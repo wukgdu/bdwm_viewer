@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import '../bdwm/login.dart';
 
 class LoginPage extends StatefulWidget {
-  PageCallBack? pageCallBack;
-  NameCallBack? changeTitle;
-  LoginPage({Key? key, this.pageCallBack, this.changeTitle}) : super(key: key);
+  LoginPage({Key? key}) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -16,9 +14,9 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    if (widget.changeTitle != null) {
-      widget.changeTitle!("登录");
-    }
+    // if (widget.changeTitle != null) {
+    //   widget.changeTitle!("登录");
+    // }
   }
   TextEditingController usernameValue = TextEditingController();
   TextEditingController passwordValue = TextEditingController();
@@ -44,17 +42,17 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 24,),
             ElevatedButton(
-              onPressed: () async {
+              onPressed: () {
                 var username = usernameValue.text.trim();
                 var password = passwordValue.text.trim();
-                var res = await bdwmLogin(username, password);
-                if (res == false) {
-                } else {
-                  debugPrint(globalUInfo.gist());
-                  if (widget.pageCallBack != null) {
-                    widget.pageCallBack!();
+                // var res = await bdwmLogin(username, password);
+                bdwmLogin(username, password).then((res) {
+                  if (res == false) {
+                  } else {
+                    debugPrint(globalUInfo.gist());
+                    Navigator.of(context).pushReplacementNamed('/me');
                   }
-                }
+                });
               },
               child: const Text("登录"),
             ),

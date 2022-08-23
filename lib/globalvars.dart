@@ -157,6 +157,8 @@ class UIInfo {
   int boardID = -1;
   int threadID = -1;
   String userID = "";
+  String boardName = "";
+  String userName = "";
 }
 
 var globalUInfo = Uinfo.initFromFile();

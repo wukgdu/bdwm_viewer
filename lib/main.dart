@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import './globalvars.dart';
+import './pages/home.dart';
+import './pages/board.dart';
 import './pages/login.dart';
-import './pages/top100.dart';
 import './pages/user.dart';
-import './pages/favorite.dart';
 
 void main() {
   runApp(const MainPage());
@@ -18,13 +18,11 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  String pageName = "author";
   double iconWidth = 35;
-  String appBarTitle = "";
 
   PreferredSizeWidget myAppBar() {
     return AppBar(
-      title: Text(appBarTitle),
+      title: Text("demo"),
       leading: IconButton(
         icon: const Icon(Icons.list),
         onPressed: () { },
@@ -47,7 +45,6 @@ class _MainPageState extends State<MainPage> {
               //   return;
               // }
               setState(() {
-                pageName = "hot";
               });
               // ??? will re-render even if pageName is 'hot'
             },
@@ -73,7 +70,6 @@ class _MainPageState extends State<MainPage> {
             icon: const Icon(Icons.star),
             onPressed: () {
               setState(() {
-                pageName = "favorite";
               });
             },
           ),
@@ -85,9 +81,7 @@ class _MainPageState extends State<MainPage> {
             onPressed: () {
               setState(() {
                 if (globalUInfo.login == true) {
-                  pageName = "me";
                 } else {
-                  pageName = "login";
                 }
               });
             },
@@ -106,12 +100,10 @@ class _MainPageState extends State<MainPage> {
   }
   void afterLogin () {
     setState(() {
-      pageName = "login";
     });
   }
   void afterLogout () {
     setState(() {
-      pageName = "hot";
     });
   }
 
@@ -121,25 +113,35 @@ class _MainPageState extends State<MainPage> {
     return MaterialApp(
       title: 'BDWMViewer',
       theme: ThemeData(
-        colorScheme: const ColorScheme.light().copyWith(primary: Colors.blueAccent),
+        // #e97c62
+        // colorScheme: const ColorScheme.light().copyWith(primary: Colors.orangeAccent),
+        colorScheme: const ColorScheme.light().copyWith(primary: Color(0xffe97c62)),
       ),
-      home: Scaffold(
-          appBar: myAppBar(),
-          body: Builder(
-            builder: (context) {
-              globalUIInfo.bodyContext = context;
-              return pageName == "hot" ? Top100Page(changeTitle: changeTitle) :
-                    pageName == "login" ?
-                      globalUInfo.login == false ? LoginPage(pageCallBack: afterLogin, changeTitle: changeTitle,)
-                                                 : UserInfoPage(uid: globalUInfo.uid, pageCallBack: afterLogout, changeTitle: changeTitle,) :
-                    pageName == "me" ? UserInfoPage(uid: globalUInfo.uid, pageCallBack: afterLogout, changeTitle: changeTitle,) :
-                    pageName == "user" ? UserInfoPage(uid: globalUIInfo.userID, pageCallBack: afterLogout, changeTitle: changeTitle,) :
-                    pageName == "author" ? UserInfoPage(uid: '22776', pageCallBack: afterLogout, changeTitle: changeTitle,) :
-                    pageName == "favorite" ? FavoritePage(changeTitle: changeTitle) :
-                    Top100Page(changeTitle: changeTitle);
-            },
-          )
-      ),
+      home: HomeApp(),
+      // initialRoute: "/home",
+      onGenerateRoute: (settings) {
+        WidgetBuilder builder;
+        switch (settings.name) {
+          case "/board":
+            String? boardName = settings.arguments as String?;
+            builder = (BuildContext context) => BoardApp(boardName: boardName,);
+            break;
+          case "/login":
+            builder = (BuildContext context) => LoginApp();
+            break;
+          case "/me":
+            if (globalUInfo.login) {
+              builder = (BuildContext context) => UserApp(uid: globalUInfo.uid);
+            } else {
+              builder = (BuildContext context) => LoginApp();
+            }
+            break;
+          case "/home":
+          default:
+            builder = (BuildContext context) => HomeApp();
+        }
+        return MaterialPageRoute(builder: builder, settings: settings);
+      },
     );
   }
 }

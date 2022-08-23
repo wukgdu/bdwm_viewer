@@ -8,9 +8,7 @@ import "../bdwm/logout.dart";
 
 class UserInfoPage extends StatefulWidget {
   final String uid;
-  PageCallBack? pageCallBack;
-  NameCallBack? changeTitle;
-  UserInfoPage({Key? key, required this.uid, this.pageCallBack, this.changeTitle}) : super(key: key);
+  UserInfoPage({Key? key, required this.uid}) : super(key: key);
 
   @override
   State<UserInfoPage> createState() => _UserInfoPageState();
@@ -25,15 +23,15 @@ class _UserInfoPageState extends State<UserInfoPage> {
   }
 
   void updateTitle() {
-    if (widget.changeTitle != null) {
-      if ((globalUInfo.uid == widget.uid) && (globalUInfo.login == true)) {
-        widget.changeTitle!("我");
-      } else if (widget.uid == "22776") {
-        widget.changeTitle!("作者");
-      } else {
-        widget.changeTitle!("用户");
-      }
-    }
+    // if (widget.changeTitle != null) {
+    //   if ((globalUInfo.uid == widget.uid) && (globalUInfo.login == true)) {
+    //     widget.changeTitle!("我");
+    //   } else if (widget.uid == "22776") {
+    //     widget.changeTitle!("作者");
+    //   } else {
+    //     widget.changeTitle!("用户");
+    //   }
+    // }
   }
 
   @override
@@ -152,10 +150,9 @@ class _UserInfoPageState extends State<UserInfoPage> {
                 child: (globalUInfo.login && (globalUInfo.uid == widget.uid)) ? IconButton(
                   icon: const Icon(Icons.logout),
                   onPressed: () {
-                    bdwmLogout();
-                    if (widget.pageCallBack != null) {
-                      widget.pageCallBack!();
-                    }
+                    bdwmLogout().then((value) {
+                      Navigator.of(context).pushReplacementNamed('/login');
+                    });
                   },
                 ) : null,
               ),

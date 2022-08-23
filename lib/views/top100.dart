@@ -5,8 +5,7 @@ import '../globalvars.dart';
 import '../html_parser/top100_parser.dart';
 
 class Top100Page extends StatefulWidget {
-  NameCallBack? changeTitle;
-  Top100Page({Key? key, this.changeTitle}) : super(key: key);
+  Top100Page({Key? key}) : super(key: key);
 
   @override
   State<Top100Page> createState() => _Top100PageState();
@@ -22,9 +21,6 @@ class _Top100PageState extends State<Top100Page> {
   @override
   void initState() {
     super.initState();
-    if (widget.changeTitle != null) {
-      widget.changeTitle!("热点");
-    }
     getData().then((value) {
       // getExampleTop100();
       setState(() {
@@ -83,6 +79,7 @@ class _Top100PageState extends State<Top100Page> {
   Widget build(BuildContext context) {
     debugPrint(top100items.length.toString());
     return ListView(
+      controller: ScrollController(),
       padding: const EdgeInsets.all(8),
       children: top100items.map((Top100Item item) {
         return _onepost(item);

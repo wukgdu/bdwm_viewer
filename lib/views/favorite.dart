@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import '../bdwm/req.dart';
 import '../globalvars.dart';
 import '../html_parser/favorite_parser.dart';
-import "./board.dart";
 
 class FavoritePage extends StatefulWidget {
-  NameCallBack? changeTitle;
-  FavoritePage({Key? key, this.changeTitle}) : super(key: key);
+  FavoritePage({Key? key}) : super(key: key);
 
   @override
   State<FavoritePage> createState() => _FavoritePageState();
@@ -23,9 +21,6 @@ class _FavoritePageState extends State<FavoritePage> {
   @override
   void initState() {
     super.initState();
-    if (widget.changeTitle != null) {
-      widget.changeTitle!("收藏");
-    }
     // setState(() {
     //   favoriteBoards = getExampleFavoriteBoard();
     // });
@@ -69,7 +64,7 @@ class _FavoritePageState extends State<FavoritePage> {
             ],
           ),
           onTap: () {
-            Navigator.of(context).pushReplacementNamed("/board");
+            Navigator.of(context).pushNamed("/board", arguments: item.boardName);
           },
         ),
       ),
