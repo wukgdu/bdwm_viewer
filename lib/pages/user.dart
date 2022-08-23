@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../globalvars.dart';
 import '../views/user.dart';
 import '../views/drawer.dart';
 
 class UserApp extends StatefulWidget {
   String uid;
-  UserApp({Key? key, required this.uid}) : super(key: key);
+  bool? needBack;
+  UserApp({Key? key, required this.uid, this.needBack}) : super(key: key);
 
   @override
   State<UserApp> createState() => _UserAppState();
@@ -14,10 +16,16 @@ class UserApp extends StatefulWidget {
 class _UserAppState extends State<UserApp> {
   @override
   Widget build(BuildContext context) {
+    var title = "用户";
+    if ((globalUInfo.uid == widget.uid) || (globalUInfo.login == true)) {
+      title = "我";
+    } else if (globalUInfo.uid == "22776") {
+      title = "作者";
+    }
     return Scaffold(
-      drawer: MyDrawer(),
+      drawer: ((widget.needBack == null) || (widget.needBack == false)) ? MyDrawer() : null,
       appBar: AppBar(
-        title: Text("我"),
+        title: Text(title),
       ),
       body: UserInfoPage(uid: widget.uid),
     );

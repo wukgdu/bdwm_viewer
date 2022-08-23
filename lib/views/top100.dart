@@ -53,15 +53,23 @@ class _Top100PageState extends State<Top100Page> {
           "${item.author} ${item.postTime}\n${item.board}",
         ),
         isThreeLine: true,
-        leading: Container(
-          alignment: Alignment.center,
-          width: 30,
-          height: 30,
-          child: CircleAvatar(
-            // radius: 100,
-            backgroundColor: Colors.white,
-            backgroundImage: NetworkImage(item.avatarLink),
-          )
+        leading: GestureDetector(
+          child: Container(
+            alignment: Alignment.center,
+            width: 30,
+            height: 30,
+            child: CircleAvatar(
+              // radius: 100,
+              backgroundColor: Colors.white,
+              backgroundImage: NetworkImage(item.avatarLink),
+            ),
+          ),
+          onTap: () {
+            if (item.uid.isEmpty) {
+              return;
+            }
+            Navigator.of(context).pushNamed('/user', arguments: item.uid);
+          },
         ),
         minLeadingWidth: 20,
         trailing: Container(

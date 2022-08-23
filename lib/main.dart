@@ -136,6 +136,10 @@ class _MainPageState extends State<MainPage> {
               builder = (BuildContext context) => LoginApp();
             }
             break;
+          case "/user":
+            String userID = settings.arguments as String? ?? "15265";
+            builder = (BuildContext context) => UserApp(uid: userID, needBack: true,);
+            break;
           case "/home":
           default:
             builder = (BuildContext context) => HomeApp();

@@ -23,7 +23,7 @@ class MyDrawer extends StatelessWidget {
         padding: EdgeInsets.all(16.0),
         children: <Widget>[
           _oneItem(context, "/home", icon: Icon(Icons.home), text: Text('首页')),
-          _oneItem(context, "/me", icon: Icon(Icons.info), text: Text('我')),
+          _oneItem(context, "/me", icon: Icon(Icons.person), text: Text('我')),
         ],
       ),
     );

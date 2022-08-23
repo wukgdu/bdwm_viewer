@@ -10,13 +10,14 @@ class Top100Item {
   int id = 0;
   String title = "";
   String author = "";
+  String uid = "";
   String avatarLink = "";
   String board = "";
   String postTime = "";
   String contentLink = "";
   String boardLink = "";
 
-  Top100Item(this.id, this.title, this.author, this.avatarLink, this.board, this.postTime, this.contentLink, this.boardLink);
+  Top100Item(this.id, this.title, this.author, this.uid, this.avatarLink, this.board, this.postTime, this.contentLink, this.boardLink);
 }
 
 List<Top100Item> parseTop100(String htmlStr) {
@@ -30,12 +31,14 @@ List<Top100Item> parseTop100(String htmlStr) {
     final itemID = int.parse(getTrimmedString(item.querySelector(".id")));
     final itemTitle = getTrimmedString(item.querySelector(".title"));
     final itemAuthor = getTrimmedString(item.querySelector(".name"));
+    final itemAuthorRelaLink = item.querySelector(".author")?.querySelector(".link")?.attributes['href'] ?? "";
+    final itemUID = itemAuthorRelaLink.isNotEmpty ? itemAuthorRelaLink.split("=")[1] : "";
     final itemTime = getTrimmedString(item.querySelector(".time"));
     final itemAvatar = absImgSrc(item.querySelector(".avatar")?.querySelector("img")?.attributes['src'] ?? defaultAvator);
     final itemBoard = getTrimmedString(item.querySelector(".board"));
     final itemLink = absThreadLink(item.querySelector(".link")?.attributes['href'] ?? "");
     final itemBoardLink = absThreadLink(item.querySelector(".board-cont")?.querySelector(".link")?.attributes['href'] ?? "");
-    top100Items.add(Top100Item(itemID, itemTitle, itemAuthor, itemAvatar, itemBoard, itemTime, itemLink, itemBoardLink));
+    top100Items.add(Top100Item(itemID, itemTitle, itemAuthor, itemUID, itemAvatar, itemBoard, itemTime, itemLink, itemBoardLink));
   }
   return top100Items;
 }
