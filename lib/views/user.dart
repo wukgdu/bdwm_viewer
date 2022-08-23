@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 
 import "../html_parser/user_parser.dart";
 import "../bdwm/req.dart";
@@ -103,26 +104,39 @@ class _UserInfoPageState extends State<UserInfoPage> {
     );
   }
 
-  // Widget _multiHtmlLineItem(String label, Html value, {Icon? icon}) {
-  //   return Card(
-  //     child: Container(
-  //       padding: const EdgeInsets.only(left: 10),
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           Row(
-  //             children: [
-  //               if (icon != null)
-  //                 ...[icon],
-  //               Text("$label："),
-  //             ],
-  //           ),
-  //           value,
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
+  HtmlWidget renderHtml(String htmlStr) {
+    return HtmlWidget(
+      htmlStr.replaceAll("<br/>", ""),
+      onErrorBuilder: (context, element, error) => Text('$element error: $error'),
+      customStylesBuilder: (element) {
+        if (element.localName == 'p') {
+          return {'margin-top': '0px', 'margin-bottom': '0px'};
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _multiHtmlLineItem(String label, var value, {Icon? icon}) {
+    return Card(
+      child: Container(
+        padding: const EdgeInsets.only(left: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                if (icon != null)
+                  ...[icon],
+                Text("$label："),
+              ],
+            ),
+            value,
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -171,12 +185,13 @@ class _UserInfoPageState extends State<UserInfoPage> {
                 _oneLineItem("原创分", user.rating),
                 _oneLineItem("最近上站时间", user.recentLogin),
                 _oneLineItem("最近离站时间", user.recentLogout),
-                // _multiHtmlLineItem("个人说明", Html(data: user.signature), icon: const Icon(Icons.description)),
                 if (user.timeReg != null)
                   ...[_oneLineItem("注册时间", user.timeReg!)],
                 if (user.timeOnline != null)
                   ...[_oneLineItem("在线总时长", user.timeOnline!)],
-                _multiLineItem("个人说明", user.signature, icon: const Icon(Icons.description)),
+                // _multiLineItem("个人说明", user.signature, icon: const Icon(Icons.description)),
+                // _multiHtmlLineItem("个人说明", Html(data: user.signature), icon: const Icon(Icons.description)),
+                _multiHtmlLineItem("个人说明", renderHtml(user.signatureHtml), icon: const Icon(Icons.description)),
                 if (user.duty != null && user.dutyBoards != null)
                   ...[_multiLineItem("担任版务", user.dutyBoards!.join("\n"))],
               ],

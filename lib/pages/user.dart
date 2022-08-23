@@ -17,7 +17,7 @@ class _UserAppState extends State<UserApp> {
   @override
   Widget build(BuildContext context) {
     var title = "用户";
-    if ((globalUInfo.uid == widget.uid) || (globalUInfo.login == true)) {
+    if ((globalUInfo.uid == widget.uid) && (globalUInfo.login == true)) {
       title = "我";
     } else if (globalUInfo.uid == "22776") {
       title = "作者";

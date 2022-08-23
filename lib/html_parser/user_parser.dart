@@ -25,6 +25,7 @@ class UserProfile {
   String? timeReg;
   String? timeOnline;
   String signature = "";
+  String signatureHtml = "";
   String? duty;
   List<String>? dutyBoards;
   List<String>? dutyBoardLinks;
@@ -50,6 +51,7 @@ class UserProfile {
     this.timeReg,
     this.timeOnline,
     required this.signature,
+    required this.signatureHtml,
     this.duty,
     this.dutyBoards,
     this.dutyBoardLinks,
@@ -123,10 +125,11 @@ UserProfile parseUser(String htmlStr) {
   }
 
   String signature = "";
+  String signatureHtml = "";
   var sigDom = profileDom.querySelector(".signature");
   if (sigDom != null) {
-    // signature = getTrimmedHtml(sigDom);
     signature = getTrimmedString(sigDom);
+    signatureHtml = getTrimmedHtml(sigDom);
   }
 
   List<String>? dutyBoards;
@@ -145,7 +148,7 @@ UserProfile parseUser(String htmlStr) {
     bbsID: bbsID, nickName: nickName, status: status, avatarLink: avatarLink,
     personalCollection: TextAndLink(personalCollection, personalCollectionLink), gender: gender, constellation: constellation,
     countLogin: countLogin, countPost: countPost, value: value, score: score, rankName: rankName,
-    rating: rating, recentLogin: recentLogin, recentLogout: recentLogout, signature: signature,
+    rating: rating, recentLogin: recentLogin, recentLogout: recentLogout, signature: signature, signatureHtml: signatureHtml,
     timeReg: timeReg, timeOnline: timeOnline, duty: duty, dutyBoards: dutyBoards, dutyBoardLinks: dutyBoardLinks,
   );
 }
