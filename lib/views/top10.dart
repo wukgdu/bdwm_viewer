@@ -137,7 +137,9 @@ class _TopHomePageState extends State<TopHomePage> {
                 }).toList()
               else if (!(homeInfo.top10Info == null) && homeInfo.top10Info!.length == 1)
                 ListTile(
+                  // title: Text("全站十大", style: _titleFont),
                   title: Text(homeInfo.top10Info![0].title),
+                  // isThreeLine: true,
                   trailing: IconButton(
                     icon: Icon(Icons.login),
                     onPressed: () { Navigator.pushReplacementNamed(context, '/login', arguments: {'needBack': false}); },

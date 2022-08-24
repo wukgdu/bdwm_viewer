@@ -114,7 +114,7 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     debugPrint("** main rebuild");
     return MaterialApp(
-      title: 'BDWMViewer',
+      title: 'OBViewer',
       theme: ThemeData(
         // #e97c62
         // colorScheme: const ColorScheme.light().copyWith(primary: Colors.orangeAccent),

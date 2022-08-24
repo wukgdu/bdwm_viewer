@@ -31,12 +31,14 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             TextFormField(
               decoration: const InputDecoration(
+                icon: Icon(Icons.account_box_rounded),
                 hintText: '用户名',
               ),
               controller: usernameValue,
             ),
             TextFormField(
               decoration: const InputDecoration(
+                icon: Icon(Icons.password_rounded),
                 hintText: '密码',
               ),
               obscureText: true,
