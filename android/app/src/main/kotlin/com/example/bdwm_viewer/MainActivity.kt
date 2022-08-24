@@ -1,4 +1,4 @@
-package com.example.bdwm_viewer
+package com.wukgdu365.bdwm_viewer
 
 import io.flutter.embedding.android.FlutterActivity
 

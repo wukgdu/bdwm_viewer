@@ -1,9 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.bdwm_viewer">
+    package="com.wukgdu365.bdwm_viewer">
    <application
-        android:label="bdwm_viewer"
+        android:label="OBViewer"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/wukgdu_ghicon">
         <activity
             android:name=".MainActivity"
             android:exported="true"
