@@ -1,3 +1,4 @@
+import 'package:bdwm_viewer/globalvars.dart';
 import 'package:flutter/material.dart';
 
 import '../views/top100.dart';
@@ -29,6 +30,18 @@ class _HomeAppState extends State<HomeApp> {
         drawer: MyDrawer(),
         appBar: AppBar(
           title: const Text("首页"),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.account_circle),
+              onPressed: () {
+                if (globalUInfo.login) {
+                  Navigator.of(context).pushNamed('/user', arguments: globalUInfo.uid);
+                } else {
+                  Navigator.of(context).pushReplacementNamed('/me');
+                }
+              },
+            ),
+          ],
           bottom: TabBar(
             labelStyle: const TextStyle(fontSize: 12),
             tabs: [

@@ -159,19 +159,21 @@ class _UserInfoPageState extends State<UserInfoPage> {
                 "$subtitle1\n$subtitle2",
               ),
               isThreeLine: true,
-              trailing: SizedBox(
-                width: 48,
-                child: (globalUInfo.login && (globalUInfo.uid == widget.uid)) ? IconButton(
-                  icon: const Icon(Icons.logout),
-                  onPressed: () {
-                    bdwmLogout().then((value) {
-                      Navigator.of(context).pushReplacementNamed('/login');
-                    });
-                  },
-                ) : null,
+              trailing: (globalUInfo.login && (globalUInfo.uid == widget.uid))
+                ? SizedBox(
+                  width: 48,
+                  child:  IconButton(
+                    icon: const Icon(Icons.logout),
+                    onPressed: () {
+                      bdwmLogout().then((value) {
+                        Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+                      });
+                    },
+                  ),
+                )
+                : null,
               ),
             ),
-          ),
           Expanded(
             child: ListView(
               children: [

@@ -45,7 +45,7 @@ class _Top100PageState extends State<Top100Page> {
       child: ListTile(
         title: Text(
           item.title,
-          style: _biggerFont,
+          // style: _biggerFont,
           textAlign: TextAlign.start,
           overflow: TextOverflow.ellipsis,
         ),
@@ -77,7 +77,7 @@ class _Top100PageState extends State<Top100Page> {
           width: 24,
           child: Text("${item.id}")
         ),
-        dense: false,
+        // dense: true,
         onTap: () { }
       )
     );
