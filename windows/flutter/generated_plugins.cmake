@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  quick_notify
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

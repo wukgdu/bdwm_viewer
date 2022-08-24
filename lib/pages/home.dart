@@ -1,5 +1,6 @@
 import 'package:bdwm_viewer/globalvars.dart';
 import 'package:flutter/material.dart';
+import 'package:quick_notify/quick_notify.dart';
 
 import '../views/top100.dart';
 import '../views/top10.dart';
@@ -31,6 +32,22 @@ class _HomeAppState extends State<HomeApp> {
         appBar: AppBar(
           title: const Text("首页"),
           actions: [
+            IconButton(
+              icon: Icon(Icons.notifications),
+              onPressed: () async {
+                var hasP = await QuickNotify.hasPermission();
+                if (!hasP) {
+                  var getP = await QuickNotify.requestPermission();
+                  if (!getP) {
+                    return;
+                  }
+                }
+                QuickNotify.notify(
+                  title: 'OBViewer',
+                  content: 'OK',
+                );
+              },
+            ),
             IconButton(
               icon: Icon(Icons.account_circle),
               onPressed: () {

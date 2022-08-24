@@ -40,6 +40,7 @@ dependencies:
   # flutter_html: ^2.2.1
   path_provider: ^2.0.11
   flutter_widget_from_html_core: ^0.8.5+3
+  quick_notify: ^0.2.1
 
 dev_dependencies:
   flutter_test:
