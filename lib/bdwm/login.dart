@@ -24,17 +24,24 @@ Map<String, String> genLoginInfo(String username, String password) {
   return data;
 }
 
-Future<bool> bdwmLogin(String username, String password) async {
+class LoginRes {
+  bool success = false;
+  int error = 0;
+
+  LoginRes(this.success, this.error);
+}
+
+Future<LoginRes> bdwmLogin(String username, String password) async {
   var loginUrl = "$v2Host/ajax/login.php";
   var data = genLoginInfo(username, password);
   var resp = await bdwmClient.post(loginUrl, headers: <String, String>{}, data: data);
   var status = json.decode(resp.body);
   if (!status['success']) {
-    return false;
+    return LoginRes(false, status['error']);
   }
   List<String> res = parseCookie(resp.headers['set-cookie'] ?? "");
   if (res.isNotEmpty) {
     globalUInfo.setInfo(res[1], res[0], username);
   }
-  return true;
+  return LoginRes(true, 0);
 }

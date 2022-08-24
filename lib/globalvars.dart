@@ -57,14 +57,7 @@ class Uinfo {
     String dir = (await getApplicationDocumentsDirectory()).path;
     String filename = "$dir/$storage";
     debugPrint(filename);
-    if (File(filename).existsSync()) {
-      var content = File(filename).readAsStringSync();
-      var jsonContent = jsonDecode(content);
-      uid = jsonContent['users'][0]['uid'];
-      skey = jsonContent['users'][0]['skey'];
-      username = jsonContent['users'][0]['name'];
-      login = jsonContent['users'][0]['login'];
-    } else {
+    void writeInit() {
       var file = File(filename).openWrite();
       Map<String, Object> content = <String, Object>{
         "users": [{
@@ -77,6 +70,19 @@ class Uinfo {
       };
       file.write(jsonEncode(content));
       file.close();
+    }
+    if (File(filename).existsSync()) {
+      var content = File(filename).readAsStringSync();
+      if (content.isEmpty) {
+        writeInit();
+      }
+      var jsonContent = jsonDecode(content);
+      uid = jsonContent['users'][0]['uid'];
+      skey = jsonContent['users'][0]['skey'];
+      username = jsonContent['users'][0]['name'];
+      login = jsonContent['users'][0]['login'];
+    } else {
+      writeInit();
     }
   }
 
