@@ -53,7 +53,7 @@ class Uinfo {
     update();
   }
 
-  void init() async {
+  Future<bool> init() async {
     String dir = (await getApplicationDocumentsDirectory()).path;
     String filename = "$dir/$storage";
     debugPrint(filename);
@@ -84,6 +84,7 @@ class Uinfo {
     } else {
       writeInit();
     }
+    return true;
   }
 
   void update() async {
@@ -167,5 +168,5 @@ class UIInfo {
   String userName = "";
 }
 
-var globalUInfo = Uinfo.initFromFile();
+var globalUInfo = Uinfo.empty();
 var globalUIInfo = UIInfo();

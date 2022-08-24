@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../views/top100.dart';
+import '../views/top10.dart';
 import '../views/favorite.dart';
 import '../views/drawer.dart';
 
@@ -23,7 +24,7 @@ class _HomeAppState extends State<HomeApp> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         drawer: MyDrawer(),
         appBar: AppBar(
@@ -31,6 +32,7 @@ class _HomeAppState extends State<HomeApp> {
           bottom: TabBar(
             labelStyle: const TextStyle(fontSize: 12),
             tabs: [
+              _oneTab(Icon(Icons.whatshot), Text("热点")),
               _oneTab(Icon(Icons.trending_up), Text("百大")),
               _oneTab(Icon(Icons.star), Text("收藏")),
             ],
@@ -38,6 +40,7 @@ class _HomeAppState extends State<HomeApp> {
         ),
         body: TabBarView(
           children: [
+            TopHomePage(),
             Top100Page(),
             FavoritePage(),
           ],

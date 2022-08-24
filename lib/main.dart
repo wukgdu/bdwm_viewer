@@ -5,9 +5,12 @@ import './pages/home.dart';
 import './pages/board.dart';
 import './pages/login.dart';
 import './pages/user.dart';
+import './globalvars.dart';
 
 void main() {
-  runApp(const MainPage());
+  globalUInfo.init().then((res) {
+    runApp(const MainPage());
+  });
 }
 
 class MainPage extends StatefulWidget {
@@ -127,7 +130,11 @@ class _MainPageState extends State<MainPage> {
             builder = (BuildContext context) => BoardApp(boardName: boardName,);
             break;
           case "/login":
-            builder = (BuildContext context) => LoginApp();
+            bool needBack = false;
+            if (settings.arguments != null) {
+              needBack = (settings.arguments as Map)['needBack'] ?? false;
+            }
+            builder = (BuildContext context) => LoginApp(needBack: needBack,);
             break;
           case "/me":
             if (globalUInfo.login) {

@@ -4,8 +4,8 @@ import '../views/login.dart';
 import '../views/drawer.dart';
 
 class LoginApp extends StatefulWidget {
-  String? boardName;
-  LoginApp({Key? key, this.boardName}) : super(key: key);
+  bool? needBack = false; 
+  LoginApp({Key? key, this.needBack}) : super(key: key);
 
   @override
   State<LoginApp> createState() => _LoginAppState();
@@ -15,7 +15,7 @@ class _LoginAppState extends State<LoginApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: MyDrawer(),
+      drawer: ((widget.needBack == null) || (widget.needBack == false)) ? MyDrawer() : null,
       appBar: AppBar(
         title: Text("登录"),
       ),
