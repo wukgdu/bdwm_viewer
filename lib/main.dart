@@ -5,9 +5,9 @@ import './pages/home.dart';
 import './pages/board.dart';
 import './pages/login.dart';
 import './pages/user.dart';
-import './globalvars.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   globalUInfo.init().then((res) {
     runApp(const MainPage());
   });

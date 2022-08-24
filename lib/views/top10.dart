@@ -48,6 +48,7 @@ class _TopHomePageState extends State<TopHomePage> {
             Text(item.countComments)
           ],
         ),
+        // dense: true,
         leading: Container(
           height: 20,
           width: 30,
@@ -81,6 +82,7 @@ class _TopHomePageState extends State<TopHomePage> {
             Text(item.countComments)
           ],
         ),
+        // dense: true,
         minLeadingWidth: 20,
         onTap: () { }
       )
