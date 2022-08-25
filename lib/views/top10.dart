@@ -4,6 +4,7 @@ import '../bdwm/req.dart';
 import '../globalvars.dart';
 import '../html_parser/top10_parser.dart';
 import "./utils.dart";
+import '../pages/read_thread.dart';
 
 class TopHomePage extends StatefulWidget {
   const TopHomePage({Key? key}) : super(key: key);
@@ -29,6 +30,31 @@ class _TopHomePageState extends State<TopHomePage> {
       setState(() {
         homeInfo = value;
       });
+    });
+  }
+
+  void _gotoThread(String bid, String threadid, String page, String boardName) {
+    Navigator.of(context).pushNamed('/thread', arguments: {
+      'bid': bid,
+      'threadid': threadid,
+      'page': page,
+      'boardName': boardName,
+    });
+  }
+
+  void _gotoThreadByLink(String link, String boardName) {
+    var pb1 = link.indexOf('bid');
+    var pb2 = link.indexOf('&', pb1);
+    var pt1 = link.indexOf('threadid');
+    var pt2 = link.indexOf('&', pt1);
+    var bid = link.substring(pb1+4, pb2 == -1 ? null : pb2);
+    var threadid = link.substring(pt1+9, pt2 == -1 ? null : pt2);
+    var page = "1";
+    Navigator.of(context).pushNamed('/thread', arguments: {
+      'bid': bid,
+      'threadid': threadid,
+      'page': page,
+      'boardName': boardName,
     });
   }
 
@@ -61,7 +87,7 @@ class _TopHomePageState extends State<TopHomePage> {
           child: Text(item.id.toString(), style: const TextStyle(color: Colors.white)),
         ),
         minLeadingWidth: 20,
-        onTap: () { }
+        onTap: () { _gotoThreadByLink(item.link, item.board); }
       )
     );
   }
@@ -84,7 +110,7 @@ class _TopHomePageState extends State<TopHomePage> {
         ),
         // dense: true,
         minLeadingWidth: 20,
-        onTap: () { }
+        onTap: () { _gotoThreadByLink(item.link, item.board); }
       )
     );
   }

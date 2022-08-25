@@ -1,11 +1,17 @@
 import '../globalvars.dart';
 
 String getTrimmedString(var dom) {
-  return dom?.text.trim();
+  if (dom == null) {
+    return "";
+  }
+  return dom.text.trim();
 }
 
 String getTrimmedHtml(var dom) {
-  return dom?.innerHtml.trim();
+  if (dom == null) {
+    return "";
+  }
+  return dom.innerHtml.trim();
 }
 
 String absImgSrc(String src) {

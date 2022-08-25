@@ -31,7 +31,7 @@ class NotifyMessage {
   }
 
   void updateValue(Function callBack) {
-    // return NotifyMessageInfo.empty();
+    return;
     bdwmGetUnreadMessageCount().then((value) {
       if (value == null) {
         return;

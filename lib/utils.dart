@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 import 'package:quick_notify/quick_notify.dart';
 
 class TextAndLink {

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 
 import "../html_parser/user_parser.dart";
 import "../bdwm/req.dart";
 import "../globalvars.dart";
 import "../bdwm/logout.dart";
+import "./utils.dart";
 
 class UserInfoPage extends StatefulWidget {
   final String uid;
@@ -101,19 +101,6 @@ class _UserInfoPageState extends State<UserInfoPage> {
           ],
         ),
       ),
-    );
-  }
-
-  HtmlWidget renderHtml(String htmlStr) {
-    return HtmlWidget(
-      htmlStr.replaceAll("<br/>", ""),
-      onErrorBuilder: (context, element, error) => Text('$element error: $error'),
-      customStylesBuilder: (element) {
-        if (element.localName == 'p') {
-          return {'margin-top': '0px', 'margin-bottom': '0px'};
-        }
-        return null;
-      },
     );
   }
 

@@ -7,6 +7,7 @@ import './pages/home.dart';
 import './pages/board.dart';
 import './pages/login.dart';
 import './pages/user.dart';
+import './pages/read_thread.dart';
 import './services.dart';
 
 void main() {
@@ -54,6 +55,7 @@ class _MainPageState extends State<MainPage> {
         colorScheme: const ColorScheme.light().copyWith(primary: Color(0xffe97c62)),
       ),
       home: HomeApp(unreadMessageInfo: unreadMessageInfo,),
+      // home: ThreadApp(bid: "33", threadid: "18262167", page: "2", boardName: "历史",),
       // initialRoute: "/home",
       onGenerateRoute: (settings) {
         WidgetBuilder builder;
@@ -61,6 +63,13 @@ class _MainPageState extends State<MainPage> {
           case "/board":
             String? boardName = settings.arguments as String?;
             builder = (BuildContext context) => BoardApp(boardName: boardName,);
+            break;
+          case "/thread":
+            var res = gotoThread(settings.arguments);
+            if (res == null) {
+              return null;
+            }
+            builder = res;
             break;
           case "/login":
             bool needBack = false;
