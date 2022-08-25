@@ -105,30 +105,33 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
             },
           ),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(item.authorInfo.userName),
-                    Text(' ('),
-                    renderHtml(item.authorInfo.nickName),
-                    Text(')'),
-                    Text(item.authorInfo.status),
-                  ],
-                ),
-                if (item.modifyTime.isNotEmpty)
-                  Text(
-                    item.modifyTime,
+            child: Container(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(item.authorInfo.userName),
+                      Text(' ('),
+                      Flexible(child: renderHtml(item.authorInfo.nickName),),
+                      Text(')'),
+                      Text(item.authorInfo.status),
+                    ],
                   ),
-                Text(
-                  item.postTime,
-                ),
-                Divider(),
-                renderHtml(item.content),
-                Divider(),
-                renderHtml(item.signature),
-              ],
+                  if (item.modifyTime.isNotEmpty)
+                    Text(
+                      item.modifyTime,
+                    ),
+                  Text(
+                    item.postTime,
+                  ),
+                  Divider(),
+                  renderHtml(item.content),
+                  Divider(),
+                  renderHtml(item.signature),
+                ],
+              ),
             ),
           ),
         ],

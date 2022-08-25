@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../bdwm/req.dart';
 import '../globalvars.dart';
 import '../html_parser/top100_parser.dart';
+import '../pages/read_thread.dart';
 
 class Top100Page extends StatefulWidget {
   Top100Page({Key? key}) : super(key: key);
@@ -78,7 +79,7 @@ class _Top100PageState extends State<Top100Page> {
           child: Text("${item.id}")
         ),
         // dense: true,
-        onTap: () { }
+        onTap: () { naviGotoThreadByLink(context, item.contentLink, item.board); }
       )
     );
   }

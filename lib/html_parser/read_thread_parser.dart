@@ -191,7 +191,11 @@ ThreadPageInfo parseThread(String htmlStr) {
         return etext.contains("返回") || etext.contains("页") || etext.contains("跳");
       });
       pagingsDom.map((e) {
-        return int.parse(e.text);
+        var txt = e.text;
+        if (txt.startsWith(".")) {
+          txt = txt.replaceAll(".", "");
+        }
+        return int.parse(txt);
       },).toList().forEach((e) {
         if (pageNum < e) {
           pageNum = e;

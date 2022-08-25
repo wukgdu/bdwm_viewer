@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:fwfh_selectable_text/fwfh_selectable_text.dart';
+
+class MyWidgetFactory extends WidgetFactory with SelectableTextFactory {
+
+  @override
+  SelectionChangedCallback? get selectableTextOnChanged => (selection, cause) {
+    // do something when the selection changes
+  };
+
+}
 
 HtmlWidget renderHtml(String htmlStr) {
   return HtmlWidget(
     htmlStr.replaceAll("<br/>", ""),
+    factoryBuilder: () => MyWidgetFactory(),
     onErrorBuilder: (context, element, error) => Text('$element error: $error'),
+    onTapImage: (p0) { },
+    onTapUrl: (p0) { return true; },
     customStylesBuilder: (element) {
       if (element.localName == 'p') {
         return {'margin-top': '0px', 'margin-bottom': '0px'};
