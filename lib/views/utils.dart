@@ -11,11 +11,11 @@ class MyWidgetFactory extends WidgetFactory with SelectableTextFactory {
 
 }
 
-HtmlWidget renderHtml(String htmlStr) {
+HtmlWidget renderHtml(String htmlStr, {bool? needSelect = true}) {
   return HtmlWidget(
     // htmlStr.replaceAll("<br/>", ""),
     htmlStr,
-    factoryBuilder: () => MyWidgetFactory(),
+    factoryBuilder: (needSelect == null || needSelect == false) ? null :  () => MyWidgetFactory(),
     onErrorBuilder: (context, element, error) => Text('$element error: $error'),
     onTapImage: (p0) { },
     onTapUrl: (p0) { return true; },

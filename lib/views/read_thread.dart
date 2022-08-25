@@ -115,7 +115,7 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
                     children: [
                       Text(item.authorInfo.userName),
                       Text(' ('),
-                      Flexible(child: renderHtml(item.authorInfo.nickName),),
+                      Flexible(child: renderHtml(item.authorInfo.nickName, needSelect: false),),
                       Text(')'),
                       Text(item.authorInfo.status),
                     ],
