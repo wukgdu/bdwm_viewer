@@ -85,7 +85,7 @@ AuthorPostInfo parseUserPost(Element? document) {
   }
   String uid = getEqualValue(document.querySelector(".portrait-container")?.attributes['href'] ?? "");
   String userName = getTrimmedString(document.querySelector(".username a"));
-  String nickName = getTrimmedHtml(document.querySelector(".nickname"));
+  String nickName = getTrimmedHtml(document.querySelector(".nickname")?.firstChild);
   String status = getTrimmedString(document.querySelector(".username span"));
 
   String rating = "", postCount = "";

@@ -13,7 +13,8 @@ class MyWidgetFactory extends WidgetFactory with SelectableTextFactory {
 
 HtmlWidget renderHtml(String htmlStr) {
   return HtmlWidget(
-    htmlStr.replaceAll("<br/>", ""),
+    // htmlStr.replaceAll("<br/>", ""),
+    htmlStr,
     factoryBuilder: () => MyWidgetFactory(),
     onErrorBuilder: (context, element, error) => Text('$element error: $error'),
     onTapImage: (p0) { },

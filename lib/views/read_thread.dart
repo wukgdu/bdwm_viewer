@@ -111,6 +111,7 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(item.authorInfo.userName),
                       Text(' ('),

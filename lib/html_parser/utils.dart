@@ -1,4 +1,5 @@
 import '../globalvars.dart';
+import 'package:html/dom.dart' show Text;
 
 String getTrimmedString(var dom) {
   if (dom == null) {
@@ -10,6 +11,9 @@ String getTrimmedString(var dom) {
 String getTrimmedHtml(var dom) {
   if (dom == null) {
     return "";
+  }
+  if (dom is Text) {
+    return dom.text.trim();
   }
   return dom.innerHtml.trim();
 }
