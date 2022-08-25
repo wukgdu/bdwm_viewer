@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import './globalvars.dart';
@@ -5,9 +7,11 @@ import './pages/home.dart';
 import './pages/board.dart';
 import './pages/login.dart';
 import './pages/user.dart';
+import './services.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  // debugPaintSizeEnabled = true;
   globalUInfo.init().then((res) {
     runApp(const MainPage());
   });
@@ -21,92 +25,21 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  double iconWidth = 35;
+  Timer? timer;
+  NotifyMessage unreadMessage = NotifyMessage();
+  NotifyMessageInfo unreadMessageInfo = NotifyMessageInfo.empty();
 
-  PreferredSizeWidget myAppBar() {
-    return AppBar(
-      title: Text("demo"),
-      leading: IconButton(
-        icon: const Icon(Icons.list),
-        onPressed: () { },
-      ),
-      leadingWidth: iconWidth-5,
-      actions: <Widget>[
-        SizedBox(
-          width: iconWidth,
-          child: IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () { },
-          ),
-        ),
-        SizedBox(
-          width: 35,
-          child: IconButton(
-            icon: const Icon(Icons.home),
-            onPressed: () {
-              // if (pageName == "hot") {
-              //   return;
-              // }
-              setState(() {
-              });
-              // ??? will re-render even if pageName is 'hot'
-            },
-          )
-        ),
-        SizedBox(
-          width: iconWidth,
-          child: IconButton(
-            icon: const Icon(Icons.mail),
-            onPressed: () { },
-          ),
-        ),
-        SizedBox(
-          width: iconWidth,
-          child: IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () { },
-          ),
-        ),
-        SizedBox(
-          width: iconWidth,
-          child: IconButton(
-            icon: const Icon(Icons.star),
-            onPressed: () {
-              setState(() {
-              });
-            },
-          ),
-        ),
-        SizedBox(
-          width: iconWidth+10,
-          child: IconButton(
-            icon: const Icon(Icons.person),
-            onPressed: () {
-              setState(() {
-                if (globalUInfo.login == true) {
-                } else {
-                }
-              });
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  void changeTitle(String title) {
-    WidgetsBinding.instance.addPostFrameCallback((_){
-      // setState(() {
-      //   appBarTitle = title;
-      // });
-    });
-  }
-  void afterLogin () {
-    setState(() {
-    });
-  }
-  void afterLogout () {
-    setState(() {
+  @override
+  void initState() {
+    super.initState();
+    timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      unreadMessage.updateValue((NotifyMessageInfo info) {
+        if (unreadMessageInfo.count != info.count) {
+          setState(() {
+            unreadMessageInfo = info;
+          });
+        }
+      });
     });
   }
 
@@ -120,7 +53,7 @@ class _MainPageState extends State<MainPage> {
         // colorScheme: const ColorScheme.light().copyWith(primary: Colors.orangeAccent),
         colorScheme: const ColorScheme.light().copyWith(primary: Color(0xffe97c62)),
       ),
-      home: HomeApp(),
+      home: HomeApp(unreadMessageInfo: unreadMessageInfo,),
       // initialRoute: "/home",
       onGenerateRoute: (settings) {
         WidgetBuilder builder;
@@ -149,7 +82,7 @@ class _MainPageState extends State<MainPage> {
             break;
           case "/home":
           default:
-            builder = (BuildContext context) => HomeApp();
+            builder = (BuildContext context) => HomeApp(unreadMessageInfo: unreadMessageInfo,);
         }
         return MaterialPageRoute(builder: builder, settings: settings);
       },

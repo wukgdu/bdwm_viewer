@@ -1,14 +1,16 @@
-import 'package:bdwm_viewer/globalvars.dart';
 import 'package:flutter/material.dart';
-import 'package:quick_notify/quick_notify.dart';
 
+import '../globalvars.dart';
+import '../utils.dart';
+import '../services.dart';
 import '../views/top100.dart';
 import '../views/top10.dart';
 import '../views/favorite.dart';
 import '../views/drawer.dart';
 
 class HomeApp extends StatefulWidget {
-  const HomeApp({Key? key}) : super(key: key);
+  NotifyMessageInfo unreadMessageInfo;
+  HomeApp({Key? key, required this.unreadMessageInfo}) : super(key: key);
 
   @override
   State<HomeApp> createState() => _HomeAppState();
@@ -32,21 +34,35 @@ class _HomeAppState extends State<HomeApp> {
         appBar: AppBar(
           title: const Text("首页"),
           actions: [
-            IconButton(
-              icon: Icon(Icons.notifications),
-              onPressed: () async {
-                var hasP = await QuickNotify.hasPermission();
-                if (!hasP) {
-                  var getP = await QuickNotify.requestPermission();
-                  if (!getP) {
-                    return;
-                  }
-                }
-                QuickNotify.notify(
-                  title: 'OBViewer',
-                  content: 'OK',
-                );
-              },
+            Stack(
+              alignment: const Alignment(0, 0),
+              children: [
+                IconButton(
+                  icon: Icon(Icons.notifications),
+                  onPressed: () {
+                    quickNotify("OBViewer", "OK");
+                  },
+                ),
+                if (widget.unreadMessageInfo.count > 0)
+                  Positioned(
+                    top: 10,
+                    right: 0,
+                    child: Container(
+                      width: 20,
+                      // height: 20,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.red,
+                      ),
+                      child: Text(
+                        widget.unreadMessageInfo.count > 9
+                          ? '9+' : widget.unreadMessageInfo.count.toString(),
+                        style: const TextStyle(color: Colors.white, fontSize: 12),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
             ),
             IconButton(
               icon: Icon(Icons.account_circle),
