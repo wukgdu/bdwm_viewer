@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 // import 'package:fwfh_selectable_text/fwfh_selectable_text.dart';
 
+import './detail_image.dart';
+
 // https://github.com/daohoangson/flutter_widget_from_html/tree/master/packages/fwfh_selectable_text
 mixin SelectableTextFactory on WidgetFactory {
   /// Controls whether text is rendered with [SelectableText] or [RichText].
@@ -43,27 +45,6 @@ class MyWidgetFactory extends WidgetFactory with SelectableTextFactory {
 
 }
 
-class DetailImage extends StatelessWidget {
-  String imgLink = "";
-  DetailImage(this.imgLink);
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: GestureDetector(
-        child: Center(
-          child: Hero(
-            tag: 'imageHero',
-            child: Image.network(imgLink),
-          ),
-        ),
-        onTap: () {
-          Navigator.pop(context);
-        },
-      ),
-    );
-  }
-}
-
 HtmlWidget renderHtml(String htmlStr, {bool? needSelect = true, TextStyle? ts, BuildContext? context}) {
   return HtmlWidget(
     // htmlStr.replaceAll("<br/>", ""),
@@ -73,9 +54,7 @@ HtmlWidget renderHtml(String htmlStr, {bool? needSelect = true, TextStyle? ts, B
     textStyle: ts,
     onTapImage: (p0) {
       if (context == null) { return; }
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => DetailImage(p0.sources.first.url),
-      ));
+      gotoDetailImage(context, p0.sources.first.url);
     },
     onTapUrl: (p0) {
       return true;

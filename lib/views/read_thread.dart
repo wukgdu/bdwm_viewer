@@ -4,7 +4,9 @@ import '../bdwm/req.dart';
 import '../bdwm/vote.dart';
 import '../globalvars.dart';
 import './utils.dart';
+import './constants.dart';
 import '../html_parser/read_thread_parser.dart';
+import './detail_image.dart';
 
 class OnePostComponent extends StatefulWidget {
   OnePostInfo onePostInfo = OnePostInfo.empty();
@@ -21,6 +23,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
   bool iVoteDown = false;
   int voteUpCount = 0;
   int voteDownCount = 0;
+  bool get simpleAttachment => false;
 
   @override
   void initState() {
@@ -29,6 +32,57 @@ class _OnePostComponentState extends State<OnePostComponent> {
     iVoteDown = widget.onePostInfo.iVoteDown;
     voteUpCount = widget.onePostInfo.upCount;
     voteDownCount = widget.onePostInfo.downCount;
+  }
+
+  Widget renderAttachment() {
+    var attachments = widget.onePostInfo.attachmentInfo;
+    const spaceSpacer = Text(" ");
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: attachments.map((e) {
+        if (e.type == AttachmentType.showText) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(Icons.attachment),
+              spaceSpacer,
+              Flexible(
+                child: GestureDetector(
+                  child: Text.rich(
+                    TextSpan(
+                      text: e.text,
+                      style: textLinkStyle,
+                      children: [
+                        TextSpan(
+                          text: e.size,
+                          style: textLinkSiblingStyle,
+                        ),
+                      ]
+                    ),
+                  ),
+                  onTap: () {
+                    gotoDetailImage(context, e.link);
+                  },
+                ),
+              ),
+            ],
+          );
+        } else if (e.type == AttachmentType.showThumbnail) {
+          return GestureDetector(
+            child: Image.network(
+              e.thumbnailLink,
+              errorBuilder: (context, error, stackTrace) {
+                return Text("${e.text} 加载失败");
+              },
+            ),
+            onTap: () {
+              gotoDetailImage(context, e.link);
+            },
+          );
+        }
+        return Text("42");
+      },).toList(),
+    );
   }
 
   void vote(String action) async {
@@ -202,8 +256,13 @@ class _OnePostComponentState extends State<OnePostComponent> {
                     ...[
                       Divider(),
                       const Text("附件", style: TextStyle(fontWeight: FontWeight.bold)),
-                      renderHtml(item.attachmentHtml, context: context),
                     ],
+                    if (simpleAttachment)
+                      ...[
+                        renderHtml(item.attachmentHtml, context: context),
+                      ]
+                    else
+                      renderAttachment(),
                 ],
               ),
             ),
@@ -248,48 +307,6 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
         threadPageInfo = value;
       });
     });
-  }
-
-  // skip this
-  Widget _onePostWideScreen(OnePostInfo item) {
-    double deviceWidth = MediaQuery.of(context).size.width;
-    return Card(
-      child: Row(
-        children: [
-          Container(
-            width: deviceWidth * 0.2,
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.white,
-                  backgroundImage: NetworkImage(item.authorInfo.avatarLink),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Text(item.authorInfo.userName), Text(item.authorInfo.status)]
-                ),
-                Text(item.authorInfo.nickName),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(item.authorInfo.score),
-                    Text(item.authorInfo.rankName),
-                  ],
-                ),
-                Text("发帖数：${item.authorInfo.postCount}"),
-                Text("原创分：${item.authorInfo.rating}"),
-              ],
-            ),
-          ),
-          Row(
-            children: const [
-              Text("内容"),
-            ],
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _onepost(OnePostInfo item) {

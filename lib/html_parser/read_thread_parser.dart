@@ -69,6 +69,7 @@ class OnePostInfo {
   bool iVoteUp = false;
   bool iVoteDown = false;
   List<AttachmentInfo> attachmentInfo = <AttachmentInfo>[];
+  int attachmentSlidesCount = 0;
   String attachmentHtml = "";
 
   OnePostInfo.empty();
@@ -87,6 +88,7 @@ class OnePostInfo {
     required this.iVoteDown,
     required this.attachmentInfo,
     required this.attachmentHtml,
+    required this.attachmentSlidesCount,
   });
 }
 
@@ -215,10 +217,11 @@ OnePostInfo parseOnePost(Element document) {
     var signatureDom = contentDom.querySelector(".signature");
     signature = getTrimmedHtml(signatureDom);
   }
-  
+
   var attachmentInfo = <AttachmentInfo>[];
   var attachmentDom = document.querySelector(".attachment");
   var attachmentHtml = "";
+  int attachmentSlidesCount = 0;
   if (attachmentDom != null) {
     var attachmentsDom = attachmentDom.querySelectorAll("li");
     attachmentHtml = getTrimmedOuterHtml(attachmentDom.querySelector("ul"));
@@ -235,6 +238,7 @@ OnePostInfo parseOnePost(Element document) {
       if (a.classes.contains("highslide")) {
         aType = AttachmentType.showThumbnail;
         thumbnailLink = getTrimmedString(adom.querySelector("img")?.attributes['src']);
+        attachmentSlidesCount += 1;
       }
       attachmentInfo.add(AttachmentInfo(text: name, link: link, size: size, type: aType, thumbnailLink: thumbnailLink));
     }
@@ -244,7 +248,7 @@ OnePostInfo parseOnePost(Element document) {
     authorInfo: authorInfo, postTime: postTime, postID: postID, modifyTime: modifyTime,
     upCount: upCount, downCount: downCount, content: content, signature: signature,
     postNumber: postNumber, postOwner: postOwner, iVoteUp: iVoteUp, iVoteDown: iVoteDown,
-    attachmentInfo: attachmentInfo, attachmentHtml: attachmentHtml,
+    attachmentInfo: attachmentInfo, attachmentHtml: attachmentHtml, attachmentSlidesCount: attachmentSlidesCount,
   );
 }
 
