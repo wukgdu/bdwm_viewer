@@ -41,7 +41,7 @@ dependencies:
   path_provider: ^2.0.11
   flutter_widget_from_html_core: ^0.8.5+3
   quick_notify: ^0.2.1
-  fwfh_selectable_text: ^0.8.3+1
+  # fwfh_selectable_text: ^0.8.3+1
 
 dev_dependencies:
   flutter_test:
