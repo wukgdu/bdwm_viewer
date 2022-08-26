@@ -58,7 +58,7 @@ class _TopHomePageState extends State<TopHomePage> {
             color: item.id <= 3 ? Colors.redAccent : Colors.grey,
             borderRadius: const BorderRadius.all(Radius.circular(10.0)),
             // border: Border.all(width: 1, color: Colors.red),
-            ),
+          ),
           child: Text(item.id.toString(), style: const TextStyle(color: Colors.white)),
         ),
         minLeadingWidth: 20,

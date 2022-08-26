@@ -37,22 +37,30 @@ class OnePostInfo {
   var authorInfo = AuthorPostInfo.empty();
   String postTime = "";
   String postID = "";
+  String postNumber = "";
+  bool postOwner = false;
   String modifyTime = "";
   int upCount = 0;
   int downCount = 0;
   String content = "";
   String signature = "";
+  bool iVoteUp = false;
+  bool iVoteDown = false;
 
   OnePostInfo.empty();
   OnePostInfo({
     required this.authorInfo,
     required this.postTime,
     required this.postID,
+    required this.postNumber,
+    required this.postOwner,
     required this.modifyTime,
     required this.upCount,
     required this.downCount,
     required this.content,
     required this.signature,
+    required this.iVoteUp,
+    required this.iVoteDown,
   });
 }
 
@@ -85,7 +93,7 @@ AuthorPostInfo parseUserPost(Element? document) {
   }
   String uid = getEqualValue(document.querySelector(".portrait-container")?.attributes['href'] ?? "");
   String userName = getTrimmedString(document.querySelector(".username a"));
-  String nickName = getTrimmedHtml(document.querySelector(".nickname")?.firstChild);
+  String nickName = getTrimmedHtml(document.querySelector(".nickname"));
   String status = getTrimmedString(document.querySelector(".username span"));
 
   String rating = "", postCount = "";
@@ -139,9 +147,16 @@ OnePostInfo parseOnePost(Element document) {
     }
   }
 
+  var postNumber = getTrimmedString(document.querySelector(".post-id"));
+  var postOwner = false;
+  if (document.querySelector(".lz-tag") != null) {
+    postOwner = true;
+  }
+
   var upCount = 0;
   var downCount = 0;
   var voteDom = document.querySelector(".post-vote-line");
+  bool iVoteUp = false, iVoteDown = false;
   if (voteDom != null) {
     var votesDom = voteDom.querySelectorAll(".text");
     for (var vd in votesDom) {
@@ -153,6 +168,14 @@ OnePostInfo parseOnePost(Element document) {
         upCount = value;
       } else {
         downCount = value;
+      }
+      var checkDom = voteDom.querySelectorAll(".checked");
+      for (var cdom in checkDom) {
+        if (cdom.attributes['data-action'] == "upvote") {
+          iVoteUp = true;
+        } else if (cdom.attributes['data-action'] == "downvote") {
+          iVoteDown = true;
+        }
       }
     }
   }
@@ -166,7 +189,11 @@ OnePostInfo parseOnePost(Element document) {
     var signatureDom = contentDom.querySelector(".signature");
     signature = getTrimmedHtml(signatureDom);
   }
-  return OnePostInfo(authorInfo: authorInfo, postTime: postTime, postID: postID, modifyTime: modifyTime, upCount: upCount, downCount: downCount, content: content, signature: signature);
+  return OnePostInfo(
+    authorInfo: authorInfo, postTime: postTime, postID: postID, modifyTime: modifyTime,
+    upCount: upCount, downCount: downCount, content: content, signature: signature,
+    postNumber: postNumber, postOwner: postOwner, iVoteUp: iVoteUp, iVoteDown: iVoteDown,
+  );
 }
 
 String getEqualValue(String a, {String del="="}) {
