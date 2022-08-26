@@ -43,15 +43,43 @@ class MyWidgetFactory extends WidgetFactory with SelectableTextFactory {
 
 }
 
-HtmlWidget renderHtml(String htmlStr, {bool? needSelect = true, TextStyle? ts}) {
+class DetailImage extends StatelessWidget {
+  String imgLink = "";
+  DetailImage(this.imgLink);
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GestureDetector(
+        child: Center(
+          child: Hero(
+            tag: 'imageHero',
+            child: Image.network(imgLink),
+          ),
+        ),
+        onTap: () {
+          Navigator.pop(context);
+        },
+      ),
+    );
+  }
+}
+
+HtmlWidget renderHtml(String htmlStr, {bool? needSelect = true, TextStyle? ts, BuildContext? context}) {
   return HtmlWidget(
     // htmlStr.replaceAll("<br/>", ""),
     htmlStr,
     factoryBuilder: (needSelect == null || needSelect == false) ? null :  () => MyWidgetFactory(),
     onErrorBuilder: (context, element, error) => Text('$element error: $error'),
     textStyle: ts,
-    onTapImage: (p0) { },
-    onTapUrl: (p0) { return true; },
+    onTapImage: (p0) {
+      if (context == null) { return; }
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => DetailImage(p0.sources.first.url),
+      ));
+    },
+    onTapUrl: (p0) {
+      return true;
+    },
     customStylesBuilder: (element) {
       if (element.localName == 'p') {
         return {'margin-top': '0px', 'margin-bottom': '0px'};

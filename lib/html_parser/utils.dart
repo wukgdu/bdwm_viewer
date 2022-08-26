@@ -5,6 +5,9 @@ String getTrimmedString(var dom) {
   if (dom == null) {
     return "";
   }
+  if (dom is String) {
+    return dom.trim();
+  }
   return dom.text.trim();
 }
 
@@ -16,6 +19,16 @@ String getTrimmedHtml(var dom) {
     return dom.text.trim();
   }
   return dom.innerHtml.trim();
+}
+
+String getTrimmedOuterHtml(var dom) {
+  if (dom == null) {
+    return "";
+  }
+  if (dom is Text) {
+    return dom.text.trim();
+  }
+  return dom.outerHtml.trim();
 }
 
 String absImgSrc(String src) {

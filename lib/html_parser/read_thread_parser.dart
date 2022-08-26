@@ -33,6 +33,28 @@ class AuthorPostInfo {
   });
 }
 
+enum AttachmentType {
+  showText,
+  showThumbnail,
+}
+
+class AttachmentInfo {
+  String text = "";
+  String link = "";
+  String size = "";
+  String thumbnailLink = "";
+  AttachmentType type = AttachmentType.showText;
+
+  AttachmentInfo.empty();
+  AttachmentInfo({
+    required this.text,
+    required this.link,
+    required this.size,
+    required this.type,
+    required this.thumbnailLink,
+  });
+}
+
 class OnePostInfo {
   var authorInfo = AuthorPostInfo.empty();
   String postTime = "";
@@ -46,6 +68,8 @@ class OnePostInfo {
   String signature = "";
   bool iVoteUp = false;
   bool iVoteDown = false;
+  List<AttachmentInfo> attachmentInfo = <AttachmentInfo>[];
+  String attachmentHtml = "";
 
   OnePostInfo.empty();
   OnePostInfo({
@@ -61,6 +85,8 @@ class OnePostInfo {
     required this.signature,
     required this.iVoteUp,
     required this.iVoteDown,
+    required this.attachmentInfo,
+    required this.attachmentHtml,
   });
 }
 
@@ -189,10 +215,36 @@ OnePostInfo parseOnePost(Element document) {
     var signatureDom = contentDom.querySelector(".signature");
     signature = getTrimmedHtml(signatureDom);
   }
+  
+  var attachmentInfo = <AttachmentInfo>[];
+  var attachmentDom = document.querySelector(".attachment");
+  var attachmentHtml = "";
+  if (attachmentDom != null) {
+    var attachmentsDom = attachmentDom.querySelectorAll("li");
+    attachmentHtml = getTrimmedOuterHtml(attachmentDom.querySelector("ul"));
+    for (var adom in attachmentsDom) {
+      var a = adom.querySelector("a");
+      if (a == null) {
+        continue;
+      }
+      var name = getTrimmedString(a);
+      var link = a.attributes['href']?.trim() ?? "";
+      var size = getTrimmedString(adom.querySelector(".size"));
+      var thumbnailLink = "";
+      AttachmentType aType = AttachmentType.showText;
+      if (a.classes.contains("highslide")) {
+        aType = AttachmentType.showThumbnail;
+        thumbnailLink = getTrimmedString(adom.querySelector("img")?.attributes['src']);
+      }
+      attachmentInfo.add(AttachmentInfo(text: name, link: link, size: size, type: aType, thumbnailLink: thumbnailLink));
+    }
+  }
+
   return OnePostInfo(
     authorInfo: authorInfo, postTime: postTime, postID: postID, modifyTime: modifyTime,
     upCount: upCount, downCount: downCount, content: content, signature: signature,
     postNumber: postNumber, postOwner: postOwner, iVoteUp: iVoteUp, iVoteDown: iVoteDown,
+    attachmentInfo: attachmentInfo, attachmentHtml: attachmentHtml,
   );
 }
 

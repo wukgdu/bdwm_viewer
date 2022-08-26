@@ -19,8 +19,8 @@ class _UserAppState extends State<UserApp> {
     var title = "用户";
     if ((globalUInfo.uid == widget.uid) && (globalUInfo.login == true)) {
       title = "我";
-    } else if (globalUInfo.uid == "22776") {
-      title = "作者";
+    } else if (widget.uid == "22776") {
+      title = "大秘宝";
     }
     return Scaffold(
       drawer: ((widget.needBack == null) || (widget.needBack == false)) ? MyDrawer() : null,

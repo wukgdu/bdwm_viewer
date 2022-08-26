@@ -169,7 +169,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
           ),
           Expanded(
             child: Container(
-              padding: const EdgeInsets.only(top: 5.0, right: 10.0, bottom: 10.0),
+              padding: const EdgeInsets.only(top: 10.0, right: 10.0, bottom: 10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -193,8 +193,17 @@ class _OnePostComponentState extends State<OnePostComponent> {
                   Divider(),
                   renderHtml(item.content, ts: _contentFont),
                   _toolBox(item),
-                  Divider(),
-                  renderHtml(item.signature),
+                  if (item.signature.isNotEmpty)
+                    ...[
+                      Divider(),
+                      renderHtml(item.signature),
+                    ],
+                  if (item.attachmentInfo.isNotEmpty)
+                    ...[
+                      Divider(),
+                      const Text("附件", style: TextStyle(fontWeight: FontWeight.bold)),
+                      renderHtml(item.attachmentHtml, context: context),
+                    ],
                 ],
               ),
             ),
