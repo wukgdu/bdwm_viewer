@@ -35,7 +35,7 @@ class DetailImage extends StatelessWidget {
                     if (sumByte == -1) {
                       return const Text("加载中");
                     }
-                    return Text("${(curByte * 100 / sumByte).toStringAsFixed(2)}%");
+                    return Text("${(curByte * 100 / sumByte).toStringAsFixed(0)}%");
                     break;
                   case LoadState.completed:
                     break;
