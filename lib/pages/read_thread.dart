@@ -14,7 +14,8 @@ class ThreadApp extends StatefulWidget {
   // ThreadApp.empty({Key? key}) : super(key: key);
 
   @override
-  State<ThreadApp> createState() => _ThreadAppState();
+  // State<ThreadApp> createState() => _ThreadAppState();
+  State<ThreadApp> createState() => _ThreadApp2State();
 }
 
 class _ThreadAppState extends State<ThreadApp> {
@@ -178,4 +179,79 @@ void naviGotoThreadByLink(context, String link, String boardName) {
     'page': page,
     'boardName': boardName,
   });
+}
+class _ThreadApp2State extends State<ThreadApp> {
+  int page = 0;
+  ThreadPageInfo threadPageInfo = ThreadPageInfo.empty();
+
+  void updateThreadPageInfo() {
+    getData().then((value) {
+      setState(() {
+        threadPageInfo = value;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    page = widget.page.isEmpty ? 0 : int.parse(widget.page);
+    // _future = getData();
+    updateThreadPageInfo();
+  }
+
+  Future<ThreadPageInfo> getData() async {
+    var bid = widget.bid;
+    var threadid = widget.threadid;
+    var url = "$v2Host/post-read.php?bid=$bid&threadid=$threadid";
+    if (! (page == 0 || page == 1)) {
+      url += "&page=$page";
+    }
+    var resp = await bdwmClient.get(url, headers: genHeaders2());
+    return parseThread(resp.body);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.boardName ?? "看帖"),
+      ),
+      body: ReadThreadPage(bid: widget.bid, threadid: widget.threadid, page: page.toString(), threadPageInfo: threadPageInfo,),
+      bottomNavigationBar: BottomAppBar(
+        shape: null,
+        // color: Colors.blue,
+        child: IconTheme(
+          data: IconThemeData(color: Colors.redAccent),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              IconButton(
+                disabledColor: Colors.grey,
+                tooltip: '上一页',
+                icon: const Icon(Icons.arrow_back),
+                onPressed: page == 1 ? null : () {
+                  page = page - 1;
+                  updateThreadPageInfo();
+                },
+              ),
+              TextButton(
+                child: Text("$page/${threadPageInfo.pageNum}"),
+                onPressed: () {},
+              ),
+              IconButton(
+                disabledColor: Colors.grey,
+                tooltip: '下一页',
+                icon: const Icon(Icons.arrow_forward),
+                onPressed: page == threadPageInfo.pageNum ? null : () {
+                  page = page + 1;
+                  updateThreadPageInfo();
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
