@@ -238,6 +238,7 @@ OnePostInfo parseOnePost(Element document) {
       if (a.classes.contains("highslide")) {
         aType = AttachmentType.showThumbnail;
         thumbnailLink = getTrimmedString(adom.querySelector("img")?.attributes['src']);
+        name = getTrimmedString(adom.querySelector("img")?.attributes['alt']);
         attachmentSlidesCount += 1;
       }
       attachmentInfo.add(AttachmentInfo(text: name, link: link, size: size, type: aType, thumbnailLink: thumbnailLink));

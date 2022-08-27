@@ -67,7 +67,7 @@ class DetailImage extends StatelessWidget {
     }
     debugPrint(downloadPath);
 
-    var imgData = await getNetworkImageData(imgLink);
+    var imgData = await getNetworkImageData(imgLink, useCache: true);
     if (imgData == null) {
       return SaveRes(false, "图片未缓存完成");
     }
