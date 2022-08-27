@@ -9,6 +9,7 @@ import './pages/board.dart';
 import './pages/login.dart';
 import './pages/user.dart';
 import './pages/read_thread.dart';
+import './pages/detail_image.dart';
 import './services.dart';
 
 void main() {
@@ -56,6 +57,7 @@ class _MainPageState extends State<MainPage> {
         colorScheme: const ColorScheme.light().copyWith(primary: Color(0xffe97c62)),
       ),
       home: HomeApp(unreadMessageInfo: unreadMessageInfo,),
+      // home: const DetailImage(imgLink: "https://bbs.pku.edu.cn/v2/uploads/index_MKoueo.jpg", imgName: "招新.jpg",),
       // home: ThreadApp(bid: "33", threadid: "18262167", page: "2", boardName: "历史",),
       // initialRoute: "/home",
       onGenerateRoute: (settings) {

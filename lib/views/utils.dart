@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 // import 'package:fwfh_selectable_text/fwfh_selectable_text.dart';
 
-import './detail_image.dart';
+import '../pages/detail_image.dart';
 
 // https://github.com/daohoangson/flutter_widget_from_html/tree/master/packages/fwfh_selectable_text
 mixin SelectableTextFactory on WidgetFactory {
@@ -54,7 +54,7 @@ HtmlWidget renderHtml(String htmlStr, {bool? needSelect = true, TextStyle? ts, B
     textStyle: ts,
     onTapImage: (p0) {
       if (context == null) { return; }
-      gotoDetailImage(context, p0.sources.first.url);
+      gotoDetailImage(context: context, link: p0.sources.first.url, name: p0.title);
     },
     onTapUrl: (p0) {
       return true;

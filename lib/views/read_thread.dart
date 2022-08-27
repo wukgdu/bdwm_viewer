@@ -6,7 +6,7 @@ import '../globalvars.dart';
 import './utils.dart';
 import './constants.dart';
 import '../html_parser/read_thread_parser.dart';
-import './detail_image.dart';
+import '../pages/detail_image.dart';
 
 class OnePostComponent extends StatefulWidget {
   OnePostInfo onePostInfo = OnePostInfo.empty();
@@ -61,7 +61,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                     ),
                   ),
                   onTap: () {
-                    gotoDetailImage(context, e.link);
+                    gotoDetailImage(context: context, link: e.link, name: e.text);
                   },
                 ),
               ),
@@ -76,7 +76,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
               },
             ),
             onTap: () {
-              gotoDetailImage(context, e.link);
+              gotoDetailImage(context: context, link: e.link, name: e.text);
             },
           );
         }
