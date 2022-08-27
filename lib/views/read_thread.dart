@@ -6,34 +6,159 @@ import './constants.dart';
 import '../html_parser/read_thread_parser.dart';
 import '../pages/detail_image.dart';
 
-class OnePostComponent extends StatefulWidget {
-  OnePostInfo onePostInfo = OnePostInfo.empty();
-  String bid = "";
-  OnePostComponent({Key? key, required this.onePostInfo, required this.bid}) : super(key: key);
+class VoteComponent extends StatefulWidget {
+  final String bid;
+  final String postID;
+  final bool iVoteUp;
+  final bool iVoteDown;
+  final int voteUpCount;
+  final int voteDownCount;
+  const VoteComponent({
+    Key? key,
+    required this.iVoteUp,
+    required this.iVoteDown,
+    required this.voteUpCount,
+    required this.voteDownCount,
+    required this.bid,
+    required this.postID,
+  }) : super(key: key);
 
   @override
-  State<OnePostComponent> createState() => _OnePostComponentState();
+  State<VoteComponent> createState() => _VoteComponentState();
 }
 
-class _OnePostComponentState extends State<OnePostComponent> {
-  final _contentFont = const TextStyle(fontSize: 16, fontWeight: FontWeight.normal);
+class _VoteComponentState extends State<VoteComponent> {
+  final borderColor = Colors.blueGrey;
+  final voteSize = 12.0;
+  final widthSpacer = const SizedBox(width: 5,);
   bool iVoteUp = false;
   bool iVoteDown = false;
   int voteUpCount = 0;
   int voteDownCount = 0;
-  bool get simpleAttachment => false;
 
   @override
   void initState() {
     super.initState();
-    iVoteUp = widget.onePostInfo.iVoteUp;
-    iVoteDown = widget.onePostInfo.iVoteDown;
-    voteUpCount = widget.onePostInfo.upCount;
-    voteDownCount = widget.onePostInfo.downCount;
+    iVoteUp = widget.iVoteUp;
+    iVoteDown = widget.iVoteDown;
+    voteUpCount = widget.voteUpCount;
+    voteDownCount = widget.voteDownCount;
   }
 
-  Widget renderAttachment() {
-    var attachments = widget.onePostInfo.attachmentInfo;
+  void vote(String action) async {
+    if (action == "up" && iVoteUp == true) {
+      action = "clear";
+    }
+    if (action == "down" && iVoteDown == true) {
+      action = "clear";
+    }
+    bdwmVote(widget.bid, widget.postID, action).then((value) {
+      if (value.success) {
+        setState(() {
+          if (action == "clear") {
+            iVoteUp = false;
+            iVoteDown = false;
+          } else if (action == "up") {
+            iVoteUp = true;
+            iVoteDown = false;
+          } else if (action == "down") {
+            iVoteUp = false;
+            iVoteDown = true;
+          }
+          voteUpCount = value.upCount;
+          voteDownCount = value.downCount;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("ok"),
+          ),
+        );
+      } else {
+        var text = "";
+        switch (value.error) {
+          case 9:
+            text = "抱歉，您没有本版回复(点赞)权限";
+            break;
+          case 11:
+          default:
+            text = "暂时无法这么操作";
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(text),
+          ),
+        );
+      }
+    },);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IntrinsicHeight(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(voteSize/2)),
+              // border: Border.all(width: 1, color: Colors.red),
+              border: Border.all(color: borderColor, width: 1.0, style: BorderStyle.solid),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                widthSpacer,
+                GestureDetector(
+                  child: Icon(
+                    iVoteUp ? Icons.thumb_up : Icons.thumb_up_outlined,
+                    size: voteSize, color: const Color(0xff5cae97),
+                  ),
+                  onTap: () {
+                    vote("up");
+                  },
+                ),
+                widthSpacer,
+                Text("赞 ", style: TextStyle(fontSize: voteSize)),
+                Text(voteUpCount.toString()),
+                VerticalDivider(
+                  color: borderColor,
+                  width: 10.0,
+                  thickness: 1.0,
+                ),
+                GestureDetector(
+                  child: Icon(
+                    iVoteDown ? Icons.thumb_down : Icons.thumb_down_outlined,
+                    size: voteSize, color: const Color(0xffe97c62),
+                  ),
+                  onTap: () {
+                    vote("down");
+                  },
+                ),
+                widthSpacer,
+                Text("踩 ", style: TextStyle(fontSize: voteSize)),
+                Text(voteDownCount.toString()),
+                widthSpacer,
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class OnePostComponent extends StatelessWidget {
+  final OnePostInfo onePostInfo;
+  final String bid;
+
+  const OnePostComponent({Key? key, required this.onePostInfo, required this.bid,}) : super(key: key);
+
+  bool get simpleAttachment => false;
+  final _contentFont = const TextStyle(fontSize: 16, fontWeight: FontWeight.normal);
+
+  Widget renderAttachment(BuildContext context) {
+    var attachments = onePostInfo.attachmentInfo;
     const spaceSpacer = Text(" ");
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,113 +208,9 @@ class _OnePostComponentState extends State<OnePostComponent> {
     );
   }
 
-  void vote(String action) async {
-    if (action == "up" && iVoteUp == true) {
-      action = "clear";
-    }
-    if (action == "down" && iVoteDown == true) {
-      action = "clear";
-    }
-    bdwmVote(widget.bid, widget.onePostInfo.postID, action).then((value) {
-      if (value.success) {
-        setState(() {
-          if (action == "clear") {
-            iVoteUp = false;
-            iVoteDown = false;
-          } else if (action == "up") {
-            iVoteUp = true;
-            iVoteDown = false;
-          } else if (action == "down") {
-            iVoteUp = false;
-            iVoteDown = true;
-          }
-          voteUpCount = value.upCount;
-          voteDownCount = value.downCount;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("ok"),
-          ),
-        );
-      } else {
-        var text = "";
-        switch (value.error) {
-          case 9:
-            text = "抱歉，您没有本版回复(点赞)权限";
-            break;
-          case 11:
-          default:
-            text = "暂时无法这么操作";
-        }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(text),
-          ),
-        );
-      }
-    },);
-  }
-
-  Widget _toolBox(OnePostInfo item) {
-    const borderColor = Colors.blueGrey;
-    const voteSize = 12.0;
-    const widthSpacer = SizedBox(width: 5,);
-    return IntrinsicHeight(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(voteSize/2)),
-              // border: Border.all(width: 1, color: Colors.red),
-              border: Border.all(color: borderColor, width: 1.0, style: BorderStyle.solid),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                widthSpacer,
-                GestureDetector(
-                  child: Icon(
-                    iVoteUp ? Icons.thumb_up : Icons.thumb_up_outlined,
-                    size: voteSize, color: Color(0xff5cae97),
-                  ),
-                  onTap: () {
-                    vote("up");
-                  },
-                ),
-                widthSpacer,
-                const Text("赞 ", style: TextStyle(fontSize: voteSize)),
-                Text(voteUpCount.toString()),
-                const VerticalDivider(
-                  color: borderColor,
-                  width: 10.0,
-                  thickness: 1.0,
-                ),
-                GestureDetector(
-                  child: Icon(
-                    iVoteDown ? Icons.thumb_down : Icons.thumb_down_outlined,
-                    size: voteSize, color: Color(0xffe97c62),
-                  ),
-                  onTap: () {
-                    vote("down");
-                  },
-                ),
-                widthSpacer,
-                const Text("踩 ", style: TextStyle(fontSize: voteSize)),
-                Text(voteDownCount.toString()),
-                widthSpacer,
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    var item = widget.onePostInfo;
+    var item = onePostInfo;
     double deviceWidth = MediaQuery.of(context).size.width;
     return Card(
       child: Row(
@@ -215,7 +236,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                 ),
                 if (item.postOwner)
                   const Text("楼主", style: TextStyle(fontSize: 12, color: Colors.lightBlue)),
-                Text(item.postNumber, style: TextStyle(fontSize: 12, color: Colors.grey)),
+                Text(item.postNumber, style: const TextStyle(fontSize: 12, color: Colors.grey)),
               ],
             ),
           ),
@@ -229,9 +250,9 @@ class _OnePostComponentState extends State<OnePostComponent> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(item.authorInfo.userName),
-                      Text(' ('),
+                      const Text(' ('),
                       Flexible(child: renderHtml(item.authorInfo.nickName, needSelect: false),),
-                      Text(')'),
+                      const Text(')'),
                       Text(item.authorInfo.status),
                     ],
                   ),
@@ -243,8 +264,15 @@ class _OnePostComponentState extends State<OnePostComponent> {
                     item.postTime,
                   ),
                   Divider(),
-                  renderHtml(item.content, ts: _contentFont),
-                  _toolBox(item),
+                  renderHtml(item.content, ts: _contentFont, context: context),
+                  VoteComponent(
+                    iVoteUp: onePostInfo.iVoteUp,
+                    iVoteDown: onePostInfo.iVoteDown,
+                    voteUpCount: onePostInfo.upCount,
+                    voteDownCount: onePostInfo.downCount,
+                    bid: bid,
+                    postID: onePostInfo.postID,
+                  ),
                   if (item.signature.isNotEmpty)
                     ...[
                       Divider(),
@@ -260,7 +288,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                         renderHtml(item.attachmentHtml, context: context),
                       ]
                     else
-                      renderAttachment(),
+                      renderAttachment(context),
                 ],
               ),
             ),
@@ -276,7 +304,7 @@ class ReadThreadPage extends StatefulWidget {
   final String threadid;
   final String page;
   final ThreadPageInfo threadPageInfo;
-  ReadThreadPage({Key? key, required this.bid, required this.threadid, required this.page, required this.threadPageInfo}) : super(key: key);
+  const ReadThreadPage({Key? key, required this.bid, required this.threadid, required this.page, required this.threadPageInfo}) : super(key: key);
 
   @override
   State<ReadThreadPage> createState() => _ReadThreadPageState();
@@ -296,7 +324,7 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
   }
 
   Widget _onepost(OnePostInfo item) {
-    return OnePostComponent(onePostInfo: item, bid: widget.bid);
+    return OnePostComponent(onePostInfo: item, bid: widget.bid,);
   }
 
   @override

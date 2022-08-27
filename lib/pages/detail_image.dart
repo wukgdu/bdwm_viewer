@@ -41,7 +41,7 @@ class DetailImage extends StatelessWidget {
       case TargetPlatform.macOS:
         String? outputFile = await FilePicker.platform.saveFile(
           dialogTitle: "选择保存路径",
-          fileName: imgName,
+          fileName: (imgName == null || imgName!.isEmpty) ? "image.png" : imgName,
         );
         if (outputFile == null) {
           return SaveRes(false, "未设置保存路径");

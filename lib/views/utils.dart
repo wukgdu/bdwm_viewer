@@ -54,6 +54,9 @@ HtmlWidget renderHtml(String htmlStr, {bool? needSelect = true, TextStyle? ts, B
     textStyle: ts,
     onTapImage: (p0) {
       if (context == null) { return; }
+      if (p0.sources.first.url.startsWith("data")) {
+        return;
+      }
       gotoDetailImage(context: context, link: p0.sources.first.url, name: p0.title);
     },
     onTapUrl: (p0) {
