@@ -2,15 +2,54 @@ import 'package:flutter/material.dart';
 
 import '../globalvars.dart';
 import '../utils.dart';
-import '../services.dart';
+// import '../services.dart';
 import '../views/top100.dart';
 import '../views/top10.dart';
 import '../views/favorite.dart';
 import '../views/drawer.dart';
 
+class StackIcon extends StatelessWidget {
+  final int count;
+  final Icon icon;
+  final Function callBack;
+  const StackIcon({Key? key, required this.count, required this.icon, required this.callBack}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: const Alignment(0, 0),
+      children: [
+        IconButton(
+          icon: icon,
+          onPressed: () => callBack(),
+        ),
+        if (count > 0)
+          Positioned(
+            top: 10,
+            right: 0,
+            child: Container(
+              width: 20,
+              // height: 20,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.red,
+              ),
+              child: Text(
+                count > 9
+                  ? '9+' : count.toString(),
+                style: const TextStyle(color: Colors.white, fontSize: 12),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
 class HomeApp extends StatefulWidget {
-  final NotifyMessageInfo unreadMessageInfo;
-  const HomeApp({Key? key, required this.unreadMessageInfo}) : super(key: key);
+  final ValueNotifier<int> messageCount;
+  const HomeApp({Key? key, required this.messageCount}) : super(key: key);
 
   @override
   State<HomeApp> createState() => _HomeAppState();
@@ -40,35 +79,15 @@ class _HomeAppState extends State<HomeApp> {
                 quickNotify("OBViewer", "mail");
               },
             ),
-            Stack(
-              alignment: const Alignment(0, 0),
-              children: [
-                IconButton(
+            ValueListenableBuilder(
+              valueListenable: widget.messageCount,
+              builder: (context, count, Widget? child) {
+                return StackIcon(
+                  count: count as int,
                   icon: const Icon(Icons.message),
-                  onPressed: () {
-                    quickNotify("OBViewer", "message");
-                  },
-                ),
-                if (widget.unreadMessageInfo.count > 0)
-                  Positioned(
-                    top: 10,
-                    right: 0,
-                    child: Container(
-                      width: 20,
-                      // height: 20,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.red,
-                      ),
-                      child: Text(
-                        widget.unreadMessageInfo.count > 9
-                          ? '9+' : widget.unreadMessageInfo.count.toString(),
-                        style: const TextStyle(color: Colors.white, fontSize: 12),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-              ],
+                  callBack: () { quickNotify("OBViewer", "message"); },
+                );
+              },
             ),
             IconButton(
               icon: const Icon(Icons.account_circle),

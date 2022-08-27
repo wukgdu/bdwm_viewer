@@ -28,19 +28,18 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  Timer? timer;
+  Timer? timerMessage;
   NotifyMessage unreadMessage = NotifyMessage();
-  NotifyMessageInfo unreadMessageInfo = NotifyMessageInfo.empty();
+  // NotifyMessageInfo unreadMessageInfo = NotifyMessageInfo.empty();
+  ValueNotifier<int> messageCount = ValueNotifier<int>(0);
 
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(const Duration(seconds: 15), (timer) {
+    timerMessage = Timer.periodic(const Duration(seconds: 15), (timer) {
       unreadMessage.updateValue((NotifyMessageInfo info) {
-        if (unreadMessageInfo.count != info.count) {
-          setState(() {
-            unreadMessageInfo = info;
-          });
+        if (info.count != messageCount.value) {
+          messageCount.value = info.count;
         }
       });
     });
@@ -48,8 +47,8 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void dispose() {
-    if (timer != null) {
-      timer!.cancel();
+    if (timerMessage != null) {
+      timerMessage!.cancel();
     }
     super.dispose();
   }
@@ -64,7 +63,7 @@ class _MainPageState extends State<MainPage> {
         // colorScheme: const ColorScheme.light().copyWith(primary: Colors.orangeAccent),
         colorScheme: const ColorScheme.light().copyWith(primary: const Color(0xffe97c62)),
       ),
-      home: HomeApp(unreadMessageInfo: unreadMessageInfo,),
+      home: HomeApp(messageCount: messageCount,),
       // home: const DetailImage(imgLink: "https://bbs.pku.edu.cn/v2/uploads/index_MKoueo.jpg", imgName: "招新.jpg",),
       // home: ThreadApp(bid: "33", threadid: "18262167", page: "2", boardName: "历史",),
       // initialRoute: "/home",
@@ -102,7 +101,7 @@ class _MainPageState extends State<MainPage> {
             break;
           case "/home":
           default:
-            builder = (BuildContext context) => HomeApp(unreadMessageInfo: unreadMessageInfo,);
+            builder = (BuildContext context) => HomeApp(messageCount: messageCount,);
         }
         return MaterialPageRoute(builder: builder, settings: settings);
       },
