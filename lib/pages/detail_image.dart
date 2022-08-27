@@ -20,10 +20,32 @@ class SaveRes {
   SaveRes(this.success, this.reason);
 }
 
-class DetailImage extends StatelessWidget {
+class DetailImage extends StatefulWidget {
   final String imgLink;
   final String? imgName;
   const DetailImage({Key? key, required this.imgLink, this.imgName}) : super(key: key);
+
+  @override
+  State<DetailImage> createState() => _DetailImageState();
+}
+
+class _DetailImageState extends State<DetailImage> {
+  String imgLink = "";
+  String? imgName;
+
+  @override
+  initState() {
+    super.initState();
+    imgLink = widget.imgLink;
+    imgName = widget.imgName;
+  }
+
+  @override
+  dispose() {
+    clearMemoryImageCache();
+    clearDiskCachedImages().then((_) {});
+    super.dispose();
+  }
 
   Future<SaveRes> saveImage() async {
     Directory? downloadDir;
@@ -121,7 +143,7 @@ class DetailImage extends StatelessWidget {
             child: ExtendedImage.network(
               imgLink,
               fit: BoxFit.fill,
-              cache: false,
+              cache: true,
               enableMemoryCache: true,
               clearMemoryCacheWhenDispose: true,
               clearMemoryCacheIfFailed: true,

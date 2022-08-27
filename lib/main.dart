@@ -47,6 +47,14 @@ class _MainPageState extends State<MainPage> {
   }
 
   @override
+  void dispose() {
+    if (timer != null) {
+      timer!.cancel();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     debugPrint("** main rebuild");
     return MaterialApp(
