@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class MyDrawer extends StatelessWidget {
+  const MyDrawer({Key? key}) : super(key: key);
+
   _gotoPage(String route, BuildContext context) {
     Navigator.of(context).pushReplacementNamed(route);
   }

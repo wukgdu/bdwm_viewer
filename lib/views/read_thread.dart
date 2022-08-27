@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../bdwm/req.dart';
 import '../bdwm/vote.dart';
-import '../globalvars.dart';
 import './utils.dart';
 import './constants.dart';
 import '../html_parser/read_thread_parser.dart';
@@ -274,39 +272,27 @@ class _OnePostComponentState extends State<OnePostComponent> {
 }
 
 class ReadThreadPage extends StatefulWidget {
-  String bid = "";
-  String threadid = "";
-  String page = "";
-  ReadThreadPage({Key? key, required this.bid, required this.threadid, required this.page}) : super(key: key);
+  final String bid;
+  final String threadid;
+  final String page;
+  final ThreadPageInfo threadPageInfo;
+  ReadThreadPage({Key? key, required this.bid, required this.threadid, required this.page, required this.threadPageInfo}) : super(key: key);
 
   @override
   State<ReadThreadPage> createState() => _ReadThreadPageState();
 }
 
 class _ReadThreadPageState extends State<ReadThreadPage> {
-  ThreadPageInfo threadPageInfo = ThreadPageInfo.empty();
   final _titleFont = const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
-
-  Future<ThreadPageInfo> getData() async {
-    var bid = widget.bid;
-    var threadid = widget.threadid;
-    var page = widget.page;
-    var url = "$v2Host/post-read.php?bid=$bid&threadid=$threadid";
-    if (! (page == "" || page == "1")) {
-      url += "&page=$page";
-    }
-    var resp = await bdwmClient.get(url, headers: genHeaders2());
-    return parseThread(resp.body);
-  }
 
   @override
   void initState() {
     super.initState();
-    getData().then((value) {
-      setState(() {
-        threadPageInfo = value;
-      });
-    });
+    // getData().then((value) {
+    //   setState(() {
+    //     threadPageInfo = value;
+    //   });
+    // });
   }
 
   Widget _onepost(OnePostInfo item) {
@@ -320,10 +306,10 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
       padding: const EdgeInsets.all(8),
       children: [
         Text(
-          threadPageInfo.title,
+          widget.threadPageInfo.title,
           style: _titleFont,
         ),
-        ...threadPageInfo.posts.map((OnePostInfo item) {
+        ...widget.threadPageInfo.posts.map((OnePostInfo item) {
           return _onepost(item);
         }).toList(),
       ],

@@ -105,7 +105,7 @@ class _TopHomePageState extends State<TopHomePage> {
       if (showIt == false) {
         return;
       }
-      showAlertDialog(context, title, content,
+      showAlertDialog(context, title, Text(content),
         actions1: TextButton(
           child: Text("登录"),
           onPressed: () { Navigator.pushReplacementNamed(context, '/login', arguments: {'needBack': false}); },

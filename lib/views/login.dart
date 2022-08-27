@@ -64,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
                         content = "其他错误发生，错误码 ${res.error}";
                     }
                     showAlertDialog(
-                      context, title, content,
+                      context, title, Text(content),
                       actions1: TextButton(
                         child: Text("知道了"),
                         onPressed: () { Navigator.pop(context, 'OK'); },
