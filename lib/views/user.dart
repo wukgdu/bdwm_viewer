@@ -50,9 +50,6 @@ class _UserInfoPageState extends State<UserInfoPage> {
   @override
   void didUpdateWidget(covariant UserInfoPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // debugPrint("old ${oldWidget.uid} ${oldWidget.changeTitle.hashCode} ${oldWidget.pageCallBack.hashCode}");
-    // debugPrint("new ${widget.uid} ${widget.changeTitle.hashCode} ${widget.pageCallBack.hashCode}");
-    // updateTitle();
     getData().then((value) {
       // getExampleTop100();
       if (!mounted) {

@@ -24,7 +24,7 @@ class DetailImage extends StatelessWidget {
               imgLink,
               fit: BoxFit.fill,
               cache: false,
-              clearMemoryCacheWhenDispose: true,
+              // clearMemoryCacheWhenDispose: true,
               clearMemoryCacheIfFailed: true,
               handleLoadingProgress: true,
               loadStateChanged: (ExtendedImageState state) {
@@ -40,6 +40,7 @@ class DetailImage extends StatelessWidget {
                   case LoadState.completed:
                     break;
                   case LoadState.failed:
+                    return SelectableText("加载失败：$imgLink");
                     break;
                 }
               },

@@ -70,7 +70,7 @@ class _HomeAppState extends State<HomeApp> {
                 if (globalUInfo.login) {
                   Navigator.of(context).pushNamed('/user', arguments: globalUInfo.uid);
                 } else {
-                  Navigator.of(context).pushReplacementNamed('/me');
+                  Navigator.of(context).pushNamedAndRemoveUntil('/me', (Route a) => false);
                 }
               },
             ),

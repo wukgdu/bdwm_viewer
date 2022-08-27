@@ -10,9 +10,6 @@ const v2Host = "https://bbs.pku.edu.cn/v2";
 // const v2Host = "";
 const defaultAvator = "/v2/images/user/portrait-neu.png";
 
-typedef PageCallBack = void Function();
-typedef NameCallBack = void Function(String);
-
 List<String> parseCookie(String cookie) {
   var pattern1 = "skey=";
   var pattern2 = "uid=";
@@ -102,16 +99,24 @@ class Uinfo {
   }
 
   void checkAndLogout(cookie) {
+    if (login == false) {
+      return;
+    }
     List<String> res = parseCookie(cookie);
     if (res.isEmpty) {
       return;
     }
     String newUid = res[0];
     String newSkey = res[1];
-    if ((newUid != uid) || (newSkey != skey)) {
+    if (newUid != uid) {
       uid = newUid;
       skey = newSkey;
       login = false;
+      update();
+    } else if (newSkey != skey) {
+      uid = newUid;
+      skey = newSkey;
+      login = true;
       update();
     }
   }

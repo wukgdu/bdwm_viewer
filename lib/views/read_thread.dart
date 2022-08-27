@@ -42,7 +42,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
       children: attachments.map((e) {
         if (e.type == AttachmentType.showText) {
           return Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Icon(Icons.attachment),
               spaceSpacer,
