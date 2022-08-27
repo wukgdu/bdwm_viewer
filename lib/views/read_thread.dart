@@ -28,9 +28,6 @@ class VoteComponent extends StatefulWidget {
 }
 
 class _VoteComponentState extends State<VoteComponent> {
-  final borderColor = Colors.blueGrey;
-  final voteSize = 12.0;
-  final widthSpacer = const SizedBox(width: 5,);
   bool iVoteUp = false;
   bool iVoteDown = false;
   int voteUpCount = 0;
@@ -94,56 +91,58 @@ class _VoteComponentState extends State<VoteComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return IntrinsicHeight(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(voteSize/2)),
-              // border: Border.all(width: 1, color: Colors.red),
-              border: Border.all(color: borderColor, width: 1.0, style: BorderStyle.solid),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                widthSpacer,
-                GestureDetector(
-                  child: Icon(
-                    iVoteUp ? Icons.thumb_up : Icons.thumb_up_outlined,
-                    size: voteSize, color: const Color(0xff5cae97),
-                  ),
-                  onTap: () {
-                    vote("up");
-                  },
+    const voteSize = 12.0;
+    const borderColor = Colors.grey;
+    const widthSpacer = SizedBox(width: 5,);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Container(
+          height: 18,
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(voteSize/2)),
+            // border: Border.all(width: 1, color: Colors.red),
+            border: Border.all(color: borderColor, width: 1.0, style: BorderStyle.solid),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              widthSpacer,
+              GestureDetector(
+                child: Icon(
+                  iVoteUp ? Icons.thumb_up : Icons.thumb_up_outlined,
+                  size: voteSize, color: const Color(0xff5cae97),
                 ),
-                widthSpacer,
-                Text("赞 ", style: TextStyle(fontSize: voteSize)),
-                Text(voteUpCount.toString()),
-                VerticalDivider(
-                  color: borderColor,
-                  width: 10.0,
-                  thickness: 1.0,
+                onTap: () {
+                  vote("up");
+                },
+              ),
+              widthSpacer,
+              const Text("赞 ", style: TextStyle(fontSize: voteSize)),
+              Text(voteUpCount.toString()),
+              const VerticalDivider(
+                color: borderColor,
+                width: 10.0,
+                thickness: 1.0,
+              ),
+              GestureDetector(
+                child: Icon(
+                  iVoteDown ? Icons.thumb_down : Icons.thumb_down_outlined,
+                  size: voteSize, color: const Color(0xffe97c62),
                 ),
-                GestureDetector(
-                  child: Icon(
-                    iVoteDown ? Icons.thumb_down : Icons.thumb_down_outlined,
-                    size: voteSize, color: const Color(0xffe97c62),
-                  ),
-                  onTap: () {
-                    vote("down");
-                  },
-                ),
-                widthSpacer,
-                Text("踩 ", style: TextStyle(fontSize: voteSize)),
-                Text(voteDownCount.toString()),
-                widthSpacer,
-              ],
-            ),
-          )
-        ],
-      ),
+                onTap: () {
+                  vote("down");
+                },
+              ),
+              widthSpacer,
+              const Text("踩 ", style: TextStyle(fontSize: voteSize)),
+              Text(voteDownCount.toString()),
+              widthSpacer,
+            ],
+          ),
+        )
+      ],
     );
   }
 }
@@ -329,18 +328,28 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      controller: ScrollController(),
-      padding: const EdgeInsets.all(8),
+    return Column(
       children: [
-        Text(
-          widget.threadPageInfo.title,
-          style: _titleFont,
+        Container(
+          padding: const EdgeInsets.all(10.0),
+          alignment: Alignment.centerLeft,
+          // height: 20,
+          child: Text(
+            widget.threadPageInfo.title,
+            style: _titleFont,
+          ),
         ),
-        ...widget.threadPageInfo.posts.map((OnePostInfo item) {
-          return _onepost(item);
-        }).toList(),
-      ],
+        Expanded(
+          child: ListView.builder(
+            controller: ScrollController(),
+            padding: const EdgeInsets.all(8),
+            itemCount: widget.threadPageInfo.posts.length,
+            itemBuilder: (context, index) {
+              return _onepost(widget.threadPageInfo.posts[index]);
+            },
+          ),
+        )
+      ]
     );
   }
 }

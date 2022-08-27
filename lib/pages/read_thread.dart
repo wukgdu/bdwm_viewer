@@ -15,7 +15,7 @@ class ThreadApp extends StatefulWidget {
 
   @override
   // State<ThreadApp> createState() => _ThreadAppState();
-  State<ThreadApp> createState() => _ThreadApp2State();
+  State<ThreadApp> createState() => _ThreadAppState();
 }
 
 class _ThreadAppState extends State<ThreadApp> {
@@ -45,38 +45,12 @@ class _ThreadAppState extends State<ThreadApp> {
       future: getData(),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          // return const CircularProgressIndicator();
+          // return const Center(child: CircularProgressIndicator());
           return Scaffold(
             appBar: AppBar(
               title: Text(widget.boardName ?? "看帖"),
             ),
-            body: ReadThreadPage(bid: widget.bid, threadid: widget.threadid, page: page.toString(), threadPageInfo: ThreadPageInfo.empty(),),
-            bottomNavigationBar: BottomAppBar(
-              shape: null,
-              // color: Colors.blue,
-              child: IconTheme(
-                data: const IconThemeData(color: Colors.redAccent),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    IconButton(
-                      tooltip: '上一页',
-                      icon: const Icon(Icons.arrow_back),
-                      onPressed: () { },
-                    ),
-                    TextButton(
-                      child: const Text("/"),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      tooltip: '下一页',
-                      icon: const Icon(Icons.arrow_forward),
-                      onPressed: () { },
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            body: const Center(child: CircularProgressIndicator()),
           );
         }
         if (snapshot.hasError) {

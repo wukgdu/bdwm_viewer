@@ -41,9 +41,10 @@ class _DetailImageState extends State<DetailImage> {
   }
 
   @override
-  dispose() async {
+  dispose() {
     clearMemoryImageCache();
-    await clearDiskCachedImages();
+    // Future.delayed(Duration.zero, () => clearDiskCachedImages());
+    Future.microtask(() => clearDiskCachedImages());
     super.dispose();
   }
 
