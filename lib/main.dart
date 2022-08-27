@@ -9,7 +9,7 @@ import './pages/board.dart';
 import './pages/login.dart';
 import './pages/user.dart';
 import './pages/read_thread.dart';
-import './pages/detail_image.dart';
+// import './pages/detail_image.dart';
 import './services.dart';
 
 void main() {
@@ -35,7 +35,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 15), (timer) {
       unreadMessage.updateValue((NotifyMessageInfo info) {
         if (unreadMessageInfo.count != info.count) {
           setState(() {
@@ -62,7 +62,7 @@ class _MainPageState extends State<MainPage> {
       theme: ThemeData(
         // #e97c62
         // colorScheme: const ColorScheme.light().copyWith(primary: Colors.orangeAccent),
-        colorScheme: const ColorScheme.light().copyWith(primary: Color(0xffe97c62)),
+        colorScheme: const ColorScheme.light().copyWith(primary: const Color(0xffe97c62)),
       ),
       home: HomeApp(unreadMessageInfo: unreadMessageInfo,),
       // home: const DetailImage(imgLink: "https://bbs.pku.edu.cn/v2/uploads/index_MKoueo.jpg", imgName: "招新.jpg",),
@@ -73,7 +73,7 @@ class _MainPageState extends State<MainPage> {
         switch (settings.name) {
           case "/board":
             String? boardName = settings.arguments as String?;
-            builder = (BuildContext context) => BoardApp(boardName: boardName,);
+            builder = (BuildContext context) => BoardApp(boardName: boardName ?? "版面",);
             break;
           case "/thread":
             var res = gotoThread(settings.arguments);
@@ -93,7 +93,7 @@ class _MainPageState extends State<MainPage> {
             if (globalUInfo.login) {
               builder = (BuildContext context) => UserApp(uid: globalUInfo.uid);
             } else {
-              builder = (BuildContext context) => LoginApp();
+              builder = (BuildContext context) => const LoginApp();
             }
             break;
           case "/user":

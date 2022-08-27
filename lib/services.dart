@@ -31,7 +31,7 @@ class NotifyMessage {
   }
 
   void updateValue(Function callBack) {
-    return;
+    // return;
     bdwmGetUnreadMessageCount().then((value) {
       if (value == null) {
         return;
@@ -49,9 +49,6 @@ class NotifyMessage {
 
   void notify() {
     if (count == 0) {
-      return;
-    }
-    if (value == null) {
       return;
     }
     bool notifyIt = notifyP(value);

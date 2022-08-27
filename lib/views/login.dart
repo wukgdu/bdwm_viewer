@@ -66,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                     showAlertDialog(
                       context, title, Text(content),
                       actions1: TextButton(
-                        child: Text("知道了"),
+                        child: const Text("知道了"),
                         onPressed: () { Navigator.pop(context, 'OK'); },
                       ),
                     );

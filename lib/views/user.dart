@@ -9,7 +9,7 @@ import "./utils.dart";
 
 class UserInfoPage extends StatefulWidget {
   final String uid;
-  UserInfoPage({Key? key, required this.uid}) : super(key: key);
+  const UserInfoPage({Key? key, required this.uid}) : super(key: key);
 
   @override
   State<UserInfoPage> createState() => _UserInfoPageState();
@@ -124,67 +124,65 @@ class _UserInfoPageState extends State<UserInfoPage> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("** user rebuild");
     var genderIcon = user.gender.contains("保密") ? const Icon(Icons.lock) :
       user.gender == "男" ? const Icon(Icons.man) : const Icon(Icons.woman);
     var subtitle1 = user.personalCollection.link != null ? "个人文集 ${user.personalCollection.text}" : user.personalCollection.text;
     var subtitle2 = user.duty ?? '本站职务：无';
-    return Container(
-      child: Column(
-        children: [
-          Card(
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: Colors.white,
-                backgroundImage: NetworkImage(user.avatarLink),
-              ),
-              title: Text("${user.bbsID} (${user.nickName}) ${user.status}"),
-              subtitle: Text(
-                // TODO: personalCollectionLink
-                "$subtitle1\n$subtitle2",
-              ),
-              isThreeLine: true,
-              trailing: (globalUInfo.login && (globalUInfo.uid == widget.uid))
-                ? SizedBox(
-                  width: 48,
-                  child:  IconButton(
-                    icon: const Icon(Icons.logout),
-                    onPressed: () {
-                      bdwmLogout().then((value) {
-                        Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
-                      });
-                    },
-                  ),
-                )
-                : null,
-              ),
+    return Column(
+      children: [
+        Card(
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.white,
+              backgroundImage: NetworkImage(user.avatarLink),
             ),
-          Expanded(
-            child: ListView(
-              children: [
-                _oneLineItem("性别", user.gender, icon: genderIcon),
-                _oneLineItem("星座", user.constellation),
-                _oneLineItem("生命力", user.value, icon: const Icon(Icons.favorite_border)),
-                _oneLineItem("上站次数", user.countLogin),
-                _oneLineItem("发帖数", user.countPost),
-                _oneLineItem("积分", user.score),
-                _oneLineItem("等级", user.rankName),
-                _oneLineItem("原创分", user.rating),
-                _oneLineItem("最近上站时间", user.recentLogin),
-                _oneLineItem("最近离站时间", user.recentLogout),
-                if (user.timeReg != null)
-                  ...[_oneLineItem("注册时间", user.timeReg!)],
-                if (user.timeOnline != null)
-                  ...[_oneLineItem("在线总时长", user.timeOnline!)],
-                // _multiLineItem("个人说明", user.signature, icon: const Icon(Icons.description)),
-                // _multiHtmlLineItem("个人说明", Html(data: user.signature), icon: const Icon(Icons.description)),
-                _multiHtmlLineItem("个人说明", renderHtml(user.signatureHtml), icon: const Icon(Icons.description)),
-                if (user.duty != null && user.dutyBoards != null)
-                  ...[_multiLineItem("担任版务", user.dutyBoards!.join("\n"))],
-              ],
-            )
+            title: Text("${user.bbsID} (${user.nickName}) ${user.status}"),
+            subtitle: Text(
+              "$subtitle1\n$subtitle2",
+            ),
+            isThreeLine: true,
+            trailing: (globalUInfo.login && (globalUInfo.uid == widget.uid))
+              ? SizedBox(
+                width: 48,
+                child:  IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: () {
+                    bdwmLogout().then((value) {
+                      Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+                    });
+                  },
+                ),
+              )
+              : null,
+            ),
           ),
-        ],
-      ),
+        Expanded(
+          child: ListView(
+            children: [
+              _oneLineItem("性别", user.gender, icon: genderIcon),
+              _oneLineItem("星座", user.constellation),
+              _oneLineItem("生命力", user.value, icon: const Icon(Icons.favorite_border)),
+              _oneLineItem("上站次数", user.countLogin),
+              _oneLineItem("发帖数", user.countPost),
+              _oneLineItem("积分", user.score),
+              _oneLineItem("等级", user.rankName),
+              _oneLineItem("原创分", user.rating),
+              _oneLineItem("最近上站时间", user.recentLogin),
+              _oneLineItem("最近离站时间", user.recentLogout),
+              if (user.timeReg != null)
+                ...[_oneLineItem("注册时间", user.timeReg!)],
+              if (user.timeOnline != null)
+                ...[_oneLineItem("在线总时长", user.timeOnline!)],
+              // _multiLineItem("个人说明", user.signature, icon: const Icon(Icons.description)),
+              // _multiHtmlLineItem("个人说明", Html(data: user.signature), icon: const Icon(Icons.description)),
+              _multiHtmlLineItem("个人说明", renderHtml(user.signatureHtml), icon: const Icon(Icons.description)),
+              if (user.duty != null && user.dutyBoards != null)
+                ...[_multiLineItem("担任版务", user.dutyBoards!.join("\n"))],
+            ],
+          )
+        ),
+      ],
     );
   }
 }

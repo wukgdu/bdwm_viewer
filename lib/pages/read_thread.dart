@@ -55,7 +55,7 @@ class _ThreadAppState extends State<ThreadApp> {
               shape: null,
               // color: Colors.blue,
               child: IconTheme(
-                data: IconThemeData(color: Colors.redAccent),
+                data: const IconThemeData(color: Colors.redAccent),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
@@ -65,7 +65,7 @@ class _ThreadAppState extends State<ThreadApp> {
                       onPressed: () { },
                     ),
                     TextButton(
-                      child: Text("/"),
+                      child: const Text("/"),
                       onPressed: () {},
                     ),
                     IconButton(
@@ -83,7 +83,7 @@ class _ThreadAppState extends State<ThreadApp> {
           return Text("错误：${snapshot.error}");
         }
         if (!snapshot.hasData || snapshot.data == null) {
-          return Text("错误：未获取数据");
+          return const Text("错误：未获取数据");
         }
         var threadPageInfo = snapshot.data as ThreadPageInfo;
         return Scaffold(
@@ -95,7 +95,7 @@ class _ThreadAppState extends State<ThreadApp> {
             shape: null,
             // color: Colors.blue,
             child: IconTheme(
-              data: IconThemeData(color: Colors.redAccent),
+              data: const IconThemeData(color: Colors.redAccent),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
@@ -104,6 +104,7 @@ class _ThreadAppState extends State<ThreadApp> {
                     tooltip: '上一页',
                     icon: const Icon(Icons.arrow_back),
                     onPressed: page == 1 ? null : () {
+                      if (!mounted) { return; }
                       setState(() {
                         page = page - 1;
                       });
@@ -121,6 +122,7 @@ class _ThreadAppState extends State<ThreadApp> {
                       // if (page == threadPageInfo.pageNum) {
                       //   return;
                       // }
+                      if (!mounted) { return; }
                       setState(() {
                         page = page + 1;
                       });
@@ -186,6 +188,9 @@ class _ThreadApp2State extends State<ThreadApp> {
 
   void updateThreadPageInfo() {
     getData().then((value) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         threadPageInfo = value;
       });
@@ -222,7 +227,7 @@ class _ThreadApp2State extends State<ThreadApp> {
         shape: null,
         // color: Colors.blue,
         child: IconTheme(
-          data: IconThemeData(color: Colors.redAccent),
+          data: const IconThemeData(color: Colors.redAccent),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[

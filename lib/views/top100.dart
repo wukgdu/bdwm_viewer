@@ -6,7 +6,7 @@ import '../html_parser/top100_parser.dart';
 import '../pages/read_thread.dart';
 
 class Top100Page extends StatefulWidget {
-  Top100Page({Key? key}) : super(key: key);
+  const Top100Page({Key? key}) : super(key: key);
 
   @override
   State<Top100Page> createState() => _Top100PageState();
@@ -40,7 +40,7 @@ class _Top100PageState extends State<Top100Page> {
   //   });
   // }
 
-  final _biggerFont = const TextStyle(fontSize: 16);
+  // final _biggerFont = const TextStyle(fontSize: 16);
   Widget _onepost(Top100Item item) {
     return Card(
       child: ListTile(

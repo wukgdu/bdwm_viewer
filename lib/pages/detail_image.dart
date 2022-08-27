@@ -41,9 +41,9 @@ class _DetailImageState extends State<DetailImage> {
   }
 
   @override
-  dispose() {
+  dispose() async {
     clearMemoryImageCache();
-    clearDiskCachedImages().then((_) {});
+    await clearDiskCachedImages();
     super.dispose();
   }
 
@@ -120,7 +120,7 @@ class _DetailImageState extends State<DetailImage> {
         title: const Text("图片"),
         actions: [
           IconButton(
-            icon: Icon(Icons.download),
+            icon: const Icon(Icons.download),
             onPressed: () {
               saveImage().then((res) {
                 var text = "保存成功";
@@ -165,10 +165,8 @@ class _DetailImageState extends State<DetailImage> {
                       semanticsValue: text,
                       backgroundColor: Colors.amberAccent,
                     );
-                    break;
                   case LoadState.completed:
                     return null;
-                    break;
                   case LoadState.failed:
                     return SelectableText("加载失败：$imgLink");
                   default:

@@ -22,10 +22,10 @@ class MyDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         children: <Widget>[
-          _oneItem(context, "/home", icon: Icon(Icons.home), text: Text('首页')),
-          _oneItem(context, "/me", icon: Icon(Icons.person), text: Text('我')),
+          _oneItem(context, "/home", icon: const Icon(Icons.home), text: const Text('首页')),
+          _oneItem(context, "/me", icon: const Icon(Icons.person), text: const Text('我')),
         ],
       ),
     );

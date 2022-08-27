@@ -10,11 +10,11 @@ class LoginApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: ((needBack == null) || (needBack == false)) ? MyDrawer() : null,
+      drawer: ((needBack == null) || (needBack == false)) ? const MyDrawer() : null,
       appBar: AppBar(
         title: const Text("登录"),
       ),
-      body: LoginPage(),
+      body: const LoginPage(),
     );
   }
 }

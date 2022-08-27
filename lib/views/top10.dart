@@ -107,11 +107,11 @@ class _TopHomePageState extends State<TopHomePage> {
       }
       showAlertDialog(context, title, Text(content),
         actions1: TextButton(
-          child: Text("登录"),
+          child: const Text("登录"),
           onPressed: () { Navigator.pushReplacementNamed(context, '/login', arguments: {'needBack': false}); },
         ),
         actions2: TextButton(
-          child: Text("知道了"),
+          child: const Text("知道了"),
           onPressed: () { Navigator.pop(context, 'OK'); },
         ),
       );
@@ -121,6 +121,7 @@ class _TopHomePageState extends State<TopHomePage> {
   @override
   Widget build(BuildContext context) {
     // checkData(homeInfo);
+    debugPrint("** top10 rebuild");
     return ListView(
       controller: ScrollController(),
       padding: const EdgeInsets.all(8),
@@ -142,7 +143,7 @@ class _TopHomePageState extends State<TopHomePage> {
                   title: Text(homeInfo.top10Info![0].title),
                   // isThreeLine: true,
                   trailing: IconButton(
-                    icon: Icon(Icons.login),
+                    icon: const Icon(Icons.login),
                     onPressed: () { Navigator.pushReplacementNamed(context, '/login', arguments: {'needBack': false}); },
                   )
                 ),
@@ -161,7 +162,7 @@ class _TopHomePageState extends State<TopHomePage> {
                     return _oneBlockItem(item);
                   }).toList()
                 else
-                  Text("该分区暂无热门主题帖"),
+                  const Text("该分区暂无热门主题帖"),
               ],
             ),
           );

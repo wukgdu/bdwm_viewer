@@ -203,7 +203,7 @@ class OnePostComponent extends StatelessWidget {
             },
           );
         }
-        return Text("42");
+        return const Text("42");
       },).toList(),
     );
   }
@@ -211,7 +211,7 @@ class OnePostComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var item = onePostInfo;
-    double deviceWidth = MediaQuery.of(context).size.width;
+    // double deviceWidth = MediaQuery.of(context).size.width;
     return Card(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -263,7 +263,7 @@ class OnePostComponent extends StatelessWidget {
                   Text(
                     item.postTime,
                   ),
-                  Divider(),
+                  const Divider(),
                   renderHtml(item.content, ts: _contentFont, context: context),
                   VoteComponent(
                     iVoteUp: onePostInfo.iVoteUp,
@@ -275,12 +275,12 @@ class OnePostComponent extends StatelessWidget {
                   ),
                   if (item.signature.isNotEmpty)
                     ...[
-                      Divider(),
+                      const Divider(),
                       renderHtml(item.signature),
                     ],
                   if (item.attachmentInfo.isNotEmpty)
                     ...[
-                      Divider(),
+                      const Divider(),
                       const Text("附件", style: TextStyle(fontWeight: FontWeight.bold)),
                     ],
                     if (simpleAttachment)

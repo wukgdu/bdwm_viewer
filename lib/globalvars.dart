@@ -164,14 +164,4 @@ Map<String, String> genHeaders2() {
   };
 }
 
-class UIInfo {
-  var bodyContext;
-  int boardID = -1;
-  int threadID = -1;
-  String userID = "";
-  String boardName = "";
-  String userName = "";
-}
-
 var globalUInfo = Uinfo.empty();
-var globalUIInfo = UIInfo();

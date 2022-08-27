@@ -9,8 +9,8 @@ import '../views/favorite.dart';
 import '../views/drawer.dart';
 
 class HomeApp extends StatefulWidget {
-  NotifyMessageInfo unreadMessageInfo;
-  HomeApp({Key? key, required this.unreadMessageInfo}) : super(key: key);
+  final NotifyMessageInfo unreadMessageInfo;
+  const HomeApp({Key? key, required this.unreadMessageInfo}) : super(key: key);
 
   @override
   State<HomeApp> createState() => _HomeAppState();
@@ -21,7 +21,7 @@ class _HomeAppState extends State<HomeApp> {
     return Tab(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [icon, SizedBox(width: 10), text],
+        children: [icon, const SizedBox(width: 10), text],
       ),
     );
   }
@@ -30,17 +30,23 @@ class _HomeAppState extends State<HomeApp> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        drawer: MyDrawer(),
+        drawer: const MyDrawer(),
         appBar: AppBar(
           title: const Text("首页"),
           actions: [
+            IconButton(
+              icon: const Icon(Icons.mail),
+              onPressed: () {
+                quickNotify("OBViewer", "mail");
+              },
+            ),
             Stack(
               alignment: const Alignment(0, 0),
               children: [
                 IconButton(
-                  icon: Icon(Icons.notifications),
+                  icon: const Icon(Icons.message),
                   onPressed: () {
-                    quickNotify("OBViewer", "OK");
+                    quickNotify("OBViewer", "message");
                   },
                 ),
                 if (widget.unreadMessageInfo.count > 0)
@@ -65,7 +71,7 @@ class _HomeAppState extends State<HomeApp> {
               ],
             ),
             IconButton(
-              icon: Icon(Icons.account_circle),
+              icon: const Icon(Icons.account_circle),
               onPressed: () {
                 if (globalUInfo.login) {
                   Navigator.of(context).pushNamed('/user', arguments: globalUInfo.uid);
@@ -78,13 +84,13 @@ class _HomeAppState extends State<HomeApp> {
           bottom: TabBar(
             labelStyle: const TextStyle(fontSize: 12),
             tabs: [
-              _oneTab(Icon(Icons.whatshot), Text("热点")),
-              _oneTab(Icon(Icons.trending_up), Text("百大")),
-              _oneTab(Icon(Icons.star), Text("收藏")),
+              _oneTab(const Icon(Icons.whatshot), const Text("热点")),
+              _oneTab(const Icon(Icons.trending_up), const Text("百大")),
+              _oneTab(const Icon(Icons.star), const Text("收藏")),
             ],
           ),
         ),
-        body: TabBarView(
+        body: const TabBarView(
           children: [
             TopHomePage(),
             Top100Page(),
