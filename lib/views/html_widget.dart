@@ -149,20 +149,20 @@ class _HtmlComponentState extends State<HtmlComponent> {
     // return renderHtml(htmlStr, ts: ts, context: context, needSelect: needSelect);
     // var htmlStr = '''<p>asd<span style="background-color: #40ff40;">fs<font color="#c00000">a<u>d<b>fa</b></u><b>s</b></font><b>d</b></span>fa<br></p>''';
     var document = parse(htmlStr);
-    if (needSelect != null && needSelect == true) {
-      return SelectableText.rich(
+    if (needSelect != null && needSelect == false) {
+      return Text.rich(
         TextSpan(
           children: travel(document.querySelector("body")),
           style: ts,
         ),
-        cursorWidth: 0,
       );
     }
-    return Text.rich(
+    return SelectableText.rich(
       TextSpan(
         children: travel(document.querySelector("body")),
         style: ts,
       ),
+      cursorWidth: 0,
     );
   }
 }
