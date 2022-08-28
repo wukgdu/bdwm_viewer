@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,9 +9,9 @@ import 'package:extended_image/extended_image.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 
-void gotoDetailImage({required BuildContext context, required String link, String? name}) {
+void gotoDetailImage({required BuildContext context, required String link, String? name, Uint8List? imgData}) {
   Navigator.of(context).push(MaterialPageRoute(
-    builder: (context) => DetailImage(imgLink: link, imgName: name,),
+    builder: (context) => DetailImage(imgLink: link, imgName: name, imgData: imgData,),
   ));
 }
 
@@ -23,7 +24,8 @@ class SaveRes {
 class DetailImage extends StatefulWidget {
   final String imgLink;
   final String? imgName;
-  const DetailImage({Key? key, required this.imgLink, this.imgName}) : super(key: key);
+  final Uint8List? imgData;
+  const DetailImage({Key? key, required this.imgLink, this.imgName, this.imgData}) : super(key: key);
 
   @override
   State<DetailImage> createState() => _DetailImageState();
@@ -32,12 +34,14 @@ class DetailImage extends StatefulWidget {
 class _DetailImageState extends State<DetailImage> {
   String imgLink = "";
   String? imgName;
+  Uint8List? imgData;
 
   @override
   initState() {
     super.initState();
     imgLink = widget.imgLink;
     imgName = widget.imgName;
+    imgData = widget.imgData;
   }
 
   @override
@@ -48,7 +52,7 @@ class _DetailImageState extends State<DetailImage> {
     super.dispose();
   }
 
-  Future<SaveRes> saveImage() async {
+  Future<SaveRes> saveImage(Uint8List? data) async {
     Directory? downloadDir;
     String? downloadPath;
     switch (defaultTargetPlatform) {
@@ -90,9 +94,12 @@ class _DetailImageState extends State<DetailImage> {
     }
     debugPrint(downloadPath);
 
-    var imgData = await getNetworkImageData(imgLink, useCache: true);
+    var imgData = data;
     if (imgData == null) {
-      return SaveRes(false, "图片未缓存完成");
+      imgData = await getNetworkImageData(imgLink, useCache: true);
+      if (imgData == null) {
+        return SaveRes(false, "图片未缓存完成");
+      }
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.windows:
@@ -123,7 +130,7 @@ class _DetailImageState extends State<DetailImage> {
           IconButton(
             icon: const Icon(Icons.download),
             onPressed: () {
-              saveImage().then((res) {
+              saveImage(imgData).then((res) {
                 var text = "保存成功";
                 if (!res.success) {
                   text = "保存失败：${res.reason}";
@@ -141,54 +148,101 @@ class _DetailImageState extends State<DetailImage> {
           child: Hero(
             tag: 'imageHero',
             // child: Image.network(imgLink),
-            child: ExtendedImage.network(
-              imgLink,
-              fit: BoxFit.fill,
-              cache: true,
-              enableMemoryCache: true,
-              clearMemoryCacheWhenDispose: true,
-              clearMemoryCacheIfFailed: true,
-              handleLoadingProgress: true,
-              filterQuality: FilterQuality.high,
-              loadStateChanged: (ExtendedImageState state) {
-                switch (state.extendedImageLoadState) {
-                  case LoadState.loading:
-                    var curByte = state.loadingProgress?.cumulativeBytesLoaded ?? 0;
-                    var sumByte = state.loadingProgress?.expectedTotalBytes ?? -1;
-                    if (sumByte == -1) {
-                      return const Text("加载中");
-                    }
-                    var text = "${(curByte * 100 / sumByte).toStringAsFixed(0)}%";
-                    // return Text(text);
-                    return LinearProgressIndicator(
-                      value: curByte / sumByte,
-                      semanticsLabel: '加载中',
-                      semanticsValue: text,
-                      backgroundColor: Colors.amberAccent,
-                    );
-                  case LoadState.completed:
-                    return null;
-                  case LoadState.failed:
-                    return SelectableText("加载失败：$imgLink");
-                  default:
-                    return null;
-                }
-              },
-              mode: ExtendedImageMode.gesture,
-              initGestureConfigHandler: (state) {
-                return GestureConfig(
-                  minScale: 1.0,
-                  animationMinScale: 0.7,
-                  maxScale: 3.0,
-                  animationMaxScale: 3.5,
-                  speed: 1.0,
-                  inertialSpeed: 100.0,
-                  initialScale: 1.0,
-                  inPageView: false,
-                  initialAlignment: InitialAlignment.center,
-                );
-              },
-            ),
+            child: imgData == null
+              ? ExtendedImage.network(
+                imgLink,
+                fit: BoxFit.fill,
+                cache: true,
+                enableMemoryCache: true,
+                clearMemoryCacheWhenDispose: true,
+                clearMemoryCacheIfFailed: true,
+                handleLoadingProgress: true,
+                filterQuality: FilterQuality.high,
+                loadStateChanged: (ExtendedImageState state) {
+                  switch (state.extendedImageLoadState) {
+                    case LoadState.loading:
+                      var curByte = state.loadingProgress?.cumulativeBytesLoaded ?? 0;
+                      var sumByte = state.loadingProgress?.expectedTotalBytes ?? -1;
+                      if (sumByte == -1) {
+                        return const Text("加载中");
+                      }
+                      var text = "${(curByte * 100 / sumByte).toStringAsFixed(0)}%";
+                      // return Text(text);
+                      return LinearProgressIndicator(
+                        value: curByte / sumByte,
+                        semanticsLabel: '加载中',
+                        semanticsValue: text,
+                        backgroundColor: Colors.amberAccent,
+                      );
+                    case LoadState.completed:
+                      return null;
+                    case LoadState.failed:
+                      return SelectableText("加载失败：$imgLink");
+                    default:
+                      return null;
+                  }
+                },
+                mode: ExtendedImageMode.gesture,
+                initGestureConfigHandler: (state) {
+                  return GestureConfig(
+                    minScale: 1.0,
+                    animationMinScale: 0.7,
+                    maxScale: 3.0,
+                    animationMaxScale: 3.5,
+                    speed: 1.0,
+                    inertialSpeed: 100.0,
+                    initialScale: 1.0,
+                    inPageView: false,
+                    initialAlignment: InitialAlignment.center,
+                  );
+                },
+              )
+              : ExtendedImage.memory(
+                imgData!,
+                fit: BoxFit.fill,
+                enableMemoryCache: true,
+                clearMemoryCacheWhenDispose: true,
+                clearMemoryCacheIfFailed: true,
+                filterQuality: FilterQuality.high,
+                loadStateChanged: (ExtendedImageState state) {
+                  switch (state.extendedImageLoadState) {
+                    case LoadState.loading:
+                      var curByte = state.loadingProgress?.cumulativeBytesLoaded ?? 0;
+                      var sumByte = state.loadingProgress?.expectedTotalBytes ?? -1;
+                      if (sumByte == -1) {
+                        return const Text("加载中");
+                      }
+                      var text = "${(curByte * 100 / sumByte).toStringAsFixed(0)}%";
+                      // return Text(text);
+                      return LinearProgressIndicator(
+                        value: curByte / sumByte,
+                        semanticsLabel: '加载中',
+                        semanticsValue: text,
+                        backgroundColor: Colors.amberAccent,
+                      );
+                    case LoadState.completed:
+                      return null;
+                    case LoadState.failed:
+                      return SelectableText("加载失败：$imgLink");
+                    default:
+                      return null;
+                  }
+                },
+                mode: ExtendedImageMode.gesture,
+                initGestureConfigHandler: (state) {
+                  return GestureConfig(
+                    minScale: 1.0,
+                    animationMinScale: 0.7,
+                    maxScale: 3.0,
+                    animationMaxScale: 3.5,
+                    speed: 1.0,
+                    inertialSpeed: 100.0,
+                    initialScale: 1.0,
+                    inPageView: false,
+                    initialAlignment: InitialAlignment.center,
+                  );
+                },
+              ),
           ),
         ),
         onTap: () {

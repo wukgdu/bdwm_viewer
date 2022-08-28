@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:bdwm_viewer/pages/detail_image.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as hDom;
@@ -71,16 +72,26 @@ class _HtmlComponentState extends State<HtmlComponent> {
               var str = src.substring(p1+7);
               var data = base64Decode(str);
               res.add(WidgetSpan(
-                child: Container(alignment: Alignment.centerLeft, child: Image.memory(data,)),
-              ));
+                child: GestureDetector(onTap: (() {
+                  gotoDetailImage(context: context, link: "", imgData: data, name: "image.jpg");
+                }),
+                child: Container(alignment: Alignment.centerLeft,
+                child: Image.memory(data, height: 200, )),
+              )));
             } else {
               res.add(WidgetSpan(
-                child: Container(alignment: Alignment.centerLeft, child: Image.network(src,)),
+                child: GestureDetector(child: Container(alignment: Alignment.centerLeft,
+                child: Image.network(src, height: 200,)),
+                onTap: () {
+                  gotoDetailImage(context: context, link: src, imgData: null, name: "image.jpg");
+                }),
               ));
             }
           }
         } else if (ele.localName == "b") {
-          res.add(TextSpan(text: ele.text, style: const TextStyle(fontWeight: FontWeight.bold)));
+          res.add(TextSpan(children: travel(ele).children, style: const TextStyle(fontWeight: FontWeight.bold)));
+        } else if (ele.localName == "u") {
+          res.add(TextSpan(children: travel(ele).children, style: const TextStyle(decoration: TextDecoration.underline)));
         }
       }
     }
