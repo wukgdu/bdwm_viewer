@@ -6,6 +6,7 @@ import "../bdwm/req.dart";
 import "../globalvars.dart";
 import "../bdwm/logout.dart";
 import "./utils.dart";
+import "./constants.dart";
 
 class UserInfoPage extends StatefulWidget {
   final String uid;
@@ -73,6 +74,42 @@ class _UserInfoPageState extends State<UserInfoPage> {
             Text(label),
             const Text("："),
             Text(value),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _multiLineItemForAdmin(String label, List<String>? values, List<String>? bids, {Icon? icon}) {
+    return Card(
+      child: Container(
+        padding: const EdgeInsets.only(left: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                if (icon != null)
+                  ...[icon],
+                Text("$label："),
+              ],
+            ),
+            if (values!=null && bids != null)
+              ...values.asMap().entries.map((pair) {
+                int idx = pair.key;
+                String boardName = pair.value;
+                String bidLink = bids[idx];
+                String bid = bidLink.split("=").last;
+                return GestureDetector(
+                  child: Text(boardName, style: textLinkStyle,),
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/board', arguments: {
+                      'boardName': boardName.split('(').first,
+                      'bid': bid,
+                    });
+                  },
+                );
+              })
           ],
         ),
       ),
@@ -178,7 +215,8 @@ class _UserInfoPageState extends State<UserInfoPage> {
               // _multiHtmlLineItem("个人说明", Html(data: user.signature), icon: const Icon(Icons.description)),
               _multiHtmlLineItem("个人说明", renderHtml(user.signatureHtml), icon: const Icon(Icons.description)),
               if (user.duty != null && user.dutyBoards != null)
-                ...[_multiLineItem("担任版务", user.dutyBoards!.join("\n"))],
+                // ...[_multiLineItem("担任版务", user.dutyBoards!.join("\n"))],
+                ...[_multiLineItemForAdmin("担任版务", user.dutyBoards, user.dutyBoardLinks,)],
             ],
           )
         ),

@@ -134,7 +134,12 @@ class _BoardPageState extends State<BoardPage> {
               // const Text("版务：", style: _boldFont),
               for (var admin in boardInfo.admins)
                 ...[
-                  Text(admin.userName, style: textLinkStyle),
+                  GestureDetector(
+                    child: Text(admin.userName, style: textLinkStyle),
+                    onTap: () {
+                      Navigator.of(context).pushNamed('/user', arguments: admin.uid);
+                    },
+                  ),
                   const SizedBox(width: 5,),
                 ],
             ],
