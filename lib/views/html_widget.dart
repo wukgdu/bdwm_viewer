@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:bdwm_viewer/pages/detail_image.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart' show parse;
-import 'package:html/dom.dart' as hDom;
+import 'package:html/dom.dart' as hdom;
 
 import "./utils.dart";
 
@@ -30,18 +30,21 @@ class _HtmlComponentState extends State<HtmlComponent> {
     ts = widget.ts;
   }
 
-  TextSpan travel(hDom.Element? document) {
+  TextSpan travel(hdom.Element? document) {
     var res = <InlineSpan>[];
     if (document == null) {
       return TextSpan(
         children: res,
       );
     }
+    document.querySelectorAll("br").forEach((element) {
+      element.remove();
+    });
     for (var cdom in document.nodes) {
-      if (cdom.nodeType == hDom.Node.TEXT_NODE) {
+      if (cdom.nodeType == hdom.Node.TEXT_NODE) {
         res.add(TextSpan(text: cdom.text));
-      } else if (cdom.nodeType == hDom.Node.ELEMENT_NODE) {
-        var ele = cdom as hDom.Element;
+      } else if (cdom.nodeType == hdom.Node.ELEMENT_NODE) {
+        var ele = cdom as hdom.Element;
         if (ele.localName == "font") {
           var color = ele.attributes['color'];
           var bColor = ele.attributes['backgroundColor'];
@@ -58,10 +61,12 @@ class _HtmlComponentState extends State<HtmlComponent> {
           } else {
             res.add(travel(ele));
           }
-          res.add(TextSpan(text: "\n"));
+          if (cdom != document.nodes.last) {
+            res.add(const TextSpan(text: "\n"));
+          }
         } else if (ele.localName == "h5") {
           res.add(TextSpan(text: ele.text, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)));
-          res.add(TextSpan(text: "\n"));
+          res.add(const TextSpan(text: "\n"));
         } else if (ele.localName == "img") {
           var src = ele.attributes['src'];
           if (src == null) {
@@ -72,21 +77,32 @@ class _HtmlComponentState extends State<HtmlComponent> {
               var str = src.substring(p1+7);
               var data = base64Decode(str);
               res.add(WidgetSpan(
-                child: GestureDetector(onTap: (() {
-                  gotoDetailImage(context: context, link: "", imgData: data, name: "image.jpg");
-                }),
-                child: Container(alignment: Alignment.centerLeft,
-                child: Image.memory(data, height: 200, )),
-              )));
+                child: GestureDetector(
+                  child: Container(
+                    constraints: const BoxConstraints(maxHeight: 200),
+                    // alignment: Alignment.centerLeft,
+                    child: Image.memory(data,)
+                  ),
+                  onTap: () {
+                    gotoDetailImage(context: context, link: "", imgData: data, name: "image.jpg");
+                  },
+                )));
             } else {
               res.add(WidgetSpan(
-                child: GestureDetector(child: Container(alignment: Alignment.centerLeft,
-                child: Image.network(src, height: 200,)),
-                onTap: () {
-                  gotoDetailImage(context: context, link: src, imgData: null, name: "image.jpg");
-                }),
+                child: GestureDetector(
+                  child: Container(
+                    constraints: const BoxConstraints(maxHeight: 200),
+                    // alignment: Alignment.centerLeft,
+                    child: Image.network(src,)
+                  ),
+                  onTap: () {
+                    gotoDetailImage(context: context, link: src, imgData: null, name: "image.jpg");
+                  }),
               ));
             }
+          }
+          if (cdom != document.nodes.last) {
+            res.add(const TextSpan(text: "\n"));
           }
         } else if (ele.localName == "b") {
           res.add(TextSpan(children: travel(ele).children, style: const TextStyle(fontWeight: FontWeight.bold)));
@@ -97,7 +113,7 @@ class _HtmlComponentState extends State<HtmlComponent> {
     }
     return TextSpan(
       children: res,
-      // style: TextStyle(color: Colors.black),
+      style: ts,
     );
   }
 
@@ -105,9 +121,14 @@ class _HtmlComponentState extends State<HtmlComponent> {
   Widget build(BuildContext context) {
     // return renderHtml(htmlStr, ts: ts, context: context, needSelect: needSelect);
     var document = parse(htmlStr);
-    return SelectableText.rich(
+    if (needSelect != null && needSelect == true) {
+      return SelectableText.rich(
+        travel(document.querySelector("body")),
+        cursorWidth: 0,
+      );
+    }
+    return Text.rich(
       travel(document.querySelector("body")),
-      cursorWidth: 0,
     );
   }
 }
