@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:async/async.dart';
 
 import '../views/read_thread.dart';
 import '../html_parser/read_thread_parser.dart';
@@ -20,12 +21,22 @@ class ThreadApp extends StatefulWidget {
 
 class _ThreadAppState extends State<ThreadApp> {
   int page = 0;
+  late CancelableOperation getDataCancelable;
   // Future<ThreadPageInfo>? _future;
   @override
   void initState() {
     super.initState();
     page = widget.page.isEmpty ? 0 : int.parse(widget.page);
     // _future = getData();
+    getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+      debugPrint("cancel it");
+    },);
+  }
+
+  @override
+  void dispose() {
+    Future.microtask(() => getDataCancelable.cancel(),);
+    super.dispose();
   }
 
   Future<ThreadPageInfo> getData() async {
@@ -42,8 +53,9 @@ class _ThreadAppState extends State<ThreadApp> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: getData(),
+      future: getDataCancelable.value,
       builder: (context, snapshot) {
+        // debugPrint(snapshot.connectionState.toString());
         if (snapshot.connectionState != ConnectionState.done) {
           // return const Center(child: CircularProgressIndicator());
           return Scaffold(
@@ -81,6 +93,9 @@ class _ThreadAppState extends State<ThreadApp> {
                       if (!mounted) { return; }
                       setState(() {
                         page = page - 1;
+                        getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+                          debugPrint("cancel it");
+                        },);
                       });
                     },
                   ),
@@ -99,6 +114,9 @@ class _ThreadAppState extends State<ThreadApp> {
                       if (!mounted) { return; }
                       setState(() {
                         page = page + 1;
+                        getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+                          debugPrint("cancel it");
+                        },);
                       });
                     },
                   ),

@@ -5,6 +5,7 @@ import './utils.dart';
 import './constants.dart';
 import '../html_parser/read_thread_parser.dart';
 import '../pages/detail_image.dart';
+import './html_widget.dart';
 
 class VoteComponent extends StatefulWidget {
   final String bid;
@@ -32,6 +33,10 @@ class _VoteComponentState extends State<VoteComponent> {
   bool iVoteDown = false;
   int voteUpCount = 0;
   int voteDownCount = 0;
+
+  static const voteSize = 12.0;
+  static const borderColor = Colors.grey;
+  static const widthSpacer = SizedBox(width: 5,);
 
   @override
   void initState() {
@@ -91,22 +96,19 @@ class _VoteComponentState extends State<VoteComponent> {
 
   @override
   Widget build(BuildContext context) {
-    const voteSize = 12.0;
-    const borderColor = Colors.grey;
-    const widthSpacer = SizedBox(width: 5,);
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Container(
-          height: 18,
+          height: 20,
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(voteSize/2)),
             // border: Border.all(width: 1, color: Colors.red),
             border: Border.all(color: borderColor, width: 1.0, style: BorderStyle.solid),
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            mainAxisSize: MainAxisSize.max,
+            // mainAxisAlignment: MainAxisAlignment.end,
+            // mainAxisSize: MainAxisSize.max,
             children: [
               widthSpacer,
               GestureDetector(
@@ -147,17 +149,12 @@ class _VoteComponentState extends State<VoteComponent> {
   }
 }
 
-class OnePostComponent extends StatelessWidget {
-  final OnePostInfo onePostInfo;
-  final String bid;
+class AttachmentComponent extends StatelessWidget {
+  final List<AttachmentInfo> attachments;
+  const AttachmentComponent({Key? key, required this.attachments}) : super(key: key);
 
-  const OnePostComponent({Key? key, required this.onePostInfo, required this.bid,}) : super(key: key);
-
-  bool get simpleAttachment => false;
-  final _contentFont = const TextStyle(fontSize: 16, fontWeight: FontWeight.normal);
-
-  Widget renderAttachment(BuildContext context) {
-    var attachments = onePostInfo.attachmentInfo;
+  @override
+  Widget build(BuildContext context) {
     const spaceSpacer = Text(" ");
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -206,6 +203,16 @@ class OnePostComponent extends StatelessWidget {
       },).toList(),
     );
   }
+}
+
+class OnePostComponent extends StatelessWidget {
+  final OnePostInfo onePostInfo;
+  final String bid;
+
+  const OnePostComponent({Key? key, required this.onePostInfo, required this.bid,}) : super(key: key);
+
+  bool get simpleAttachment => false;
+  final _contentFont = const TextStyle(fontSize: 16, fontWeight: FontWeight.normal);
 
   @override
   Widget build(BuildContext context) {
@@ -250,7 +257,7 @@ class OnePostComponent extends StatelessWidget {
                     children: [
                       Text(item.authorInfo.userName),
                       const Text(' ('),
-                      Flexible(child: renderHtml(item.authorInfo.nickName, needSelect: false),),
+                      Flexible(child: HtmlComponent(item.authorInfo.nickName, needSelect: false),),
                       const Text(')'),
                       Text(item.authorInfo.status),
                     ],
@@ -263,7 +270,8 @@ class OnePostComponent extends StatelessWidget {
                     item.postTime,
                   ),
                   const Divider(),
-                  renderHtml(item.content, ts: _contentFont, context: context),
+                  // renderHtml(item.content, ts: _contentFont, context: context),
+                  HtmlComponent(item.content, ts: _contentFont),
                   VoteComponent(
                     iVoteUp: onePostInfo.iVoteUp,
                     iVoteDown: onePostInfo.iVoteDown,
@@ -272,11 +280,6 @@ class OnePostComponent extends StatelessWidget {
                     bid: bid,
                     postID: onePostInfo.postID,
                   ),
-                  if (item.signature.isNotEmpty)
-                    ...[
-                      const Divider(),
-                      renderHtml(item.signature),
-                    ],
                   if (item.attachmentInfo.isNotEmpty)
                     ...[
                       const Divider(),
@@ -284,10 +287,16 @@ class OnePostComponent extends StatelessWidget {
                     ],
                     if (simpleAttachment)
                       ...[
-                        renderHtml(item.attachmentHtml, context: context),
+                        // renderHtml(item.attachmentHtml, context: context),
+                        HtmlComponent(item.attachmentHtml),
                       ]
                     else
-                      renderAttachment(context),
+                      AttachmentComponent(attachments: onePostInfo.attachmentInfo),
+                  if (item.signature.isNotEmpty)
+                    ...[
+                      const Divider(),
+                      HtmlComponent(item.signature),
+                    ],
                 ],
               ),
             ),

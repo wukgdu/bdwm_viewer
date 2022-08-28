@@ -51,6 +51,7 @@ HtmlWidget renderHtml(String htmlStr, {bool? needSelect = true, TextStyle? ts, B
     htmlStr,
     factoryBuilder: (needSelect == null || needSelect == false) ? null :  () => MyWidgetFactory(),
     onErrorBuilder: (context, element, error) => Text('$element error: $error'),
+    // buildAsync: true,
     textStyle: ts,
     onTapImage: (p0) {
       if (context == null) { return; }
