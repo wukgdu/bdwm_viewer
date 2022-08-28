@@ -64,6 +64,7 @@ class _MainPageState extends State<MainPage> {
         colorScheme: const ColorScheme.light().copyWith(primary: const Color(0xffe97c62)),
       ),
       home: HomeApp(messageCount: messageCount,),
+      // home: BoardApp(bid: "103", boardName: "未名湖",),
       // home: const DetailImage(imgLink: "https://bbs.pku.edu.cn/v2/uploads/index_MKoueo.jpg", imgName: "招新.jpg",),
       // home: ThreadApp(bid: "33", threadid: "18262167", page: "2", boardName: "历史",),
       // initialRoute: "/home",
@@ -71,8 +72,16 @@ class _MainPageState extends State<MainPage> {
         WidgetBuilder builder;
         switch (settings.name) {
           case "/board":
-            String? boardName = settings.arguments as String?;
-            builder = (BuildContext context) => BoardApp(boardName: boardName ?? "版面",);
+            String? boardName;
+            String? bid;
+            if (settings.arguments != null) {
+              var settingsMap = settings.arguments as Map;
+              bid = settingsMap['bid'] as String;
+              boardName = settingsMap['boardName'] as String;
+            } else {
+              return null;
+            }
+            builder = (BuildContext context) => BoardApp(boardName: boardName ?? "版面", bid: bid ?? "");
             break;
           case "/thread":
             var res = gotoThread(settings.arguments);

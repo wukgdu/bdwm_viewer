@@ -20,15 +20,16 @@ class MyDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const double dWidth = 280;
     return Drawer(
-      width: 200,
+      width: dWidth,
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.only(top: 10.0, left: 10, right: 10, bottom: 10),
             constraints: const BoxConstraints(
-              maxHeight: 200,
-              maxWidth: 200,
+              // maxHeight: 300,
+              // maxWidth: dWidth,
             ),
             child: Image.asset('assets/image/wei.jpg'),
           ),

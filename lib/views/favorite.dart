@@ -64,7 +64,10 @@ class _FavoritePageState extends State<FavoritePage> {
             ],
           ),
           onTap: () {
-            Navigator.of(context).pushNamed("/board", arguments: item.boardName);
+            Navigator.of(context).pushNamed("/board", arguments: {
+              'boardName': item.boardName,
+              'bid': item.boardLink.split("=").last,
+          });
           },
         ),
       ),

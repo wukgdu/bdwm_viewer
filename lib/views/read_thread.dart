@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../bdwm/vote.dart';
-import './utils.dart';
+// import './utils.dart';
 import './constants.dart';
 import '../html_parser/read_thread_parser.dart';
 import '../pages/detail_image.dart';
@@ -100,6 +100,8 @@ class _VoteComponentState extends State<VoteComponent> {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Container(
+          margin: const EdgeInsets.only(top: 5),
+          // padding: const EdgeInsets.only(top: 10),
           height: 20,
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(voteSize/2)),

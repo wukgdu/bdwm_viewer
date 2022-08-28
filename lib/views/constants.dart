@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
+const bdwmPrimaryColor = Color(0xffea6242);
 const textLinkStyle = TextStyle(
-  color: Colors.amber,
+  color: Color(0xffea6242),
 );
 const textLinkSiblingStyle = TextStyle(
   color: Colors.black,
