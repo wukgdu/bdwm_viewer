@@ -4,6 +4,7 @@ import 'package:bdwm_viewer/pages/detail_image.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as hdom;
+// import 'package:csslib/parser.dart' as css_parser;
 
 import "./utils.dart";
 
@@ -30,13 +31,11 @@ class _HtmlComponentState extends State<HtmlComponent> {
     ts = widget.ts;
   }
 
-  TextSpan travel(hdom.Element? document) {
-    var res = <InlineSpan>[];
+  List<InlineSpan>? travel(hdom.Element? document) {
     if (document == null) {
-      return TextSpan(
-        children: res,
-      );
+      return null;
     }
+    var res = <InlineSpan>[];
     document.querySelectorAll("br").forEach((element) {
       element.remove();
     });
@@ -46,11 +45,35 @@ class _HtmlComponentState extends State<HtmlComponent> {
       } else if (cdom.nodeType == hdom.Node.ELEMENT_NODE) {
         var ele = cdom as hdom.Element;
         if (ele.localName == "font") {
+          // for color
           var color = ele.attributes['color'];
-          var bColor = ele.attributes['backgroundColor'];
-          res.add(TextSpan(children: travel(ele).children,
+          // var bColor = ele.attributes['background-color'];
+          res.add(TextSpan(children: travel(ele),
             style: TextStyle(
               color: color!=null?Color(int.parse("0xff${color.substring(1)}")):null,
+              // backgroundColor: bColor!=null?Color(int.parse("0xff${bColor.substring(1)}")) : null,
+            ),),
+          );
+        } else if (ele.localName == "span") {
+          // for background color
+          var spanStyle = ele.attributes['style'];
+          // var color = ele.attributes['color'];
+          var bColor = ele.attributes['backgroundColor'];
+          if (spanStyle != null) {
+            var bcp1 = spanStyle.indexOf("background-color");
+            if (bcp1 != -1) {
+              var bcp2 = spanStyle.indexOf("#", bcp1);
+              bColor = spanStyle.substring(bcp2, bcp2+7);
+            }
+            // var cp1 = spanStyle.indexOf("color");
+            // if (cp1 != -1) {
+            //   var cp2 = spanStyle.indexOf("#", cp1);
+            //   // color = spanStyle.substring(cp2, cp2+7);
+            // }
+          }
+          res.add(TextSpan(children: travel(ele),
+            style: TextStyle(
+              // color: color!=null?Color(int.parse("0xff${color.substring(1)}")):null,
               backgroundColor: bColor!=null?Color(int.parse("0xff${bColor.substring(1)}")) : null,
             ),),
           );
@@ -59,14 +82,19 @@ class _HtmlComponentState extends State<HtmlComponent> {
             res.add(const WidgetSpan(child: Icon(Icons.format_quote, size: 14, color: Color(0xffA6DDE3))));
             res.add(TextSpan(text: ele.text, style: const TextStyle(color: Colors.grey, fontSize: 12)));
           } else {
-            res.add(travel(ele));
+            res.add(TextSpan(
+              children: travel(ele),
+              style: const TextStyle(color: Colors.black, backgroundColor: null),
+            ));
           }
           if (cdom != document.nodes.last) {
             res.add(const TextSpan(text: "\n"));
           }
         } else if (ele.localName == "h5") {
           res.add(TextSpan(text: ele.text, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)));
-          res.add(const TextSpan(text: "\n"));
+          if (cdom != document.nodes.last) {
+            res.add(const TextSpan(text: "\n"));
+          }
         } else if (ele.localName == "img") {
           var src = ele.attributes['src'];
           if (src == null) {
@@ -105,30 +133,36 @@ class _HtmlComponentState extends State<HtmlComponent> {
             res.add(const TextSpan(text: "\n"));
           }
         } else if (ele.localName == "b") {
-          res.add(TextSpan(children: travel(ele).children, style: const TextStyle(fontWeight: FontWeight.bold)));
+          res.add(TextSpan(children: travel(ele), style: const TextStyle(fontWeight: FontWeight.bold,)));
         } else if (ele.localName == "u") {
-          res.add(TextSpan(children: travel(ele).children, style: const TextStyle(decoration: TextDecoration.underline)));
+          res.add(TextSpan(children: travel(ele), style: const TextStyle(decoration: TextDecoration.underline)));
+        } else {
+          res.add(TextSpan(text: cdom.text));
         }
       }
     }
-    return TextSpan(
-      children: res,
-      style: ts,
-    );
+    return res;
   }
 
   @override
   Widget build(BuildContext context) {
     // return renderHtml(htmlStr, ts: ts, context: context, needSelect: needSelect);
+    // var htmlStr = '''<p>asd<span style="background-color: #40ff40;">fs<font color="#c00000">a<u>d<b>fa</b></u><b>s</b></font><b>d</b></span>fa<br></p>''';
     var document = parse(htmlStr);
     if (needSelect != null && needSelect == true) {
       return SelectableText.rich(
-        travel(document.querySelector("body")),
+        TextSpan(
+          children: travel(document.querySelector("body")),
+          style: ts,
+        ),
         cursorWidth: 0,
       );
     }
     return Text.rich(
-      travel(document.querySelector("body")),
+      TextSpan(
+        children: travel(document.querySelector("body")),
+        style: ts,
+      ),
     );
   }
 }

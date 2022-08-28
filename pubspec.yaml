@@ -47,6 +47,7 @@ dependencies:
   file_picker: ^5.0.1
   # image_picker_saver: ^0.3.0
   # image_gallery_saver: ^1.7.1
+  # csslib: ^0.17.2
   path: ^1.8.1
   async: ^2.8.2
 
