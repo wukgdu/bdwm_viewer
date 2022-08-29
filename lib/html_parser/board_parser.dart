@@ -60,6 +60,7 @@ class BoardInfo {
   String postCount = "";
   String likeCount = "";
   String intro = "";
+  int pageNum = 0;
   bool iLike = false;
   List<AdminInfo> admins = <AdminInfo>[];
   List<BoardPostInfo> boardPostInfo = <BoardPostInfo>[];
@@ -76,6 +77,7 @@ class BoardInfo {
     required this.likeCount,
     required this.iLike,
     required this.intro,
+    required this.pageNum,
     required this.admins,
     required this.boardPostInfo,
   });
@@ -185,9 +187,31 @@ BoardInfo parseBoardInfo(String htmlStr) {
       }
     }
   }
+  var pagingDom = document.querySelector(".paging");
+  var pageNum = 0;
+  if (pagingDom != null) {
+    var pagingsDom = pagingDom.querySelectorAll(".paging-button");
+    if (pagingsDom.isNotEmpty) {
+      pagingsDom.removeWhere((element) {
+        var etext = element.text;
+        return etext.contains("返回") || etext.contains("页") || etext.contains("跳");
+      });
+      pagingsDom.map((e) {
+        var txt = e.text;
+        if (txt.startsWith(".")) {
+          txt = txt.replaceAll(".", "");
+        }
+        return int.parse(txt);
+      },).toList().forEach((e) {
+        if (pageNum < e) {
+          pageNum = e;
+        }
+      });
+    }
+  }
   var boardPostInfo = parseBoardPost(document.querySelector('#list-body'));
   return BoardInfo(
-    bid: bid, boardName: boardName, engName: engName, onlineCount: onlineCount,
+    bid: bid, boardName: boardName, engName: engName, onlineCount: onlineCount, pageNum: pageNum,
     todayCount: todayCount, topicCount: topicCount, postCount: postCount, iLike: iLike,
     likeCount: likeCount, intro: intro, admins: admins, boardPostInfo: boardPostInfo,
   );

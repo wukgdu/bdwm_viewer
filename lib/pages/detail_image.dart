@@ -48,7 +48,7 @@ class _DetailImageState extends State<DetailImage> {
   dispose() {
     clearMemoryImageCache();
     // Future.delayed(Duration.zero, () => clearDiskCachedImages());
-    Future.microtask(() => clearDiskCachedImages());
+    Future.microtask(clearDiskCachedImages);
     super.dispose();
   }
 
@@ -168,7 +168,7 @@ class _DetailImageState extends State<DetailImage> {
                       }
                       var text = "${(curByte * 100 / sumByte).toStringAsFixed(0)}%";
                       // return Text(text);
-                      return LinearProgressIndicator(
+                      return CircularProgressIndicator(
                         value: curByte / sumByte,
                         semanticsLabel: '加载中',
                         semanticsValue: text,
@@ -245,9 +245,9 @@ class _DetailImageState extends State<DetailImage> {
               ),
           ),
         ),
-        onTap: () {
-          Navigator.pop(context);
-        },
+        // onTap: () {
+        //   Navigator.pop(context);
+        // },
       ),
     );
   }

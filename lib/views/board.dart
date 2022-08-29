@@ -78,7 +78,9 @@ class OneThreadInBoard extends StatelessWidget {
 }
 class BoardPage extends StatefulWidget {
   final String bid;
-  const BoardPage({Key? key, required this.bid}) : super(key: key);
+  final BoardInfo boardInfo;
+  final int page;
+  const BoardPage({Key? key, required this.bid, required this.boardInfo, required this.page}) : super(key: key);
 
   @override
   State<BoardPage> createState() => _BoardPageState();
@@ -86,49 +88,40 @@ class BoardPage extends StatefulWidget {
 
 class _BoardPageState extends State<BoardPage> {
   BoardInfo boardInfo = BoardInfo.empty();
-  int page = 1;
   final _titleFont = const TextStyle(fontWeight: FontWeight.bold, fontSize: 18);
   final _titleFont2 = const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.grey);
-  static const _boldFont = TextStyle(fontWeight: FontWeight.bold);
+  // static const _boldFont = TextStyle(fontWeight: FontWeight.bold);
   static const double _padding1 = 10;
   static const double _padding2 = 20;
-
-  Future<BoardInfo> getData() async {
-    var resp = await bdwmClient.get("$v2Host/thread.php?bid=${widget.bid}", headers: genHeaders2());
-    return parseBoardInfo(resp.body);
-  }
 
   @override
   void initState() {
     super.initState();
     // boardInfo = getExampleBoard();
-    getData().then((value) {
-      setState(() {
-        boardInfo = value;
-      });
-    });
+    boardInfo = widget.boardInfo;
   }
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        Container(
-          margin: const EdgeInsets.only(top: _padding1, left: _padding2, right: _padding2, bottom: _padding1),
-          child: Row(
-            children: [
-              Text(boardInfo.boardName, style: _titleFont),
-              const SizedBox(width: 10,),
-              Text(boardInfo.engName, style: _titleFont2),
-            ],
+        if (widget.page <= 1)
+          Container(
+            margin: const EdgeInsets.only(top: _padding1, left: _padding2, right: _padding2, bottom: _padding1),
+            child: Row(
+              children: [
+                Text(boardInfo.boardName, style: _titleFont),
+                const SizedBox(width: 10,),
+                Text(boardInfo.engName, style: _titleFont2),
+              ],
+            ),
           ),
-        ),
-        if (boardInfo.intro.isNotEmpty)
+        if (widget.page <= 1 && boardInfo.intro.isNotEmpty)
           Container(
             margin: const EdgeInsets.only(bottom: _padding1, left: _padding2, right: _padding2),
             child: Text(boardInfo.intro),
           ),
-        if (boardInfo.admins.isNotEmpty)
+        if (widget.page <= 1 && boardInfo.admins.isNotEmpty)
           Container(
             margin: const EdgeInsets.only(left: _padding2, right: _padding2, bottom: 0),
             child: Wrap(
@@ -147,7 +140,8 @@ class _BoardPageState extends State<BoardPage> {
               ],
             ),
           ),
-        const Divider(),
+        if (widget.page <= 1)
+          const Divider(),
         ListView.builder(
           primary: false,
           shrinkWrap: true,
