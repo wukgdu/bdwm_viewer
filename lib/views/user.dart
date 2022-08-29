@@ -100,9 +100,9 @@ class _UserInfoPageState extends State<UserInfoPage> {
                 String boardName = pair.value;
                 String bidLink = bids[idx];
                 String bid = bidLink.split("=").last;
-                return GestureDetector(
+                return TextButton(
                   child: Text(boardName, style: textLinkStyle,),
-                  onTap: () {
+                  onPressed: () {
                     Navigator.of(context).pushNamed('/board', arguments: {
                       'boardName': boardName.split('(').first,
                       'bid': bid,

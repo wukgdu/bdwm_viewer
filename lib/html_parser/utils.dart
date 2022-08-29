@@ -1,5 +1,14 @@
 import '../globalvars.dart';
-import 'package:html/dom.dart' show Text;
+import 'package:html/dom.dart' show Text, Document;
+
+String? checkError(Document document) {
+  if (document.querySelector("#page-error") != null) {
+    var errBodyDom = document.querySelector("#error-body p");
+    var errorMessage = errBodyDom?.firstChild?.text ?? "出错啦";
+    return errorMessage;
+  }
+  return null;
+}
 
 String getTrimmedString(var dom) {
   if (dom == null) {

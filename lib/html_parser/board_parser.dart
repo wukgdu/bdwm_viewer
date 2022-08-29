@@ -58,14 +58,16 @@ class BoardInfo {
   String todayCount = "";
   String topicCount = "";
   String postCount = "";
-  String likeCount = "";
+  String likeCount = "0";
   String intro = "";
   int pageNum = 0;
   bool iLike = false;
   List<AdminInfo> admins = <AdminInfo>[];
   List<BoardPostInfo> boardPostInfo = <BoardPostInfo>[];
+  String? errorMessage;
 
   BoardInfo.empty();
+  BoardInfo.error({this.errorMessage});
   BoardInfo({
     required this.bid,
     required this.boardName,
@@ -80,6 +82,7 @@ class BoardInfo {
     required this.pageNum,
     required this.admins,
     required this.boardPostInfo,
+    this.errorMessage,
   });
 }
 
@@ -125,6 +128,10 @@ List<BoardPostInfo> parseBoardPost(Element? docu) {
 
 BoardInfo parseBoardInfo(String htmlStr) {
   var document = parse(htmlStr);
+  var errorMessage = checkError(document);
+  if (errorMessage != null) {
+    return BoardInfo.error(errorMessage: errorMessage);
+  }
   var headDom = document.querySelector("#board-head");
   String bid = "";
   String boardName = "";
@@ -133,7 +140,7 @@ BoardInfo parseBoardInfo(String htmlStr) {
   String todayCount = "";
   String topicCount = "";
   String postCount = "";
-  String likeCount = "";
+  String likeCount = "0";
   bool iLike = false;
   String intro = "";
   List<AdminInfo> admins = <AdminInfo>[];

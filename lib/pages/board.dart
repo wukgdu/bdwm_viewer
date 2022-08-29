@@ -60,6 +60,16 @@ class _BoardAppState extends State<BoardApp> {
           return const Text("错误：未获取数据");
         }
         var boardInfo = snapshot.data as BoardInfo;
+        if (boardInfo.errorMessage != null) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(widget.boardName),
+            ),
+            body: Center(
+              child: Text(boardInfo.errorMessage!),
+            ),
+          );
+        }
         return Scaffold(
           appBar: AppBar(
             title: Text(widget.boardName),
