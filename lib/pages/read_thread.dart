@@ -93,7 +93,7 @@ class _ThreadAppState extends State<ThreadApp> {
                       icon: const Icon(Icons.list),
                       onPressed: () {
                         Navigator.of(context).pushNamed('/board', arguments: {
-                          'boardName': threadPageInfo.board.text,
+                          'boardName': threadPageInfo.board.text.split('(').first,
                           'bid': threadPageInfo.boardid,
                         },);
                       },
@@ -247,7 +247,7 @@ class _ThreadApp2State extends State<ThreadApp> {
                   icon: const Icon(Icons.list),
                   onPressed: () {
                     Navigator.of(context).pushNamed('/board', arguments: {
-                      'boardName': threadPageInfo.board.text,
+                      'boardName': threadPageInfo.board.text.split('(').first,
                       'bid': threadPageInfo.boardid,
                     },);
                   },

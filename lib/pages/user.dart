@@ -18,7 +18,7 @@ class UserApp extends StatelessWidget {
       title = "大秘宝";
     }
     return Scaffold(
-      drawer: ((needBack == null) || (needBack == false)) ? const MyDrawer() : null,
+      drawer: ((needBack == null) || (needBack == false)) ? const MyDrawer(selectedIdx: 1,) : null,
       appBar: AppBar(
         title: Text(title),
       ),

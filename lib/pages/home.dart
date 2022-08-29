@@ -69,7 +69,7 @@ class _HomeAppState extends State<HomeApp> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        drawer: const MyDrawer(),
+        drawer: const MyDrawer(selectedIdx: 0,),
         appBar: AppBar(
           title: const Text("首页"),
           actions: [
