@@ -8,6 +8,7 @@ import 'package:path/path.dart' as path;
 import 'package:extended_image/extended_image.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void gotoDetailImage({required BuildContext context, required String link, String? name, Uint8List? imgData}) {
   Navigator.of(context).push(MaterialPageRoute(
@@ -53,10 +54,29 @@ class _DetailImageState extends State<DetailImage> {
   }
 
   Future<SaveRes> saveImage(Uint8List? data) async {
+    var couldStore = true;
+    var hasStoragePermission = await Permission.storage.isGranted;
+    if (!hasStoragePermission) {
+      var status = await Permission.storage.request();
+      if (!status.isGranted) {
+        couldStore = false;
+      }
+    }
+    if (couldStore == false) {
+      return SaveRes(false, "没有保存文件权限");
+    }
     Directory? downloadDir;
     String? downloadPath;
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
+        downloadDir = Directory('/storage/emulated/0/Download');
+        if (!downloadDir.existsSync()) {
+          var path = await FilePicker.platform.getDirectoryPath();
+          if (path != null) {
+            downloadDir = Directory(path);
+          }
+        }
+        break;
       case TargetPlatform.iOS:
         var path = await FilePicker.platform.getDirectoryPath();
         if (path != null) {
