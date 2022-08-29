@@ -9,6 +9,7 @@ import '../utils.dart';
 class UserProfile {
   String bbsID = "";
   String nickName = "";
+  String nickNameHtml = "";
   String status = "";
   String avatarLink = absImgSrc(defaultAvator);
   TextAndLink personalCollection = TextAndLink.empty();
@@ -35,6 +36,7 @@ class UserProfile {
   UserProfile.init({
     required this.bbsID,
     required this.nickName,
+    required this.nickNameHtml,
     required this.status,
     required this.avatarLink,
     required this.personalCollection,
@@ -103,9 +105,17 @@ UserProfile parseUser(String htmlStr) {
   String rating = "";
   String recentLogin = "";
   String recentLogout = "";
+  String nickNameHtml = "";
   String? timeReg;
   String? timeOnline;
   for (var divDom in profileDom.querySelectorAll(".table-layout div")) {
+    if (getTrimmedString(divDom.querySelector("label")).startsWith("昵称")) {
+      nickNameHtml = getTrimmedHtml(divDom);
+      var nickIdx = nickNameHtml.indexOf("</label>");
+      if (nickIdx != -1) {
+        nickNameHtml = nickNameHtml.substring(nickIdx+8).trim();
+      }
+    }
     var divText = getTrimmedString(divDom);
     List<String> pairText = divText.split("：").map((e) => e.trim()).toList();
     switch (pairText[0]) {
@@ -145,7 +155,7 @@ UserProfile parseUser(String htmlStr) {
   }
 
   return UserProfile.init(
-    bbsID: bbsID, nickName: nickName, status: status, avatarLink: avatarLink,
+    bbsID: bbsID, nickName: nickName, status: status, avatarLink: avatarLink, nickNameHtml: nickNameHtml,
     personalCollection: TextAndLink(personalCollection, personalCollectionLink), gender: gender, constellation: constellation,
     countLogin: countLogin, countPost: countPost, value: value, score: score, rankName: rankName,
     rating: rating, recentLogin: recentLogin, recentLogout: recentLogout, signature: signature, signatureHtml: signatureHtml,

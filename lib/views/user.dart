@@ -7,6 +7,7 @@ import "../globalvars.dart";
 import "../bdwm/logout.dart";
 import "./utils.dart";
 import "./constants.dart";
+import './html_widget.dart';
 
 class UserInfoPage extends StatefulWidget {
   final String uid;
@@ -174,7 +175,17 @@ class _UserInfoPageState extends State<UserInfoPage> {
               backgroundColor: Colors.white,
               backgroundImage: NetworkImage(user.avatarLink),
             ),
-            title: Text("${user.bbsID} (${user.nickName}) ${user.status}"),
+            title: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(text: user.bbsID),
+                  const TextSpan(text: " ("),
+                  WidgetSpan(child: HtmlComponent(user.nickNameHtml),),
+                  const TextSpan(text: ") "),
+                  TextSpan(text: user.status),
+                ],
+              ),
+            ),
             subtitle: Text(
               "$subtitle1\n$subtitle2",
             ),

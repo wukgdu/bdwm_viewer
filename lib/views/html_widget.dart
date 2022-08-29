@@ -107,7 +107,7 @@ class _HtmlComponentState extends State<HtmlComponent> {
               res.add(WidgetSpan(
                 child: GestureDetector(
                   child: Container(
-                    constraints: const BoxConstraints(maxHeight: 200),
+                    constraints: const BoxConstraints(maxHeight: 200, maxWidth: 200),
                     // alignment: Alignment.centerLeft,
                     child: Image.memory(data,)
                   ),
@@ -119,7 +119,7 @@ class _HtmlComponentState extends State<HtmlComponent> {
               res.add(WidgetSpan(
                 child: GestureDetector(
                   child: Container(
-                    constraints: const BoxConstraints(maxHeight: 200),
+                    constraints: const BoxConstraints(maxHeight: 200, maxWidth: 200),
                     // alignment: Alignment.centerLeft,
                     child: Image.network(src,)
                   ),
