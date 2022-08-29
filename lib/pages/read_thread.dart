@@ -11,7 +11,8 @@ class ThreadApp extends StatefulWidget {
   final String threadid;
   final String page;
   final String? boardName;
-  const ThreadApp({Key? key, required this.bid, required this.threadid, this.boardName, required this.page}) : super(key: key);
+  final bool? needToBoard;
+  const ThreadApp({Key? key, required this.bid, required this.threadid, this.boardName, required this.page, this.needToBoard}) : super(key: key);
   // ThreadApp.empty({Key? key}) : super(key: key);
 
   @override
@@ -85,6 +86,18 @@ class _ThreadAppState extends State<ThreadApp> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
+                  if (widget.needToBoard != null && widget.needToBoard == true)
+                    IconButton(
+                      disabledColor: Colors.grey,
+                      tooltip: '返回本版',
+                      icon: const Icon(Icons.list),
+                      onPressed: () {
+                        Navigator.of(context).pushNamed('/board', arguments: {
+                          'boardName': threadPageInfo.board.text,
+                          'bid': threadPageInfo.boardid,
+                        },);
+                      },
+                    ),
                   IconButton(
                     disabledColor: Colors.grey,
                     tooltip: '上一页',
@@ -137,29 +150,32 @@ WidgetBuilder? gotoThread(Object? arguments) {
   String threadid = "";
   String boardName = "";
   String page = "";
+  bool? needToBoard;
   if (arguments != null) {
     var settingsMap = arguments as Map;
     bid = settingsMap['bid'] as String;
     threadid = settingsMap['threadid'] as String;
     boardName = settingsMap['boardName'] as String;
     page = settingsMap['page'] as String;
+    needToBoard = settingsMap['needToBoard'] as bool?;
   } else {
     return null;
   }
-  builder = (BuildContext context) => ThreadApp(boardName: boardName, bid: bid, threadid: threadid, page: page,);
+  builder = (BuildContext context) => ThreadApp(boardName: boardName, bid: bid, threadid: threadid, page: page, needToBoard: needToBoard,);
   return builder;
 }
 
-void naviGotoThread(context, String bid, String threadid, String page, String boardName) {
+void naviGotoThread(context, String bid, String threadid, String page, String boardName, {bool? needToBoard}) {
   Navigator.of(context).pushNamed('/thread', arguments: {
     'bid': bid,
     'threadid': threadid,
     'page': page,
     'boardName': boardName,
+    'needToBoard': needToBoard,
   });
 }
 
-void naviGotoThreadByLink(context, String link, String boardName) {
+void naviGotoThreadByLink(context, String link, String boardName, {bool? needToBoard}) {
   var pb1 = link.indexOf('bid');
   var pb2 = link.indexOf('&', pb1);
   var pt1 = link.indexOf('threadid');
@@ -172,6 +188,7 @@ void naviGotoThreadByLink(context, String link, String boardName) {
     'threadid': threadid,
     'page': page,
     'boardName': boardName,
+    'needToBoard': needToBoard,
   });
 }
 class _ThreadApp2State extends State<ThreadApp> {
@@ -223,6 +240,18 @@ class _ThreadApp2State extends State<ThreadApp> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
+              if (widget.needToBoard != null && widget.needToBoard == true)
+                IconButton(
+                  disabledColor: Colors.grey,
+                  tooltip: '返回本版',
+                  icon: const Icon(Icons.list),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/board', arguments: {
+                      'boardName': threadPageInfo.board.text,
+                      'bid': threadPageInfo.boardid,
+                    },);
+                  },
+                ),
               IconButton(
                 disabledColor: Colors.grey,
                 tooltip: '上一页',

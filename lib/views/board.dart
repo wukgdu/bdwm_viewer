@@ -123,29 +123,31 @@ class _BoardPageState extends State<BoardPage> {
             ],
           ),
         ),
-        Container(
-          margin: const EdgeInsets.only(bottom: _padding1, left: _padding2, right: _padding2),
-          child: Text(boardInfo.intro),
-        ),
-        Container(
-          margin: const EdgeInsets.only(left: _padding2, right: _padding2, bottom: _padding1),
-          child: Wrap(
-            children: [
-              // const Text("版务：", style: _boldFont),
-              for (var admin in boardInfo.admins)
-                ...[
-                  GestureDetector(
-                    child: Text(admin.userName, style: textLinkStyle),
-                    onTap: () {
-                      Navigator.of(context).pushNamed('/user', arguments: admin.uid);
-                    },
-                  ),
-                  const SizedBox(width: 5,),
-                ],
-            ],
+        if (boardInfo.intro.isNotEmpty)
+          Container(
+            margin: const EdgeInsets.only(bottom: _padding1, left: _padding2, right: _padding2),
+            child: Text(boardInfo.intro),
           ),
-        ),
-        Divider(),
+        if (boardInfo.admins.isNotEmpty)
+          Container(
+            margin: const EdgeInsets.only(left: _padding2, right: _padding2, bottom: 0),
+            child: Wrap(
+              children: [
+                // const Text("版务：", style: _boldFont),
+                for (var admin in boardInfo.admins)
+                  ...[
+                    GestureDetector(
+                      child: Text(admin.userName, style: textLinkStyle),
+                      onTap: () {
+                        Navigator.of(context).pushNamed('/user', arguments: admin.uid);
+                      },
+                    ),
+                    const SizedBox(width: 5,),
+                  ],
+              ],
+            ),
+          ),
+        const Divider(),
         ListView.builder(
           primary: false,
           shrinkWrap: true,

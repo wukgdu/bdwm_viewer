@@ -48,7 +48,29 @@ class _LoginPageState extends State<LoginPage> {
             ElevatedButton(
               onPressed: () {
                 var username = usernameValue.text.trim();
+                if (username.isEmpty) {
+                  showAlertDialog(context, "登录", const Text("用户名不能为空"),
+                    actions1: TextButton(
+                      child: const Text("知道了"), 
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  );
+                  return;
+                }
                 var password = passwordValue.text.trim();
+                if (password.isEmpty) {
+                  showAlertDialog(context, "登录", const Text("密码不能为空"),
+                    actions1: TextButton(
+                      child: const Text("知道了"), 
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  );
+                  return;
+                }
                 // var res = await bdwmLogin(username, password);
                 bdwmLogin(username, password).then((res) {
                   bool success = res.success;

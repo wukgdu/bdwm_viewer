@@ -62,7 +62,7 @@ class _TopHomePageState extends State<TopHomePage> {
           child: Text(item.id.toString(), style: const TextStyle(color: Colors.white)),
         ),
         minLeadingWidth: 20,
-        onTap: () { naviGotoThreadByLink(context, item.link, item.board); }
+        onTap: () { naviGotoThreadByLink(context, item.link, item.board, needToBoard: true); }
       )
     );
   }
@@ -85,7 +85,7 @@ class _TopHomePageState extends State<TopHomePage> {
         ),
         // dense: true,
         minLeadingWidth: 20,
-        onTap: () { naviGotoThreadByLink(context, item.link, item.board); }
+        onTap: () { naviGotoThreadByLink(context, item.link, item.board, needToBoard: true); }
       )
     );
   }
