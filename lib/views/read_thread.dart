@@ -351,6 +351,13 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
           ),
         ),
         Expanded(
+          // child: ListView(
+          //   controller: ScrollController(),
+          //   padding: const EdgeInsets.all(8),
+          //   children: [...widget.threadPageInfo.posts.map((e) {
+          //     return _onepost(e);
+          //   }).toList()],
+          // ),
           child: ListView.builder(
             controller: ScrollController(),
             padding: const EdgeInsets.all(8),

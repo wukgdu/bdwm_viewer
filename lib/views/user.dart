@@ -177,7 +177,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
             ),
             title: Text.rich(
               TextSpan(
-                children: [
+                children: <InlineSpan>[
                   TextSpan(text: user.bbsID),
                   const TextSpan(text: " ("),
                   WidgetSpan(child: HtmlComponent(user.nickNameHtml),),

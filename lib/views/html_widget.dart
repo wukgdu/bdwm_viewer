@@ -12,7 +12,7 @@ class HtmlComponent extends StatefulWidget {
   final String htmlStr;
   final bool? needSelect;
   final TextStyle? ts;
-  const HtmlComponent(this.htmlStr, {Key? key, this.needSelect, this.ts}) : super(key: key);
+  HtmlComponent(this.htmlStr, {Key? key, this.needSelect, this.ts}) : super(key: key);
 
   @override
   State<HtmlComponent> createState() => _HtmlComponentState();
@@ -26,6 +26,14 @@ class _HtmlComponentState extends State<HtmlComponent> {
   @override
   void initState() {
     super.initState();
+    htmlStr = widget.htmlStr;
+    needSelect = widget.needSelect;
+    ts = widget.ts;
+  }
+
+  @override
+  void didUpdateWidget(oldWidget) {
+    super.didUpdateWidget(oldWidget);
     htmlStr = widget.htmlStr;
     needSelect = widget.needSelect;
     ts = widget.ts;
@@ -149,19 +157,18 @@ class _HtmlComponentState extends State<HtmlComponent> {
     // return renderHtml(htmlStr, ts: ts, context: context, needSelect: needSelect);
     // var htmlStr = '''<p>asd<span style="background-color: #40ff40;">fs<font color="#c00000">a<u>d<b>fa</b></u><b>s</b></font><b>d</b></span>fa<br></p>''';
     var document = parse(htmlStr);
+    var res = travel(document.querySelector("body"));
+    var tspan = TextSpan(
+      children: res,
+      style: ts,
+    );
     if (needSelect != null && needSelect == false) {
       return Text.rich(
-        TextSpan(
-          children: travel(document.querySelector("body")),
-          style: ts,
-        ),
+        tspan,
       );
     }
     return SelectableText.rich(
-      TextSpan(
-        children: travel(document.querySelector("body")),
-        style: ts,
-      ),
+      tspan,
       cursorWidth: 0,
     );
   }
