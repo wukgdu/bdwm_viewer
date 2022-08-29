@@ -12,6 +12,7 @@ class UserProfile {
   String nickNameHtml = "";
   String status = "";
   String avatarLink = absImgSrc(defaultAvator);
+  String avatarFrameLink = "";
   TextAndLink personalCollection = TextAndLink.empty();
   String gender = "保密";
   String constellation = "保密";
@@ -39,6 +40,7 @@ class UserProfile {
     required this.nickNameHtml,
     required this.status,
     required this.avatarLink,
+    required this.avatarFrameLink,
     required this.personalCollection,
     required this.gender,
     required this.constellation,
@@ -76,6 +78,9 @@ UserProfile parseUser(String htmlStr) {
   var nickName = getTrimmedString(nickInfo.querySelector(".nickname"));
   var status = getTrimmedString(nickInfo.querySelector(".status"));
   var avatarLink = absImgSrc(basicInfo.querySelector(".portrait")?.attributes['src'] ?? defaultAvator);
+  var afl = basicInfo.querySelector(".avatar-frame")?.attributes['src'];
+  var avatarFrameLink = afl == null ? "" : absImgSrc(afl);
+  print(avatarFrameLink);
   var personalCollection = getTrimmedString(nickInfo.querySelector(".personal-collection"));
   var tmpDutyDom = nickInfo.querySelector(".personal-duty");
   String? duty;
@@ -157,7 +162,7 @@ UserProfile parseUser(String htmlStr) {
   return UserProfile.init(
     bbsID: bbsID, nickName: nickName, status: status, avatarLink: avatarLink, nickNameHtml: nickNameHtml,
     personalCollection: TextAndLink(personalCollection, personalCollectionLink), gender: gender, constellation: constellation,
-    countLogin: countLogin, countPost: countPost, value: value, score: score, rankName: rankName,
+    countLogin: countLogin, countPost: countPost, value: value, score: score, rankName: rankName, avatarFrameLink: avatarFrameLink,
     rating: rating, recentLogin: recentLogin, recentLogout: recentLogout, signature: signature, signatureHtml: signatureHtml,
     timeReg: timeReg, timeOnline: timeOnline, duty: duty, dutyBoards: dutyBoards, dutyBoardLinks: dutyBoardLinks,
   );
