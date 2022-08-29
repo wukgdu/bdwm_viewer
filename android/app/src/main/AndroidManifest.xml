@@ -8,7 +8,7 @@
    <application
         android:label="OBViewer"
         android:name="${applicationName}"
-        android:icon="@mipmap/wukgdu_ghicon">
+        android:icon="@mipmap/ic_wei">
         <activity
             android:name=".MainActivity"
             android:exported="true"
