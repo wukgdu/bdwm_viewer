@@ -172,7 +172,7 @@ BoardInfo parseBoardInfo(String htmlStr) {
     }
     intro = getTrimmedString(headDom.querySelector("#intro"));
     likeCount = getTrimmedString(headDom.querySelector("#add-fav .num"));
-    var starDom = headDom.querySelector("#add-fav star");
+    var starDom = headDom.querySelector("#add-fav .star");
     if (starDom != null && starDom.classes.contains('active')) {
       iLike = true;
     }

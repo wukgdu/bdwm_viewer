@@ -3,7 +3,74 @@ import 'package:flutter/material.dart';
 import '../html_parser/board_parser.dart';
 import './constants.dart';
 import '../bdwm/req.dart';
+import '../views/utils.dart';
+import '../bdwm/star_board.dart';
 import '../globalvars.dart';
+
+class StarBoard extends StatefulWidget {
+  final int starCount;
+  final bool likeIt;
+  final int bid;
+  const StarBoard({Key? key, required this.starCount, required this.likeIt, required this.bid}) : super(key: key);
+
+  @override
+  State<StarBoard> createState() => _StarBoardState();
+}
+
+class _StarBoardState extends State<StarBoard> {
+  int starCount = 0;
+  bool likeIt = false;
+
+  @override
+  void initState() {
+    super.initState();
+    starCount = widget.starCount;
+    likeIt = widget.likeIt;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        IconButton(
+          icon: likeIt ? const Icon(Icons.star, color: bdwmPrimaryColor,) : const Icon(Icons.star_outline),
+          onPressed: () {
+            var action = likeIt ? "delete" : "add";
+            bdwmStarBoard(widget.bid, action).then((value) {
+              if (value.success) {
+                setState(() {
+                  if (action == "add") {
+                    setState(() {
+                      starCount += 1;
+                      likeIt = true;
+                    });
+                  } else {
+                    setState(() {
+                      starCount -= 1;
+                      likeIt = false;
+                    });
+                  }
+                });
+              } else {
+                showAlertDialog(context, "失败", const Text("不知道为什么"),
+                  actions1: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("知道了"),
+                  ),
+                );
+              }
+            });
+          },
+        ),
+        Text(
+          starCount.toString(),
+        ),
+      ]
+    );
+  }
+}
 
 class OneThreadInBoard extends StatelessWidget {
   final BoardPostInfo boardPostInfo;
@@ -113,6 +180,8 @@ class _BoardPageState extends State<BoardPage> {
                 Text(boardInfo.boardName, style: _titleFont),
                 const SizedBox(width: 10,),
                 Text(boardInfo.engName, style: _titleFont2),
+                const Spacer(),
+                StarBoard(starCount: int.parse(boardInfo.likeCount), likeIt: boardInfo.iLike, bid: int.parse(boardInfo.bid),),
               ],
             ),
           ),
