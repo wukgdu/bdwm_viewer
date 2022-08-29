@@ -75,7 +75,7 @@ class _ThreadAppState extends State<ThreadApp> {
         var threadPageInfo = snapshot.data as ThreadPageInfo;
         return Scaffold(
           appBar: AppBar(
-            title: Text(widget.boardName ?? "看帖"),
+            title: Text(threadPageInfo.board.text.split('(').first),
           ),
           body: ReadThreadPage(bid: widget.bid, threadid: widget.threadid, page: page.toString(), threadPageInfo: threadPageInfo,),
           bottomNavigationBar: BottomAppBar(

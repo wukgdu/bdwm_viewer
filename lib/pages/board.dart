@@ -72,7 +72,7 @@ class _BoardAppState extends State<BoardApp> {
         }
         return Scaffold(
           appBar: AppBar(
-            title: Text(widget.boardName),
+            title: Text(boardInfo.boardName),
           ),
           body: BoardPage(bid: widget.bid, page: page, boardInfo: boardInfo,),
           bottomNavigationBar: BottomAppBar(

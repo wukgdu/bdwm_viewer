@@ -1,12 +1,15 @@
 import 'dart:convert';
 
-import 'package:bdwm_viewer/pages/detail_image.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as hdom;
 // import 'package:csslib/parser.dart' as css_parser;
 
 import "./utils.dart";
+import './constants.dart';
+import '../pages/read_thread.dart';
+import '../html_parser/utils.dart';
+import '../pages/detail_image.dart';
 
 class HtmlComponent extends StatefulWidget {
   final String htmlStr;
@@ -144,6 +147,41 @@ class _HtmlComponentState extends State<HtmlComponent> {
           res.add(TextSpan(children: travel(ele), style: const TextStyle(fontWeight: FontWeight.bold,)));
         } else if (ele.localName == "u") {
           res.add(TextSpan(children: travel(ele), style: const TextStyle(decoration: TextDecoration.underline)));
+        } else if (ele.localName == "a") {
+          var href = ele.attributes['href'];
+          var link = absThreadLink(href ?? "");
+          var ts = WidgetSpan(
+            child: GestureDetector(
+              child: Text.rich(
+                TextSpan(
+                  children: travel(ele),
+                  style: textLinkStyle,
+                ),
+              ),
+              onTap: () {
+                if (href == null) { return; }
+                if (link.startsWith("https://bbs.pku.edu.cn/v2/post-read.php")) {
+                  naviGotoThreadByLink(context, link, "跳转");
+                } else if (link.startsWith("https://bbs.pku.edu.cn/v2/thread.php")) {
+                  var bidP1 = link.indexOf("bid=");
+                  var bidP2 = link.indexOf("&", bidP1);
+                  var bid = "";
+                  if (bidP2 == -1) {
+                    bid = link.substring(bidP1+4);
+                  } else {
+                    bid = link.substring(bidP1+4, bidP2);
+                  }
+                  if (bid.isNotEmpty) {
+                    Navigator.of(context).pushNamed('/thread', arguments: {
+                      'bid': bid,
+                      'boardName': "跳转",
+                    });
+                  }
+                }
+              },
+            ),
+          );
+          res.add(ts);
         } else {
           res.add(TextSpan(text: cdom.text));
         }
