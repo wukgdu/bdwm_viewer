@@ -12,8 +12,8 @@ class FavoritePage extends StatefulWidget {
 }
 
 class _FavoritePageState extends State<FavoritePage> {
-  List<FavoriteBoard> favoriteBoards = <FavoriteBoard>[];
-  Future<List<FavoriteBoard>> getData() async {
+  FavoriteBoardInfo favoriteBoardInfo = FavoriteBoardInfo.empty();
+  Future<FavoriteBoardInfo> getData() async {
     var resp = await bdwmClient.get("$v2Host/favorite.php", headers: genHeaders2());
     return parseFavoriteBoard(resp.body);
   }
@@ -26,7 +26,7 @@ class _FavoritePageState extends State<FavoritePage> {
     // });
     getData().then((value) {
       setState(() {
-        favoriteBoards = value;
+        favoriteBoardInfo = value;
       });
     });
   }
@@ -75,9 +75,14 @@ class _FavoritePageState extends State<FavoritePage> {
   }
 
   Widget boardView() {
+    if (favoriteBoardInfo.errorMessage != null) {
+      return Center(
+        child: Text(favoriteBoardInfo.errorMessage!),
+      );
+    }
     return ListView(
       padding: const EdgeInsets.all(8),
-      children: favoriteBoards.map((FavoriteBoard item) {
+      children: favoriteBoardInfo.favoriteBoards.map((FavoriteBoard item) {
         return _onepost(item);
       }).toList(),
     );

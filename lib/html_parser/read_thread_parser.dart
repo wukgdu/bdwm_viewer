@@ -101,8 +101,10 @@ class ThreadPageInfo {
   String title = "";
   TextAndLink board = TextAndLink.empty();
   List<OnePostInfo> posts = <OnePostInfo>[];
+  String? errorMessage;
 
   ThreadPageInfo.empty();
+  ThreadPageInfo.error({this.errorMessage});
   ThreadPageInfo({
     required this.page,
     required this.pageNum,
@@ -112,6 +114,7 @@ class ThreadPageInfo {
     required this.title,
     required this.board,
     required this.posts,
+    this.errorMessage,
   });
 }
 
@@ -263,6 +266,10 @@ String getEqualValue(String a, {String del="="}) {
 
 ThreadPageInfo parseThread(String htmlStr) {
   var document = parse(htmlStr);
+  var errorMessage = checkError(document);
+  if (errorMessage != null) {
+    return ThreadPageInfo.error(errorMessage: errorMessage);
+  }
   var pagingDom = document.querySelector(".paging-top");
   var title = getTrimmedString(document.querySelector('header')?.children[0]);
   var page = 0, pageNum = 0;

@@ -31,12 +31,28 @@ class FavoriteBoard {
   }
 }
 
-List<FavoriteBoard> parseFavoriteBoard(String htmlStr) {
+class FavoriteBoardInfo {
+  String? errorMessage;
+  List<FavoriteBoard> favoriteBoards = <FavoriteBoard>[];
+
+  FavoriteBoardInfo.empty();
+  FavoriteBoardInfo.error({this.errorMessage});
+  FavoriteBoardInfo({
+    this.errorMessage,
+    required this.favoriteBoards,
+  });
+}
+
+FavoriteBoardInfo parseFavoriteBoard(String htmlStr) {
   var document = parse(htmlStr);
+  var errorMessage = checkError(document);
+  if (errorMessage != null) {
+    return FavoriteBoardInfo.error(errorMessage: errorMessage);
+  }
   List<Element>? boardList = document.querySelector("#favorites-list")?.querySelectorAll(".favorite-block");
   List<FavoriteBoard> favoriteBoards = <FavoriteBoard>[];
   if (boardList == null || boardList.isEmpty) {
-    return favoriteBoards;
+    return FavoriteBoardInfo(favoriteBoards: favoriteBoards);
   }
   for (var item in boardList) {
     final boardName = getTrimmedString(item.querySelector(".name"));
@@ -60,10 +76,10 @@ List<FavoriteBoard> parseFavoriteBoard(String htmlStr) {
       boardLink: boardLink, lastUpdate: TextAndLink(lastUpdateTime, lastUpdatePost)
     ));
   }
-  return favoriteBoards;
+    return FavoriteBoardInfo(favoriteBoards: favoriteBoards);
 }
 
-List<FavoriteBoard> getExampleFavoriteBoard() {
+FavoriteBoardInfo getExampleFavoriteBoard() {
   const filename = '../favorite.html';
   var htmlStr = File(filename).readAsStringSync();
   final items = parseFavoriteBoard(htmlStr);

@@ -73,6 +73,16 @@ class _ThreadAppState extends State<ThreadApp> {
           return const Text("错误：未获取数据");
         }
         var threadPageInfo = snapshot.data as ThreadPageInfo;
+        if (threadPageInfo.errorMessage != null) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(widget.boardName ?? ""),
+            ),
+            body: Center(
+              child: Text(threadPageInfo.errorMessage!),
+            ),
+          );
+        }
         return Scaffold(
           appBar: AppBar(
             title: Text(threadPageInfo.board.text.split('(').first),
