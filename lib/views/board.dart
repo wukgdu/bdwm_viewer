@@ -174,16 +174,19 @@ class _BoardPageState extends State<BoardPage> {
       children: [
         if (widget.page <= 1)
           Container(
-            margin: const EdgeInsets.only(top: _padding1, left: _padding2, right: _padding2, bottom: _padding1),
+            margin: const EdgeInsets.only(top: _padding1, left: _padding2, right: _padding2, bottom: 0),
             child: Row(
               children: [
                 Text(boardInfo.boardName, style: _titleFont),
-                const SizedBox(width: 10,),
-                Text(boardInfo.engName, style: _titleFont2),
                 const Spacer(),
                 StarBoard(starCount: int.parse(boardInfo.likeCount), likeIt: boardInfo.iLike, bid: int.parse(boardInfo.bid),),
               ],
             ),
+          ),
+        if (widget.page <= 1)
+          Container(
+            margin: const EdgeInsets.only(top: 0, left: _padding2, right: _padding2, bottom: _padding1),
+            child: Text(boardInfo.engName, style: _titleFont2),
           ),
         if (widget.page <= 1 && boardInfo.intro.isNotEmpty)
           Container(

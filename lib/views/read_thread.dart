@@ -254,15 +254,16 @@ class OnePostComponent extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(item.authorInfo.userName),
-                      const Text(' ('),
-                      Flexible(child: HtmlComponent(item.authorInfo.nickName, needSelect: false),),
-                      const Text(')'),
-                      Text(item.authorInfo.status),
-                    ],
+                  SelectableText.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(text: item.authorInfo.userName),
+                        const TextSpan(text: ' ('),
+                        WidgetSpan(child: HtmlComponent(item.authorInfo.nickName, needSelect: true),),
+                        const TextSpan(text: ') '),
+                        TextSpan(text: item.authorInfo.status),
+                      ],
+                    ),
                   ),
                   if (item.modifyTime.isNotEmpty)
                     Text(

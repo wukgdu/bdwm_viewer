@@ -172,14 +172,14 @@ class _UserInfoPageState extends State<UserInfoPage> {
         Card(
           child: ListTile(
             // leading: CircleAvatar(
-            //   // backgroundColor: Colors.white,
+            //   backgroundColor: Colors.white,
             //   backgroundImage: NetworkImage(user.avatarLink),
             // ),
             leading: Stack(
               alignment: const Alignment(0, 0),
               children: [
                 CircleAvatar(
-                  // backgroundColor: Colors.white,
+                  backgroundColor: Colors.white,
                   backgroundImage: NetworkImage(user.avatarLink),
                 ),
                 if (user.avatarFrameLink.isNotEmpty)
