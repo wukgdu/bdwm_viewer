@@ -61,6 +61,19 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            def buildType = variant.name
+            def version = variant.versionName
+            def createTime = new Date().format('yyyy_MM_dd_HH_mm')
+            if (buildType == "debug") {
+                outputFileName = "OBViewer_${buildType}_${version}_${createTime}.apk"
+            } else if (buildType == "release") {
+                outputFileName = "OBViewer_${buildType}_${version}_${createTime}.apk"
+            }
+        }
+    }
 }
 
 flutter {
