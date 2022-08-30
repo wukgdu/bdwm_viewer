@@ -221,6 +221,7 @@ class OnePostComponent extends StatelessWidget {
     var item = onePostInfo;
     // double deviceWidth = MediaQuery.of(context).size.width;
     return Card(
+      // color: item.postNumber.contains("高亮") ? hightlightColor : null,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -244,7 +245,7 @@ class OnePostComponent extends StatelessWidget {
                 ),
                 if (item.postOwner)
                   const Text("楼主", style: TextStyle(fontSize: 12, color: Colors.lightBlue)),
-                Text(item.postNumber, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                Text(item.postNumber, style: TextStyle(fontSize: 12, color: item.postNumber.contains("高亮") ? hightlightColor : Colors.grey)),
               ],
             ),
           ),

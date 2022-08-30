@@ -81,6 +81,8 @@ class OneThreadInBoard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool pinned = boardPostInfo.bpID == "置顶";
+    bool ad = boardPostInfo.bpID == "推广";
+    bool specialOne = pinned || ad;
     return Card(
         child: ListTile(
           title: Text.rich(
@@ -89,6 +91,8 @@ class OneThreadInBoard extends StatelessWidget {
               children: <InlineSpan>[
                 if (pinned)
                   const WidgetSpan(child: Icon(Icons.pin_drop, color: bdwmPrimaryColor, size: 16))
+                else if (ad)
+                  TextSpan(text: boardPostInfo.bpID, style: const TextStyle(backgroundColor: Colors.amber, color: Colors.white))
                 else if (boardPostInfo.isNew)
                   const WidgetSpan(
                     child: Icon(Icons.circle, color: bdwmPrimaryColor, size: 7),
@@ -100,7 +104,7 @@ class OneThreadInBoard extends StatelessWidget {
               ],
             )
           ),
-          subtitle: pinned ? null
+          subtitle: specialOne ? null
             : Text.rich(
               TextSpan(
                 text: "${boardPostInfo.userName} 发表于 ${boardPostInfo.pTime}",
@@ -117,19 +121,35 @@ class OneThreadInBoard extends StatelessWidget {
                 ],
               )
             ),
-          isThreeLine: pinned ? false : true,
+          isThreeLine: specialOne ? false : true,
           onTap: () {
-            if (pinned) {
-              bdwmClient.get(boardPostInfo.link, headers: genHeaders2()).then((value) {
-                var threadid = directToThread(value.body);
-                if (threadid.isEmpty) { return; }
+            if (specialOne) {
+              var link = boardPostInfo.link;
+              var p1Bid = link.indexOf("bid=");
+              var p2Bid = link.indexOf("&", p1Bid);
+              var nBid = p2Bid == -1 ? link.substring(p1Bid+4) : link.substring(p1Bid+4, p2Bid);
+              if (link.contains("post-read-single.php")) {
+                bdwmClient.get(link, headers: genHeaders2()).then((value) {
+                  var threadid = directToThread(value.body);
+                  if (threadid.isEmpty) { return; }
+                  Navigator.of(context).pushNamed('/thread', arguments: {
+                    'bid': nBid,
+                    'threadid': threadid,
+                    'boardName': boardName,
+                    'page': '1',
+                  });
+                });
+              } else {
+                var p1Tid = link.indexOf("threadid=");
+                var p2Tid = link.indexOf("&", p1Tid);
+                var nTid = p2Tid == -1 ? link.substring(p1Tid+9) : link.substring(p1Tid+9, p2Tid);
                 Navigator.of(context).pushNamed('/thread', arguments: {
-                  'bid': bid,
-                  'threadid': threadid,
+                  'bid': nBid,
+                  'threadid': nTid,
                   'boardName': boardName,
                   'page': '1',
                 });
-              });
+              }
             } else {
               Navigator.of(context).pushNamed('/thread', arguments: {
                 'bid': bid,

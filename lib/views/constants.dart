@@ -7,3 +7,4 @@ const textLinkStyle = TextStyle(
 const textLinkSiblingStyle = TextStyle(
   color: Colors.black,
 );
+const Color hightlightColor = Color(0xfff8cea8);
