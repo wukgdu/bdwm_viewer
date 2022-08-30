@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 // import 'package:fwfh_selectable_text/fwfh_selectable_text.dart';
 
@@ -111,5 +113,44 @@ Future<String?> showAlertDialog(BuildContext context, String title, Widget conte
     builder: (BuildContext context) {
       return alert;
     },
+  );
+}
+
+Future<String?> showPageDialog(BuildContext context, int curPage, int maxPage) {
+  TextEditingController pageValue = TextEditingController();
+  Widget _content() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(child: TextField(
+          controller: pageValue,
+          // decoration: InputDecoration(
+          // ),
+          keyboardType: const TextInputType.numberWithOptions(),
+        ),
+        ),
+        const Text("/"),
+        Expanded(child: Text(maxPage.toString())),
+      ],
+    );
+  }
+  return showAlertDialog(
+    context, "跳转", _content(),
+    actions1: TextButton(
+      onPressed: () { Navigator.of(context).pop(); },
+      child: const Text("取消"),
+    ),
+    actions2: TextButton(
+      onPressed: () {
+        if (pageValue.text.isEmpty) { return; }
+        var nPage = int.tryParse(pageValue.text);
+        if (nPage == null) { return; }
+        if ((nPage > 0) && (nPage <= maxPage)) {
+          Navigator.of(context).pop(pageValue.text);
+        }
+      },
+      child: const Text("确认"),
+    ),
   );
 }

@@ -5,6 +5,7 @@ import '../html_parser/board_parser.dart';
 import '../bdwm/req.dart';
 import '../views/board.dart';
 import '../globalvars.dart';
+import '../views/utils.dart';
 
 class BoardApp extends StatefulWidget {
   final String boardName;
@@ -99,7 +100,18 @@ class _BoardAppState extends State<BoardApp> {
                   ),
                   TextButton(
                     child: Text("$page/${boardInfo.pageNum}"),
-                    onPressed: () {},
+                    onPressed: () async {
+                      var nPageStr = await showPageDialog(context, page, boardInfo.pageNum);
+                      if (nPageStr == null) { return; }
+                      if (nPageStr.isEmpty) { return; }
+                      var nPage = int.parse(nPageStr);
+                      setState(() {
+                        page = nPage;
+                        getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+                          debugPrint("cancel it");
+                        },);
+                      });
+                    },
                   ),
                   IconButton(
                     disabledColor: Colors.grey,

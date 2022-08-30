@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 
 import '../views/read_thread.dart';
+import '../views/utils.dart';
 import '../html_parser/read_thread_parser.dart';
 import '../bdwm/req.dart';
 import '../globalvars.dart';
@@ -124,7 +125,18 @@ class _ThreadAppState extends State<ThreadApp> {
                   ),
                   TextButton(
                     child: Text("$page/${threadPageInfo.pageNum}"),
-                    onPressed: () {},
+                    onPressed: () async {
+                      var nPageStr = await showPageDialog(context, page, threadPageInfo.pageNum);
+                      if (nPageStr == null) { return; }
+                      if (nPageStr.isEmpty) { return; }
+                      var nPage = int.parse(nPageStr);
+                      setState(() {
+                        page = nPage;
+                        getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+                          debugPrint("cancel it");
+                        },);
+                      });
+                    },
                   ),
                   IconButton(
                     disabledColor: Colors.grey,

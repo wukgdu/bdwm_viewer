@@ -283,7 +283,7 @@ ThreadPageInfo parseThread(String htmlStr) {
       });
       pagingsDom.map((e) {
         var txt = e.text;
-        if (txt.startsWith(".")) {
+        if (txt.contains(".")) {
           txt = txt.replaceAll(".", "");
         }
         return int.parse(txt);
