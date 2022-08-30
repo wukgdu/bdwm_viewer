@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as hdom;
+import 'package:extended_image/extended_image.dart';
 // import 'package:csslib/parser.dart' as css_parser;
 
 import "./utils.dart";
@@ -10,6 +12,71 @@ import './constants.dart';
 import '../pages/read_thread.dart';
 import '../html_parser/utils.dart';
 import '../pages/detail_image.dart';
+
+class WrapImageNetwork extends StatefulWidget {
+  final String imgLink;
+  const WrapImageNetwork({Key? key, required this.imgLink}) : super(key: key);
+
+  @override
+  State<WrapImageNetwork> createState() => _WrapImageNetworkState();
+}
+
+class _WrapImageNetworkState extends State<WrapImageNetwork> {
+  CancellationToken cancelIt = CancellationToken();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+  
+  @override
+  void dispose() {
+    cancelIt.cancel();
+    clearMemoryImageCache();
+    scheduleMicrotask(clearDiskCachedImages);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ExtendedImage.network(
+      widget.imgLink,
+      fit: BoxFit.contain,
+      cache: true,
+      enableMemoryCache: true,
+      clearMemoryCacheWhenDispose: true,
+      clearMemoryCacheIfFailed: true,
+      handleLoadingProgress: true,
+      filterQuality: FilterQuality.high,
+      cancelToken: cancelIt,
+      loadStateChanged: (ExtendedImageState state) {
+        switch (state.extendedImageLoadState) {
+          case LoadState.loading:
+            var curByte = state.loadingProgress?.cumulativeBytesLoaded ?? 0;
+            var sumByte = state.loadingProgress?.expectedTotalBytes ?? -1;
+            if (sumByte == -1) {
+              return const Text("加载中");
+            }
+            var text = "${(curByte * 100 / sumByte).toStringAsFixed(0)}%";
+            // return Text(text);
+            return CircularProgressIndicator(
+              value: curByte / sumByte,
+              semanticsLabel: '加载中',
+              semanticsValue: text,
+              backgroundColor: Colors.amberAccent,
+            );
+          case LoadState.completed:
+            return null;
+          case LoadState.failed:
+            return const Icon(Icons.broken_image);
+          default:
+            return null;
+        }
+      },
+      // printError: false,
+    );
+  }
+}
 
 class HtmlComponent extends StatefulWidget {
   final String htmlStr;
@@ -132,7 +199,13 @@ class _HtmlComponentState extends State<HtmlComponent> {
                   child: Container(
                     constraints: const BoxConstraints(maxHeight: 200, maxWidth: 200),
                     // alignment: Alignment.centerLeft,
-                    child: Image.network(src,)
+                    child: WrapImageNetwork(imgLink: src,),
+                    // child: Image.network(
+                    //   src,
+                    //   errorBuilder: (context, error, stackTrace) {
+                    //     return const Center(child: Icon(Icons.broken_image));
+                    //   },
+                    // ),
                   ),
                   onTap: () {
                     gotoDetailImage(context: context, link: src, imgData: null, name: "image.jpg");

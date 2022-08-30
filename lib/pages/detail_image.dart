@@ -36,6 +36,7 @@ class _DetailImageState extends State<DetailImage> {
   String imgLink = "";
   String? imgName;
   Uint8List? imgData;
+  CancellationToken cancelIt = CancellationToken();
 
   @override
   initState() {
@@ -47,6 +48,7 @@ class _DetailImageState extends State<DetailImage> {
 
   @override
   dispose() {
+    cancelIt.cancel();
     clearMemoryImageCache();
     // Future.delayed(Duration.zero, () => clearDiskCachedImages());
     Future.microtask(clearDiskCachedImages);
@@ -169,13 +171,14 @@ class _DetailImageState extends State<DetailImage> {
           child: imgData == null
           ? ExtendedImage.network(
             imgLink,
-            fit: BoxFit.fill,
+            fit: BoxFit.contain,
             cache: true,
             enableMemoryCache: true,
             clearMemoryCacheWhenDispose: true,
             clearMemoryCacheIfFailed: true,
             handleLoadingProgress: true,
             filterQuality: FilterQuality.high,
+            cancelToken: cancelIt,
             loadStateChanged: (ExtendedImageState state) {
               switch (state.extendedImageLoadState) {
                 case LoadState.loading:
@@ -217,7 +220,7 @@ class _DetailImageState extends State<DetailImage> {
           )
           : ExtendedImage.memory(
             imgData!,
-            fit: BoxFit.fill,
+            fit: BoxFit.contain,
             enableMemoryCache: true,
             clearMemoryCacheWhenDispose: true,
             clearMemoryCacheIfFailed: true,
