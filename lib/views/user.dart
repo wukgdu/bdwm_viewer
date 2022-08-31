@@ -167,6 +167,9 @@ class _UserInfoPageState extends State<UserInfoPage> {
       user.gender == "男" ? const Icon(Icons.man) : const Icon(Icons.woman);
     var subtitle1 = user.personalCollection.link != null ? "个人文集 ${user.personalCollection.text}" : user.personalCollection.text;
     var subtitle2 = user.duty ?? '本站职务：无';
+    if (user.errorMessage != null) {
+      return Center(child: Text(user.errorMessage!));
+    }
     return Column(
       children: [
         Card(

@@ -31,8 +31,10 @@ class UserProfile {
   String? duty;
   List<String>? dutyBoards;
   List<String>? dutyBoardLinks;
+  String? errorMessage;
 
   UserProfile();
+  UserProfile.error({required this.errorMessage});
 
   UserProfile.init({
     required this.bbsID,
@@ -59,6 +61,7 @@ class UserProfile {
     this.duty,
     this.dutyBoards,
     this.dutyBoardLinks,
+    this.errorMessage,
   });
 
   @override
@@ -69,6 +72,10 @@ class UserProfile {
 
 UserProfile parseUser(String htmlStr) {
   var document = parse(htmlStr);
+  var errorMessage = checkError(document);
+  if (errorMessage != null) {
+    return UserProfile.error(errorMessage: errorMessage);
+  }
   var basicInfo = document.querySelector('.basic-info');
   var nickInfo = basicInfo?.querySelector('.nick');
   if (basicInfo == null || nickInfo == null) {

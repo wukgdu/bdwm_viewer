@@ -6,7 +6,7 @@ import '../bdwm/req.dart';
 import '../views/board.dart';
 import '../globalvars.dart';
 import '../views/utils.dart';
-import '../views/constants.dart';
+// import '../views/constants.dart';
 
 class BoardApp extends StatefulWidget {
   final String boardName;
