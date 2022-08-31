@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 // import 'package:fwfh_selectable_text/fwfh_selectable_text.dart';
 
@@ -131,7 +129,7 @@ Future<String?> showPageDialog(BuildContext context, int curPage, int maxPage) {
         ),
         ),
         const Text("/"),
-        Expanded(child: Text(maxPage.toString())),
+        Text(maxPage.toString()),
       ],
     );
   }

@@ -62,14 +62,28 @@ android {
         }
     }
 
+    splits {
+        abi {
+            enable true
+            reset()
+            universalApk true  // If true, also generate a universal APK
+            include "arm64-v8a", "armeabi-v7a", "x86_64"
+            exclude "x86"
+        }
+    }
+
     applicationVariants.all { variant ->
-        variant.outputs.all {
+        variant.outputs.all { output ->
             def buildType = variant.name
             def version = variant.versionName
-            def createTime = new Date().format('yyyy_MM_dd_HH_mm')
-            if (buildType == "debug") {
-                outputFileName = "OBViewer_${buildType}_${version}_${createTime}.apk"
-            } else if (buildType == "release") {
+            def createTime = new Date().format('yyyyMMddHHmmss')
+            def abi = output.getFilter(com.android.build.OutputFile.ABI)
+            // if (buildType == "debug") {
+            // } else if (buildType == "release") {
+            // }
+            if (abi != null) {
+                outputFileName = "OBViewer_${buildType}_${version}_${abi}_${createTime}.apk"
+            } else {
                 outputFileName = "OBViewer_${buildType}_${version}_${createTime}.apk"
             }
         }

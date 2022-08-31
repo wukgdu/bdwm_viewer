@@ -1,4 +1,5 @@
 import 'package:quick_notify/quick_notify.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class TextAndLink {
   String text = "";
@@ -9,12 +10,16 @@ class TextAndLink {
 }
 
 void quickNotify(String title, String content) async {
-  var hasP = await QuickNotify.hasPermission();
+  var couldNotify = true;
+  var hasP = await Permission.notification.isGranted;
   if (!hasP) {
-    var getP = await QuickNotify.requestPermission();
-    if (!getP) {
-      return;
+    var status = await Permission.notification.request();
+    if (!status.isGranted) {
+      couldNotify = false;
     }
+  }
+  if (couldNotify == false) {
+    return;
   }
   QuickNotify.notify(
     title: title,
