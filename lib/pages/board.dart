@@ -6,6 +6,7 @@ import '../bdwm/req.dart';
 import '../views/board.dart';
 import '../globalvars.dart';
 import '../views/utils.dart';
+import '../views/constants.dart';
 
 class BoardApp extends StatefulWidget {
   final String boardName;
@@ -75,15 +76,42 @@ class _BoardAppState extends State<BoardApp> {
           appBar: AppBar(
             title: Text(boardInfo.boardName),
           ),
+          // floatingActionButton: IconButton(
+          //   icon: const Icon(Icons.add_circle, color: bdwmPrimaryColor, size: 24,),
+          //   onPressed: () {
+          //   },
+          // ),
+          // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
           body: BoardPage(bid: widget.bid, page: page, boardInfo: boardInfo,),
           bottomNavigationBar: BottomAppBar(
-            shape: null,
+            shape: const CircularNotchedRectangle(),
             // color: Colors.blue,
             child: IconTheme(
               data: const IconThemeData(color: Colors.redAccent),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
+                  IconButton(
+                    disabledColor: Colors.grey,
+                    tooltip: '发帖',
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed('/post', arguments: {
+                        'bid': widget.bid,
+                        'boardName': boardInfo.boardName,
+                      }).then((value) {
+                        if (value != null && value == true) {
+                          if (!mounted) { return; }
+                          setState(() {
+                            page = page;
+                            getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+                              debugPrint("cancel it");
+                            },);
+                          });
+                        }
+                      });
+                    },
+                  ),
                   IconButton(
                     disabledColor: Colors.grey,
                     tooltip: '上一页',

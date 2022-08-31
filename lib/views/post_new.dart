@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 
@@ -36,8 +38,8 @@ class _PostNewPageState extends State<PostNewPage> {
   }
 
   Future<PostNewInfo> getExampleData() async {
-    print("getExampleData");
-    return getExamplePostNew();
+    print("get PostNew data");
+    return getData();
   }
 
   @override
@@ -112,9 +114,15 @@ class _PostNewPageState extends State<PostNewPage> {
                       if (needNoreply) { config['no_reply'] = true; }
                       if (needRemind) { config['mail_re'] = true; }
                       if (needAnony) { config['anony'] = true; }
+                      var nSignature = signature?.value ?? "";
+                      if (nSignature == "random") {
+                        var maxS = postNewInfo.signatureInfo.length - 2;
+                        var randomI = math.Random().nextInt(maxS);
+                        nSignature = randomI.toString();
+                      }
                       bdwmSimplePost(
                         bid: widget.bid, title: titleValue.text, content: contentValue.text,
-                        signature: signature?.value ?? "", config: config)
+                        signature: nSignature, config: config)
                       .then((value) {
                         if (value.success) {
                           // TODO: handle forward
@@ -123,7 +131,9 @@ class _PostNewPageState extends State<PostNewPage> {
                               onPressed: () { Navigator.of(context).pop(); },
                               child: const Text("知道了"),
                             )
-                          );
+                          ).then((value) {
+                            Navigator.of(context).pop(true);
+                          });
                         } else {
                           var errorMessage = "发送失败，请稍后重试";
                           if (value.error == 43) {
