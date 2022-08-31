@@ -17,7 +17,7 @@ Future<StarBoardRes> bdwmStarBoard(int bid, String action) async {
   var actionUrl = "$v2Host/ajax/set_good_boards.php";
   var data = {
     'action': action,
-    'bids': "[${bid}]",
+    'bids': "[$bid]",
   };
   var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
   var content = json.decode(resp.body);

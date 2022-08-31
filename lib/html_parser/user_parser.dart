@@ -80,7 +80,6 @@ UserProfile parseUser(String htmlStr) {
   var avatarLink = absImgSrc(basicInfo.querySelector(".portrait")?.attributes['src'] ?? defaultAvator);
   var afl = basicInfo.querySelector(".avatar-frame")?.attributes['src'];
   var avatarFrameLink = afl == null ? "" : absImgSrc(afl);
-  print(avatarFrameLink);
   var personalCollection = getTrimmedString(nickInfo.querySelector(".personal-collection"));
   var tmpDutyDom = nickInfo.querySelector(".personal-duty");
   String? duty;

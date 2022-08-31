@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
+// import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 const bbsHost = "https://bbs.pku.edu.cn";
@@ -53,7 +53,7 @@ class Uinfo {
   Future<bool> init() async {
     String dir = (await getApplicationDocumentsDirectory()).path;
     String filename = "$dir/$storage";
-    debugPrint(filename);
+    // debugPrint(filename);
     void writeInit() {
       var file = File(filename).openWrite();
       Map<String, Object> content = <String, Object>{

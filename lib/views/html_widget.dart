@@ -82,7 +82,7 @@ class HtmlComponent extends StatefulWidget {
   final String htmlStr;
   final bool? needSelect;
   final TextStyle? ts;
-  HtmlComponent(this.htmlStr, {Key? key, this.needSelect, this.ts}) : super(key: key);
+  const HtmlComponent(this.htmlStr, {Key? key, this.needSelect, this.ts}) : super(key: key);
 
   @override
   State<HtmlComponent> createState() => _HtmlComponentState();

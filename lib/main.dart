@@ -9,6 +9,7 @@ import './pages/board.dart';
 import './pages/login.dart';
 import './pages/user.dart';
 import './pages/read_thread.dart';
+import './pages/post_new.dart';
 // import './pages/detail_image.dart';
 import './services.dart';
 
@@ -63,7 +64,8 @@ class _MainPageState extends State<MainPage> {
         // colorScheme: const ColorScheme.light().copyWith(primary: Colors.orangeAccent),
         colorScheme: const ColorScheme.light().copyWith(primary: const Color(0xffe97c62)),
       ),
-      home: HomeApp(messageCount: messageCount,),
+      // home: HomeApp(messageCount: messageCount,),
+      home: const PostNewApp(boardName: "测试", bid: "7"),
       // home: BoardApp(bid: "103", boardName: "未名湖",),
       // home: const DetailImage(imgLink: "https://bbs.pku.edu.cn/v2/uploads/index_MKoueo.jpg", imgName: "招新.jpg",),
       // home: ThreadApp(bid: "33", threadid: "18262167", page: "2", boardName: "历史",),
@@ -89,6 +91,18 @@ class _MainPageState extends State<MainPage> {
               return null;
             }
             builder = res;
+            break;
+          case "/post":
+            String? boardName;
+            String? bid;
+            if (settings.arguments != null) {
+              var settingsMap = settings.arguments as Map;
+              bid = settingsMap['bid'] as String;
+              boardName = settingsMap['boardName'] as String;
+            } else {
+              return null;
+            }
+            builder = (BuildContext context) => PostNewApp(boardName: boardName ?? "版面", bid: bid ?? "");
             break;
           case "/login":
             bool needBack = false;
