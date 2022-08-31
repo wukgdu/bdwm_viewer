@@ -32,6 +32,8 @@ class UserProfile {
   List<String>? dutyBoards;
   List<String>? dutyBoardLinks;
   String? errorMessage;
+  bool useradd = false;
+  bool? userreject;
 
   UserProfile();
   UserProfile.error({required this.errorMessage});
@@ -62,6 +64,8 @@ class UserProfile {
     this.dutyBoards,
     this.dutyBoardLinks,
     this.errorMessage,
+    required this.useradd,
+    this.userreject,
   });
 
   @override
@@ -165,8 +169,17 @@ UserProfile parseUser(String htmlStr) {
     }
   }
 
+  var useradd = false;
+  var operationDom = document.querySelector(".operations-button");
+  if (operationDom != null) {
+    var txt = getTrimmedString(operationDom.querySelector("span"));
+    if (txt.contains("已关注")) {
+      useradd = true;
+    }
+  }
+
   return UserProfile.init(
-    bbsID: bbsID, nickName: nickName, status: status, avatarLink: avatarLink, nickNameHtml: nickNameHtml,
+    bbsID: bbsID, nickName: nickName, status: status, avatarLink: avatarLink, nickNameHtml: nickNameHtml, useradd: useradd,
     personalCollection: TextAndLink(personalCollection, personalCollectionLink), gender: gender, constellation: constellation,
     countLogin: countLogin, countPost: countPost, value: value, score: score, rankName: rankName, avatarFrameLink: avatarFrameLink,
     rating: rating, recentLogin: recentLogin, recentLogout: recentLogout, signature: signature, signatureHtml: signatureHtml,

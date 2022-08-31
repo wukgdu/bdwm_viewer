@@ -4,10 +4,74 @@ import 'package:flutter/material.dart';
 import "../html_parser/user_parser.dart";
 import "../bdwm/req.dart";
 import "../globalvars.dart";
+import '../bdwm/users.dart';
 import "../bdwm/logout.dart";
 import "./utils.dart";
 import "./constants.dart";
 import './html_widget.dart';
+
+class UserOperationComponent extends StatefulWidget {
+  final UserProfile user;
+  final String uid;
+  const UserOperationComponent({super.key, required this.user, required this.uid});
+
+  @override
+  State<UserOperationComponent> createState() => _UserOperationComponentState();
+}
+
+class _UserOperationComponentState extends State<UserOperationComponent> {
+  bool useradd = false;
+
+  @override
+  void initState() {
+    super.initState();
+    useradd = widget.user.useradd;
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 48,
+      height: 48,
+      child:  TextButton(
+        child: useradd ? const Text("取消关注") : const Text("关注"),
+        onPressed: () {
+          var uid = widget.uid;
+          var username = widget.user.bbsID;
+          if (username.isEmpty) { return; }
+          var action = "add";
+          if (useradd) {
+            action = "delete";
+          }
+          String? mode;
+          var desc = "";
+          bdwmUsers(uid, action, desc, mode: mode).then((value) {
+            var title = "";
+            var content = "成功关注";
+            if (useradd) {
+              content = "成功取消关注";
+            }
+            if (!value.success) {
+              content = "失败啦，请稍候再试";
+            }
+            showAlertDialog(context, title, Text(content),
+              actions1: TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("知道了"),
+              ),
+            ).then((dialogValue) {
+              setState(() {
+                useradd = !useradd;
+              });
+            });
+          });
+        },
+      ),
+    );
+  }
+}
 
 class UserInfoPage extends StatefulWidget {
   final String uid;
@@ -218,7 +282,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                   },
                 ),
               )
-              : null,
+              : UserOperationComponent(user: user, uid: widget.uid),
             ),
           ),
         Expanded(
