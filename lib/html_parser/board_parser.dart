@@ -19,6 +19,7 @@ class BoardPostInfo {
   String commentCount = "";
   String lastUser = "";
   String lastTime = "";
+  bool lock = false;
 
   BoardPostInfo.empty();
   BoardPostInfo({
@@ -34,6 +35,7 @@ class BoardPostInfo {
     required this.commentCount,
     required this.lastUser,
     required this.lastTime,
+    required this.lock,
   });
 }
 
@@ -101,7 +103,17 @@ List<BoardPostInfo> parseBoardPost(Element? docu) {
     if (pdom.querySelector(".dot.unread") != null) {
       isNew = true;
     }
-    String title = getTrimmedString(pdom.querySelector(".title-cont"));
+    var titleCont = pdom.querySelector(".title-cont");
+    String title = getTrimmedString(titleCont);
+    bool lock = false;
+    if (titleCont != null) {
+      for (var idom in titleCont.querySelectorAll("img")) {
+        if (idom.attributes['src']?.contains("lock") ?? false) {
+          lock = true;
+          break;
+        }
+      }
+    }
     String link = absThreadLink(pdom.querySelector(".link")?.attributes['href'] ?? "");
     String threadID = pdom.attributes['data-itemid'] ?? "";
     String userName = getTrimmedString(pdom.querySelector(".author .name"));
@@ -120,7 +132,7 @@ List<BoardPostInfo> parseBoardPost(Element? docu) {
     boardPostInfo.add(BoardPostInfo(
       bpID: bpID, isNew: isNew, title: title, link: link, threadID: threadID,
       userName: userName, avatarLink: avatarLink, pTime: pTime, uid: uid,
-      commentCount: commentCount, lastUser: lastUser, lastTime: lastTime,
+      commentCount: commentCount, lastUser: lastUser, lastTime: lastTime, lock: lock,
     ));
   }
   return boardPostInfo;
