@@ -5,7 +5,8 @@ import '../views/post_new.dart';
 class PostNewApp extends StatefulWidget {
   final String bid;
   final String boardName;
-  const PostNewApp({Key? key, required this.bid, required this.boardName}) : super(key: key);
+  final String? postid;
+  const PostNewApp({Key? key, required this.bid, required this.boardName, this.postid}) : super(key: key);
 
   @override
   State<PostNewApp> createState() => _PostNewAppState();
@@ -18,7 +19,7 @@ class _PostNewAppState extends State<PostNewApp> {
       appBar: AppBar(
         title: Text(widget.boardName),
       ),
-      body: PostNewPage(bid: widget.bid,),
+      body: PostNewPage(bid: widget.bid, postid: widget.postid),
     );
   }
 }

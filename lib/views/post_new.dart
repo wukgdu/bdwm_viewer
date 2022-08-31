@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 
 import '../bdwm/posts.dart';
+import '../views/html_widget.dart';
 import '../bdwm/req.dart';
 import './constants.dart';
 import '../globalvars.dart';
@@ -12,8 +14,9 @@ import './utils.dart';
 
 class PostNewPage extends StatefulWidget {
   final String bid;
+  final String? postid;
   // final String boardName;
-  const PostNewPage({Key? key, required this.bid}) : super(key: key);
+  const PostNewPage({Key? key, required this.bid, this.postid}) : super(key: key);
 
   @override
   State<PostNewPage> createState() => _PostNewPageState();
@@ -27,12 +30,16 @@ class _PostNewPageState extends State<PostNewPage> {
   bool needForward = false;
   bool needAnony = false;
   SignatureItem? signature;
+  final signatureOB = SignatureItem(key: "OBViewer", value: "OBViewer");
   static const vDivider = VerticalDivider();
 
   late CancelableOperation getDataCancelable;
 
   Future<PostNewInfo> getData() async {
     var url = "$v2Host/post-new.php?bid=${widget.bid}";
+    if (widget.postid != null) {
+      url += "&mode=modify&postid=${widget.postid}";
+    }
     var resp = await bdwmClient.get(url, headers: genHeaders2());
     return parsePostNew(resp.body);
   }
@@ -73,6 +80,16 @@ class _PostNewPageState extends State<PostNewPage> {
           return Center(
             child: Text(postNewInfo.errorMessage!),
           );
+        }
+        if (postNewInfo.titleText != null && postNewInfo.titleText!.isNotEmpty) {
+          if (titleValue.text.isEmpty) {
+            titleValue.value = TextEditingValue(text: postNewInfo.titleText!);
+          }
+        }
+        if (postNewInfo.contentText != null && postNewInfo.contentText!.isNotEmpty) {
+          if (contentValue.text.isEmpty) {
+            contentValue.value = TextEditingValue(text: postNewInfo.contentText!);
+          }
         }
         return Column(
           children: [
@@ -116,13 +133,22 @@ class _PostNewPageState extends State<PostNewPage> {
                       if (needAnony) { config['anony'] = true; }
                       var nSignature = signature?.value ?? "";
                       if (nSignature == "random") {
-                        var maxS = postNewInfo.signatureInfo.length - 2;
+                        var moreCount = widget.postid == null ? 2 : 3;
+                        moreCount -= 1; // skip OBViewer
+                        var maxS = postNewInfo.signatureInfo.length - moreCount;
                         var randomI = math.Random().nextInt(maxS);
                         nSignature = randomI.toString();
+                      } else if (nSignature == "keep") {
+                        nSignature = postNewInfo.oriSignature ?? "";
+                      } else if (nSignature == "OBViewer") {
+                        nSignature = jsonEncode([
+                            {"content":"单独设置的签名档\n","fore_color":9,"back_color":9,"bold":false,"blink":false,"underline":false,"reverse":false,"type":"ansi"},
+                          ]
+                        );
                       }
                       bdwmSimplePost(
                         bid: widget.bid, title: titleValue.text, content: contentValue.text,
-                        signature: nSignature, config: config)
+                        signature: nSignature, config: config, modify: widget.postid!=null, postid: widget.postid)
                       .then((value) {
                         if (value.success) {
                           // TODO: handle forward
@@ -233,12 +259,18 @@ class _PostNewPageState extends State<PostNewPage> {
                 hint: const Text("签名档"),
                 icon: const Icon(Icons.arrow_drop_down),
                 value: signature,
-                items: postNewInfo.signatureInfo.map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
-                  return DropdownMenuItem<SignatureItem>(
-                    value: item,
-                    child: Text(item.key),
-                  );
-                }).toList(),
+                items: [
+                  ...postNewInfo.signatureInfo.map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
+                    return DropdownMenuItem<SignatureItem>(
+                        value: item,
+                        child: Text(item.key),
+                      );
+                    }).toList(),
+                  DropdownMenuItem<SignatureItem>(
+                    value: signatureOB,
+                    child: const Text("OBViewer"),
+                  )
+                ],
                 onChanged: (SignatureItem? value) {
                   setState(() {
                     signature = value!;

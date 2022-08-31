@@ -95,14 +95,16 @@ class _MainPageState extends State<MainPage> {
           case "/post":
             String? boardName;
             String? bid;
+            String? postid;
             if (settings.arguments != null) {
               var settingsMap = settings.arguments as Map;
               bid = settingsMap['bid'] as String;
               boardName = settingsMap['boardName'] as String;
+              postid = settingsMap['postid'] as String?;
             } else {
               return null;
             }
-            builder = (BuildContext context) => PostNewApp(boardName: boardName ?? "版面", bid: bid ?? "");
+            builder = (BuildContext context) => PostNewApp(boardName: boardName ?? "版面", bid: bid ?? "", postid: postid,);
             break;
           case "/login":
             bool needBack = false;

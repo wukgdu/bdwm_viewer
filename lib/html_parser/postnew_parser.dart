@@ -28,6 +28,10 @@ class PostNewInfo {
   bool canForward = false;
   bool canAnony = false;
   String? errorMessage;
+  String? titleText;
+  String? contentText;
+  String? contentHtml;
+  String? oriSignature;
 
   PostNewInfo.empty();
   PostNewInfo.error({required this.errorMessage});
@@ -39,6 +43,10 @@ class PostNewInfo {
     required this.canForward,
     required this.canAnony,
     this.errorMessage,
+    this.titleText,
+    this.contentText,
+    this.contentHtml,
+    this.oriSignature,
   });
 }
 
@@ -90,7 +98,30 @@ PostNewInfo parsePostNew(String htmlStr) {
     }
   }
 
-  return PostNewInfo(bid: bid, signatureInfo: signatureInfo, canNoreply: canNoreply, canRemind: canRemind, canForward: canForward, canAnony: canAnony);
+  var titleDom = editorDom.querySelector(".title-input input");
+  var titleText = titleDom?.attributes['value'] ?? "";
+  var contentDom = editorDom.querySelector("#post-origin");
+  var contentText = "";
+  var pCount = contentDom?.querySelectorAll("p").length ?? 0;
+  for (var cdom in contentDom?.querySelectorAll("p") ?? []) {
+    pCount -= 1;
+    contentText += cdom.text;
+    if (pCount > 0) {
+      contentText += "\n";
+    }
+  }
+  var contentHtml = getTrimmedHtml(contentDom);
+
+  String? oriSignature;
+  var oriSigDom = editorDom.querySelector("#signature-origin");
+  if (oriSigDom != null) {
+    oriSignature = getTrimmedString(oriSigDom);
+  }
+
+  return PostNewInfo(
+    bid: bid, signatureInfo: signatureInfo, canNoreply: canNoreply, canRemind: canRemind, canForward: canForward, canAnony: canAnony,
+    titleText: titleText, contentText: contentText, contentHtml: contentHtml, oriSignature: oriSignature,
+  );
 }
 
 PostNewInfo getExamplePostNew() {

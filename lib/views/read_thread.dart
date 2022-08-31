@@ -11,11 +11,12 @@ import './html_widget.dart';
 
 class OperateComponent extends StatefulWidget {
   final String bid;
+  final String boardName;
   final String threadid;
   final String postid;
   final String uid;
   final Function refreshCallBack;
-  const OperateComponent({super.key, required this.bid, required this.threadid, required this.postid, required this.uid, required this.refreshCallBack});
+  const OperateComponent({super.key, required this.bid, required this.threadid, required this.postid, required this.uid, required this.refreshCallBack, required this.boardName});
 
   @override
   State<OperateComponent> createState() => _OperateComponentState();
@@ -31,6 +32,21 @@ class _OperateComponentState extends State<OperateComponent> {
           child: const Text("回帖"),
         ),
         // TODO: get info from html parser
+        if (globalUInfo.uid == widget.uid && globalUInfo.login == true)
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed('/post', arguments: {
+                'bid': widget.bid,
+                'boardName': "",
+                'postid': widget.postid,
+              }).then((value) {
+                if (value == true) {
+                  widget.refreshCallBack();
+                }
+              });
+            },
+            child: const Text("修改"),
+          ),
         if (globalUInfo.uid == widget.uid && globalUInfo.login == true)
           TextButton(
             onPressed: () {
@@ -264,9 +280,10 @@ class AttachmentComponent extends StatelessWidget {
 class OnePostComponent extends StatelessWidget {
   final OnePostInfo onePostInfo;
   final String bid;
+  final String boardName;
   final Function refreshCallBack;
 
-  const OnePostComponent({Key? key, required this.onePostInfo, required this.bid, required this.refreshCallBack}) : super(key: key);
+  const OnePostComponent({Key? key, required this.onePostInfo, required this.bid, required this.refreshCallBack, required this.boardName}) : super(key: key);
 
   bool get simpleAttachment => false;
   final _contentFont = const TextStyle(fontSize: 16, fontWeight: FontWeight.normal);
@@ -340,7 +357,7 @@ class OnePostComponent extends StatelessWidget {
                     postID: onePostInfo.postID,
                   ),
                   const Divider(),
-                  OperateComponent(bid: bid, threadid: bid, postid: onePostInfo.postID, uid: onePostInfo.authorInfo.uid, refreshCallBack: refreshCallBack,),
+                  OperateComponent(bid: bid, threadid: bid, postid: onePostInfo.postID, uid: onePostInfo.authorInfo.uid, refreshCallBack: refreshCallBack, boardName: boardName,),
                   if (item.attachmentInfo.isNotEmpty)
                     ...[
                       const Divider(),
@@ -394,7 +411,7 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
   }
 
   Widget _onepost(OnePostInfo item) {
-    return OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack,);
+    return OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack, boardName: widget.threadPageInfo.board.text,);
   }
 
   @override
