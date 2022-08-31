@@ -91,6 +91,14 @@ class _PostNewPageState extends State<PostNewPage> {
             contentValue.value = TextEditingValue(text: postNewInfo.contentText!);
           }
         }
+        if (signature == null && widget.postid != null) {
+          for (var item in postNewInfo.signatureInfo) {
+            if (item.value == "keep") {
+              signature = item;
+              break;
+            }
+          }
+        }
         return Column(
           children: [
             Container(
