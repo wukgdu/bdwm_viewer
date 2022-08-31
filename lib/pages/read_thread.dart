@@ -52,6 +52,15 @@ class _ThreadAppState extends State<ThreadApp> {
     return parseThread(resp.body);
   }
 
+  void refresh() {
+    setState(() {
+      page = page;
+      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+        debugPrint("cancel it");
+      },);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -88,7 +97,11 @@ class _ThreadAppState extends State<ThreadApp> {
           appBar: AppBar(
             title: Text(threadPageInfo.board.text.split('(').first),
           ),
-          body: ReadThreadPage(bid: widget.bid, threadid: widget.threadid, page: page.toString(), threadPageInfo: threadPageInfo,),
+          body: ReadThreadPage(bid: widget.bid, threadid: widget.threadid, page: page.toString(), threadPageInfo: threadPageInfo,
+            refreshCallBack: () {
+              refresh();
+            },
+          ),
           bottomNavigationBar: BottomAppBar(
             shape: null,
             // color: Colors.blue,
@@ -253,7 +266,12 @@ class _ThreadApp2State extends State<ThreadApp> {
       appBar: AppBar(
         title: Text(widget.boardName ?? "看帖"),
       ),
-      body: ReadThreadPage(bid: widget.bid, threadid: widget.threadid, page: page.toString(), threadPageInfo: threadPageInfo,),
+      body: ReadThreadPage(bid: widget.bid, threadid: widget.threadid, page: page.toString(), threadPageInfo: threadPageInfo,
+        refreshCallBack: () {
+          page = page;
+          updateThreadPageInfo();
+        },
+      ),
       bottomNavigationBar: BottomAppBar(
         shape: null,
         // color: Colors.blue,

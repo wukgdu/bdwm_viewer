@@ -1,11 +1,65 @@
 import 'package:flutter/material.dart';
 
 import '../bdwm/vote.dart';
-// import './utils.dart';
+import '../bdwm/posts.dart';
+import './utils.dart';
 import './constants.dart';
 import '../html_parser/read_thread_parser.dart';
+import '../globalvars.dart';
 import '../pages/detail_image.dart';
 import './html_widget.dart';
+
+class OperateComponent extends StatefulWidget {
+  final String bid;
+  final String threadid;
+  final String postid;
+  final String uid;
+  final Function refreshCallBack;
+  const OperateComponent({super.key, required this.bid, required this.threadid, required this.postid, required this.uid, required this.refreshCallBack});
+
+  @override
+  State<OperateComponent> createState() => _OperateComponentState();
+}
+
+class _OperateComponentState extends State<OperateComponent> {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        TextButton(
+          onPressed: () {},
+          child: const Text("回帖"),
+        ),
+        // TODO: get info from html parser
+        if (globalUInfo.uid == widget.uid && globalUInfo.login == true)
+          TextButton(
+            onPressed: () {
+              bdwmDeletePost(bid: widget.bid, postid: widget.postid).then((value) {
+                var title = "";
+                var content = "删除成功";
+                if (!value.success) {
+                  content = "删除失败";
+                }
+                showAlertDialog(context, title, Text(content),
+                  actions1: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("知道了"),
+                  ),
+                ).then((value2) {
+                  if (value.success) {
+                    widget.refreshCallBack();
+                  }
+                });
+              });
+            },
+            child: const Text("删除"),
+          ),
+      ],
+    );
+  }
+}
 
 class VoteComponent extends StatefulWidget {
   final String bid;
@@ -210,8 +264,9 @@ class AttachmentComponent extends StatelessWidget {
 class OnePostComponent extends StatelessWidget {
   final OnePostInfo onePostInfo;
   final String bid;
+  final Function refreshCallBack;
 
-  const OnePostComponent({Key? key, required this.onePostInfo, required this.bid,}) : super(key: key);
+  const OnePostComponent({Key? key, required this.onePostInfo, required this.bid, required this.refreshCallBack}) : super(key: key);
 
   bool get simpleAttachment => false;
   final _contentFont = const TextStyle(fontSize: 16, fontWeight: FontWeight.normal);
@@ -284,6 +339,8 @@ class OnePostComponent extends StatelessWidget {
                     bid: bid,
                     postID: onePostInfo.postID,
                   ),
+                  const Divider(),
+                  OperateComponent(bid: bid, threadid: bid, postid: onePostInfo.postID, uid: onePostInfo.authorInfo.uid, refreshCallBack: refreshCallBack,),
                   if (item.attachmentInfo.isNotEmpty)
                     ...[
                       const Divider(),
@@ -316,7 +373,8 @@ class ReadThreadPage extends StatefulWidget {
   final String threadid;
   final String page;
   final ThreadPageInfo threadPageInfo;
-  const ReadThreadPage({Key? key, required this.bid, required this.threadid, required this.page, required this.threadPageInfo}) : super(key: key);
+  final Function refreshCallBack;
+  const ReadThreadPage({Key? key, required this.bid, required this.threadid, required this.page, required this.threadPageInfo, required this.refreshCallBack}) : super(key: key);
 
   @override
   State<ReadThreadPage> createState() => _ReadThreadPageState();
@@ -336,7 +394,7 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
   }
 
   Widget _onepost(OnePostInfo item) {
-    return OnePostComponent(onePostInfo: item, bid: widget.bid,);
+    return OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack,);
   }
 
   @override
