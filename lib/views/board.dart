@@ -109,7 +109,7 @@ class OneThreadInBoard extends StatelessWidget {
           subtitle: specialOne ? null
             : Text.rich(
               TextSpan(
-                text: "${boardPostInfo.userName} 发表于 ${boardPostInfo.pTime}",
+                text: boardPostInfo.userName=="原帖已删除" ? boardPostInfo.userName : "${boardPostInfo.userName} 发表于 ${boardPostInfo.pTime}",
                 children: [
                   const TextSpan(text: "   "),
                   const WidgetSpan(

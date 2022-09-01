@@ -27,6 +27,7 @@ class _TopHomePageState extends State<TopHomePage> {
     super.initState();
     // homeInfo = getExampleHomeInfo();
     getData().then((value) {
+      if (!mounted) { return; }
       setState(() {
         homeInfo = value;
       });

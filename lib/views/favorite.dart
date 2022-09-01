@@ -25,6 +25,7 @@ class _FavoritePageState extends State<FavoritePage> {
     //   favoriteBoards = getExampleFavoriteBoard();
     // });
     getData().then((value) {
+      if (!mounted) { return; }
       setState(() {
         favoriteBoardInfo = value;
       });

@@ -24,6 +24,7 @@ class _Top100PageState extends State<Top100Page> {
     super.initState();
     getData().then((value) {
       // getExampleTop100();
+      if (!mounted) { return; }
       setState(() {
         top100items = value;
       });
