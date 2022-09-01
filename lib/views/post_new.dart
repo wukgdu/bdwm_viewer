@@ -32,10 +32,12 @@ class _PostNewPageState extends State<PostNewPage> {
   SignatureItem? signature;
   final signatureOB = SignatureItem(key: "OBViewer", value: "OBViewer");
   static const vDivider = VerticalDivider();
+  FocusNode contentFocusNode = FocusNode();
 
   late CancelableOperation getDataCancelable;
 
   bool get useHtmlContent => true;
+  bool get useBDWMtext => true;
 
   Future<PostNewInfo> getData() async {
     var url = "$v2Host/post-new.php?bid=${widget.bid}";
@@ -62,7 +64,22 @@ class _PostNewPageState extends State<PostNewPage> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("rebuild");
+    debugPrint("post rebuild");
+    contentFocusNode.addListener(() {
+      if (contentFocusNode.hasFocus) {
+        var text = contentValue.text;
+        contentValue.clearComposing();
+        contentValue.clear();
+        (contentValue as BDWMTextEditingController).toggle();
+        contentValue.value = TextEditingValue(text: text);
+      } else {
+        var text = contentValue.text;
+        contentValue.clearComposing();
+        contentValue.clear();
+        (contentValue as BDWMTextEditingController).toggle();
+        contentValue.value = TextEditingValue(text: text);
+      }
+    });
     return FutureBuilder(
       future: getDataCancelable.value,
       builder: (context, snapshot) {
@@ -161,8 +178,9 @@ class _PostNewPageState extends State<PostNewPage> {
                           ]
                         );
                       }
+                      var nContent = useBDWMtext ? bdwmTextFormat(contentValue.text) : contentValue.text;
                       bdwmSimplePost(
-                        bid: widget.bid, title: titleValue.text, content: contentValue.text,
+                        bid: widget.bid, title: titleValue.text, content: nContent, useBDWM: useBDWMtext,
                         signature: nSignature, config: config, modify: widget.postid!=null, postid: widget.postid)
                       .then((value) {
                         if (value.success) {
@@ -200,6 +218,7 @@ class _PostNewPageState extends State<PostNewPage> {
                 minLines: 5,
                 maxLines: 10,
                 controller: contentValue,
+                focusNode: contentFocusNode,
                 decoration: const InputDecoration(
                   alignLabelWithHint: true,
                   labelText: "正文",

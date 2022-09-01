@@ -110,6 +110,14 @@ class _ThreadAppState extends State<ThreadApp> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
+                  IconButton(
+                    disabledColor: Colors.grey,
+                    tooltip: '刷新',
+                    icon: const Icon(Icons.refresh),
+                    onPressed: () {
+                      refresh();
+                    },
+                  ),
                   if (widget.needToBoard != null && widget.needToBoard == true)
                     IconButton(
                       disabledColor: Colors.grey,

@@ -93,6 +93,20 @@ class _BoardAppState extends State<BoardApp> {
                 children: <Widget>[
                   IconButton(
                     disabledColor: Colors.grey,
+                    tooltip: '刷新',
+                    icon: const Icon(Icons.refresh),
+                    onPressed: () {
+                      if (!mounted) { return; }
+                      setState(() {
+                        page = page;
+                        getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+                          debugPrint("cancel it");
+                        },);
+                      });
+                    },
+                  ),
+                  IconButton(
+                    disabledColor: Colors.grey,
                     tooltip: '发帖',
                     icon: const Icon(Icons.add),
                     onPressed: () {

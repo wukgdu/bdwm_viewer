@@ -20,12 +20,13 @@ class PostRes {
   });
 }
 
-Future<PostRes> bdwmSimplePost({required String bid, required String title, required String content, required String signature, required Map<String, bool> config, bool? modify=false, String? postid}) async {
+Future<PostRes> bdwmSimplePost({required String bid, required String title, required String content, required String signature, required Map<String, bool> config, bool? modify=false, String? postid, bool? useBDWM=false}) async {
   // TODO: random signature, noreplay, anony
   var actionUrl = "$v2Host/ajax/create_post.php";
   if (modify == true) {
     actionUrl = "$v2Host/ajax/edit_post.php";
   }
+  var contentStr = content;
   var contentData = [
     {
       "type": "ansi",
@@ -38,7 +39,7 @@ Future<PostRes> bdwmSimplePost({required String bid, required String title, requ
   ];
   var data = {
     'title': title,
-    'content': jsonEncode(contentData),
+    'content': (useBDWM!=null&&useBDWM==true) ? contentStr : contentData,
     'bid': bid,
     'postinfo': <String, dynamic>{},
     'actionid': ""

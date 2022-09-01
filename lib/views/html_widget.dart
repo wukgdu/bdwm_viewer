@@ -133,7 +133,15 @@ class _HtmlComponentState extends State<HtmlComponent> {
 }
 
 TextSpan html2TextSpan(String htmlStr, {TextStyle? ts}) {
-  var document = parse(htmlStr);
+  var document;
+  try {
+    document = parse(htmlStr);
+  } catch (e) {
+    document = null;
+  }
+  if (document == null) {
+    return const TextSpan(text: "解析错误");
+  }
   var res = travelHtml(document.querySelector("body"), context: null);
   var tspan = TextSpan(
     children: res,
@@ -304,11 +312,220 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
 }
 
 class BDWMTextEditingController extends TextEditingController {
+  bool html = true;
 
   BDWMTextEditingController({super.text});
 
+  void toggle() {
+    html = !html;
+  }
+
   @override
   TextSpan buildTextSpan({required BuildContext context, TextStyle? style, required bool withComposing}) {
-    return html2TextSpan(text);
+    if (html) {
+      return html2TextSpan(text);
+    }
+    return TextSpan(text: text, style: const TextStyle(color: Colors.black));
+  }
+}
+
+String bdwmTextFormat(String htmlStr) {
+  var document = parse(htmlStr);
+  var res = <BDWMtext>[];
+  travelHtmlBack(document.querySelector("body"), BDWMAnsiText.empty(), res);
+  if (res.isEmpty) {
+    return '[{"type":"ansi","bold":false,"underline":false,"fore_color":9,"back_color":9,"content":"\\n"}]';
+  }
+  return jsonEncode(res);
+}
+
+class BDWMtext {
+  String type = "ansi";
+  BDWMtext.empty();
+  BDWMtext({
+    required this.type,
+  });
+}
+class BDWMAnsiText extends BDWMtext {
+  bool bold = false;
+  bool underline = false;
+  int foreColor = 9;
+  int backColor = 9;
+  String content = "";
+
+  BDWMAnsiText.empty({super.type="ansi"});
+
+  BDWMAnsiText.raw(this.content) : super(type: "ansi") {
+    bold = false;
+    underline = false;
+    foreColor = 9;
+    backColor = 9;
+  }
+
+  BDWMAnsiText({
+    required super.type,
+    required this.bold,
+    required this.underline,
+    required this.foreColor,
+    required this.backColor,
+    required this.content,
+  });
+
+  BDWMAnsiText copy() {
+    return BDWMAnsiText(type: type, bold: bold, underline: underline, foreColor: foreColor, backColor: backColor, content: content);
+  }
+
+  @override
+  String toString() {
+    return '{"type":"$type","bold":$bold,"underline":$underline,"fore_color":$foreColor,"back_color":$backColor,"content":"$content"}';
+  }
+
+  Map toJson() {
+    return {
+      'type': type,
+      'bold': bold,
+      'underline': underline,
+      'fore_color': foreColor,
+      'back_color': backColor,
+      'content': content,
+    };
+  }
+}
+
+class BDWMImgText extends BDWMtext {
+  String src = "";
+  BDWMImgText({
+    required super.type,
+    required this.src,
+  });
+  @override
+  String toString() {
+    return '{"type":"img","src":"$src"}';
+  }
+  Map toJson() {
+    return {
+      'type': type,
+      'src': src,
+    };
+  }
+}
+
+class BDWMQuoteText extends BDWMtext {
+  bool mail = false;
+  String username = "";
+  String nickname = "";
+  BDWMQuoteText({
+    required super.type,
+    required this.username,
+    required this.nickname,
+    required this.mail,
+  });
+  @override
+  String toString() {
+    return '{"type":"quotehead","mail":$mail,"username":"$username","nickname":"$nickname"}';
+  }
+  Map toJson() {
+    return {
+      'type': type,
+      'username': username,
+      'nickname': nickname,
+      'mail': mail,
+    };
+  }
+}
+
+void travelHtmlBack(hdom.Element? document, BDWMtext config, List<BDWMtext> res) {
+  if (document == null) {
+    return;
+  }
+  document.querySelectorAll("br").forEach((element) {
+    element.remove();
+  });
+  for (var cdom in document.nodes) {
+    if (cdom.nodeType == hdom.Node.TEXT_NODE) {
+      BDWMAnsiText bdwmText = (config as BDWMAnsiText).copy();
+      bdwmText.content = cdom.text ?? "";
+      res.add(bdwmText);
+    } else if (cdom.nodeType == hdom.Node.ELEMENT_NODE) {
+      var ele = cdom as hdom.Element;
+      if (ele.localName == "font") {
+        // for color
+        var color = ele.attributes['color'];
+        // var bColor = ele.attributes['background-color'];
+        if (color == null) {
+          continue;
+        }
+        var colorIdx = (BDWMrich['bc'] as Map<String, int>)[color];
+        if (colorIdx != null) {
+          BDWMAnsiText bdwmText = (config as BDWMAnsiText).copy();
+          bdwmText.foreColor = colorIdx;
+          travelHtmlBack(ele, bdwmText, res);
+        }
+      } else if (ele.localName == "span") {
+        var spanStyle = ele.attributes['style'];
+        var bColor = ele.attributes['backgroundColor'];
+        if (spanStyle != null) {
+          var bcp1 = spanStyle.indexOf("background-color");
+          if (bcp1 != -1) {
+            var bcp2 = spanStyle.indexOf("#", bcp1);
+            bColor = spanStyle.substring(bcp2, bcp2+7);
+          }
+          // var cp1 = spanStyle.indexOf("color");
+          // if (cp1 != -1) {
+          //   var cp2 = spanStyle.indexOf("#", cp1);
+          //   // color = spanStyle.substring(cp2, cp2+7);
+          // }
+        }
+        if (bColor == null) {
+          continue;
+        }
+        var colorIdx = (BDWMrich['bc'] as Map<String, int>)[bColor];
+        if (colorIdx != null) {
+          BDWMAnsiText bdwmText = (config as BDWMAnsiText).copy();
+          bdwmText.backColor = colorIdx;
+          travelHtmlBack(ele, bdwmText, res);
+        }
+      } else if (ele.localName == "p") {
+        if (ele.classes.contains('quotehead')) {
+          var username = ele.attributes['data-username'] ?? "";
+          var nickname = ele.attributes['data-nickname'] ?? "";
+          var txt = BDWMQuoteText(mail: false, type: "quotehead", nickname: nickname, username: username);
+          res.add(txt);
+        } else if (ele.classes.contains('blockquote')) {
+          var txt = BDWMAnsiText.raw(ele.text);
+          txt.type = "quote";
+          res.add(txt);
+        } else {
+          BDWMAnsiText bdwmText = (config as BDWMAnsiText).copy();
+          travelHtmlBack(ele, bdwmText, res);
+        }
+        if (cdom != document.nodes.last) {
+          res.add(BDWMAnsiText.raw("\n"));
+        }
+      } else if (ele.localName == "h5") {
+      } else if (ele.localName == "img") {
+        var src = ele.attributes['src'];
+        if (src != null && src.isNotEmpty) {
+          res.add(BDWMImgText(type: "img", src: src));
+        }
+        if (cdom != document.nodes.last) {
+          res.add(BDWMAnsiText.raw("\n"));
+        }
+      } else if (ele.localName == "b") {
+        BDWMAnsiText bdwmText = (config as BDWMAnsiText).copy();
+        bdwmText.bold = true;
+        travelHtmlBack(ele, bdwmText, res);
+      } else if (ele.localName == "u") {
+        BDWMAnsiText bdwmText = (config as BDWMAnsiText).copy();
+        bdwmText.underline = true;
+        travelHtmlBack(ele, bdwmText, res);
+      } else if (ele.localName == "a") {
+        // var href = ele.attributes['href'];
+        // var link = absThreadLink(href ?? "");
+        res.add(BDWMAnsiText.raw(ele.text));
+      } else {
+        res.add(BDWMAnsiText.raw(cdom.text));
+      }
+    }
   }
 }
