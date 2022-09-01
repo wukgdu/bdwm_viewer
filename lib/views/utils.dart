@@ -116,7 +116,7 @@ Future<String?> showAlertDialog(BuildContext context, String title, Widget conte
 
 Future<String?> showPageDialog(BuildContext context, int curPage, int maxPage) {
   TextEditingController pageValue = TextEditingController();
-  Widget _content() {
+  Widget content() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -134,7 +134,7 @@ Future<String?> showPageDialog(BuildContext context, int curPage, int maxPage) {
     );
   }
   return showAlertDialog(
-    context, "跳转", _content(),
+    context, "跳转", content(),
     actions1: TextButton(
       onPressed: () { Navigator.of(context).pop(); },
       child: const Text("取消"),
@@ -147,6 +147,40 @@ Future<String?> showPageDialog(BuildContext context, int curPage, int maxPage) {
         if ((nPage > 0) && (nPage <= maxPage)) {
           Navigator.of(context).pop(pageValue.text);
         }
+      },
+      child: const Text("确认"),
+    ),
+  );
+}
+
+Future<String?> showTextDialog(BuildContext context, String title) {
+  TextEditingController textValue = TextEditingController();
+  Widget content() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: TextField(
+            controller: textValue,
+            // decoration: InputDecoration(
+            // ),
+            keyboardType: const TextInputType.numberWithOptions(),
+          ),
+        ),
+      ],
+    );
+  }
+  return showAlertDialog(
+    context, title, content(),
+    actions1: TextButton(
+      onPressed: () { Navigator.of(context).pop(); },
+      child: const Text("取消"),
+    ),
+    actions2: TextButton(
+      onPressed: () {
+        if (textValue.text.isEmpty) { return; }
+        Navigator.of(context).pop(textValue.text);
       },
       child: const Text("确认"),
     ),

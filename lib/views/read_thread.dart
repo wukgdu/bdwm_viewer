@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../bdwm/vote.dart';
 import '../bdwm/posts.dart';
+import '../bdwm/forward.dart';
 import './utils.dart';
 import './constants.dart';
 import '../html_parser/read_thread_parser.dart';
@@ -30,6 +31,33 @@ class _OperateComponentState extends State<OperateComponent> {
         TextButton(
           onPressed: () {},
           child: const Text("回帖"),
+        ),
+        TextButton(
+          onPressed: () {
+            showTextDialog(context, "转载到的版面")
+            .then((value) {
+              if (value == null || value.isEmpty) {
+                return;
+              }
+              bdwmForwrad(widget.bid, widget.postid, toBoardName: value)
+              .then((res) {
+                var title = "转载";
+                var content = "成功";
+                if (!res.success) {
+                  content = "该版面不存在，或需要特殊权限";
+                }
+                showAlertDialog(context, title, Text(content),
+                  actions1: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("知道了"),
+                  ),
+                );
+              });
+            },);
+          },
+          child: const Text("转载"),
         ),
         // TODO: get info from html parser
         if (globalUInfo.uid == widget.uid && globalUInfo.login == true)
