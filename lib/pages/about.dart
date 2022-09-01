@@ -15,7 +15,7 @@ class AboutApp extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(header, style: _titleStyle,),
-            Text(content, style: _contentStyle,),
+            SelectableText(content, style: _contentStyle,),
           ],
         ),
       ),

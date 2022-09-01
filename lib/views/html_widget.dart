@@ -124,11 +124,12 @@ class _HtmlComponentState extends State<HtmlComponent> {
         tspan,
       );
     }
-    return SelectionArea(
-      child: Text.rich(
-        tspan,
-      ),
-    );
+    return SelectableText.rich(tspan);
+    // return SelectionArea(
+    //   child: Text.rich(
+    //     tspan,
+    //   ),
+    // );
   }
 }
 

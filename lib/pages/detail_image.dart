@@ -198,7 +198,7 @@ class _DetailImageState extends State<DetailImage> {
                 case LoadState.completed:
                   return null;
                 case LoadState.failed:
-                  return SelectableText("加载失败：$imgLink");
+                  return Center(child: SelectableText("加载失败：$imgLink"));
                 default:
                   return null;
               }
@@ -244,7 +244,7 @@ class _DetailImageState extends State<DetailImage> {
                 case LoadState.completed:
                   return null;
                 case LoadState.failed:
-                  return SelectableText("加载失败：$imgLink");
+                  return Center(child: SelectableText("加载失败：$imgLink"));
                 default:
                   return null;
               }
