@@ -71,6 +71,9 @@ class OnePostInfo {
   List<AttachmentInfo> attachmentInfo = <AttachmentInfo>[];
   int attachmentSlidesCount = 0;
   String attachmentHtml = "";
+  bool canReply = true;
+  bool canModify = false;
+  bool canDelete = false;
 
   OnePostInfo.empty();
   OnePostInfo({
@@ -89,6 +92,9 @@ class OnePostInfo {
     required this.attachmentInfo,
     required this.attachmentHtml,
     required this.attachmentSlidesCount,
+    required this.canReply,
+    required this.canModify,
+    required this.canDelete,
   });
 }
 
@@ -248,11 +254,54 @@ OnePostInfo parseOnePost(Element document) {
     }
   }
 
+  bool canReply = true;
+  var operationDom = document.querySelector(".operations .toolbox");
+  if (operationDom != null) {
+    var operationsDom = operationDom.querySelectorAll("li");
+    for (var oDom in operationsDom) {
+      var optext = getTrimmedString(oDom);
+      var aDom = oDom.querySelector("a");
+      if (aDom == null) {
+        continue;
+      }
+      var canDoIt = !aDom.classes.contains("disable");
+      switch (optext) {
+        case "回帖":
+          canReply = canDoIt;
+          break;
+        default:
+      }
+    }
+  }
+  var canDelete = false;
+  var canModify = false;
+  var moreOperationDom = document.querySelector(".operations .ops");
+  if (moreOperationDom != null) {
+    var moreOpsDom = moreOperationDom.querySelectorAll("li");
+    for (var oDom in moreOpsDom) {
+      var optext = getTrimmedString(oDom);
+      var aDom = oDom.querySelector("a");
+      if (aDom == null) {
+        continue;
+      }
+      switch (optext) {
+        case "修改":
+          canModify = true;
+          break;
+        case "删除":
+          canDelete = true;
+          break;
+        default:
+      }
+    }
+  }
+
   return OnePostInfo(
     authorInfo: authorInfo, postTime: postTime, postID: postID, modifyTime: modifyTime,
     upCount: upCount, downCount: downCount, content: content, signature: signature,
     postNumber: postNumber, postOwner: postOwner, iVoteUp: iVoteUp, iVoteDown: iVoteDown,
     attachmentInfo: attachmentInfo, attachmentHtml: attachmentHtml, attachmentSlidesCount: attachmentSlidesCount,
+    canReply: canReply, canDelete: canDelete, canModify: canModify,
   );
 }
 

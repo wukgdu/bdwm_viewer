@@ -6,7 +6,7 @@ import '../bdwm/forward.dart';
 import './utils.dart';
 import './constants.dart';
 import '../html_parser/read_thread_parser.dart';
-import '../globalvars.dart';
+// import '../globalvars.dart';
 import '../pages/detail_image.dart';
 import './html_widget.dart';
 
@@ -17,7 +17,12 @@ class OperateComponent extends StatefulWidget {
   final String postid;
   final String uid;
   final Function refreshCallBack;
-  const OperateComponent({super.key, required this.bid, required this.threadid, required this.postid, required this.uid, required this.refreshCallBack, required this.boardName});
+  final OnePostInfo onePostInfo;
+  const OperateComponent({
+    super.key,
+    required this.bid, required this.threadid, required this.postid, required this.uid,
+    required this.refreshCallBack, required this.boardName, required this.onePostInfo,
+  });
 
   @override
   State<OperateComponent> createState() => _OperateComponentState();
@@ -29,8 +34,9 @@ class _OperateComponentState extends State<OperateComponent> {
     return Row(
       children: [
         TextButton(
-          onPressed: () {},
-          child: const Text("回帖"),
+          onPressed: !widget.onePostInfo.canReply ? null
+            : () {},
+          child: Text("回帖", style: TextStyle(color: !widget.onePostInfo.canReply ? Colors.grey : null ),),
         ),
         TextButton(
           onPressed: () {
@@ -59,8 +65,8 @@ class _OperateComponentState extends State<OperateComponent> {
           },
           child: const Text("转载"),
         ),
-        // TODO: get info from html parser
-        if (globalUInfo.uid == widget.uid && globalUInfo.login == true)
+        // if (globalUInfo.uid == widget.uid && globalUInfo.login == true)
+        if (widget.onePostInfo.canModify)
           TextButton(
             onPressed: () {
               Navigator.of(context).pushNamed('/post', arguments: {
@@ -75,7 +81,8 @@ class _OperateComponentState extends State<OperateComponent> {
             },
             child: const Text("修改"),
           ),
-        if (globalUInfo.uid == widget.uid && globalUInfo.login == true)
+        // if (globalUInfo.uid == widget.uid && globalUInfo.login == true)
+        if (widget.onePostInfo.canDelete)
           TextButton(
             onPressed: () {
               bdwmDeletePost(bid: widget.bid, postid: widget.postid).then((value) {
@@ -385,7 +392,7 @@ class OnePostComponent extends StatelessWidget {
                     postID: onePostInfo.postID,
                   ),
                   const Divider(),
-                  OperateComponent(bid: bid, threadid: bid, postid: onePostInfo.postID, uid: onePostInfo.authorInfo.uid, refreshCallBack: refreshCallBack, boardName: boardName,),
+                  OperateComponent(bid: bid, threadid: bid, postid: onePostInfo.postID, uid: onePostInfo.authorInfo.uid, refreshCallBack: refreshCallBack, boardName: boardName, onePostInfo: onePostInfo,),
                   if (item.attachmentInfo.isNotEmpty)
                     ...[
                       const Divider(),
