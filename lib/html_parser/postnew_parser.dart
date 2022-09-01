@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:html/parser.dart' show parse;
+import 'package:html/dom.dart' as hdom;
 
 import './utils.dart';
 
@@ -22,6 +23,7 @@ class SignatureItem {
 
 class PostNewInfo {
   String bid = "";
+  List<SignatureItem> quoteInfo = <SignatureItem>[];
   List<SignatureItem> signatureInfo = <SignatureItem>[];
   bool canNoreply = false;
   bool canRemind = false;
@@ -47,6 +49,7 @@ class PostNewInfo {
     this.contentText,
     this.contentHtml,
     this.oriSignature,
+    required this.quoteInfo,
   });
 }
 
@@ -87,14 +90,33 @@ PostNewInfo parsePostNew(String htmlStr) {
     canAnony = anonymousBoxDom.attributes['disabled']!=null ? false : true;
   }
 
-  var signatureInfo = <SignatureItem>[];
+  var selectionsDom = editorDom.querySelectorAll(".row select.cs-select");
+  hdom.Element? selectOptionDom;
+  hdom.Element? quoteOptionDom;
+  for (var sd in selectionsDom) {
+    if (sd.attributes['data-role'] == "signature") {
+      selectOptionDom = sd;
+    }
+    if (sd.attributes['data-role'] == "quote-mode") {
+      quoteOptionDom = sd;
+    }
+  }
 
-  var selectOptionDom = editorDom.querySelector("select.cs-select");
+  var signatureInfo = <SignatureItem>[];
   if (selectOptionDom != null) {
     for (var sodom in selectOptionDom.querySelectorAll("option")) {
       var key = getTrimmedString(sodom);
       var value = sodom.attributes['value'] ?? "";
       signatureInfo.add(SignatureItem(key: key, value: value));
+    }
+  }
+
+  var quoteInfo = <SignatureItem>[];
+  if (quoteOptionDom != null) {
+    for (var qodom in quoteOptionDom.querySelectorAll("option")) {
+      var key = getTrimmedString(qodom);
+      var value = qodom.attributes['value'] ?? "";
+      quoteInfo.add(SignatureItem(key: key, value: value));
     }
   }
 
@@ -120,7 +142,7 @@ PostNewInfo parsePostNew(String htmlStr) {
 
   return PostNewInfo(
     bid: bid, signatureInfo: signatureInfo, canNoreply: canNoreply, canRemind: canRemind, canForward: canForward, canAnony: canAnony,
-    titleText: titleText, contentText: contentText, contentHtml: contentHtml, oriSignature: oriSignature,
+    titleText: titleText, contentText: contentText, contentHtml: contentHtml, oriSignature: oriSignature, quoteInfo: quoteInfo,
   );
 }
 
