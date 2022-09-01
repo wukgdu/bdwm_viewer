@@ -133,14 +133,14 @@ class _HtmlComponentState extends State<HtmlComponent> {
 }
 
 TextSpan html2TextSpan(String htmlStr, {TextStyle? ts}) {
-  var document;
+  hdom.Document? document;
   try {
     document = parse(htmlStr);
   } catch (e) {
     document = null;
   }
   if (document == null) {
-    return const TextSpan(text: "解析错误");
+    return const TextSpan(text: "解析错误", style: TextStyle(color: Colors.black));
   }
   var res = travelHtml(document.querySelector("body"), context: null);
   var tspan = TextSpan(
@@ -331,7 +331,7 @@ class BDWMTextEditingController extends TextEditingController {
   @override
   TextSpan buildTextSpan({required BuildContext context, TextStyle? style, required bool withComposing}) {
     if (html) {
-      return html2TextSpan(text);
+      return html2TextSpan(text, ts: const TextStyle(color: Colors.black) );
     }
     return TextSpan(text: text, style: const TextStyle(color: Colors.black));
   }
