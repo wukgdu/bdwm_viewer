@@ -20,6 +20,7 @@ class BoardPostInfo {
   String lastUser = "";
   String lastTime = "";
   bool lock = false;
+  bool hasAttachment = false;
 
   BoardPostInfo.empty();
   BoardPostInfo({
@@ -36,6 +37,7 @@ class BoardPostInfo {
     required this.lastUser,
     required this.lastTime,
     required this.lock,
+    required this.hasAttachment,
   });
 }
 
@@ -106,11 +108,14 @@ List<BoardPostInfo> parseBoardPost(Element? docu) {
     var titleCont = pdom.querySelector(".title-cont");
     String title = getTrimmedString(titleCont);
     bool lock = false;
+    bool hasAttachment = false;
     if (titleCont != null) {
       for (var idom in titleCont.querySelectorAll("img")) {
         if (idom.attributes['src']?.contains("lock") ?? false) {
           lock = true;
-          break;
+        }
+        if (idom.attributes['src']?.contains("attach.png") ?? false) {
+          hasAttachment = true;
         }
       }
     }
@@ -131,7 +136,7 @@ List<BoardPostInfo> parseBoardPost(Element? docu) {
     }
     boardPostInfo.add(BoardPostInfo(
       bpID: bpID, isNew: isNew, title: title, link: link, threadID: threadID,
-      userName: userName, avatarLink: avatarLink, pTime: pTime, uid: uid,
+      userName: userName, avatarLink: avatarLink, pTime: pTime, uid: uid, hasAttachment: hasAttachment,
       commentCount: commentCount, lastUser: lastUser, lastTime: lastTime, lock: lock,
     ));
   }

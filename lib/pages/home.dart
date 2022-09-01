@@ -49,7 +49,8 @@ class StackIcon extends StatelessWidget {
 
 class HomeApp extends StatefulWidget {
   final ValueNotifier<int> messageCount;
-  const HomeApp({Key? key, required this.messageCount}) : super(key: key);
+  final ValueNotifier<int> mailCount;
+  const HomeApp({Key? key, required this.messageCount, required this.mailCount}) : super(key: key);
 
   @override
   State<HomeApp> createState() => _HomeAppState();
@@ -73,10 +74,14 @@ class _HomeAppState extends State<HomeApp> {
         appBar: AppBar(
           title: const Text("首页"),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.mail),
-              onPressed: () {
-                quickNotify("OBViewer", "mail");
+            ValueListenableBuilder(
+              valueListenable: widget.mailCount,
+              builder: (context, count, Widget? child) {
+                return StackIcon(
+                  count: count as int,
+                  icon: const Icon(Icons.mail),
+                  callBack: () { quickNotify("OBViewer", "mail"); },
+                );
               },
             ),
             ValueListenableBuilder(

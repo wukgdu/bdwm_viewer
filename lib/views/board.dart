@@ -101,8 +101,10 @@ class OneThreadInBoard extends StatelessWidget {
                 TextSpan(
                   text: boardPostInfo.title,
                 ),
+                if (boardPostInfo.hasAttachment)
+                  const WidgetSpan(child: Icon(Icons.attachment, color: bdwmPrimaryColor, size: 16)),
                 if (boardPostInfo.lock)
-                  const WidgetSpan(child: Icon(Icons.lock, color: bdwmPrimaryColor, size: 16))
+                  const WidgetSpan(child: Icon(Icons.lock, color: bdwmPrimaryColor, size: 16)),
               ],
             )
           ),

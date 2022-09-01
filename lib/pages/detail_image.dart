@@ -140,7 +140,7 @@ class _DetailImageState extends State<DetailImage> {
         //   name: downloadPath,
         // );
     }
-    return SaveRes(true, '');
+    return SaveRes(true, downloadPath);
   }
 
   @override
@@ -153,7 +153,7 @@ class _DetailImageState extends State<DetailImage> {
             icon: const Icon(Icons.download),
             onPressed: () {
               saveImage(imgData).then((res) {
-                var text = "保存成功";
+                var text = "保存成功：${res.reason}";
                 if (!res.success) {
                   text = "保存失败：${res.reason}";
                 }

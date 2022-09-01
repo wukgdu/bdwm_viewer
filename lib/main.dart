@@ -13,6 +13,7 @@ import './pages/read_thread.dart';
 import './pages/post_new.dart';
 // import './pages/detail_image.dart';
 import './services.dart';
+import './bdwm/mail.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,9 +32,12 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   Timer? timerMessage;
+  Timer? timerMail;
   NotifyMessage unreadMessage = NotifyMessage();
+  NotifyMail unreadMail = NotifyMail();
   // NotifyMessageInfo unreadMessageInfo = NotifyMessageInfo.empty();
   ValueNotifier<int> messageCount = ValueNotifier<int>(0);
+  ValueNotifier<int> mailCount = ValueNotifier<int>(0);
 
   @override
   void initState() {
@@ -45,12 +49,22 @@ class _MainPageState extends State<MainPage> {
         }
       });
     });
+    timerMail = Timer.periodic(const Duration(seconds: 15), (timer) {
+      unreadMail.updateValue((UnreadMailInfo info) {
+        if (info.count != mailCount.value) {
+          mailCount.value = info.count;
+        }
+      });
+    });
   }
 
   @override
   void dispose() {
     if (timerMessage != null) {
       timerMessage!.cancel();
+    }
+    if (timerMail != null) {
+      timerMail!.cancel();
     }
     super.dispose();
   }
@@ -65,7 +79,7 @@ class _MainPageState extends State<MainPage> {
         // colorScheme: const ColorScheme.light().copyWith(primary: Colors.orangeAccent),
         colorScheme: const ColorScheme.light().copyWith(primary: const Color(0xffe97c62)),
       ),
-      home: HomeApp(messageCount: messageCount,),
+      home: HomeApp(messageCount: messageCount, mailCount: mailCount,),
       // home: const PostNewApp(boardName: "测试", bid: "7"),
       // home: BoardApp(bid: "103", boardName: "未名湖",),
       // home: const DetailImage(imgLink: "https://bbs.pku.edu.cn/v2/uploads/index_MKoueo.jpg", imgName: "招新.jpg",),
@@ -132,7 +146,7 @@ class _MainPageState extends State<MainPage> {
             break;
           case "/home":
           default:
-            builder = (BuildContext context) => HomeApp(messageCount: messageCount,);
+            builder = (BuildContext context) => HomeApp(messageCount: messageCount, mailCount: mailCount,);
         }
         return MaterialPageRoute(builder: builder, settings: settings);
       },

@@ -1,4 +1,5 @@
 import './bdwm/message.dart';
+import './bdwm/mail.dart';
 import './utils.dart';
 
 class NotifyMessageInfo {
@@ -31,7 +32,7 @@ class NotifyMessage {
   }
 
   void updateValue(Function callBack) {
-    return;
+    // return;
     bdwmGetUnreadMessageCount().then((value) {
       if (value == null) {
         return;
@@ -62,5 +63,52 @@ class NotifyMessage {
       content = content.substring(0, 30);
     }
     quickNotify("$count条消息", content);
+  }
+}
+
+class NotifyMail {
+  int lastUnreadTime = 0;
+  UnreadMailInfo unreadMailInfo = UnreadMailInfo.empty();
+
+  bool notifyP(UnreadMailInfo value) {
+    bool notifyIt = false;
+    for (var e in value.unreadMailList) {
+      if (e.time > lastUnreadTime) {
+        notifyIt = true;
+      }
+    }
+    return notifyIt;
+  }
+
+  void updateValue(Function callBack) {
+    // return;
+    bdwmGetUnreadMailCount().then((value) {
+      if (value == null) {
+        return;
+      }
+      if (value.success == false) {
+        return;
+      }
+      unreadMailInfo = value;
+      callBack(unreadMailInfo);
+      notify();
+    });
+  }
+
+  void notify() {
+    if (unreadMailInfo.count == 0) {
+      return;
+    }
+    bool notifyIt = notifyP(unreadMailInfo);
+    if (!notifyIt) {
+      return;
+    }
+    String title = "站内信 ${unreadMailInfo.count} 封未读";
+    var newestItem = unreadMailInfo.unreadMailList.first;
+    String content = "${newestItem.owner} ${newestItem.title} ${newestItem.content}";
+    if (content.length > 40) {
+      content = content.substring(0, 40);
+    }
+    quickNotify(title, content);
   }
 }
