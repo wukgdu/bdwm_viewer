@@ -140,7 +140,7 @@ class _PostNewPageState extends State<PostNewPage> {
         }
         if (widget.parentid != null && quoteText != null && contentValue.text.isEmpty) {
           if (useHtmlContent) {
-            contentValue.value = TextEditingValue(text: "<p></p><p></p>$quoteText");
+            contentValue.value = TextEditingValue(text: "\n$quoteText");
           }
         }
         if (signature == null && widget.postid != null) {
@@ -202,7 +202,7 @@ class _PostNewPageState extends State<PostNewPage> {
                         nSignature = postNewInfo.oriSignature ?? "";
                       } else if (nSignature == "OBViewer") {
                         nSignature = jsonEncode([
-                            {"content":"发自我的客户端\n","fore_color":9,"back_color":9,"bold":false,"blink":false,"underline":false,"reverse":false,"type":"ansi"},
+                            {"content":"发自 onepiece 的客户端\n","fore_color":9,"back_color":9,"bold":false,"blink":false,"underline":false,"reverse":false,"type":"ansi"},
                           ]
                         );
                       }

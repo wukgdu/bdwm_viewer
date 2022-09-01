@@ -160,6 +160,9 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
   });
   for (var cdom in document.nodes) {
     if (cdom.nodeType == hdom.Node.TEXT_NODE) {
+      if (cdom.text == "\n") {
+        continue;
+      }
       res.add(TextSpan(text: cdom.text));
     } else if (cdom.nodeType == hdom.Node.ELEMENT_NODE) {
       var ele = cdom as hdom.Element;
@@ -453,6 +456,9 @@ void travelHtmlBack(hdom.Element? document, BDWMtext config, List<BDWMtext> res)
     if (cdom.nodeType == hdom.Node.TEXT_NODE) {
       BDWMAnsiText bdwmText = (config as BDWMAnsiText).copy();
       bdwmText.content = cdom.text ?? "";
+      if (cdom.text == "\n") {
+        continue;
+      }
       res.add(bdwmText);
     } else if (cdom.nodeType == hdom.Node.ELEMENT_NODE) {
       var ele = cdom as hdom.Element;

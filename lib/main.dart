@@ -8,6 +8,7 @@ import './pages/home.dart';
 import './pages/board.dart';
 import './pages/login.dart';
 import './pages/user.dart';
+import './pages/about.dart';
 import './pages/read_thread.dart';
 import './pages/post_new.dart';
 // import './pages/detail_image.dart';
@@ -114,6 +115,9 @@ class _MainPageState extends State<MainPage> {
               needBack = (settings.arguments as Map)['needBack'] ?? false;
             }
             builder = (BuildContext context) => LoginApp(needBack: needBack,);
+            break;
+          case "/about":
+            builder = (BuildContext context) => const AboutApp();
             break;
           case "/me":
             if (globalUInfo.login) {
