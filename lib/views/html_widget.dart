@@ -278,9 +278,10 @@ class _HtmlComponentState extends State<HtmlComponent> {
         tspan,
       );
     }
-    return SelectableText.rich(
-      tspan,
-      cursorWidth: 0,
+    return SelectionArea(
+      child: Text.rich(
+        tspan,
+      ),
     );
   }
 }
