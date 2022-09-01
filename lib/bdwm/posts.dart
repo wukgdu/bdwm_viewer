@@ -13,14 +13,16 @@ String genMD5(String s) {
 class PostRes {
   bool success = false;
   int error = 0;
+  String? result;
 
   PostRes({
     required this.success,
     required this.error,
+    this.result,
   });
 }
 
-Future<PostRes> bdwmSimplePost({required String bid, required String title, required String content, required String signature, required Map<String, bool> config, bool? modify=false, String? postid, bool? useBDWM=false}) async {
+Future<PostRes> bdwmSimplePost({required String bid, required String title, required String content, required String signature, required Map<String, bool> config, bool? modify=false, String? postid, bool? useBDWM=false, String? parentid}) async {
   // TODO: random signature, noreplay, anony
   var actionUrl = "$v2Host/ajax/create_post.php";
   if (modify == true) {
@@ -56,7 +58,11 @@ Future<PostRes> bdwmSimplePost({required String bid, required String title, requ
   if (config['anony']!=null && config['anony'] == true) {
     (data['postinfo'] as Map<String, dynamic>)['anony'] = true;
   }
+  if (parentid != null) {
+    (data['postinfo'] as Map<String, dynamic>)['parentid'] = int.parse(parentid);
+  }
   data['postinfo'] = jsonEncode(data['postinfo']);
+  print(data['postinfo']);
   var now = DateTime.now();
   var timestamp = now.millisecondsSinceEpoch ~/ 1000;
   data['actionid'] = (timestamp % 100000000).toString() + genMD5(jsonEncode(data)+signature).substring(0, 16);
@@ -84,6 +90,23 @@ Future<PostRes> bdwmDeletePost({required String bid, required String postid}) as
   PostRes postRes = PostRes(
     success: respContent['success'],
     error: respContent['error'] ?? 0,
+  );
+  return postRes;
+}
+
+Future<PostRes> bdwmGetPostQuote({required String bid, required String postid, String mode="simple"}) async {
+  var actionUrl = "$v2Host/ajax/get_post_quote.php";
+  var data = {
+    "bid": bid,
+    "postid": postid,
+    "mode": mode,
+  };
+  var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
+  var respContent = json.decode(resp.body);
+  PostRes postRes = PostRes(
+    success: respContent['success'],
+    error: respContent['error'] ?? 0,
+    result: respContent['quote'],
   );
   return postRes;
 }

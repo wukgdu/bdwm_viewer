@@ -320,6 +320,14 @@ class BDWMTextEditingController extends TextEditingController {
     html = !html;
   }
 
+  void useHtml() {
+    html = true;
+  }
+
+  void notUseHtml() {
+    html = false;
+  }
+
   @override
   TextSpan buildTextSpan({required BuildContext context, TextStyle? style, required bool withComposing}) {
     if (html) {
@@ -495,12 +503,15 @@ void travelHtmlBack(hdom.Element? document, BDWMtext config, List<BDWMtext> res)
           var txt = BDWMAnsiText.raw(ele.text);
           txt.type = "quote";
           res.add(txt);
+          if (cdom != document.nodes.last) {
+            res.add(BDWMAnsiText.raw("\n"));
+          }
         } else {
           BDWMAnsiText bdwmText = (config as BDWMAnsiText).copy();
           travelHtmlBack(ele, bdwmText, res);
-        }
-        if (cdom != document.nodes.last) {
-          res.add(BDWMAnsiText.raw("\n"));
+          if (cdom != document.nodes.last) {
+            res.add(BDWMAnsiText.raw("\n"));
+          }
         }
       } else if (ele.localName == "h5") {
       } else if (ele.localName == "img") {

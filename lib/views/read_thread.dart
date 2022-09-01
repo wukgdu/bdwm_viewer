@@ -35,7 +35,17 @@ class _OperateComponentState extends State<OperateComponent> {
       children: [
         TextButton(
           onPressed: !widget.onePostInfo.canReply ? null
-            : () {},
+            : () {
+              Navigator.of(context).pushNamed('/post', arguments: {
+                'bid': widget.bid,
+                'boardName': "",
+                'parentid': widget.postid,
+              }).then((value) {
+                if (value == true) {
+                  widget.refreshCallBack();
+                }
+              });
+            },
           child: Text("回帖", style: TextStyle(color: !widget.onePostInfo.canReply ? Colors.grey : null ),),
         ),
         TextButton(

@@ -15,8 +15,9 @@ import './utils.dart';
 class PostNewPage extends StatefulWidget {
   final String bid;
   final String? postid;
+  final String? parentid;
   // final String boardName;
-  const PostNewPage({Key? key, required this.bid, this.postid}) : super(key: key);
+  const PostNewPage({Key? key, required this.bid, this.postid, this.parentid}) : super(key: key);
 
   @override
   State<PostNewPage> createState() => _PostNewPageState();
@@ -36,16 +37,25 @@ class _PostNewPageState extends State<PostNewPage> {
 
   late CancelableOperation getDataCancelable;
 
-  bool get useHtmlContent => true;
-  bool get useBDWMtext => true;
+  bool useHtmlContent = true;
 
   Future<PostNewInfo> getData() async {
     var url = "$v2Host/post-new.php?bid=${widget.bid}";
     if (widget.postid != null) {
       url += "&mode=modify&postid=${widget.postid}";
+    } else if (widget.parentid != null) {
+      url += "&parentid=${widget.parentid}";
     }
     var resp = await bdwmClient.get(url, headers: genHeaders2());
     return parsePostNew(resp.body);
+  }
+
+  Future<String?> getPostQuote() async {
+    var resp = await bdwmGetPostQuote(bid: widget.bid, postid: widget.parentid!);
+    if (resp.success) {
+      return resp.result!;
+    }
+    return resp.result!;
   }
 
   Future<PostNewInfo> getExampleData() async {
@@ -57,9 +67,15 @@ class _PostNewPageState extends State<PostNewPage> {
   void initState() {
     super.initState();
     // _future = getData();
-    getDataCancelable = CancelableOperation.fromFuture(getExampleData(), onCancel: () {
-      debugPrint("cancel it");
-    },);
+    if (widget.parentid == null) {
+      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+        debugPrint("cancel it");
+      },);
+    } else {
+      getDataCancelable = CancelableOperation.fromFuture(Future.wait([getData(), getPostQuote()]), onCancel: () {
+        debugPrint("cancel it");
+      },);
+    }
   }
 
   @override
@@ -94,7 +110,14 @@ class _PostNewPageState extends State<PostNewPage> {
         if (!snapshot.hasData || snapshot.data == null) {
           return const Text("错误：未获取数据");
         }
-        var postNewInfo = snapshot.data as PostNewInfo;
+        PostNewInfo postNewInfo;
+        String? quoteText;
+        if (widget.parentid == null) {
+          postNewInfo = snapshot.data as PostNewInfo;
+        } else {
+          postNewInfo = (snapshot.data as List)[0];
+          quoteText = (snapshot.data as List)[1];
+        }
         if (postNewInfo.errorMessage != null) {
           return Center(
             child: Text(postNewInfo.errorMessage!),
@@ -113,6 +136,11 @@ class _PostNewPageState extends State<PostNewPage> {
         if (postNewInfo.contentHtml != null && postNewInfo.contentHtml!.isNotEmpty) {
           if (contentValue.text.isEmpty && useHtmlContent) {
             contentValue.value = TextEditingValue(text: postNewInfo.contentHtml!);
+          }
+        }
+        if (widget.parentid != null && quoteText != null && contentValue.text.isEmpty) {
+          if (useHtmlContent) {
+            contentValue.value = TextEditingValue(text: "<p></p><p></p>$quoteText");
           }
         }
         if (signature == null && widget.postid != null) {
@@ -174,13 +202,13 @@ class _PostNewPageState extends State<PostNewPage> {
                         nSignature = postNewInfo.oriSignature ?? "";
                       } else if (nSignature == "OBViewer") {
                         nSignature = jsonEncode([
-                            {"content":"单独设置的签名档\n","fore_color":9,"back_color":9,"bold":false,"blink":false,"underline":false,"reverse":false,"type":"ansi"},
+                            {"content":"发自我的客户端\n","fore_color":9,"back_color":9,"bold":false,"blink":false,"underline":false,"reverse":false,"type":"ansi"},
                           ]
                         );
                       }
-                      var nContent = useBDWMtext ? bdwmTextFormat(contentValue.text) : contentValue.text;
+                      var nContent = useHtmlContent ? bdwmTextFormat(contentValue.text) : contentValue.text;
                       bdwmSimplePost(
-                        bid: widget.bid, title: titleValue.text, content: nContent, useBDWM: useBDWMtext,
+                        bid: widget.bid, title: titleValue.text, content: nContent, useBDWM: useHtmlContent, parentid: widget.parentid,
                         signature: nSignature, config: config, modify: widget.postid!=null, postid: widget.postid)
                       .then((value) {
                         if (value.success) {
