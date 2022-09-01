@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -76,11 +77,6 @@ class _PostNewPageState extends State<PostNewPage> {
         debugPrint("cancel it");
       },);
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    debugPrint("post rebuild");
     contentFocusNode.addListener(() {
       if (contentFocusNode.hasFocus) {
         var text = contentValue.text;
@@ -96,6 +92,11 @@ class _PostNewPageState extends State<PostNewPage> {
         contentValue.value = TextEditingValue(text: text);
       }
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    debugPrint("post rebuild");
     return FutureBuilder(
       future: getDataCancelable.value,
       builder: (context, snapshot) {

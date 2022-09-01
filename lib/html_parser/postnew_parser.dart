@@ -82,7 +82,7 @@ PostNewInfo parsePostNew(String htmlStr) {
   }
 
   var canAnony = false;
-  var anonymousBoxDom = editorDom.querySelector("input#input-forward");
+  var anonymousBoxDom = editorDom.querySelector("input#input-anonymous");
   if (anonymousBoxDom != null) {
     canAnony = anonymousBoxDom.attributes['disabled']!=null ? false : true;
   }

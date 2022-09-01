@@ -62,7 +62,6 @@ Future<PostRes> bdwmSimplePost({required String bid, required String title, requ
     (data['postinfo'] as Map<String, dynamic>)['parentid'] = int.parse(parentid);
   }
   data['postinfo'] = jsonEncode(data['postinfo']);
-  print(data['postinfo']);
   var now = DateTime.now();
   var timestamp = now.millisecondsSinceEpoch ~/ 1000;
   data['actionid'] = (timestamp % 100000000).toString() + genMD5(jsonEncode(data)+signature).substring(0, 16);

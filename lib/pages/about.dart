@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 
 import '../views/drawer.dart';
 
 class AboutApp extends StatelessWidget {
   const AboutApp({Key? key}) : super(key: key);
-  final _titleStyle = const TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
-  final _contentStyle = const TextStyle(fontSize: 20);
+  final _titleStyle = const TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
+  final _contentStyle = const TextStyle(fontSize: 18);
 
   Widget oneItem(String header, String content) {
     return Card(
