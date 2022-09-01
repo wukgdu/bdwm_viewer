@@ -302,3 +302,13 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
   }
   return res;
 }
+
+class BDWMTextEditingController extends TextEditingController {
+
+  BDWMTextEditingController({super.text});
+
+  @override
+  TextSpan buildTextSpan({required BuildContext context, TextStyle? style, required bool withComposing}) {
+    return html2TextSpan(text);
+  }
+}

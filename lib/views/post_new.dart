@@ -24,7 +24,7 @@ class PostNewPage extends StatefulWidget {
 
 class _PostNewPageState extends State<PostNewPage> {
   TextEditingController titleValue = TextEditingController();
-  TextEditingController contentValue = TextEditingController();
+  TextEditingController contentValue = BDWMTextEditingController();
   bool needNoreply = false;
   bool needRemind = true;
   bool needForward = false;
@@ -34,6 +34,8 @@ class _PostNewPageState extends State<PostNewPage> {
   static const vDivider = VerticalDivider();
 
   late CancelableOperation getDataCancelable;
+
+  bool get useHtmlContent => true;
 
   Future<PostNewInfo> getData() async {
     var url = "$v2Host/post-new.php?bid=${widget.bid}";
@@ -87,8 +89,13 @@ class _PostNewPageState extends State<PostNewPage> {
           }
         }
         if (postNewInfo.contentText != null && postNewInfo.contentText!.isNotEmpty) {
-          if (contentValue.text.isEmpty) {
+          if (contentValue.text.isEmpty && !useHtmlContent) {
             contentValue.value = TextEditingValue(text: postNewInfo.contentText!);
+          }
+        }
+        if (postNewInfo.contentHtml != null && postNewInfo.contentHtml!.isNotEmpty) {
+          if (contentValue.text.isEmpty && useHtmlContent) {
+            contentValue.value = TextEditingValue(text: postNewInfo.contentHtml!);
           }
         }
         if (signature == null && widget.postid != null) {
