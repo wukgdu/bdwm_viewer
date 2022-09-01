@@ -74,7 +74,9 @@ class NotifyMail {
     bool notifyIt = false;
     for (var e in value.unreadMailList) {
       if (e.time > lastUnreadTime) {
+        lastUnreadTime = e.time;
         notifyIt = true;
+        break;
       }
     }
     return notifyIt;
