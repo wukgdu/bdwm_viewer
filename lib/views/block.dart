@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../globalvars.dart';
 import './constants.dart';
 import '../html_parser/block_parser.dart';
 

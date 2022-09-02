@@ -2,27 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 
 import '../bdwm/req.dart';
-import '../views/block.dart';
+import '../views/zone.dart';
 import '../globalvars.dart';
-import '../html_parser/block_parser.dart';
+import '../html_parser/zone_parser.dart';
 
-class BlockApp extends StatefulWidget {
-  final String bid;
-  final String title;
-  const BlockApp({super.key, required this.bid, required this.title});
+class ZoneApp extends StatefulWidget {
+  const ZoneApp({super.key});
 
   @override
-  State<BlockApp> createState() => _BlockAppState();
+  State<ZoneApp> createState() => _ZoneAppState();
 }
 
-class _BlockAppState extends State<BlockApp> {
+class _ZoneAppState extends State<ZoneApp> {
   late CancelableOperation getDataCancelable;
 
-  Future<BlockInfo> getData() async {
-    // return getExampleBlockInfo();
-    var url = "$v2Host/board.php?bid=${widget.bid}";
+  Future<ZoneInfo> getData() async {
+    // return getExampleZone();
+    var url = "$v2Host/zone.php";
     var resp = await bdwmClient.get(url, headers: genHeaders2());
-    return parseBlock(resp.body);
+    return parseZone(resp.body);
   }
 
   @override
@@ -48,7 +46,7 @@ class _BlockAppState extends State<BlockApp> {
           // return const Center(child: CircularProgressIndicator());
           return Scaffold(
             appBar: AppBar(
-              title: Text(widget.title),
+              title: const Text("版面目录"),
             ),
             body: const Center(child: CircularProgressIndicator()),
           );
@@ -59,22 +57,22 @@ class _BlockAppState extends State<BlockApp> {
         if (!snapshot.hasData || snapshot.data == null) {
           return const Text("错误：未获取数据");
         }
-        var blockInfo = snapshot.data as BlockInfo;
-        if (blockInfo.errorMessage != null) {
+        var zoneInfo = snapshot.data as ZoneInfo;
+        if (zoneInfo.errorMessage != null) {
           return Scaffold(
             appBar: AppBar(
-              title: Text(widget.title),
+              title: const Text("版面目录"),
             ),
             body: Center(
-              child: Text(blockInfo.errorMessage!),
+              child: Text(zoneInfo.errorMessage!),
             ),
           );
         }
         return Scaffold(
           appBar: AppBar(
-            title: Text(blockInfo.name),
+            title: const Text("版面目录"),
           ),
-          body: BlockPage(blockInfo: blockInfo, bid: widget.bid, name: blockInfo.name,),
+          body: ZonePage(zoneInfo: zoneInfo),
         );
       },
     );
