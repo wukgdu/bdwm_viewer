@@ -210,7 +210,24 @@ class _BoardPageState extends State<BoardPage> {
         if (widget.page <= 1)
           Container(
             margin: const EdgeInsets.only(top: 0, left: _padding2, right: _padding2, bottom: _padding1),
-            child: Text(boardInfo.engName, style: _titleFont2),
+            child: Row(
+              children: [
+                Text(boardInfo.engName, style: _titleFont2),
+                const Spacer(),
+                GestureDetector(
+                  onTap: () {
+                    if (boardInfo.collectionLink.isEmpty) { return; }
+                    Navigator.of(context).pushNamed('/collection', arguments: {
+                      'link': boardInfo.collectionLink,
+                      'title': boardInfo.boardName,
+                    });
+                  },
+                  child: const Text.rich(
+                    TextSpan(text: "精华区", style: textLinkStyle),
+                  ),
+                ),
+              ],
+            ),
           ),
         if (widget.page <= 1 && boardInfo.intro.isNotEmpty)
           Container(

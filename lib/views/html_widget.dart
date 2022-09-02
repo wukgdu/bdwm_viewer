@@ -49,6 +49,7 @@ class _WrapImageNetworkState extends State<WrapImageNetwork> {
       handleLoadingProgress: true,
       filterQuality: FilterQuality.high,
       cancelToken: cancelIt,
+      timeLimit: const Duration(seconds: 30),
       loadStateChanged: (ExtendedImageState state) {
         switch (state.extendedImageLoadState) {
           case LoadState.loading:
@@ -302,6 +303,16 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
                     'boardName': "跳转",
                   });
                 }
+              } else if (link.startsWith("https://bbs.pku.edu.cn/v2/collection.php")) {
+                Navigator.of(context).pushNamed('/collection', arguments: {
+                  'link': link,
+                  'title': "目录",
+                });
+              } else if (link.startsWith("https://bbs.pku.edu.cn/v2/collection-read.php")) {
+                Navigator.of(context).pushNamed('/collectionArticle', arguments: {
+                  'link': link,
+                  'title': "文章",
+                });
               }
             },
           ),

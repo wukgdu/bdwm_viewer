@@ -266,8 +266,34 @@ class _UserInfoPageState extends State<UserInfoPage> {
                 ],
               ),
             ),
-            subtitle: Text(
-              "$subtitle1\n$subtitle2",
+            subtitle: Text.rich(
+              TextSpan(
+                children: [
+                  if (user.personalCollection.link != null && user.personalCollection.link!.isNotEmpty)
+                    WidgetSpan(
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pushNamed('/collection', arguments: {
+                            'link': user.personalCollection.link,
+                            'title': user.bbsID,
+                          });
+                        },
+                        child: Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(text: "个人文集 "),
+                              TextSpan(text: user.personalCollection.text, style: textLinkStyle),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  else
+                    TextSpan(text: subtitle1),
+                  const TextSpan(text: "\n"),
+                  TextSpan(text: subtitle2),
+                ]
+              ),
             ),
             isThreeLine: true,
             trailing: (globalUInfo.login && (globalUInfo.uid == widget.uid))

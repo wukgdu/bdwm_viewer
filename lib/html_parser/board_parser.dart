@@ -68,6 +68,7 @@ class BoardInfo {
   bool iLike = false;
   List<AdminInfo> admins = <AdminInfo>[];
   List<BoardPostInfo> boardPostInfo = <BoardPostInfo>[];
+  String collectionLink = "";
   String? errorMessage;
 
   BoardInfo.empty();
@@ -87,6 +88,7 @@ class BoardInfo {
     required this.admins,
     required this.boardPostInfo,
     this.errorMessage,
+    required this.collectionLink,
   });
 }
 
@@ -233,11 +235,13 @@ BoardInfo parseBoardInfo(String htmlStr) {
       });
     }
   }
+  String path = document.querySelector("#tab-button-collection a")?.attributes['href'] ?? "";
+  String collectionLink = path.isEmpty ? "" : absThreadLink(path);
   var boardPostInfo = parseBoardPost(document.querySelector('#list-body'));
   return BoardInfo(
     bid: bid, boardName: boardName, engName: engName, onlineCount: onlineCount, pageNum: pageNum,
     todayCount: todayCount, topicCount: topicCount, postCount: postCount, iLike: iLike,
-    likeCount: likeCount, intro: intro, admins: admins, boardPostInfo: boardPostInfo,
+    likeCount: likeCount, intro: intro, admins: admins, boardPostInfo: boardPostInfo, collectionLink: collectionLink,
   );
 }
 

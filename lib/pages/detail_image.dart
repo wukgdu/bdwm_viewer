@@ -179,6 +179,7 @@ class _DetailImageState extends State<DetailImage> {
             handleLoadingProgress: true,
             filterQuality: FilterQuality.high,
             cancelToken: cancelIt,
+            timeLimit: const Duration(seconds: 60),
             loadStateChanged: (ExtendedImageState state) {
               switch (state.extendedImageLoadState) {
                 case LoadState.loading:

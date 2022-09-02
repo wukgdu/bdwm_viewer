@@ -22,13 +22,13 @@ class ThreadApp extends StatefulWidget {
 }
 
 class _ThreadAppState extends State<ThreadApp> {
-  int page = 0;
+  int page = 1;
   late CancelableOperation getDataCancelable;
   // Future<ThreadPageInfo>? _future;
   @override
   void initState() {
     super.initState();
-    page = widget.page.isEmpty ? 0 : int.parse(widget.page);
+    page = widget.page.isEmpty ? 1 : int.parse(widget.page);
     // _future = getData();
     getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
       debugPrint("cancel it");
