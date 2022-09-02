@@ -4,6 +4,7 @@ import 'package:async/async.dart';
 import '../bdwm/req.dart';
 import '../views/collection.dart';
 import '../globalvars.dart';
+import '../views/utils.dart';
 import '../html_parser/collection_parser.dart';
 
 class CollectionApp extends StatefulWidget {
@@ -16,19 +17,32 @@ class CollectionApp extends StatefulWidget {
 }
 
 class _CollectionAppState extends State<CollectionApp> {
+  int page = 1;
   late CancelableOperation getDataCancelable;
 
   Future<CollectionList> getData() async {
     // return getExampleCollectionList();
     var link = widget.link;
     var url = link;
+    if (page != 1) {
+      url += "&page=$page";
+    }
     var resp = await bdwmClient.get(url, headers: genHeaders2());
     return parseCollectionList(resp.body);
+  }
+
+  void refresh() {
+    setState(() {
+      page = page;
+      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+      },);
+    });
   }
 
   @override
   void initState() {
     super.initState();
+    page = 1;
     getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
     },);
   }
@@ -77,6 +91,62 @@ class _CollectionAppState extends State<CollectionApp> {
             title: Text(widget.title),
           ),
           body: CollectionPage(collectionList: collectionList, title: widget.title),
+          bottomNavigationBar: BottomAppBar(
+            shape: null,
+            // color: Colors.blue,
+            child: IconTheme(
+              data: const IconThemeData(color: Colors.redAccent),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  IconButton(
+                    disabledColor: Colors.grey,
+                    tooltip: '上一页',
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: page == 1 ? null : () {
+                      if (!mounted) { return; }
+                      setState(() {
+                        page = page - 1;
+                        getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+                        },);
+                      });
+                    },
+                  ),
+                  TextButton(
+                    child: Text("$page/${collectionList.maxPage}"),
+                    onPressed: () async {
+                      var nPageStr = await showPageDialog(context, page, collectionList.maxPage);
+                      if (nPageStr == null) { return; }
+                      if (nPageStr.isEmpty) { return; }
+                      var nPage = int.parse(nPageStr);
+                      setState(() {
+                        page = nPage;
+                        getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+                          debugPrint("cancel it");
+                        },);
+                      });
+                    },
+                  ),
+                  IconButton(
+                    disabledColor: Colors.grey,
+                    tooltip: '下一页',
+                    icon: const Icon(Icons.arrow_forward),
+                    onPressed: page == collectionList.maxPage ? null : () {
+                      // if (page == threadPageInfo.pageNum) {
+                      //   return;
+                      // }
+                      if (!mounted) { return; }
+                      setState(() {
+                        page = page + 1;
+                        getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+                        },);
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
         );
       },
     );

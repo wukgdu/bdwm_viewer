@@ -30,6 +30,7 @@ class CollectionItem {
 
 class CollectionList {
   List<CollectionItem> collectionItems = <CollectionItem>[];
+  int maxPage = 0;
   String? errorMessage;
 
   CollectionList.empty();
@@ -39,6 +40,7 @@ class CollectionList {
   CollectionList({
     required this.collectionItems,
     this.errorMessage,
+    required this.maxPage,
   });
 }
 
@@ -64,7 +66,16 @@ CollectionList parseCollectionList(String htmlStr) {
     String link = absThreadLink(path);
     collectionItems.add(CollectionItem(id: id, name: name, type: type, path: path, author: author, time: time, link: link));
   }
-  return CollectionList(collectionItems: collectionItems);
+  int maxPage = 0;
+  var pagingDivsDom = document.querySelectorAll(".paging div");
+  for (var pdd in pagingDivsDom) {
+    var txt = pdd.text;
+    if (txt.startsWith("/")) {
+      maxPage = int.parse(txt.substring(2)); // <div>/ 2</div>
+      break;
+    }
+  }
+  return CollectionList(collectionItems: collectionItems, maxPage: maxPage);
 }
 
 CollectionList getExampleCollectionList() {
