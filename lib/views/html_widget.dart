@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as hdom;
 import 'package:extended_image/extended_image.dart';
-// import 'package:csslib/parser.dart' as css_parser;
+import 'package:url_launcher/url_launcher.dart';
 
 import "./utils.dart";
 import './constants.dart';
@@ -133,12 +132,12 @@ class _HtmlComponentState extends State<HtmlComponent> {
         tspan,
       );
     }
-    return SelectableText.rich(tspan);
-    // return SelectionArea(
-    //   child: Text.rich(
-    //     tspan,
-    //   ),
-    // );
+    // return SelectableText.rich(tspan);
+    return SelectionArea(
+      child: Text.rich(
+        tspan,
+      ),
+    );
   }
 }
 
@@ -320,6 +319,39 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
                 Navigator.of(context).pushNamed('/collectionArticle', arguments: {
                   'link': link,
                   'title': "文章",
+                });
+              } else {
+                showAlertDialog(context, "", const Text("使用默认浏览器打开链接?"),
+                  actions1: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("不了"),
+                  ),
+                  actions2: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop("ok");
+                    },
+                    child: const Text("好"),
+                  ),
+                ).then((value) async {
+                  if (value == null) {
+                    return;
+                  }
+                  if (value == "ok") {
+                    var parsedUrl = Uri.parse(link);
+                    if (true || !await canLaunchUrl(parsedUrl)) {
+                      if (!await launchUrl(parsedUrl)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("打开链接失败"),),
+                        );
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("未能打开链接"),),
+                      );
+                    }
+                  }
                 });
               }
             },

@@ -15,7 +15,7 @@ class _ZonePageState extends State<ZonePage> {
   Widget oneItem(ZoneItemInfo ziInfo) {
     var size = MediaQuery.of(context).size;
     var itemWidth = size.width / 2;
-    var itemHeight = 20;
+    var itemHeight = 30;
     return Card(
       child: Container(
         padding: const EdgeInsets.all(12.0),
