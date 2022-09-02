@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart' show parse;
@@ -33,7 +34,13 @@ class _WrapImageNetworkState extends State<WrapImageNetwork> {
   void dispose() {
     cancelIt.cancel();
     clearMemoryImageCache();
-    scheduleMicrotask(clearDiskCachedImages);
+    scheduleMicrotask(() {
+      try {
+        clearDiskCachedImages();
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+    });
     super.dispose();
   }
 
@@ -47,12 +54,13 @@ class _WrapImageNetworkState extends State<WrapImageNetwork> {
       clearMemoryCacheWhenDispose: true,
       clearMemoryCacheIfFailed: true,
       handleLoadingProgress: true,
-      filterQuality: FilterQuality.high,
+      filterQuality: FilterQuality.low,
       cancelToken: cancelIt,
       timeLimit: const Duration(seconds: 30),
       loadStateChanged: (ExtendedImageState state) {
         switch (state.extendedImageLoadState) {
           case LoadState.loading:
+            if (state.loadingProgress == null) { return null; }
             var curByte = state.loadingProgress?.cumulativeBytesLoaded ?? 0;
             var sumByte = state.loadingProgress?.expectedTotalBytes ?? -1;
             if (sumByte == -1) {

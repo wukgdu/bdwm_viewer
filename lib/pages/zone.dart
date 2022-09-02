@@ -3,6 +3,7 @@ import 'package:async/async.dart';
 
 import '../bdwm/req.dart';
 import '../views/zone.dart';
+import '../views/drawer.dart';
 import '../globalvars.dart';
 import '../html_parser/zone_parser.dart';
 
@@ -45,6 +46,7 @@ class _ZoneAppState extends State<ZoneApp> {
         if (snapshot.connectionState != ConnectionState.done) {
           // return const Center(child: CircularProgressIndicator());
           return Scaffold(
+            drawer: const MyDrawer(selectedIdx: 1),
             appBar: AppBar(
               title: const Text("版面目录"),
             ),
@@ -60,6 +62,7 @@ class _ZoneAppState extends State<ZoneApp> {
         var zoneInfo = snapshot.data as ZoneInfo;
         if (zoneInfo.errorMessage != null) {
           return Scaffold(
+            drawer: const MyDrawer(selectedIdx: 1),
             appBar: AppBar(
               title: const Text("版面目录"),
             ),
@@ -69,6 +72,7 @@ class _ZoneAppState extends State<ZoneApp> {
           );
         }
         return Scaffold(
+          drawer: const MyDrawer(selectedIdx: 1),
           appBar: AppBar(
             title: const Text("版面目录"),
           ),

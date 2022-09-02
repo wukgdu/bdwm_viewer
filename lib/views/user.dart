@@ -255,12 +255,13 @@ class _UserInfoPageState extends State<UserInfoPage> {
                   ),
               ],
             ),
-            title: Text.rich(
+            title: SelectableText.rich(
               TextSpan(
                 children: <InlineSpan>[
                   TextSpan(text: user.bbsID),
                   const TextSpan(text: " ("),
-                  WidgetSpan(child: HtmlComponent(user.nickNameHtml),),
+                  // WidgetSpan(child: HtmlComponent(user.nickNameHtml),),
+                  html2TextSpan(user.nickNameHtml),
                   const TextSpan(text: ") "),
                   TextSpan(text: user.status),
                 ],

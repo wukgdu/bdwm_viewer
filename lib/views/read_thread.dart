@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:extended_image/extended_image.dart';
 
 import '../bdwm/vote.dart';
 import '../bdwm/posts.dart';
@@ -390,7 +393,8 @@ class OnePostComponent extends StatelessWidget {
                       children: [
                         TextSpan(text: item.authorInfo.userName),
                         const TextSpan(text: ' ('),
-                        WidgetSpan(child: HtmlComponent(item.authorInfo.nickName, needSelect: true),),
+                        // WidgetSpan(child: HtmlComponent(item.authorInfo.nickName, needSelect: true),),
+                        html2TextSpan(item.authorInfo.nickName),
                         const TextSpan(text: ') '),
                         TextSpan(text: item.authorInfo.status),
                       ],
@@ -486,21 +490,21 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
           ),
         ),
         Expanded(
-          // child: ListView(
-          //   controller: ScrollController(),
-          //   padding: const EdgeInsets.all(8),
-          //   children: [...widget.threadPageInfo.posts.map((e) {
-          //     return _onepost(e);
-          //   }).toList()],
-          // ),
-          child: ListView.builder(
+          child: ListView(
             controller: ScrollController(),
             padding: const EdgeInsets.all(8),
-            itemCount: widget.threadPageInfo.posts.length,
-            itemBuilder: (context, index) {
-              return _onepost(widget.threadPageInfo.posts[index]);
-            },
+            children: widget.threadPageInfo.posts.map((e) {
+              return _onepost(e);
+            }).toList(),
           ),
+          // child: ListView.builder(
+          //   controller: ScrollController(),
+          //   padding: const EdgeInsets.all(8),
+          //   itemCount: widget.threadPageInfo.posts.length,
+          //   itemBuilder: (context, index) {
+          //     return _onepost(widget.threadPageInfo.posts[index]);
+          //   },
+          // ),
         )
       ]
     );

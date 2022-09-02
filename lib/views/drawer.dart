@@ -43,8 +43,9 @@ class MyDrawer extends StatelessWidget {
               padding: const EdgeInsets.only(top: 0, left: 10, right: 10),
               children: <Widget>[
                 _oneItem(context, "/home", icon: const Icon(Icons.home), text: const Text('首页'), idx: 0),
-                _oneItem(context, "/me", icon: const Icon(Icons.person), text: const Text('我'), idx: 1),
-                _oneItem(context, "/about", icon: const Icon(Icons.info), text: const Text('关于'), idx: 2),
+                _oneItem(context, "/zone", icon: const Icon(Icons.info), text: const Text('版面目录'), idx: 1),
+                _oneItem(context, "/me", icon: const Icon(Icons.person), text: const Text('我'), idx: 2),
+                _oneItem(context, "/about", icon: const Icon(Icons.info), text: const Text('关于'), idx: 3),
               ],
             ),
           ),
