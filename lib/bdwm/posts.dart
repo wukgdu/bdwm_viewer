@@ -23,7 +23,6 @@ class PostRes {
 }
 
 Future<PostRes> bdwmSimplePost({required String bid, required String title, required String content, required String signature, required Map<String, bool> config, bool? modify=false, String? postid, bool? useBDWM=false, String? parentid}) async {
-  // TODO: random signature, noreplay, anony
   var actionUrl = "$v2Host/ajax/create_post.php";
   if (modify == true) {
     actionUrl = "$v2Host/ajax/edit_post.php";

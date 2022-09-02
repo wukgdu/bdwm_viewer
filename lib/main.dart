@@ -12,6 +12,7 @@ import './pages/about.dart';
 import './pages/read_thread.dart';
 import './pages/post_new.dart';
 import './pages/collection.dart';
+import './pages/block.dart';
 // import './pages/detail_image.dart';
 import './services.dart';
 import './bdwm/mail.dart';
@@ -81,6 +82,7 @@ class _MainPageState extends State<MainPage> {
         colorScheme: const ColorScheme.light().copyWith(primary: const Color(0xffe97c62)),
       ),
       home: HomeApp(messageCount: messageCount, mailCount: mailCount,),
+      // home: const BlockApp(bid: "678", title: "休闲娱乐",),
       // home: CollectionArticleApp(link: "", title: "测试",),
       // home: const PostNewApp(boardName: "测试", bid: "7"),
       // home: BoardApp(bid: "103", boardName: "未名湖",),
@@ -124,6 +126,18 @@ class _MainPageState extends State<MainPage> {
               return null;
             }
             builder = (BuildContext context) => PostNewApp(boardName: boardName ?? "版面", bid: bid ?? "", postid: postid, parentid: parentid);
+            break;
+          case "/block":
+            String? bid;
+            String? title;
+            if (settings.arguments != null) {
+              var settingsMap = settings.arguments as Map;
+              bid = settingsMap['uid'] as String;
+              title = settingsMap['title'] as String;
+            } else {
+              return null;
+            }
+            builder = (BuildContext context) => BlockApp(bid: bid!, title: title!,);
             break;
           case "/collection":
             String? link;

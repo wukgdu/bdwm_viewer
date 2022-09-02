@@ -9,7 +9,7 @@ const textLinkSiblingStyle = TextStyle(
 );
 const Color hightlightColor = Color(0xfff8cea8);
 
-const Map<String, Object> BDWMrich = {
+const Map<String, Object> bdwmRichText = {
   'bc': {
     '#ffffff': 9,
     '#404040': 0,

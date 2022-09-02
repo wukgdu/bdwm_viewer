@@ -281,7 +281,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                         child: Text.rich(
                           TextSpan(
                             children: [
-                              TextSpan(text: "个人文集 "),
+                              const TextSpan(text: "个人文集 "),
                               TextSpan(text: user.personalCollection.text, style: textLinkStyle),
                             ],
                           ),

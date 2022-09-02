@@ -481,7 +481,7 @@ void travelHtmlBack(hdom.Element? document, BDWMtext config, List<BDWMtext> res)
         if (color == null) {
           continue;
         }
-        var colorIdx = (BDWMrich['bc'] as Map<String, int>)[color];
+        var colorIdx = (bdwmRichText['bc'] as Map<String, int>)[color];
         if (colorIdx != null) {
           BDWMAnsiText bdwmText = (config as BDWMAnsiText).copy();
           bdwmText.foreColor = colorIdx;
@@ -505,7 +505,7 @@ void travelHtmlBack(hdom.Element? document, BDWMtext config, List<BDWMtext> res)
         if (bColor == null) {
           continue;
         }
-        var colorIdx = (BDWMrich['bc'] as Map<String, int>)[bColor];
+        var colorIdx = (bdwmRichText['bc'] as Map<String, int>)[bColor];
         if (colorIdx != null) {
           BDWMAnsiText bdwmText = (config as BDWMAnsiText).copy();
           bdwmText.backColor = colorIdx;

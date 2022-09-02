@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -60,7 +59,7 @@ class _PostNewPageState extends State<PostNewPage> {
   }
 
   Future<PostNewInfo> getExampleData() async {
-    print("get PostNew data");
+    debugPrint("get PostNew data");
     return getData();
   }
 
