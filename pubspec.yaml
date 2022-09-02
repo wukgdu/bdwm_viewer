@@ -50,6 +50,7 @@ dependencies:
   # csslib: ^0.17.2
   path: ^1.8.1
   async: ^2.8.2
+  url_launcher: ^6.1.5
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../bdwm/vote.dart';
 import '../bdwm/posts.dart';
@@ -296,8 +297,20 @@ class AttachmentComponent extends StatelessWidget {
                       ]
                     ),
                   ),
-                  onTap: () {
-                    gotoDetailImage(context: context, link: e.link, name: e.text);
+                  onTap: () async {
+                    var parsedUrl = Uri.parse(e.link);
+                    if (true || !await canLaunchUrl(parsedUrl)) {
+                      if (!await launchUrl(parsedUrl)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("打开链接失败"),),
+                        );
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("未能打开链接"),),
+                      );
+                    }
+                    // gotoDetailImage(context: context, link: e.link, name: e.text);
                   },
                 ),
               ),
