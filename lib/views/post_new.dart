@@ -90,6 +90,7 @@ class _PostNewPageState extends State<PostNewPage> {
         (contentValue as BDWMTextEditingController).toggle();
         contentValue.value = TextEditingValue(text: text);
       }
+      contentValue.selection = TextSelection.fromPosition(const TextPosition(affinity: TextAffinity.downstream, offset: 0));
     });
   }
 
