@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../views/read_thread.dart';
 import '../views/utils.dart';
@@ -96,6 +97,38 @@ class _ThreadAppState extends State<ThreadApp> {
         return Scaffold(
           appBar: AppBar(
             title: Text(threadPageInfo.board.text.split('(').first),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  final box = context.findRenderObject() as RenderBox?;
+                  Share.shareWithResult(
+                    "$v2Host/post-read.php?bid=${threadPageInfo.boardid}&threadid=${threadPageInfo.threadid}",
+                    subject: "分享帖子",
+                    sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+                  ).then((result) {
+                    var txt = "";
+                    switch (result.status) {
+                      case ShareResultStatus.success:
+                        txt = "分享成功";
+                        break;
+                      case ShareResultStatus.dismissed:
+                        txt = "分享取消";
+                        break;
+                      case ShareResultStatus.unavailable:
+                        txt = "分享不可用";
+                        break;
+                      default:
+                        txt = "分享状态未知";
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(txt),
+                      duration: const Duration(milliseconds: 600),
+                    ));
+                  });
+                },
+                icon: const Icon(Icons.share),
+              ),
+            ],
           ),
           body: ReadThreadPage(bid: widget.bid, threadid: widget.threadid, page: page.toString(), threadPageInfo: threadPageInfo,
             refreshCallBack: () {

@@ -206,6 +206,7 @@ class _VoteComponentState extends State<VoteComponent> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(text),
+            duration: const Duration(microseconds: 600),
           ),
         );
       }
@@ -304,7 +305,7 @@ class AttachmentComponent extends StatelessWidget {
                     if (true || !await canLaunchUrl(parsedUrl)) {
                       if (!await launchUrl(parsedUrl)) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("打开链接失败"),),
+                          const SnackBar(content: Text("打开链接失败"), duration: Duration(milliseconds: 600),),
                         );
                       }
                     } else {

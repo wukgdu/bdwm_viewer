@@ -161,7 +161,7 @@ class _DetailImageState extends State<DetailImage> {
                   text = "保存失败：${res.reason}";
                 }
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(text),),
+                  SnackBar(content: Text(text), duration: const Duration(milliseconds: 600),),
                 );
               });
             },
