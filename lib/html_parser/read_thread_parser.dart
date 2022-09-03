@@ -179,6 +179,9 @@ OnePostInfo parseOnePost(Element document) {
     if (downDom != null) {
       postTime = getTrimmedString(downDom);
       modifyTime = getTrimmedString(trDom.querySelector("span"));
+      var splitArray = modifyTime.split(" ");
+      splitArray.removeWhere((element) => element.isEmpty);
+      modifyTime = splitArray.join(" ");
     } else {
       postTime = getTrimmedString(trDom.querySelector("span"));
     }
