@@ -1,3 +1,5 @@
+import 'dart:math' show min;
+
 import 'package:flutter/material.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -25,7 +27,9 @@ class MyDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double dWidth = 280;
+    var size = MediaQuery.of(context).size;
+    var deviceWidth = size.width;
+    double dWidth = min(280, deviceWidth*0.7);
     return Drawer(
       width: dWidth,
       child: Column(
@@ -44,8 +48,9 @@ class MyDrawer extends StatelessWidget {
               children: <Widget>[
                 _oneItem(context, "/home", icon: const Icon(Icons.home), text: const Text('首页'), idx: 0),
                 _oneItem(context, "/zone", icon: const Icon(Icons.info), text: const Text('版面目录'), idx: 1),
-                _oneItem(context, "/me", icon: const Icon(Icons.person), text: const Text('我'), idx: 2),
-                _oneItem(context, "/about", icon: const Icon(Icons.info), text: const Text('关于'), idx: 3),
+                _oneItem(context, "/favorite", icon: const Icon(Icons.star), text: const Text('版面收藏夹'), idx: 2),
+                _oneItem(context, "/me", icon: const Icon(Icons.person), text: const Text('我'), idx: 3),
+                _oneItem(context, "/about", icon: const Icon(Icons.info), text: const Text('关于'), idx: 4),
               ],
             ),
           ),

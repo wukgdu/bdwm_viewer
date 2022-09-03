@@ -14,6 +14,7 @@ import './pages/post_new.dart';
 import './pages/collection.dart';
 import './pages/block.dart';
 import './pages/zone.dart';
+import './pages/favorite.dart';
 // import './pages/detail_image.dart';
 import './services.dart';
 import './bdwm/mail.dart';
@@ -133,6 +134,9 @@ class _MainPageState extends State<MainPage> {
             break;
           case "/zone":
             builder = (BuildContext context) => const ZoneApp();
+            break;
+          case "/favorite":
+            builder = (BuildContext context) => const FavoriteApp();
             break;
           case "/block":
             String? bid;
