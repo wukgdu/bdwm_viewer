@@ -66,6 +66,11 @@ class _HomeAppState extends State<HomeApp> {
     );
   }
   @override
+  void dispose() {
+    clearAllExtendedImageCache();
+    super.dispose();
+  }
+  @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,

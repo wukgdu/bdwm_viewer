@@ -8,6 +8,7 @@ import '../bdwm/users.dart';
 import "../bdwm/logout.dart";
 import "./utils.dart";
 import "./constants.dart";
+import "../pages/detail_image.dart";
 import './html_widget.dart';
 
 class UserOperationComponent extends StatefulWidget {
@@ -242,18 +243,23 @@ class _UserInfoPageState extends State<UserInfoPage> {
             //   backgroundColor: Colors.white,
             //   backgroundImage: NetworkImage(user.avatarLink),
             // ),
-            leading: Stack(
-              alignment: const Alignment(0, 0),
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.white,
-                  backgroundImage: NetworkImage(user.avatarLink),
-                ),
-                if (user.avatarFrameLink.isNotEmpty)
-                  Image.network(
-                    user.avatarFrameLink,
+            leading: GestureDetector(
+              onTap: () {
+                gotoDetailImage(context: context, link: user.avatarLink, imgData: null, name: "${user.bbsID}.jpg");
+              },
+              child: Stack(
+                alignment: const Alignment(0, 0),
+                children: [
+                  CircleAvatar(
+                    backgroundColor: Colors.white,
+                    backgroundImage: NetworkImage(user.avatarLink),
                   ),
-              ],
+                  if (user.avatarFrameLink.isNotEmpty)
+                    Image.network(
+                      user.avatarFrameLink,
+                    ),
+                ],
+              ),
             ),
             title: SelectableText.rich(
               TextSpan(

@@ -9,6 +9,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../utils.dart';
+
 void gotoDetailImage({required BuildContext context, required String link, String? name, Uint8List? imgData}) {
   Navigator.of(context).push(MaterialPageRoute(
     builder: (context) => DetailImage(imgLink: link, imgName: name, imgData: imgData,),
@@ -48,9 +50,11 @@ class _DetailImageState extends State<DetailImage> {
   @override
   dispose() {
     cancelIt.cancel();
-    clearMemoryImageCache();
-    // Future.delayed(Duration.zero, () => clearDiskCachedImages());
-    Future.microtask(clearDiskCachedImages);
+    // clearMemoryImageCache();
+    // Future.microtask(clearDiskCachedImages);
+    if (imgLink.isNotEmpty) {
+      clearOneExtendedImageCache(imgLink);
+    }
     super.dispose();
   }
 

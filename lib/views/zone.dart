@@ -32,7 +32,7 @@ class _ZonePageState extends State<ZonePage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("${ziInfo.number} ${ziInfo.name}"),
+                  Text("${ziInfo.number} ${ziInfo.name}", style: const TextStyle(fontSize: 20),),
                   const Icon(Icons.arrow_right),
                 ],
               ),

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -32,14 +31,6 @@ class _WrapImageNetworkState extends State<WrapImageNetwork> {
   @override
   void dispose() {
     cancelIt.cancel();
-    clearMemoryImageCache();
-    scheduleMicrotask(() {
-      try {
-        clearDiskCachedImages();
-      } catch (e) {
-        debugPrint(e.toString());
-      }
-    });
     super.dispose();
   }
 
@@ -132,7 +123,7 @@ class _HtmlComponentState extends State<HtmlComponent> {
         tspan,
       );
     }
-    // return SelectableText.rich(tspan);
+    // return SelectableText.rich(tspan, cursorWidth: 0,);
     return SelectionArea(
       child: Text.rich(
         tspan,

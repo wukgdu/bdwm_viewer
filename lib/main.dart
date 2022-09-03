@@ -17,6 +17,7 @@ import './pages/zone.dart';
 // import './pages/detail_image.dart';
 import './services.dart';
 import './bdwm/mail.dart';
+import './utils.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -69,6 +70,7 @@ class _MainPageState extends State<MainPage> {
     if (timerMail != null) {
       timerMail!.cancel();
     }
+    clearAllExtendedImageCache();
     super.dispose();
   }
 

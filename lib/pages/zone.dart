@@ -8,6 +8,7 @@ import '../globalvars.dart';
 import '../html_parser/zone_parser.dart';
 
 class ZoneApp extends StatefulWidget {
+  final zoneDrawer = const MyDrawer(selectedIdx: 1);
   const ZoneApp({super.key});
 
   @override
@@ -46,7 +47,7 @@ class _ZoneAppState extends State<ZoneApp> {
         if (snapshot.connectionState != ConnectionState.done) {
           // return const Center(child: CircularProgressIndicator());
           return Scaffold(
-            drawer: const MyDrawer(selectedIdx: 1),
+            drawer: widget.zoneDrawer,
             appBar: AppBar(
               title: const Text("版面目录"),
             ),
@@ -62,7 +63,7 @@ class _ZoneAppState extends State<ZoneApp> {
         var zoneInfo = snapshot.data as ZoneInfo;
         if (zoneInfo.errorMessage != null) {
           return Scaffold(
-            drawer: const MyDrawer(selectedIdx: 1),
+            drawer: widget.zoneDrawer,
             appBar: AppBar(
               title: const Text("版面目录"),
             ),
@@ -72,7 +73,7 @@ class _ZoneAppState extends State<ZoneApp> {
           );
         }
         return Scaffold(
-          drawer: const MyDrawer(selectedIdx: 1),
+          drawer: widget.zoneDrawer,
           appBar: AppBar(
             title: const Text("版面目录"),
           ),

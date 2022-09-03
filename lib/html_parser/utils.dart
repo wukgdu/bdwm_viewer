@@ -54,5 +54,8 @@ String absImgSrc(String src) {
 }
 
 String absThreadLink(String link) {
+  if (link.startsWith("http")) {
+    return link;
+  }
   return "$v2Host/$link";
 }

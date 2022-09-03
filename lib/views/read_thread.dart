@@ -6,6 +6,7 @@ import '../bdwm/vote.dart';
 import '../bdwm/posts.dart';
 import '../bdwm/forward.dart';
 import './utils.dart';
+import '../utils.dart' show clearAllExtendedImageCache;
 import './constants.dart';
 import '../html_parser/read_thread_parser.dart';
 // import '../globalvars.dart';
@@ -187,11 +188,11 @@ class _VoteComponentState extends State<VoteComponent> {
           voteUpCount = value.upCount;
           voteDownCount = value.downCount;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("ok"),
-          ),
-        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(
+        //     content: Text("ok"),
+        //   ),
+        // );
       } else {
         var text = "";
         switch (value.error) {
@@ -468,6 +469,12 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
     //     threadPageInfo = value;
     //   });
     // });
+  }
+
+  @override
+  void dispose() {
+    clearAllExtendedImageCache();
+    super.dispose();
   }
 
   Widget _onepost(OnePostInfo item) {
