@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as hdom;
 
-import '../globalvars.dart';
 import './utils.dart';
 
 class BlockBoardItem {

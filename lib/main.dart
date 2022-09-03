@@ -17,6 +17,7 @@ import './pages/zone.dart';
 import './pages/favorite.dart';
 import './pages/search.dart';
 import './pages/search_result.dart';
+import './views/search.dart';
 // import './pages/detail_image.dart';
 import './services.dart';
 import './bdwm/mail.dart';
@@ -201,6 +202,16 @@ class _MainPageState extends State<MainPage> {
               return null;
             }
             builder = (BuildContext context) => SimpleSearchResultApp(mode: mode!, keyWord: keyWord!,);
+            break;
+          case "/complexSearchResult":
+            PostSearchSettings? pss;
+            if (settings.arguments != null) {
+              var settingsMap = settings.arguments as Map;
+              pss = settingsMap['settings'] as PostSearchSettings;
+            } else {
+              return null;
+            }
+            builder = (BuildContext context) => ComplexSearchResultApp(pss: pss!);
             break;
           case "/me":
             if (globalUInfo.login) {

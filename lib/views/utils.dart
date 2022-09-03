@@ -165,7 +165,7 @@ Future<String?> showTextDialog(BuildContext context, String title) {
             controller: textValue,
             // decoration: InputDecoration(
             // ),
-            keyboardType: const TextInputType.numberWithOptions(),
+            // keyboardType: const TextInputType.numberWithOptions(),
           ),
         ),
       ],
