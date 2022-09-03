@@ -2,41 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 
 import '../bdwm/req.dart';
-import '../views/collection.dart';
 import '../globalvars.dart';
 import '../views/utils.dart';
-import '../html_parser/collection_parser.dart';
+import '../html_parser/search_parser.dart';
+import '../views/search_result.dart';
 
-class CollectionApp extends StatefulWidget {
-  final String link;
-  final String title;
-  const CollectionApp({super.key, required this.link, required this.title});
+class SimpleSearchResultApp extends StatefulWidget {
+  final String mode;
+  final String keyWord;
+  const SimpleSearchResultApp({super.key, required this.mode, required this.keyWord});
 
   @override
-  State<CollectionApp> createState() => _CollectionAppState();
+  State<SimpleSearchResultApp> createState() => _SimpleSearchResultAppState();
 }
 
-class _CollectionAppState extends State<CollectionApp> {
+class _SimpleSearchResultAppState extends State<SimpleSearchResultApp> {
   int page = 1;
   late CancelableOperation getDataCancelable;
 
-  Future<CollectionList> getData() async {
+  Future<SimpleSearchRes> getData() async {
     // return getExampleCollectionList();
-    var link = widget.link;
-    var url = link;
+    var url = "$v2Host/search.php?mode=${widget.mode}&key=${widget.keyWord}";
     if (page != 1) {
       url += "&page=$page";
     }
     var resp = await bdwmClient.get(url, headers: genHeaders2());
-    return parseCollectionList(resp.body);
-  }
-
-  void refresh() {
-    setState(() {
-      page = page;
-      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
-      },);
-    });
+    if (widget.mode=="user") {
+      return parseUserSearch(resp.body);
+    } else if (widget.mode == "board") {
+      return parseBoardSearch(resp.body);
+    }
+    return SimpleSearchRes.error(errorMessage: "未知搜索");
   }
 
   @override
@@ -64,7 +60,7 @@ class _CollectionAppState extends State<CollectionApp> {
           // return const Center(child: CircularProgressIndicator());
           return Scaffold(
             appBar: AppBar(
-              title: Text(widget.title),
+              title: const Text("搜索"),
             ),
             body: const Center(child: CircularProgressIndicator()),
           );
@@ -75,22 +71,22 @@ class _CollectionAppState extends State<CollectionApp> {
         if (!snapshot.hasData || snapshot.data == null) {
           return const Text("错误：未获取数据");
         }
-        var collectionList = snapshot.data as CollectionList;
-        if (collectionList.errorMessage != null) {
+        var simpleSearchRes = snapshot.data as SimpleSearchRes;
+        if (simpleSearchRes.errorMessage != null) {
           return Scaffold(
             appBar: AppBar(
-              title: Text(widget.title),
+              title: const Text("搜索失败"),
             ),
             body: Center(
-              child: Text(collectionList.errorMessage!),
+              child: Text(simpleSearchRes.errorMessage!),
             ),
           );
         }
         return Scaffold(
           appBar: AppBar(
-            title: Text(widget.title),
+            title: Text("搜索 ${widget.keyWord} 结果"),
           ),
-          body: CollectionPage(collectionList: collectionList, title: widget.title),
+          body: SimpleResultPage(ssRes: simpleSearchRes, mode: widget.mode),
           bottomNavigationBar: BottomAppBar(
             shape: null,
             // color: Colors.blue,
@@ -113,9 +109,9 @@ class _CollectionAppState extends State<CollectionApp> {
                     },
                   ),
                   TextButton(
-                    child: Text("$page/${collectionList.maxPage}"),
+                    child: Text("$page/${simpleSearchRes.maxPage}"),
                     onPressed: () async {
-                      var nPageStr = await showPageDialog(context, page, collectionList.maxPage);
+                      var nPageStr = await showPageDialog(context, page, simpleSearchRes.maxPage);
                       if (nPageStr == null) { return; }
                       if (nPageStr.isEmpty) { return; }
                       var nPage = int.parse(nPageStr);
@@ -131,7 +127,7 @@ class _CollectionAppState extends State<CollectionApp> {
                     disabledColor: Colors.grey,
                     tooltip: '下一页',
                     icon: const Icon(Icons.arrow_forward),
-                    onPressed: page >= collectionList.maxPage ? null : () {
+                    onPressed: page >= simpleSearchRes.maxPage ? null : () {
                       // if (page == threadPageInfo.pageNum) {
                       //   return;
                       // }
@@ -147,83 +143,6 @@ class _CollectionAppState extends State<CollectionApp> {
               ),
             ),
           ),
-        );
-      },
-    );
-  }
-}
-
-class CollectionArticleApp extends StatefulWidget {
-  final String link;
-  final String title;
-  const CollectionArticleApp({super.key, required this.link, required this.title});
-
-  @override
-  State<CollectionArticleApp> createState() => _CollectionArticleAppState();
-}
-
-class _CollectionArticleAppState extends State<CollectionArticleApp> {
-  late CancelableOperation getDataCancelable;
-
-  Future<CollectionArticle> getData() async {
-    // return getExampleCollectionArticle();
-    var link = widget.link;
-    var url = link;
-    var resp = await bdwmClient.get(url, headers: genHeaders2());
-    return parseCollectionArticle(resp.body);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
-    },);
-  }
-
-  @override
-  void dispose() {
-    Future.microtask(() => getDataCancelable.cancel(),);
-    super.dispose();
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getDataCancelable.value,
-      builder: (context, snapshot) {
-        // debugPrint(snapshot.connectionState.toString());
-        if (snapshot.connectionState != ConnectionState.done) {
-          // return const Center(child: CircularProgressIndicator());
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(widget.title),
-            ),
-            body: const Center(child: CircularProgressIndicator()),
-          );
-        }
-        if (snapshot.hasError) {
-          return Text("错误：${snapshot.error}");
-        }
-        if (!snapshot.hasData || snapshot.data == null) {
-          return const Text("错误：未获取数据");
-        }
-        var collectionArticle = snapshot.data as CollectionArticle;
-        if (collectionArticle.errorMessage != null) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(widget.title),
-            ),
-            body: Center(
-              child: Text(collectionArticle.errorMessage!),
-            ),
-          );
-        }
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(widget.title),
-          ),
-          body: CollectionArticlePage(collectionArticle: collectionArticle),
         );
       },
     );

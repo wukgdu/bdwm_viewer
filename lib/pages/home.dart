@@ -100,6 +100,12 @@ class _HomeAppState extends State<HomeApp> {
               },
             ),
             IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                Navigator.of(context).pushNamed('/search');
+              },
+            ),
+            IconButton(
               icon: const Icon(Icons.account_circle),
               onPressed: () {
                 if (globalUInfo.login) {

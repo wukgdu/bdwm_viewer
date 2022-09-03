@@ -15,6 +15,8 @@ import './pages/collection.dart';
 import './pages/block.dart';
 import './pages/zone.dart';
 import './pages/favorite.dart';
+import './pages/search.dart';
+import './pages/search_result.dart';
 // import './pages/detail_image.dart';
 import './services.dart';
 import './bdwm/mail.dart';
@@ -86,6 +88,7 @@ class _MainPageState extends State<MainPage> {
         colorScheme: const ColorScheme.light().copyWith(primary: const Color(0xffe97c62)),
       ),
       home: HomeApp(messageCount: messageCount, mailCount: mailCount,),
+      // home: const SimpleSearchResultApp(mode: "user", keyWord: "onepiecexx",),
       // home: const ZoneApp(),
       // home: const BlockApp(bid: "678", title: "休闲娱乐",),
       // home: CollectionArticleApp(link: "", title: "测试",),
@@ -183,6 +186,21 @@ class _MainPageState extends State<MainPage> {
             break;
           case "/about":
             builder = (BuildContext context) => const AboutApp();
+            break;
+          case "/search":
+            builder = (BuildContext context) => const SearchApp();
+            break;
+          case "/simpleSearchResult":
+            String? mode;
+            String? keyWord;
+            if (settings.arguments != null) {
+              var settingsMap = settings.arguments as Map;
+              mode = settingsMap['mode'] as String;
+              keyWord = settingsMap['keyWord'] as String;
+            } else {
+              return null;
+            }
+            builder = (BuildContext context) => SimpleSearchResultApp(mode: mode!, keyWord: keyWord!,);
             break;
           case "/me":
             if (globalUInfo.login) {
