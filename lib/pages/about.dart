@@ -39,11 +39,12 @@ class AboutApp extends StatelessWidget {
       body: ListView(
         children: [
           oneItem("北大未名BBS", "https://bbs.pku.edu.cn"),
-          oneItem("App 开发", "onepiece@bdwm"),
-          oneItem("开源", "https://github.com/wukgdu/bdwm_viewer"),
-          oneItem("下载", "https://github.com/wukgdu/bdwm_viewer/releases"),
+          oneItem("关于此应用", "北大未名BBS第三方安卓客户端"),
+          oneItem("开发", "onepiece@bdwm"),
           oneItem("当前版本", curVersion),
           oneItem("站内更新", innerLink, isLink: true),
+          oneItem("开源", "https://github.com/wukgdu/bdwm_viewer"),
+          oneItem("下载", "https://github.com/wukgdu/bdwm_viewer/releases"),
         ],
       ),
     );
