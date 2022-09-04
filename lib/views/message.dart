@@ -191,13 +191,16 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
         if (messageinfo.desc != null) {
           return Center(child: Text(messageinfo.desc!),);
         }
-        return ListView.builder(
+        return ListView(
           reverse: true,
           controller: _controller,
-          itemCount: widget.count,
-          itemBuilder: ((context, index) {
-            return oneItem(messageinfo.messages[index]);
-          }),
+          // itemCount: widget.count,
+          // itemBuilder: ((context, index) {
+          //   return oneItem(messageinfo.messages[index]);
+          // }),
+          children: messageinfo.messages.map((e) {
+            return oneItem(e);
+          }).toList(),
         );
       },
     );

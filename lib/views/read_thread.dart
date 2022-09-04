@@ -227,11 +227,12 @@ class _VoteComponentState extends State<VoteComponent> {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
           margin: const EdgeInsets.only(top: 5),
           // padding: const EdgeInsets.only(top: 10),
-          height: 22,
+          height: 26,
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(voteSize/2)),
             // border: Border.all(width: 1, color: Colors.red),
