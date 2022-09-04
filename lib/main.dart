@@ -17,6 +17,7 @@ import './pages/zone.dart';
 import './pages/favorite.dart';
 import './pages/search.dart';
 import './pages/search_result.dart';
+import './pages/message.dart';
 import './views/search.dart';
 // import './pages/detail_image.dart';
 import './services.dart';
@@ -46,16 +47,31 @@ class _MainPageState extends State<MainPage> {
   // NotifyMessageInfo unreadMessageInfo = NotifyMessageInfo.empty();
   ValueNotifier<int> messageCount = ValueNotifier<int>(0);
   ValueNotifier<int> mailCount = ValueNotifier<int>(0);
+  MessageBriefNotifier messageBrief = MessageBriefNotifier([]);
 
   @override
   void initState() {
     super.initState();
+
+    unreadMessage.updateValue((NotifyMessageInfo info) {
+      if (info.count != messageCount.value) {
+        messageCount.value = info.count;
+      }
+      messageBrief.newArray(info);
+    });
     timerMessage = Timer.periodic(const Duration(seconds: 15), (timer) {
       unreadMessage.updateValue((NotifyMessageInfo info) {
         if (info.count != messageCount.value) {
           messageCount.value = info.count;
         }
+        messageBrief.newArray(info);
       });
+    });
+
+    unreadMail.updateValue((UnreadMailInfo info) {
+      if (info.count != mailCount.value) {
+        mailCount.value = info.count;
+      }
     });
     timerMail = Timer.periodic(const Duration(seconds: 15), (timer) {
       unreadMail.updateValue((UnreadMailInfo info) {
@@ -224,6 +240,13 @@ class _MainPageState extends State<MainPage> {
           case "/user":
             String userID = settings.arguments as String? ?? "15265";
             builder = (BuildContext context) => UserApp(uid: userID, needBack: true,);
+            break;
+          case "/message":
+            builder = (BuildContext context) => MessagelistApp(brief: messageBrief);
+            break;
+          case "/messagePerson":
+            String userName = settings.arguments as String? ?? "deliver";
+            builder = (BuildContext context) => MessagePersonApp(userName: userName,);
             break;
           case "/home":
           default:

@@ -1,10 +1,10 @@
-import 'package:bdwm_viewer/views/search.dart';
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 
 import '../bdwm/req.dart';
 import '../globalvars.dart';
 import '../views/utils.dart';
+import '../views/search.dart';
 import '../html_parser/search_parser.dart';
 import '../views/search_result.dart';
 

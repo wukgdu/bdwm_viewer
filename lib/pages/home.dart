@@ -95,7 +95,10 @@ class _HomeAppState extends State<HomeApp> {
                 return StackIcon(
                   count: count as int,
                   icon: const Icon(Icons.message),
-                  callBack: () { quickNotify("OBViewer", "message"); },
+                  callBack: () {
+                    // quickNotify("OBViewer", "message");
+                    Navigator.of(context).pushNamed('/message');
+                  },
                 );
               },
             ),

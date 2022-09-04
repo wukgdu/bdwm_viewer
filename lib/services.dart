@@ -1,6 +1,7 @@
 import './bdwm/message.dart';
 import './bdwm/mail.dart';
 import './utils.dart';
+import 'package:flutter/foundation.dart';
 
 class NotifyMessageInfo {
   List<UnreadMessageInfo> value = <UnreadMessageInfo>[];
@@ -112,5 +113,17 @@ class NotifyMail {
       content = content.substring(0, 40);
     }
     quickNotify(title, content);
+  }
+}
+
+class MessageBriefNotifier extends ValueNotifier<List<TextAndLink>> {
+  MessageBriefNotifier(List<TextAndLink> value): super(value);
+
+  void newArray(NotifyMessageInfo nmi) {
+    value.clear();
+    for (var nsi in nmi.value) {
+      value.add(TextAndLink(nsi.withWho, nsi.count.toString()));
+    }
+    notifyListeners();
   }
 }

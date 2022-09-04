@@ -252,7 +252,7 @@ BoardInfo getExampleBoard() {
   return items;
 }
 
-String directToThread(String htmlStr) {
+String directToThread(String htmlStr, {bool? needLink=false}) {
   var document = parse(htmlStr);
   var link = document.querySelector(".view-full-post")?.attributes['href'];
   if (link == null) {
@@ -260,5 +260,6 @@ String directToThread(String htmlStr) {
   }
   var p1 = link.indexOf("threadid=");
   var p2 = link.indexOf("&", p1);
+  if (needLink==true) { return link; }
   return link.substring(p1+9, p2);
 }
