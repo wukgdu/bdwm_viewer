@@ -71,8 +71,17 @@ class _ComplexSearchComponentState extends State<ComplexSearchComponent> {
                 ),
                 TextButton(
                   onPressed: () {
-                    int? days = int.tryParse(daysController.text);
-                    if (days == null) {
+                    int? days;
+                    bool daysOK = true;
+                    if (daysController.text.length > 7) {
+                      daysOK = false;
+                    } else {
+                      days = int.tryParse(daysController.text);
+                      if (days == null || days <= 0 || days > 999999) {
+                        daysOK = false;
+                      }
+                    }
+                    if (daysOK == false) {
                       showAlertDialog(context, "时间错误", const Text("输入天数不合法,请输入1000以内的天数\n（onepiece：实际可以24855）"),
                         actions1: TextButton(
                           onPressed: () {

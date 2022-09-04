@@ -58,9 +58,22 @@ class _ComplexResultPageState extends State<ComplexResultPage> {
   final _ts2 = const TextStyle(fontSize: 16, color: Colors.black);
   final _ts3 = const TextStyle(fontSize: 12, color: Colors.black);
 
+  void gotoThread(ComplexSearchResItem csri) {
+    Navigator.of(context).pushNamed('/thread', arguments: {
+      'bid': csri.bid,
+      'threadid': csri.threadid,
+      'boardName': csri.boardName,
+      'page': '1',
+    },);
+  }
+
   Widget oneItem(ComplexSearchResItem csri) {
     return Card(
-      child: Container(
+      child: InkWell(
+        onTap: () {
+          gotoThread(csri);
+        },
+        child: Container(
         padding: const EdgeInsets.all(5.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,12 +89,7 @@ class _ComplexResultPageState extends State<ComplexResultPage> {
             ),
             GestureDetector(
               onTap: () {
-                Navigator.of(context).pushNamed('/thread', arguments: {
-                  'bid': csri.bid,
-                  'threadid': csri.threadid,
-                  'boardName': csri.boardName,
-                  'page': '1',
-                },);
+                gotoThread(csri);
               },
               child: Text(csri.title, style: _ts2,),
             ),
@@ -94,6 +102,7 @@ class _ComplexResultPageState extends State<ComplexResultPage> {
             }).toList(),
           ],
         ),
+      ),
       ),
     );
   }

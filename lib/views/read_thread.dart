@@ -152,7 +152,7 @@ class _VoteComponentState extends State<VoteComponent> {
   int voteUpCount = 0;
   int voteDownCount = 0;
 
-  static const voteSize = 12.0;
+  static const voteSize = 16.0;
   static const borderColor = Colors.grey;
   static const widthSpacer = SizedBox(width: 5,);
 
@@ -221,7 +221,7 @@ class _VoteComponentState extends State<VoteComponent> {
         Container(
           margin: const EdgeInsets.only(top: 5),
           // padding: const EdgeInsets.only(top: 10),
-          height: 20,
+          height: 22,
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(voteSize/2)),
             // border: Border.all(width: 1, color: Colors.red),

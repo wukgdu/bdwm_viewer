@@ -41,6 +41,7 @@ class _TopHomePageState extends State<TopHomePage> {
           item.title,
           textAlign: TextAlign.start,
           overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.normal),
         ),
         subtitle: Row(
           children: [
