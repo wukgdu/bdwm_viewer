@@ -58,10 +58,22 @@ class _ZoneAppState extends State<ZoneApp> {
           );
         }
         if (snapshot.hasError) {
-          return Text("错误：${snapshot.error}");
+          return Scaffold(
+            drawer: widget.zoneDrawer,
+            appBar: AppBar(
+              title: const Text("版面目录"),
+            ),
+            body: Text("错误：${snapshot.error}"),
+          );
         }
         if (!snapshot.hasData || snapshot.data == null) {
-          return const Text("错误：未获取数据");
+          return Scaffold(
+            drawer: widget.zoneDrawer,
+            appBar: AppBar(
+              title: const Text("版面目录"),
+            ),
+            body: const Text("错误：未获取数据"),
+          );
         }
         var zoneInfo = snapshot.data as ZoneInfo;
         if (zoneInfo.errorMessage != null) {

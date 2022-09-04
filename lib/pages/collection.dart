@@ -73,10 +73,20 @@ class _CollectionAppState extends State<CollectionApp> {
           );
         }
         if (snapshot.hasError) {
-          return Text("错误：${snapshot.error}");
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(widget.title),
+            ),
+            body: Text("错误：${snapshot.error}"),
+          );
         }
         if (!snapshot.hasData || snapshot.data == null) {
-          return const Text("错误：未获取数据");
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(widget.title),
+            ),
+            body: const Text("错误：未获取数据"),
+          );
         }
         var collectionList = snapshot.data as CollectionList;
         if (collectionList.errorMessage != null) {
@@ -209,10 +219,20 @@ class _CollectionArticleAppState extends State<CollectionArticleApp> {
           );
         }
         if (snapshot.hasError) {
-          return Text("错误：${snapshot.error}");
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(widget.title),
+            ),
+            body: Text("错误：${snapshot.error}"),
+          );
         }
         if (!snapshot.hasData || snapshot.data == null) {
-          return const Text("错误：未获取数据");
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(widget.title),
+            ),
+            body: const Text("错误：未获取数据"),
+          );
         }
         var collectionArticle = snapshot.data as CollectionArticle;
         if (collectionArticle.errorMessage != null) {

@@ -96,10 +96,20 @@ class _ThreadAppState extends State<ThreadApp> {
           );
         }
         if (snapshot.hasError) {
-          return Text("错误：${snapshot.error}");
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(widget.boardName ?? "看帖"),
+            ),
+            body: Text("错误：${snapshot.error}"),
+          );
         }
         if (!snapshot.hasData || snapshot.data == null) {
-          return const Text("错误：未获取数据");
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(widget.boardName ?? "看帖"),
+            ),
+            body: const Text("错误：未获取数据"),
+          );
         }
         var threadPageInfo = snapshot.data as ThreadPageInfo;
         if (threadPageInfo.errorMessage != null) {

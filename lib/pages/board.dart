@@ -59,10 +59,20 @@ class _BoardAppState extends State<BoardApp> {
           );
         }
         if (snapshot.hasError) {
-          return Text("错误：${snapshot.error}");
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(widget.boardName),
+            ),
+            body: Text("错误：${snapshot.error}"),
+          );
         }
         if (!snapshot.hasData || snapshot.data == null) {
-          return const Text("错误：未获取数据");
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(widget.boardName),
+            ),
+            body: const Text("错误：未获取数据"),
+          );
         }
         var boardInfo = snapshot.data as BoardInfo;
         if (boardInfo.errorMessage != null) {

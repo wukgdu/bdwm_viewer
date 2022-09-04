@@ -57,10 +57,20 @@ class _BlockAppState extends State<BlockApp> {
           );
         }
         if (snapshot.hasError) {
-          return Text("错误：${snapshot.error}");
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(widget.title),
+            ),
+            body: Text("错误：${snapshot.error}"),
+          );
         }
         if (!snapshot.hasData || snapshot.data == null) {
-          return const Text("错误：未获取数据");
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(widget.title),
+            ),
+            body: const Text("错误：未获取数据"),
+          );
         }
         var blockInfo = snapshot.data as BlockInfo;
         if (blockInfo.errorMessage != null) {

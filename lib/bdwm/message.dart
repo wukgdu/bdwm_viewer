@@ -96,10 +96,6 @@ Future<MessageInfo> bdwmGetMessages(String withWho, int count) async {
     var content = element['content'];
     messages.add(MessageItem(id: id, withWho: withWho, withuid: withuid, dir: dir, unread: unread, time: time, content: content));
   }
-  // List<String> res = parseCookie(resp.headers['set-cookie'] ?? "");
-  // if (res.isNotEmpty) {
-  //   globalUInfo.setInfo(res[1], res[0], username);
-  // }
   return MessageInfo(success: true, error: 0, messages: messages);
 }
 
