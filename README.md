@@ -18,7 +18,8 @@ https://github.com/wukgdu/bdwm_viewer/releases
 2. `git clone https://github.com/wukgdu/bdwm_viewer.git`
 3. 进入目录（删除pubspec.lock，应该不用，下一步不行了就删掉）
 4. `flutter pub get`
-5. `flutter run` （选择一个target）
+5. 调试 `flutter run` （选择一个target）
+6. 编译 `flutter build apk --split-per-abi`
 
 ## 功能
 1. 看帖
@@ -26,7 +27,7 @@ https://github.com/wukgdu/bdwm_viewer/releases
     2. [x] 单个帖子（thread）
     3. [x] 彩色文字，签名档，附件图片预览
     4. [x] 版面目录，版面
-    5. [x] 收藏版面，投票
+    5. [x] 收藏版面，帖子赞/踩
 2. 发帖
     1. [x] 发帖
     2. [x] 发帖时选择匿名、不可回复、回复提醒，选择签名档
