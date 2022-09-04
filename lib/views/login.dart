@@ -96,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                     );
                   } else {
                     debugPrint(globalUInfo.gist());
-                    Navigator.of(context).pushReplacementNamed('/me');
+                    // Navigator.of(context).pushReplacementNamed('/me');
                     Navigator.of(context).pushReplacementNamed('/home');
                   }
                 });
