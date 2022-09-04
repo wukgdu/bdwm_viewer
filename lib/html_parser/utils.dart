@@ -57,5 +57,9 @@ String absThreadLink(String link) {
   if (link.startsWith("http")) {
     return link;
   }
+  if (link.startsWith('/')) {
+    var res = bbsHost + link;
+    return res;
+  }
   return "$v2Host/$link";
 }
