@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../views/message.dart';
-import '../services.dart' show MessageBriefNotifier;
+import '../services.dart' show MessageBriefNotifier, NotifyMessage;
 
 class MessagelistApp extends StatelessWidget {
   final MessageBriefNotifier brief;
@@ -20,7 +20,8 @@ class MessagelistApp extends StatelessWidget {
 
 class MessagePersonApp extends StatelessWidget {
   final String userName;
-  const MessagePersonApp({super.key, required this.userName});
+  final NotifyMessage notifier;
+  const MessagePersonApp({super.key, required this.userName, required this.notifier});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +29,7 @@ class MessagePersonApp extends StatelessWidget {
       appBar: AppBar(
         title: Text(userName),
       ),
-      body: MessagePersonPage(withWho: userName),
+      body: MessagePersonPage(withWho: userName, notifier: notifier,),
     );
   }
 }

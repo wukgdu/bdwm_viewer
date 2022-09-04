@@ -20,7 +20,7 @@ class NotifyMessage {
     for (var e in value) {
       if (lastUnreadInfo.containsKey(e.withWho)) {
         var thatCount = lastUnreadInfo[e.withWho]!;
-        if (e.count > thatCount) {
+        if (e.count != thatCount) {
           lastUnreadInfo[e.withWho] = e.count;
           notifyIt = true;
         }
@@ -30,6 +30,10 @@ class NotifyMessage {
       }
     }
     return notifyIt;
+  }
+
+  void clearOne(String withWho) {
+    lastUnreadInfo.remove(withWho);
   }
 
   void updateValue(Function callBack) {

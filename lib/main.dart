@@ -242,11 +242,11 @@ class _MainPageState extends State<MainPage> {
             builder = (BuildContext context) => UserApp(uid: userID, needBack: true,);
             break;
           case "/message":
-            builder = (BuildContext context) => MessagelistApp(brief: messageBrief);
+            builder = (BuildContext context) => MessagelistApp(brief: messageBrief,);
             break;
           case "/messagePerson":
             String userName = settings.arguments as String? ?? "deliver";
-            builder = (BuildContext context) => MessagePersonApp(userName: userName,);
+            builder = (BuildContext context) => MessagePersonApp(userName: userName, notifier: unreadMessage);
             break;
           case "/home":
           default:

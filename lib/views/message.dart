@@ -9,7 +9,7 @@ import '../bdwm/message.dart';
 import '../bdwm/req.dart';
 import '../globalvars.dart';
 import '../utils.dart';
-import '../services.dart' show MessageBriefNotifier;
+import '../services.dart' show MessageBriefNotifier, NotifyMessage;
 
 class MessageListPage extends StatefulWidget {
   final MessageBriefNotifier users;
@@ -50,12 +50,12 @@ class _MessageListPageState extends State<MessageListPage> {
                   trailing: e.link!=null && e.link!="0"
                     ? Container(
                       alignment: Alignment.center,
-                      width: 18,
+                      width: 20,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         color: bdwmPrimaryColor,
                       ),
-                      child: Text(e.link!, style: const TextStyle(color: Colors.white)),
+                      child: Text(int.parse(e.link!) > 9 ? "9+" : e.link!, style: const TextStyle(color: Colors.white)),
                     )
                     : null,
                 ),
@@ -71,7 +71,8 @@ class _MessageListPageState extends State<MessageListPage> {
 class MessagePersonPage extends StatefulWidget {
   final String withWho;
   final int count = 50;
-  const MessagePersonPage({super.key, required this.withWho});
+  final NotifyMessage notifier;
+  const MessagePersonPage({super.key, required this.withWho, required this.notifier});
 
   @override
   State<MessagePersonPage> createState() => _MessagePersonPageState();
@@ -101,6 +102,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       // _controller.jumpTo(_controller.position.maxScrollExtent);
       var _ = await bdwmSetMessagesRead(widget.withWho);
+      widget.notifier.clearOne(widget.withWho);
     });
   }
 

@@ -249,8 +249,8 @@ class _PostNewPageState extends State<PostNewPage> {
             Container(
               margin: const EdgeInsets.only(top: 0, left: 10, right: 10, bottom: 10),
               child: TextField(
-                minLines: 5,
-                maxLines: 10,
+                minLines: 7,
+                maxLines: 14,
                 controller: contentValue,
                 focusNode: contentFocusNode,
                 decoration: const InputDecoration(
