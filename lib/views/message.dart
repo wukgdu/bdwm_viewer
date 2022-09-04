@@ -117,7 +117,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
     var hp2 = content.lastIndexOf("(");
     var rawContent = content;
     var link = "";
-    if (hp1 != -1) {
+    if ((mi.withWho == "deliver") && (hp1 != -1)) {
       rawContent = content.substring(0, hp1);
       link = content.substring(hp1, hp2==-1? content.length : hp2);
     }
@@ -138,8 +138,9 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
           child: SelectionArea(
             child: Text.rich(
               TextSpan(
-                text: rawContent,
+                text: "${DateTime.fromMillisecondsSinceEpoch(mi.time*1000)}\n",
                 children: [
+                  TextSpan(text: rawContent),
                   if (link.isNotEmpty)
                     WidgetSpan(
                       child: GestureDetector(

@@ -120,6 +120,7 @@ class _HomeAppState extends State<HomeApp> {
             ),
           ],
           bottom: TabBar(
+            indicatorColor: const Color.fromARGB(159, 214, 53, 13),
             labelStyle: const TextStyle(fontSize: 12),
             tabs: [
               _oneTab(const Icon(Icons.whatshot), const Text("热点")),
