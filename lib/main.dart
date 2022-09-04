@@ -89,6 +89,7 @@ class _MainPageState extends State<MainPage> {
         colorScheme: const ColorScheme.light().copyWith(primary: const Color(0xffe97c62)),
       ),
       home: HomeApp(messageCount: messageCount, mailCount: mailCount,),
+      // home: const ThreadApp(bid: "338", threadid: "18367551", page: "a", boardName: "ID文化", postid: "26066045",),
       // home: const SimpleSearchResultApp(mode: "user", keyWord: "onepiecexx",),
       // home: const ZoneApp(),
       // home: const BlockApp(bid: "678", title: "休闲娱乐",),

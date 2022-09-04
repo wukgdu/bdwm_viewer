@@ -463,7 +463,8 @@ class ReadThreadPage extends StatefulWidget {
   final String page;
   final ThreadPageInfo threadPageInfo;
   final Function refreshCallBack;
-  const ReadThreadPage({Key? key, required this.bid, required this.threadid, required this.page, required this.threadPageInfo, required this.refreshCallBack}) : super(key: key);
+  final String? postid;
+  const ReadThreadPage({Key? key, required this.bid, required this.threadid, required this.page, required this.threadPageInfo, required this.refreshCallBack, this.postid}) : super(key: key);
 
   @override
   State<ReadThreadPage> createState() => _ReadThreadPageState();
@@ -471,6 +472,8 @@ class ReadThreadPage extends StatefulWidget {
 
 class _ReadThreadPageState extends State<ReadThreadPage> {
   final _titleFont = const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
+  var itemKeys = <GlobalKey>[];
+  String? postid;
 
   @override
   void initState() {
@@ -480,6 +483,26 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
     //     threadPageInfo = value;
     //   });
     // });
+    for (var i in widget.threadPageInfo.posts) {
+      itemKeys.add(GlobalKey());
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      if (widget.postid != null) {
+        BuildContext? c;
+        var i = 0;
+        while (i<widget.threadPageInfo.posts.length) {
+          var p = widget.threadPageInfo.posts[i];
+          if (p.postID == widget.postid) {
+            c = itemKeys[i].currentContext;
+            break;
+          }
+          i+=1;
+        }
+        if (c!=null) {
+          Scrollable.ensureVisible(c, duration: const Duration(milliseconds: 1500));
+        }
+      }
+    });
   }
 
   @override
@@ -488,8 +511,8 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
     super.dispose();
   }
 
-  Widget _onepost(OnePostInfo item) {
-    return OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack, boardName: widget.threadPageInfo.board.text,);
+  Widget _onepost(OnePostInfo item, int idx) {
+    return OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack, boardName: widget.threadPageInfo.board.text, key: itemKeys[idx]);
   }
 
   @override
@@ -506,13 +529,22 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
           ),
         ),
         Expanded(
-          child: ListView(
+          child: SingleChildScrollView(
             controller: ScrollController(),
             padding: const EdgeInsets.all(8),
-            children: widget.threadPageInfo.posts.map((e) {
-              return _onepost(e);
-            }).toList(),
+            child: Column(
+              children: widget.threadPageInfo.posts.asMap().entries.map((pair) {
+                return _onepost(pair.value, pair.key);
+              }).toList(),
+            ),
           ),
+          // child: ListView(
+          //   controller: ScrollController(),
+          //   padding: const EdgeInsets.all(8),
+          //   children: widget.threadPageInfo.posts.asMap().entries.map((pair) {
+          //     return _onepost(pair.value, pair.key);
+          //   }).toList(),
+          // ),
           // child: ListView.builder(
           //   controller: ScrollController(),
           //   padding: const EdgeInsets.all(8),
