@@ -47,13 +47,16 @@ class _PostNewPageState extends State<PostNewPage> {
       url += "&parentid=${widget.parentid}";
     }
     var resp = await bdwmClient.get(url, headers: genHeaders2());
+    if (resp == null) {
+      return PostNewInfo.error(errorMessage: networkErrorText);
+    }
     return parsePostNew(resp.body);
   }
 
   Future<String?> getPostQuote() async {
     var resp = await bdwmGetPostQuote(bid: widget.bid, postid: widget.parentid!);
-    if (resp.success) {
-      return resp.result!;
+    if (!resp.success) {
+      return networkErrorText;
     }
     return resp.result!;
   }
@@ -226,6 +229,8 @@ class _PostNewPageState extends State<PostNewPage> {
                           var errorMessage = "发送失败，请稍后重试";
                           if (value.error == 43) {
                             errorMessage = "对不起，您的帖子包含敏感词，请检查后发布";
+                          } else if (value.error == -1) {
+                            errorMessage = value.result!;
                           }
                           showAlertDialog(context, "发送失败", Text(errorMessage),
                             actions1: TextButton(

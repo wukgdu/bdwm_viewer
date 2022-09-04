@@ -15,9 +15,10 @@ class IDandName {
 class TopSearchRes {
   bool success = false;
   int error = 0;
-  String jsonStr;
-  List<IDandName> users;
-  List<IDandName> boards;
+  String jsonStr = "";
+  List<IDandName> users = <IDandName>[];
+  List<IDandName> boards = <IDandName>[];
+  String? desc;
 
   TopSearchRes({
     required this.success,
@@ -25,6 +26,11 @@ class TopSearchRes {
     required this.jsonStr,
     required this.users,
     required this.boards,
+  });
+  TopSearchRes.error({
+    required this.success,
+    required this.error,
+    required this.desc,
   });
 }
 
@@ -34,6 +40,9 @@ Future<TopSearchRes> bdwmTopSearch(String pref) async {
     'pref': pref,
   };
   var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
+  if (resp == null) {
+    return TopSearchRes.error(success: false, error: -1, desc: networkErrorText);
+  }
   var content = json.decode(resp.body);
   var users = <IDandName>[];
   var boards = <IDandName>[];

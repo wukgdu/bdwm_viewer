@@ -55,13 +55,16 @@ class BlockOne {
 class HomeInfo {
   List<Top10Item>? top10Info = <Top10Item>[];
   List<BlockOne> blockInfo = <BlockOne>[];
+  String? errorMessage;
 
   HomeInfo({
     required this.top10Info,
     required this.blockInfo,
+    this.errorMessage,
   });
 
   HomeInfo.empty();
+  HomeInfo.error({required this.errorMessage});
 }
 
 List<Top10Item>? parseTop10(Document document) {

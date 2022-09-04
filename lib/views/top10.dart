@@ -19,6 +19,9 @@ class _TopHomePageState extends State<TopHomePage> {
 
   Future<HomeInfo> getData() async {
     var resp = await bdwmClient.get("$v2Host/mobile/home.php", headers: genHeaders());
+    if (resp == null) {
+      return HomeInfo.error(errorMessage: networkErrorText);
+    }
     return parseHome(resp.body);
   }
 
@@ -124,6 +127,11 @@ class _TopHomePageState extends State<TopHomePage> {
   Widget build(BuildContext context) {
     // checkData(homeInfo);
     debugPrint("** top10 rebuild");
+    if (homeInfo.errorMessage != null) {
+      return Center(
+        child: Text(homeInfo.errorMessage!),
+      );
+    }
     return ListView(
       controller: ScrollController(),
       padding: const EdgeInsets.all(8),

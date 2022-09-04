@@ -27,14 +27,23 @@ Map<String, String> genLoginInfo(String username, String password) {
 class LoginRes {
   bool success = false;
   int error = 0;
+  String? desc;
 
   LoginRes(this.success, this.error);
+  LoginRes.error({
+    required this.success,
+    required this.error,
+    required this.desc,
+  });
 }
 
 Future<LoginRes> bdwmLogin(String username, String password) async {
   var loginUrl = "$v2Host/ajax/login.php";
   var data = genLoginInfo(username, password);
   var resp = await bdwmClient.post(loginUrl, headers: <String, String>{}, data: data);
+  if (resp == null) {
+    return LoginRes.error(success: false, error: -1, desc: networkErrorText);
+  }
   var status = json.decode(resp.body);
   if (!status['success']) {
     return LoginRes(false, status['error']);

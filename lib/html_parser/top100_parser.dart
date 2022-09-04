@@ -20,13 +20,25 @@ class Top100Item {
   Top100Item(this.id, this.title, this.author, this.uid, this.avatarLink, this.board, this.postTime, this.contentLink, this.boardLink);
 }
 
-List<Top100Item> parseTop100(String htmlStr) {
+class Top100Info {
+  String? errorMessage;
+  List<Top100Item> items = <Top100Item>[];
+
+  Top100Info.empty();
+  Top100Info.error({required this.errorMessage});
+  Top100Info({
+    required this.items,
+    this.errorMessage,
+  });
+}
+
+Top100Info parseTop100(String htmlStr) {
   var document = parse(htmlStr);
   List<Element>? topicList = document.querySelector("#hot-topic-body")?.querySelectorAll(".list-item");
-  List<Top100Item> top100Items = <Top100Item>[];
   if (topicList == null) {
-    return top100Items;
+    return Top100Info.empty();
   }
+  List<Top100Item> top100Items = <Top100Item>[];
   for (var item in topicList) {
     final itemID = int.parse(getTrimmedString(item.querySelector(".id")));
     final itemTitle = getTrimmedString(item.querySelector(".title"));
@@ -40,10 +52,10 @@ List<Top100Item> parseTop100(String htmlStr) {
     final itemBoardLink = absThreadLink(item.querySelector(".board-cont")?.querySelector(".link")?.attributes['href'] ?? "");
     top100Items.add(Top100Item(itemID, itemTitle, itemAuthor, itemUID, itemAvatar, itemBoard, itemTime, itemLink, itemBoardLink));
   }
-  return top100Items;
+  return Top100Info(items: top100Items);
 }
 
-List<Top100Item> getExampleTop100() {
+Top100Info getExampleTop100() {
   const filename = '../top100raw.html';
   var htmlStr = File(filename).readAsStringSync();
   final items = parseTop100(htmlStr);

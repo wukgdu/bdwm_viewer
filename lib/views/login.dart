@@ -78,6 +78,8 @@ class _LoginPageState extends State<LoginPage> {
                   String content = "";
                   if (success == false) {
                     switch (res.error) {
+                      case -1:
+                        content = res.desc!; break;
                       case 4:
                         content = "您输入的用户名不存在"; break;
                       case 5:
@@ -95,6 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                   } else {
                     debugPrint(globalUInfo.gist());
                     Navigator.of(context).pushReplacementNamed('/me');
+                    Navigator.of(context).pushReplacementNamed('/home');
                   }
                 });
               },

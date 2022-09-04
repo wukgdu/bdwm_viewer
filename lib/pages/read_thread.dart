@@ -50,6 +50,9 @@ class _ThreadAppState extends State<ThreadApp> {
       url += "&page=$page";
     }
     var resp = await bdwmClient.get(url, headers: genHeaders2());
+    if (resp == null) {
+      return ThreadPageInfo.error(errorMessage: networkErrorText);
+    }
     return parseThread(resp.body);
   }
 
@@ -298,6 +301,9 @@ class _ThreadApp2State extends State<ThreadApp> {
       url += "&page=$page";
     }
     var resp = await bdwmClient.get(url, headers: genHeaders2());
+    if (resp == null) {
+      return ThreadPageInfo.error(errorMessage: networkErrorText);
+    }
     return parseThread(resp.body);
   }
 

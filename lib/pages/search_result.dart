@@ -28,6 +28,9 @@ class _SimpleSearchResultAppState extends State<SimpleSearchResultApp> {
       url += "&page=$page";
     }
     var resp = await bdwmClient.get(url, headers: genHeaders2());
+    if (resp == null) {
+      return SimpleSearchRes.error(errorMessage: networkErrorText);
+    }
     if (widget.mode=="user") {
       return parseUserSearch(resp.body);
     } else if (widget.mode == "board") {
@@ -169,6 +172,9 @@ class _ComplexSearchResultAppState extends State<ComplexSearchResultApp> {
       url += "&page=$page";
     }
     var resp = await bdwmClient.get(url, headers: genHeaders2());
+    if (resp == null) {
+      return ComplexSearchRes.error(errorMessage: networkErrorText);
+    }
     return parsePostSearch(resp.body);
   }
 

@@ -20,6 +20,11 @@ class PostRes {
     required this.error,
     this.result,
   });
+  PostRes.error({
+    required this.success,
+    required this.error,
+    this.result,
+  });
 }
 
 Future<PostRes> bdwmSimplePost({required String bid, required String title, required String content, required String signature, required Map<String, bool> config, bool? modify=false, String? postid, bool? useBDWM=false, String? parentid}) async {
@@ -68,6 +73,9 @@ Future<PostRes> bdwmSimplePost({required String bid, required String title, requ
     data['signature'] = signature;
   }
   var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
+  if (resp == null) {
+    return PostRes.error(success: false, error: -1, result: networkErrorText);
+  }
   var respContent = json.decode(resp.body);
   PostRes postRes = PostRes(
     success: respContent['success'],
@@ -84,6 +92,9 @@ Future<PostRes> bdwmDeletePost({required String bid, required String postid}) as
     "action": 'delete',
   };
   var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
+  if (resp == null) {
+    return PostRes.error(success: false, error: -1, result: networkErrorText);
+  }
   var respContent = json.decode(resp.body);
   PostRes postRes = PostRes(
     success: respContent['success'],
@@ -100,6 +111,9 @@ Future<PostRes> bdwmGetPostQuote({required String bid, required String postid, S
     "mode": mode,
   };
   var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
+  if (resp == null) {
+    return PostRes.error(success: false, error: -1, result: networkErrorText);
+  }
   var respContent = json.decode(resp.body);
   PostRes postRes = PostRes(
     success: respContent['success'],

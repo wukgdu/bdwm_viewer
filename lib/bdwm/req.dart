@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 
@@ -17,18 +20,54 @@ class BdwmClient {
     }
   }
 
-  Future<http.Response> post(String url, {Map<String, String> headers=const {}, Object data=const <String, String>{}}) async {
+  Future<http.Response?> post(String url, {Map<String, String> headers=const {}, Object data=const <String, String>{}}) async {
     debugPrint("post");
-    var resp = await client.post(Uri.parse(url), body: data, headers: headers);
-    checkStatus(resp.headers['set-cookie'] ?? "");
-    return resp;
+    var timeout = false;
+    try {
+      var resp = await client.post(Uri.parse(url), body: data, headers: headers)
+        .timeout(const Duration(seconds: 10));
+      checkStatus(resp.headers['set-cookie'] ?? "");
+      return resp;
+    } on TimeoutException catch (_) {
+      timeout = true;
+    } on SocketException catch (_) {
+      timeout = true;
+    } on HttpException catch (_) {
+      timeout = true;
+    } on Exception catch (_) {
+      timeout = true;
+    } catch (e) {
+      timeout = true;
+    }
+    if (timeout) {
+      return null;
+    }
+    return null;
   }
 
-  Future<http.Response> get(String url, {Map<String, String> headers=const {}}) async {
+  Future<http.Response?> get(String url, {Map<String, String> headers=const {}}) async {
     debugPrint("get");
-    var resp =  await client.get(Uri.parse(url), headers: headers);
-    checkStatus(resp.headers['set-cookie'] ?? "");
-    return resp;
+    var timeout = false;
+    try {
+      var resp =  await client.get(Uri.parse(url), headers: headers)
+        .timeout(const Duration(seconds: 10));
+      checkStatus(resp.headers['set-cookie'] ?? "");
+      return resp;
+    } on TimeoutException catch (_) {
+      timeout = true;
+    } on SocketException catch (_) {
+      timeout = true;
+    } on HttpException catch (_) {
+      timeout = true;
+    } on Exception catch (_) {
+      timeout = true;
+    } catch (e) {
+      timeout = true;
+    }
+    if (timeout) {
+      return null;
+    }
+    return null;
   }
 }
 

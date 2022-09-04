@@ -9,6 +9,7 @@ const v2Host = "https://bbs.pku.edu.cn/v2";
 // const bbsHost = "";
 // const v2Host = "";
 const defaultAvator = "/v2/images/user/portrait-neu.png";
+const networkErrorText = "网络问题，请稍后重试";
 
 List<String> parseCookie(String cookie) {
   var pattern1 = "skey=";

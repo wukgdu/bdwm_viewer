@@ -6,9 +6,15 @@ import './search.dart';
 import '../globalvars.dart';
 
 class ForwardRes extends SimpleRes {
+  String? desc;
   ForwardRes({
     required super.success,
     required super.error,
+  });
+  ForwardRes.error({
+    required super.success,
+    required super.error,
+    required this.desc,
   });
 }
 
@@ -30,6 +36,10 @@ Future<ForwardRes> bdwmForwrad(String fromBid, String fromPostid, {String? toBoa
           break;
         }
       }
+    } else {
+      if (searchResp.error == -1) {
+        return ForwardRes.error(success: false, error: -1, desc: networkErrorText);
+      }
     }
     if (!findIt) {
       return ForwardRes(success: false, error: 1);
@@ -43,6 +53,9 @@ Future<ForwardRes> bdwmForwrad(String fromBid, String fromPostid, {String? toBoa
     "tobid": toBid2,
   };
   var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
+  if (resp == null) {
+    return ForwardRes.error(success: false, error: -1, desc: networkErrorText);
+  }
   var content = json.decode(resp.body);
   var forwardRes = ForwardRes(
     success: content['success'],

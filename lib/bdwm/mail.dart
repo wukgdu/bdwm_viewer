@@ -37,6 +37,9 @@ class UnreadMailInfo {
 Future<UnreadMailInfo?> bdwmGetUnreadMailCount() async {
   var actionUrl = "$v2Host/ajax/get_new_mails.php";
   var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: {});
+  if (resp==null) {
+    return null;
+  }
   var resContent = json.decode(resp.body);
   if (!resContent['success']) {
     return null;

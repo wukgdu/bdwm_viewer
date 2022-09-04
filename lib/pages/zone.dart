@@ -22,6 +22,9 @@ class _ZoneAppState extends State<ZoneApp> {
     // return getExampleZone();
     var url = "$v2Host/zone.php";
     var resp = await bdwmClient.get(url, headers: genHeaders2());
+    if (resp == null) {
+      return ZoneInfo.error(errorMessage: networkErrorText);
+    }
     return parseZone(resp.body);
   }
 

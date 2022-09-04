@@ -52,7 +52,11 @@ class _StarBoardState extends State<StarBoard> {
                   }
                 });
               } else {
-                showAlertDialog(context, "失败", const Text("不知道为什么"),
+                var reason = "不知道为什么";
+                if (value.error == -1) {
+                  reason = value.desc!;
+                }
+                showAlertDialog(context, "失败", Text(reason),
                   actions1: TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
@@ -134,14 +138,18 @@ class OneThreadInBoard extends StatelessWidget {
               var nBid = p2Bid == -1 ? link.substring(p1Bid+4) : link.substring(p1Bid+4, p2Bid);
               if (link.contains("post-read-single.php")) {
                 bdwmClient.get(link, headers: genHeaders2()).then((value) {
-                  var threadid = directToThread(value.body);
-                  if (threadid.isEmpty) { return; }
-                  Navigator.of(context).pushNamed('/thread', arguments: {
-                    'bid': nBid,
-                    'threadid': threadid,
-                    'boardName': boardName,
-                    'page': '1',
-                  });
+                  if (value == null) {
+                    showNetWorkDialog(context);
+                  } else {
+                    var threadid = directToThread(value.body);
+                    if (threadid.isEmpty) { return; }
+                    Navigator.of(context).pushNamed('/thread', arguments: {
+                      'bid': nBid,
+                      'threadid': threadid,
+                      'boardName': boardName,
+                      'page': '1',
+                    });
+                  }
                 });
               } else {
                 var p1Tid = link.indexOf("threadid=");

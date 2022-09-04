@@ -37,6 +37,9 @@ class _BoardAppState extends State<BoardApp> {
       url += "&page=$page";
     }
     var resp = await bdwmClient.get(url, headers: genHeaders2());
+    if (resp == null) {
+      return BoardInfo.error(errorMessage: networkErrorText);
+    }
     return parseBoardInfo(resp.body);
   }
 

@@ -15,6 +15,9 @@ class _FavoritePageState extends State<FavoritePage> {
   FavoriteBoardInfo favoriteBoardInfo = FavoriteBoardInfo.empty();
   Future<FavoriteBoardInfo> getData() async {
     var resp = await bdwmClient.get("$v2Host/favorite.php", headers: genHeaders2());
+    if (resp == null) {
+      return FavoriteBoardInfo.error(errorMessage: networkErrorText);
+    }
     return parseFavoriteBoard(resp.body);
   }
 

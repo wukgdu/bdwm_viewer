@@ -22,6 +22,9 @@ class _BlockAppState extends State<BlockApp> {
     // return getExampleBlockInfo();
     var url = "$v2Host/board.php?bid=${widget.bid}";
     var resp = await bdwmClient.get(url, headers: genHeaders2());
+    if (resp == null) {
+      return BlockInfo.error(errorMessage: networkErrorText);
+    }
     return parseBlock(resp.body);
   }
 

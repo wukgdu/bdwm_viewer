@@ -63,7 +63,11 @@ class _OperateComponentState extends State<OperateComponent> {
                 var title = "转载";
                 var content = "成功";
                 if (!res.success) {
-                  content = "该版面不存在，或需要特殊权限";
+                  if (res.error == -1) {
+                    content = res.desc!;
+                  } else {
+                    content = "该版面不存在，或需要特殊权限";
+                  }
                 }
                 showAlertDialog(context, title, Text(content),
                   actions1: TextButton(
@@ -103,6 +107,9 @@ class _OperateComponentState extends State<OperateComponent> {
                 var content = "删除成功";
                 if (!value.success) {
                   content = "删除失败";
+                  if (value.error == -1) {
+                    content = value.result!;
+                  }
                 }
                 showAlertDialog(context, title, Text(content),
                   actions1: TextButton(
@@ -196,6 +203,9 @@ class _VoteComponentState extends State<VoteComponent> {
       } else {
         var text = "";
         switch (value.error) {
+          case -1:
+            text = value.desc ?? "";
+            break;
           case 9:
             text = "抱歉，您没有本版回复(点赞)权限";
             break;

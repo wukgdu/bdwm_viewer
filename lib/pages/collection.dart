@@ -28,6 +28,9 @@ class _CollectionAppState extends State<CollectionApp> {
       url += "&page=$page";
     }
     var resp = await bdwmClient.get(url, headers: genHeaders2());
+    if (resp == null) {
+      return CollectionList.error(errorMessage: networkErrorText);
+    }
     return parseCollectionList(resp.body);
   }
 
@@ -170,6 +173,9 @@ class _CollectionArticleAppState extends State<CollectionArticleApp> {
     var link = widget.link;
     var url = link;
     var resp = await bdwmClient.get(url, headers: genHeaders2());
+    if (resp == null) {
+      return CollectionArticle.error(errorMessage: networkErrorText);
+    }
     return parseCollectionArticle(resp.body);
   }
 

@@ -13,9 +13,12 @@ class Top100Page extends StatefulWidget {
 }
 
 class _Top100PageState extends State<Top100Page> {
-  List<Top100Item> top100items = <Top100Item>[];
-  Future<List<Top100Item>> getData() async {
+  Top100Info top100info = Top100Info.empty();
+  Future<Top100Info> getData() async {
     var resp = await bdwmClient.get("$v2Host/hot-topic.php", headers: genHeaders());
+    if (resp == null) {
+      return Top100Info.error(errorMessage: networkErrorText);
+    }
     return parseTop100(resp.body);
   }
 
@@ -26,7 +29,7 @@ class _Top100PageState extends State<Top100Page> {
       // getExampleTop100();
       if (!mounted) { return; }
       setState(() {
-        top100items = value;
+        top100info = value;
       });
     });
   }
@@ -87,11 +90,16 @@ class _Top100PageState extends State<Top100Page> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(top100items.length.toString());
+    debugPrint(top100info.items.length.toString());
+    if (top100info.errorMessage != null) {
+      return Center(
+        child: Text(top100info.errorMessage!),
+      );
+    }
     return ListView(
       controller: ScrollController(),
       padding: const EdgeInsets.all(8),
-      children: top100items.map((Top100Item item) {
+      children: top100info.items.map((Top100Item item) {
         return _onepost(item);
       }).toList(),
     );

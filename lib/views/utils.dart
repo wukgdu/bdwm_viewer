@@ -3,6 +3,7 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 // import 'package:fwfh_selectable_text/fwfh_selectable_text.dart';
 
 import '../pages/detail_image.dart';
+import '../globalvars.dart' show networkErrorText;
 
 // https://github.com/daohoangson/flutter_widget_from_html/tree/master/packages/fwfh_selectable_text
 mixin SelectableTextFactory on WidgetFactory {
@@ -111,6 +112,17 @@ Future<String?> showAlertDialog(BuildContext context, String title, Widget conte
     builder: (BuildContext context) {
       return alert;
     },
+  );
+}
+
+Future<String?> showNetWorkDialog(BuildContext context) {
+  return showAlertDialog(context, "网络错误", const Text(networkErrorText),
+    actions1: TextButton(
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+      child: const Text("知道了"),
+    )
   );
 }
 

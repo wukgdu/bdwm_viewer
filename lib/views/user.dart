@@ -53,7 +53,11 @@ class _UserOperationComponentState extends State<UserOperationComponent> {
               content = "成功取消关注";
             }
             if (!value.success) {
-              content = "失败啦，请稍候再试";
+              if (value.error == -1) {
+                content = networkErrorText;
+              } else {
+                content = "失败啦，请稍候再试";
+              }
             }
             showAlertDialog(context, title, Text(content),
               actions1: TextButton(
@@ -87,6 +91,9 @@ class _UserInfoPageState extends State<UserInfoPage> {
 
   Future<UserProfile> getData() async {
     var resp = await bdwmClient.get("$v2Host/user.php?uid=${widget.uid}", headers: genHeaders());
+    if (resp == null) {
+      return UserProfile.error(errorMessage: networkErrorText);
+    }
     return parseUser(resp.body);
   }
 
@@ -310,6 +317,9 @@ class _UserInfoPageState extends State<UserInfoPage> {
                   icon: const Icon(Icons.logout),
                   onPressed: () {
                     bdwmLogout().then((value) {
+                      if (value == false) {
+                        showNetWorkDialog(context);
+                      }
                       Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
                     });
                   },
