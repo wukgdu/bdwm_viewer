@@ -331,11 +331,14 @@ class AttachmentComponent extends StatelessWidget {
           );
         } else if (e.type == AttachmentType.showThumbnail) {
           return GestureDetector(
-            child: Image.network(
-              e.thumbnailLink,
-              errorBuilder: (context, error, stackTrace) {
-                return Text("${e.text} 加载失败");
-              },
+            child: Container(
+              constraints: const BoxConstraints(maxHeight: 200, maxWidth: 200),
+              child: Image.network(
+                e.thumbnailLink,
+                errorBuilder: (context, error, stackTrace) {
+                  return Text("${e.text} 加载失败");
+                },
+              ),
             ),
             onTap: () {
               gotoDetailImage(context: context, link: e.link, name: e.text);
@@ -483,7 +486,7 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
     //     threadPageInfo = value;
     //   });
     // });
-    for (var i in widget.threadPageInfo.posts) {
+    for (var _ in widget.threadPageInfo.posts) {
       itemKeys.add(GlobalKey());
     }
     WidgetsBinding.instance.addPostFrameCallback((_){

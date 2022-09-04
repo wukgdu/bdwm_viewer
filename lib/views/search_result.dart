@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../html_parser/search_parser.dart';
+import '../pages/read_thread.dart';
 
 class SimpleResultPage extends StatefulWidget {
   final SimpleSearchRes ssRes;
@@ -54,7 +55,7 @@ class ComplexResultPage extends StatefulWidget {
 }
 
 class _ComplexResultPageState extends State<ComplexResultPage> {
-  final _ts1 = const TextStyle(fontSize: 12, color: Colors.grey);
+  final _ts1 = const TextStyle(fontSize: 12, color: Colors.grey, height: 2);
   final _ts2 = const TextStyle(fontSize: 16, color: Colors.black);
   final _ts3 = const TextStyle(fontSize: 12, color: Colors.black);
 
@@ -74,35 +75,37 @@ class _ComplexResultPageState extends State<ComplexResultPage> {
           gotoThread(csri);
         },
         child: Container(
-        padding: const EdgeInsets.all(5.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GestureDetector(
-              onTap: () {
-                Navigator.of(context).pushNamed('/board', arguments: {
-                  'boardName': csri.boardName,
-                  'bid': csri.bid,
-                },);
-              },
-              child: Text("${csri.boardName} ${csri.boardEngName}", style: _ts1,),
-            ),
-            GestureDetector(
-              onTap: () {
-                gotoThread(csri);
-              },
-              child: Text(csri.title, style: _ts2,),
-            ),
-            Text("楼主 ${csri.userName}", style: _ts3,),
-            ...csri.shortTexts.map((st) {
-              return GestureDetector(
-                onTap: () {},
-                child: Text(st.text, style: _ts1,),
-              );
-            }).toList(),
-          ],
+          padding: const EdgeInsets.all(5.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pushNamed('/board', arguments: {
+                    'boardName': csri.boardName,
+                    'bid': csri.bid,
+                  },);
+                },
+                child: Text("${csri.boardName} ${csri.boardEngName}", style: _ts1,),
+              ),
+              GestureDetector(
+                onTap: () {
+                  gotoThread(csri);
+                },
+                child: Text(csri.title, style: _ts2,),
+              ),
+              Text("楼主 ${csri.userName}", style: _ts3,),
+              ...csri.shortTexts.map((st) {
+                return GestureDetector(
+                  onTap: () {
+                    naviGotoThreadByLink(context, st.link!, csri.boardName, pageDefault: "a");
+                  },
+                  child: Text(st.text, style: _ts1,),
+                );
+              }).toList(),
+            ],
+          ),
         ),
-      ),
       ),
     );
   }

@@ -283,6 +283,7 @@ void naviGotoThreadByLink(context, String link, String boardName, {bool? needToB
     var pp1 = link.indexOf('postid');
     var pp2 = link.indexOf('&', pp1);
     postid = link.substring(pp1+7, pp2 == -1 ? null : pp2);
+    postid = postid.split("#").first;
   }
   var pt1 = link.indexOf('threadid');
   var pt2 = link.indexOf('&', pt1);
