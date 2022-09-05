@@ -19,6 +19,7 @@ class NotifyMessage {
 
   bool notifyP(List<UnreadMessageInfo> value) {
     bool notifyIt = false;
+    var nKey = Set<String>.from(value.map((e) => e.withWho));
     for (var e in value) {
       if (lastUnreadInfo.containsKey(e.withWho)) {
         var thatCount = lastUnreadInfo[e.withWho]!;
@@ -29,6 +30,12 @@ class NotifyMessage {
       } else {
         lastUnreadInfo[e.withWho] = e.count;
         notifyIt = true;
+      }
+    }
+    for (var p in lastUnreadInfo.keys.toList()) {
+      if (!nKey.contains(p)) {
+        // lastUnreadInfo[p] = 0;
+        lastUnreadInfo.remove(p);
       }
     }
     return notifyIt;
