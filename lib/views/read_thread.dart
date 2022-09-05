@@ -38,8 +38,10 @@ class _OperateComponentState extends State<OperateComponent> {
   );
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Wrap(
       // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      // alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         TextButton(
           style: textButtonStyle,
@@ -136,7 +138,7 @@ class _OperateComponentState extends State<OperateComponent> {
             },
             child: const Text("删除"),
           ),
-        const Spacer(),
+        // const Spacer(),
         PopupMenuButton<String>(
           icon: const Icon(Icons.more_horiz, color: bdwmPrimaryColor,),
           onSelected: (value) {

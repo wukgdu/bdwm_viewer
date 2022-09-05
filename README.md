@@ -35,7 +35,7 @@ https://github.com/wukgdu/bdwm_viewer/releases
     4. [x] 回复
     5. [x] 修改
     6. [x] 转载
-    7. [ ] 转寄
+    7. [x] 转寄
     8. [ ] 已发帖选择不可回复
     9. [ ] 附件管理
 3. 个人文集
