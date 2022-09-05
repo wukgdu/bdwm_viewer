@@ -23,9 +23,7 @@ class _Top100PageState extends State<Top100Page> {
     return parseTop100(resp.body);
   }
 
-  @override
-  void initState() {
-    super.initState();
+  Future<void> updateData() async {
     getData().then((value) {
       // getExampleTop100();
       if (!mounted) { return; }
@@ -33,6 +31,12 @@ class _Top100PageState extends State<Top100Page> {
         top100info = value;
       });
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    updateData();
   }
 
   @override
@@ -103,12 +107,15 @@ class _Top100PageState extends State<Top100Page> {
         child: Text(top100info.errorMessage!),
       );
     }
-    return ListView(
-      controller: _scrollController,
-      padding: const EdgeInsets.all(8),
-      children: top100info.items.map((Top100Item item) {
-        return _onepost(item);
-      }).toList(),
+    return RefreshIndicator(
+      onRefresh: updateData,
+      child: ListView(
+          controller: _scrollController,
+          padding: const EdgeInsets.all(8),
+          children: top100info.items.map((Top100Item item) {
+            return _onepost(item);
+          }).toList(),
+        ),
     );
   }
 }

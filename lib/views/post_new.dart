@@ -98,6 +98,12 @@ class _PostNewPageState extends State<PostNewPage> {
   }
 
   @override
+  void dispose() {
+    contentFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     debugPrint("post rebuild");
     return FutureBuilder(

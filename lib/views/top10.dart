@@ -30,6 +30,13 @@ class _TopHomePageState extends State<TopHomePage> {
   void initState() {
     super.initState();
     // homeInfo = getExampleHomeInfo();
+    updateData();
+    // _scrollController.addListener(() {
+    //   debugPrint(_scrollController.offset);
+    // });
+  }
+
+  Future<void> updateData() async {
     getData().then((value) {
       if (!mounted) { return; }
       setState(() {
@@ -139,52 +146,58 @@ class _TopHomePageState extends State<TopHomePage> {
         child: Text(homeInfo.errorMessage!),
       );
     }
-    return ListView(
-      controller: _scrollController,
-      padding: const EdgeInsets.all(8),
-      children: [
-        Card(
-          child: Column(
-            // mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text("全站十大", style: _titleFont),
-              const Divider(),
-              if (!(homeInfo.top10Info == null) && homeInfo.top10Info!.length > 1)
-                ...homeInfo.top10Info!.map((item) {
-                  return _oneTen(item);
-                }).toList()
-              else if (!(homeInfo.top10Info == null) && homeInfo.top10Info!.length == 1)
-                ListTile(
-                  // title: Text("全站十大", style: _titleFont),
-                  title: Text(homeInfo.top10Info![0].title),
-                  // isThreeLine: true,
-                  trailing: IconButton(
-                    icon: const Icon(Icons.login),
-                    onPressed: () { Navigator.pushReplacementNamed(context, '/login', arguments: {'needBack': false}); },
-                  )
-                ),
-            ]
-          ),
-        ),
-        ...homeInfo.blockInfo.map((blockOne) {
-          return Card(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(blockOne.blockName, style: _titleFont),
-                const Divider(),
-                if (blockOne.blockItems.isNotEmpty)
-                  ...blockOne.blockItems.map((item) {
-                    return _oneBlockItem(item);
-                  }).toList()
-                else
-                  const Text("该分区暂无热门主题帖"),
-              ],
-            ),
-          );
-        },).toList(),
-      ],
+    return RefreshIndicator(
+      onRefresh: updateData,
+      child: ListView.builder(
+        controller: _scrollController,
+        padding: const EdgeInsets.all(8),
+        itemCount: homeInfo.blockInfo.length+1,
+        itemBuilder: (context, index) {
+          if (index==0) {
+            return Card(
+              child: Column(
+                // mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text("全站十大", style: _titleFont),
+                  const Divider(),
+                  if (!(homeInfo.top10Info == null) && homeInfo.top10Info!.length > 1)
+                    ...homeInfo.top10Info!.map((item) {
+                      return _oneTen(item);
+                    }).toList()
+                  else if (!(homeInfo.top10Info == null) && homeInfo.top10Info!.length == 1)
+                    ListTile(
+                      // title: Text("全站十大", style: _titleFont),
+                      title: Text(homeInfo.top10Info![0].title),
+                      // isThreeLine: true,
+                      trailing: IconButton(
+                        icon: const Icon(Icons.login),
+                        onPressed: () { Navigator.pushReplacementNamed(context, '/login', arguments: {'needBack': false}); },
+                      )
+                    ),
+                ]
+              ),
+            );
+          } else {
+            var blockOne = homeInfo.blockInfo[index-1];
+            return Card(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(blockOne.blockName, style: _titleFont),
+                  const Divider(),
+                  if (blockOne.blockItems.isNotEmpty)
+                    ...blockOne.blockItems.map((item) {
+                      return _oneBlockItem(item);
+                    }).toList()
+                  else
+                    const Text("该分区暂无热门主题帖"),
+                ],
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 }

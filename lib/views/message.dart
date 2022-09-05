@@ -108,6 +108,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
 
   @override
   void dispose() {
+    _controller.dispose();
     Future.microtask(() => getDataCancelable.cancel(),);
     super.dispose();
   }
