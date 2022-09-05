@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 
 import '../bdwm/req.dart';
+import '../bdwm/search.dart';
 import '../globalvars.dart';
 import '../views/utils.dart';
 import '../views/search.dart';
@@ -176,8 +177,31 @@ class _ComplexSearchResultAppState extends State<ComplexSearchResultApp> {
 
   Future<ComplexSearchRes> getData() async {
     // return getExampleCollectionList();
+    var bid = "";
     var pss = widget.pss;
-    var url = "$v2Host/search.php?mode=post&key=${pss.keyWord}&owner=${pss.owner}&board=${pss.board}&rated=${pss.rated}&days=${pss.days}&titleonly=${pss.titleonly}&timeorder=${pss.timeorder}";
+    if (pss.board.isNotEmpty) {
+      var searchResp = await bdwmTopSearch(pss.board);
+      bool findIt = false;
+      if (searchResp.success) {
+        var toBoardNameLc = pss.board.toLowerCase();
+        for (var b in searchResp.boards) {
+          if (b.name.toLowerCase() == toBoardNameLc) {
+            bid = b.id;
+            findIt = true;
+            break;
+          }
+        }
+      } else {
+        if (searchResp.error == -1) {
+          // network error
+          bid = "";
+        }
+      }
+      if (!findIt) {
+        bid = "";
+      }
+    }
+    var url = "$v2Host/search.php?mode=post&key=${pss.keyWord}&owner=${pss.owner}&board=${pss.board}&rated=${pss.rated}&days=${pss.days}&titleonly=${pss.titleonly}&timeorder=${pss.timeorder}&bid=$bid";
     if (page != 1) {
       url += "&page=$page";
     }

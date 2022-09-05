@@ -121,6 +121,10 @@ class _ComplexSearchComponentState extends State<ComplexSearchComponent> {
                 Expanded(
                   child: TextField(
                     controller: boardController,
+                    decoration: const InputDecoration(
+                      // hintText: "目前只支持通过版面英文名搜索，且需要完全匹配",
+                      hintText: "版面英文名",
+                    ),
                   ),
                 ),
               ],
