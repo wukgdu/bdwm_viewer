@@ -32,10 +32,16 @@ class OperateComponent extends StatefulWidget {
 }
 
 class _OperateComponentState extends State<OperateComponent> {
+  bool canReply = false;
   static const textButtonStyle = ButtonStyle(
     minimumSize: MaterialStatePropertyAll(Size(50, 20)),
     // textStyle: MaterialStatePropertyAll(TextStyle(fontSize: 12)),
   );
+  @override
+  void initState() {
+    super.initState();
+    canReply = widget.onePostInfo.canReply;
+  }
   @override
   Widget build(BuildContext context) {
     return Wrap(
@@ -45,7 +51,7 @@ class _OperateComponentState extends State<OperateComponent> {
       children: [
         TextButton(
           style: textButtonStyle,
-          onPressed: !widget.onePostInfo.canReply ? null
+          onPressed: !canReply ? null
             : () {
               Navigator.of(context).pushNamed('/post', arguments: {
                 'bid': widget.bid,
@@ -169,6 +175,28 @@ class _OperateComponentState extends State<OperateComponent> {
                   );
                 });
               },);
+            } else if (value.contains("回复")) {
+              var action = "unnoreply";
+              if (canReply) {
+                action = "noreply";
+              }
+              bdwmOperatePost(bid: widget.bid, postid: widget.postid, action: action)
+              .then((res) {
+                var txt = "操作成功";
+                if (!res.success) {
+                  txt = "操作失败";
+                }
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(txt),
+                    duration: const Duration(milliseconds: 1000),
+                  ),
+                );
+                if (!res.success) { return; }
+                setState(() {
+                  canReply = !canReply;
+                });
+              });
             }
           },
           itemBuilder: (context) {
@@ -177,6 +205,11 @@ class _OperateComponentState extends State<OperateComponent> {
                 value: "转寄",
                 child: Text("转寄"),
               ),
+              if (widget.onePostInfo.canSetReply)
+                PopupMenuItem(
+                  value: canReply ? "设为不可回复" : "取消不可回复",
+                  child: Text(canReply ? "设为不可回复" : "取消不可回复"),
+                ),
             ];
           },
         )

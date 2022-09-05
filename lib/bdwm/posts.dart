@@ -97,7 +97,7 @@ Future<PostRes> bdwmDeletePost({required String bid, required String postid}) as
   }
   var respContent = json.decode(resp.body);
   PostRes postRes = PostRes(
-    success: respContent['success'],
+    success: respContent['results'][0]==false,
     error: respContent['error'] ?? 0,
   );
   return postRes;
@@ -119,6 +119,25 @@ Future<PostRes> bdwmGetPostQuote({required String bid, required String postid, S
     success: respContent['success'],
     error: respContent['error'] ?? 0,
     result: respContent['quote'],
+  );
+  return postRes;
+}
+
+Future<PostRes> bdwmOperatePost({required String bid, required String postid, required String action}) async {
+  var actionUrl = "$v2Host/ajax/operate_post.php";
+  var data = {
+    "bid": bid,
+    "list": '[$postid]',
+    "action": action,
+  };
+  var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
+  if (resp == null) {
+    return PostRes.error(success: false, error: -1, result: networkErrorText);
+  }
+  var respContent = json.decode(resp.body);
+  PostRes postRes = PostRes(
+    success: respContent['results'][0]==false,
+    error: respContent['error'] ?? 0,
   );
   return postRes;
 }

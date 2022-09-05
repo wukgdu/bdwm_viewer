@@ -74,6 +74,7 @@ class OnePostInfo {
   bool canReply = true;
   bool canModify = false;
   bool canDelete = false;
+  bool canSetReply = false;
 
   OnePostInfo.empty();
   OnePostInfo({
@@ -95,6 +96,7 @@ class OnePostInfo {
     required this.canReply,
     required this.canModify,
     required this.canDelete,
+    required this.canSetReply,
   });
 }
 
@@ -299,12 +301,18 @@ OnePostInfo parseOnePost(Element document) {
     }
   }
 
+  var canSetReply = false;
+  if (document.querySelector("a[data-action=noreply-post]")!=null
+  || document.querySelector("a[data-action=clear-noreply-post]")!=null) {
+    canSetReply = true;
+  }
+
   return OnePostInfo(
     authorInfo: authorInfo, postTime: postTime, postID: postID, modifyTime: modifyTime,
     upCount: upCount, downCount: downCount, content: content, signature: signature,
     postNumber: postNumber, postOwner: postOwner, iVoteUp: iVoteUp, iVoteDown: iVoteDown,
     attachmentInfo: attachmentInfo, attachmentHtml: attachmentHtml, attachmentSlidesCount: attachmentSlidesCount,
-    canReply: canReply, canDelete: canDelete, canModify: canModify,
+    canReply: canReply, canDelete: canDelete, canModify: canModify, canSetReply: canSetReply,
   );
 }
 
