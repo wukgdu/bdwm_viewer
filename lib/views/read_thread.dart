@@ -32,11 +32,17 @@ class OperateComponent extends StatefulWidget {
 }
 
 class _OperateComponentState extends State<OperateComponent> {
+  static const textButtonStyle = ButtonStyle(
+    minimumSize: MaterialStatePropertyAll(Size(50, 20)),
+    // textStyle: MaterialStatePropertyAll(TextStyle(fontSize: 12)),
+  );
   @override
   Widget build(BuildContext context) {
     return Row(
+      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         TextButton(
+          style: textButtonStyle,
           onPressed: !widget.onePostInfo.canReply ? null
             : () {
               Navigator.of(context).pushNamed('/post', arguments: {
@@ -52,13 +58,14 @@ class _OperateComponentState extends State<OperateComponent> {
           child: Text("回帖", style: TextStyle(color: !widget.onePostInfo.canReply ? Colors.grey : null ),),
         ),
         TextButton(
+          style: textButtonStyle,
           onPressed: () {
             showTextDialog(context, "转载到的版面")
             .then((value) {
               if (value == null || value.isEmpty) {
                 return;
               }
-              bdwmForwrad(widget.bid, widget.postid, toBoardName: value)
+              bdwmForwrad("post", "post", widget.bid, widget.postid, value)
               .then((res) {
                 var title = "转载";
                 var content = "成功";
@@ -85,6 +92,7 @@ class _OperateComponentState extends State<OperateComponent> {
         // if (globalUInfo.uid == widget.uid && globalUInfo.login == true)
         if (widget.onePostInfo.canModify)
           TextButton(
+            style: textButtonStyle,
             onPressed: () {
               Navigator.of(context).pushNamed('/post', arguments: {
                 'bid': widget.bid,
@@ -101,6 +109,7 @@ class _OperateComponentState extends State<OperateComponent> {
         // if (globalUInfo.uid == widget.uid && globalUInfo.login == true)
         if (widget.onePostInfo.canDelete)
           TextButton(
+            style: textButtonStyle,
             onPressed: () {
               bdwmDeletePost(bid: widget.bid, postid: widget.postid).then((value) {
                 var title = "";
@@ -127,6 +136,48 @@ class _OperateComponentState extends State<OperateComponent> {
             },
             child: const Text("删除"),
           ),
+        const Spacer(),
+        PopupMenuButton<String>(
+          icon: const Icon(Icons.more_horiz, color: bdwmPrimaryColor,),
+          onSelected: (value) {
+            if (value == "转寄") {
+              showTextDialog(context, "转寄给")
+              .then((value) {
+                if (value == null || value.isEmpty) {
+                  return;
+                }
+                bdwmForwrad("post", "mail", widget.bid, widget.postid, value)
+                .then((res) {
+                  var title = "转寄";
+                  var content = "成功";
+                  if (!res.success) {
+                    if (res.error == -1) {
+                      content = res.desc!;
+                    } else {
+                      content = "用户不存在";
+                    }
+                  }
+                  showAlertDialog(context, title, Text(content),
+                    actions1: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("知道了"),
+                    ),
+                  );
+                });
+              },);
+            }
+          },
+          itemBuilder: (context) {
+            return <PopupMenuEntry<String>>[
+              const PopupMenuItem(
+                value: "转寄",
+                child: Text("转寄"),
+              ),
+            ];
+          },
+        )
       ],
     );
   }

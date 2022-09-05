@@ -18,20 +18,26 @@ class ForwardRes extends SimpleRes {
   });
 }
 
-Future<ForwardRes> bdwmForwrad(String fromBid, String fromPostid, {String? toBoardName, String? toBid}) async {
+Future<ForwardRes> bdwmForwrad(String from, String to, String fromID1, String fromID2, String toName, {String? toID}) async {
   var actionUrl = "$v2Host/ajax/forward.php";
-  var toBid2 = toBid;
-  if (toBoardName == null && toBid == null) {
-    return ForwardRes(success: false, error: 2);
-  }
-  if (toBid == null) {
-    var searchResp = await bdwmTopSearch(toBoardName!);
+  var localToID = toName;
+  if (toID != null && toID.isNotEmpty) {
+    localToID = toID;
+  } else {
+    if (toName.isEmpty) {
+      return ForwardRes(success: false, error: 2);
+    }
+    var searchResp = await bdwmTopSearch(toName);
     bool findIt = false;
     if (searchResp.success) {
-      var toBoardNameLc = toBoardName.toLowerCase();
-      for (var b in searchResp.boards) {
-        if (b.name.toLowerCase() == toBoardNameLc) {
-          toBid2 = b.id;
+      var toNameLc = toName.toLowerCase();
+      var toSearch = searchResp.boards;
+      if (to == "mail") {
+        toSearch = searchResp.users;
+      }
+      for (var b in toSearch) {
+        if (b.name.toLowerCase() == toNameLc) {
+          localToID = b.id;
           findIt = true;
           break;
         }
@@ -45,13 +51,24 @@ Future<ForwardRes> bdwmForwrad(String fromBid, String fromPostid, {String? toBoa
       return ForwardRes(success: false, error: 1);
     }
   }
-  var data = {
-    "from": "post",
-    "bid": fromBid,
-    "postid": fromPostid,
-    "to": "post",
-    "tobid": toBid2,
-  };
+  var data = <String, String>{};
+  if (from == "post" && to == "post") {
+    data = {
+      "from": from,
+      "bid": fromID1,
+      "postid": fromID2,
+      "to": to,
+      "tobid": localToID,
+    };
+  } else if (from == "post" && to == "mail") {
+    data = {
+      "from": from,
+      "bid": fromID1,
+      "postid": fromID2,
+      "to": to,
+      "touid": localToID,
+    };
+  }
   var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
   if (resp == null) {
     return ForwardRes.error(success: false, error: -1, desc: networkErrorText);
