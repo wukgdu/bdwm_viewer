@@ -16,6 +16,7 @@ class TopHomePage extends StatefulWidget {
 class _TopHomePageState extends State<TopHomePage> {
   HomeInfo homeInfo = HomeInfo.empty();
   final _titleFont = const TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.normal);
+  final _scrollController = ScrollController();
 
   Future<HomeInfo> getData() async {
     var resp = await bdwmClient.get("$v2Host/mobile/home.php", headers: genHeaders());
@@ -35,6 +36,12 @@ class _TopHomePageState extends State<TopHomePage> {
         homeInfo = value;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   Widget _oneTen(Top10Item item) {
@@ -133,7 +140,7 @@ class _TopHomePageState extends State<TopHomePage> {
       );
     }
     return ListView(
-      controller: ScrollController(),
+      controller: _scrollController,
       padding: const EdgeInsets.all(8),
       children: [
         Card(

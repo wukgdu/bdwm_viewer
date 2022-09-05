@@ -14,6 +14,7 @@ class Top100Page extends StatefulWidget {
 
 class _Top100PageState extends State<Top100Page> {
   Top100Info top100info = Top100Info.empty();
+  final _scrollController = ScrollController();
   Future<Top100Info> getData() async {
     var resp = await bdwmClient.get("$v2Host/hot-topic.php", headers: genHeaders());
     if (resp == null) {
@@ -32,6 +33,12 @@ class _Top100PageState extends State<Top100Page> {
         top100info = value;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   // @override
@@ -97,7 +104,7 @@ class _Top100PageState extends State<Top100Page> {
       );
     }
     return ListView(
-      controller: ScrollController(),
+      controller: _scrollController,
       padding: const EdgeInsets.all(8),
       children: top100info.items.map((Top100Item item) {
         return _onepost(item);

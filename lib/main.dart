@@ -90,6 +90,9 @@ class _MainPageState extends State<MainPage> {
     if (timerMail != null) {
       timerMail!.cancel();
     }
+    messageCount.dispose();
+    mailCount.dispose();
+    messageBrief.dispose();
     clearAllExtendedImageCache();
     super.dispose();
   }

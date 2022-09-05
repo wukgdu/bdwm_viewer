@@ -130,4 +130,10 @@ class MessageBriefNotifier extends ValueNotifier<List<TextAndLink>> {
     }
     notifyListeners();
   }
+
+  @override
+  void dispose() {
+    value.clear();
+    super.dispose();
+  }
 }

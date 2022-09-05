@@ -32,7 +32,7 @@ class OperateComponent extends StatefulWidget {
 }
 
 class _OperateComponentState extends State<OperateComponent> {
-  bool canReply = false;
+  var canReplyNotifier = ValueNotifier<bool>(false);
   static const textButtonStyle = ButtonStyle(
     minimumSize: MaterialStatePropertyAll(Size(50, 20)),
     // textStyle: MaterialStatePropertyAll(TextStyle(fontSize: 12)),
@@ -40,7 +40,12 @@ class _OperateComponentState extends State<OperateComponent> {
   @override
   void initState() {
     super.initState();
-    canReply = widget.onePostInfo.canReply;
+    canReplyNotifier.value = widget.onePostInfo.canReply;
+  }
+  @override
+  void dispose() {
+    canReplyNotifier.dispose();
+    super.dispose();
   }
   @override
   Widget build(BuildContext context) {
@@ -49,21 +54,27 @@ class _OperateComponentState extends State<OperateComponent> {
       // alignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        TextButton(
-          style: textButtonStyle,
-          onPressed: !canReply ? null
-            : () {
-              Navigator.of(context).pushNamed('/post', arguments: {
-                'bid': widget.bid,
-                'boardName': "",
-                'parentid': widget.postid,
-              }).then((value) {
-                if (value == true) {
-                  widget.refreshCallBack();
-                }
-              });
-            },
-          child: Text("回帖", style: TextStyle(color: !widget.onePostInfo.canReply ? Colors.grey : null ),),
+        ValueListenableBuilder(
+          valueListenable: canReplyNotifier,
+          builder: (context, value, child) {
+            var canReply = value as bool;
+            return TextButton(
+              style: textButtonStyle,
+              onPressed: !canReply ? null
+                : () {
+                  Navigator.of(context).pushNamed('/post', arguments: {
+                    'bid': widget.bid,
+                    'boardName': "",
+                    'parentid': widget.postid,
+                  }).then((value) {
+                    if (value == true) {
+                      widget.refreshCallBack();
+                    }
+                  });
+                },
+              child: Text("回帖", style: TextStyle(color: !canReply ? Colors.grey : null),),
+            );
+          },
         ),
         TextButton(
           style: textButtonStyle,
@@ -177,7 +188,7 @@ class _OperateComponentState extends State<OperateComponent> {
               },);
             } else if (value.contains("回复")) {
               var action = "unnoreply";
-              if (canReply) {
+              if (canReplyNotifier.value) {
                 action = "noreply";
               }
               bdwmOperatePost(bid: widget.bid, postid: widget.postid, action: action)
@@ -193,9 +204,9 @@ class _OperateComponentState extends State<OperateComponent> {
                   ),
                 );
                 if (!res.success) { return; }
-                setState(() {
-                  canReply = !canReply;
-                });
+                // setState(() {
+                canReplyNotifier.value = !canReplyNotifier.value;
+                // });
               });
             }
           },
@@ -207,8 +218,8 @@ class _OperateComponentState extends State<OperateComponent> {
               ),
               if (widget.onePostInfo.canSetReply)
                 PopupMenuItem(
-                  value: canReply ? "设为不可回复" : "取消不可回复",
-                  child: Text(canReply ? "设为不可回复" : "取消不可回复"),
+                  value: canReplyNotifier.value ? "设为不可回复" : "取消不可回复",
+                  child: Text(canReplyNotifier.value ? "设为不可回复" : "取消不可回复"),
                 ),
             ];
           },
