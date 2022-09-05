@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
+
 import './bdwm/message.dart';
 import './bdwm/mail.dart';
 import './utils.dart';
-import 'package:flutter/foundation.dart';
+import './globalvars.dart';
 
 class NotifyMessageInfo {
   List<UnreadMessageInfo> value = <UnreadMessageInfo>[];
@@ -38,6 +40,7 @@ class NotifyMessage {
 
   void updateValue(Function callBack) {
     // return;
+    if (globalUInfo.login == false) { return; }
     bdwmGetUnreadMessageCount().then((value) {
       if (value == null) {
         return;
@@ -89,6 +92,7 @@ class NotifyMail {
 
   void updateValue(Function callBack) {
     // return;
+    if (globalUInfo.login == false) { return; }
     bdwmGetUnreadMailCount().then((value) {
       if (value == null) {
         return;
