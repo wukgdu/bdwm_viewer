@@ -312,7 +312,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
                   'title': "文章",
                 });
               } else {
-                showAlertDialog(context, "", const Text("使用默认浏览器打开链接?"),
+                showAlertDialog(context, "", SelectableText("使用默认浏览器打开链接?\n$link"),
                   actions1: TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
@@ -513,11 +513,11 @@ void travelHtmlBack(hdom.Element? document, BDWMtext config, List<BDWMtext> res)
           continue;
         }
         var colorIdx = (bdwmRichText['bc'] as Map<String, int>)[color];
+        BDWMAnsiText bdwmText = (config as BDWMAnsiText).copy();
         if (colorIdx != null) {
-          BDWMAnsiText bdwmText = (config as BDWMAnsiText).copy();
           bdwmText.foreColor = colorIdx;
-          travelHtmlBack(ele, bdwmText, res);
         }
+        travelHtmlBack(ele, bdwmText, res);
       } else if (ele.localName == "span") {
         var spanStyle = ele.attributes['style'];
         var bColor = ele.attributes['backgroundColor'];
@@ -537,11 +537,11 @@ void travelHtmlBack(hdom.Element? document, BDWMtext config, List<BDWMtext> res)
           continue;
         }
         var colorIdx = (bdwmRichText['bc'] as Map<String, int>)[bColor];
+        BDWMAnsiText bdwmText = (config as BDWMAnsiText).copy();
         if (colorIdx != null) {
-          BDWMAnsiText bdwmText = (config as BDWMAnsiText).copy();
           bdwmText.backColor = colorIdx;
-          travelHtmlBack(ele, bdwmText, res);
         }
+        travelHtmlBack(ele, bdwmText, res);
       } else if (ele.localName == "p") {
         if (ele.classes.contains('quotehead')) {
           var username = ele.attributes['data-username'] ?? "";
