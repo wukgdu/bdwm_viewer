@@ -45,6 +45,10 @@ class NotifyMessage {
     lastUnreadInfo.remove(withWho);
   }
 
+  void clearAll() {
+    lastUnreadInfo.clear();
+  }
+
   void updateValue(Function callBack) {
     // return;
     if (globalUInfo.login == false) { return; }
@@ -111,6 +115,10 @@ class NotifyMail {
       callBack(unreadMailInfo);
       notify();
     });
+  }
+
+  void clearAll() {
+    lastUnreadTime = 0;
   }
 
   void notify() {

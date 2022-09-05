@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../bdwm/login.dart';
 import '../globalvars.dart';
+import '../services.dart';
 import './utils.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  final NotifyMail nMail;
+  final NotifyMessage nMessage;
+  const LoginPage({Key? key, required this.nMail, required this.nMessage}) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -97,6 +100,8 @@ class _LoginPageState extends State<LoginPage> {
                   } else {
                     debugPrint(globalUInfo.gist());
                     // Navigator.of(context).pushReplacementNamed('/me');
+                    widget.nMail.clearAll();
+                    widget.nMessage.clearAll();
                     Navigator.of(context).pushReplacementNamed('/home');
                   }
                 });

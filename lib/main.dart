@@ -42,8 +42,8 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   Timer? timerMessage;
   Timer? timerMail;
-  NotifyMessage unreadMessage = NotifyMessage();
-  NotifyMail unreadMail = NotifyMail();
+  final NotifyMessage unreadMessage = NotifyMessage();
+  final NotifyMail unreadMail = NotifyMail();
   // NotifyMessageInfo unreadMessageInfo = NotifyMessageInfo.empty();
   ValueNotifier<int> messageCount = ValueNotifier<int>(0);
   ValueNotifier<int> mailCount = ValueNotifier<int>(0);
@@ -203,7 +203,7 @@ class _MainPageState extends State<MainPage> {
             if (settings.arguments != null) {
               needBack = (settings.arguments as Map)['needBack'] ?? false;
             }
-            builder = (BuildContext context) => LoginApp(needBack: needBack,);
+            builder = (BuildContext context) => LoginApp(needBack: needBack, nMail: unreadMail, nMessage: unreadMessage,);
             break;
           case "/about":
             builder = (BuildContext context) => const AboutApp();
@@ -237,7 +237,7 @@ class _MainPageState extends State<MainPage> {
             if (globalUInfo.login) {
               builder = (BuildContext context) => UserApp(uid: globalUInfo.uid);
             } else {
-              builder = (BuildContext context) => const LoginApp();
+              builder = (BuildContext context) => LoginApp(nMail: unreadMail, nMessage: unreadMessage,);
             }
             break;
           case "/user":
