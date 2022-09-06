@@ -75,7 +75,7 @@ class _SimpleSearchResultAppState extends State<SimpleSearchResultApp> {
             appBar: AppBar(
               title: const Text("搜索"),
             ),
-            body: Text("错误：${snapshot.error}"),
+            body: Center(child: Text("错误：${snapshot.error}"),),
           );
         }
         if (!snapshot.hasData || snapshot.data == null) {
@@ -83,7 +83,7 @@ class _SimpleSearchResultAppState extends State<SimpleSearchResultApp> {
             appBar: AppBar(
               title: const Text("搜索"),
             ),
-            body: const Text("错误：未获取数据"),
+            body: const Center(child: Text("错误：未获取数据"),),
           );
         }
         var simpleSearchRes = snapshot.data as SimpleSearchRes;
@@ -247,7 +247,7 @@ class _ComplexSearchResultAppState extends State<ComplexSearchResultApp> {
             appBar: AppBar(
               title: const Text("搜索"),
             ),
-            body: Text("错误：${snapshot.error}"),
+            body: Center(child: Text("错误：${snapshot.error}"),),
           );
         }
         if (!snapshot.hasData || snapshot.data == null) {
@@ -255,7 +255,7 @@ class _ComplexSearchResultAppState extends State<ComplexSearchResultApp> {
             appBar: AppBar(
               title: const Text("搜索"),
             ),
-            body: const Text("错误：未获取数据"),
+            body: const Center(child: Text("错误：未获取数据"),),
           );
         }
         var complexSearchRes = snapshot.data as ComplexSearchRes;

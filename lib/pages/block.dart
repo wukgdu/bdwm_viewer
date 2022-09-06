@@ -61,7 +61,7 @@ class _BlockAppState extends State<BlockApp> {
             appBar: AppBar(
               title: Text(widget.title),
             ),
-            body: Text("错误：${snapshot.error}"),
+            body: Center(child: Text("错误：${snapshot.error}"),),
           );
         }
         if (!snapshot.hasData || snapshot.data == null) {
@@ -69,7 +69,7 @@ class _BlockAppState extends State<BlockApp> {
             appBar: AppBar(
               title: Text(widget.title),
             ),
-            body: const Text("错误：未获取数据"),
+            body: const Center(child: Text("错误：未获取数据"),),
           );
         }
         var blockInfo = snapshot.data as BlockInfo;

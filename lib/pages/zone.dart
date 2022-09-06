@@ -63,7 +63,7 @@ class _ZoneAppState extends State<ZoneApp> {
             appBar: AppBar(
               title: const Text("版面目录"),
             ),
-            body: Text("错误：${snapshot.error}"),
+            body: Center(child: Text("错误：${snapshot.error}"),),
           );
         }
         if (!snapshot.hasData || snapshot.data == null) {
@@ -72,7 +72,7 @@ class _ZoneAppState extends State<ZoneApp> {
             appBar: AppBar(
               title: const Text("版面目录"),
             ),
-            body: const Text("错误：未获取数据"),
+            body: const Center(child: Text("错误：未获取数据"),),
           );
         }
         var zoneInfo = snapshot.data as ZoneInfo;

@@ -93,16 +93,17 @@ HtmlWidget renderHtml(String htmlStr, {bool? needSelect = true, TextStyle? ts, B
   );
 }
 
-Future<String?> showAlertDialog(BuildContext context, String title, Widget content, {Widget? actions1, Widget? actions2}) {
+Future<String?> showAlertDialog(BuildContext context, String title, Widget content, {Widget? actions1, Widget? actions2, Widget? actions3, List<Widget>? actions}) {
 
   // set up the buttons
   // set up the AlertDialog
   AlertDialog alert = AlertDialog(
     title: Text(title),
     content: content,
-    actions: [
-      if (actions1 != null) ...[actions1],
-      if (actions2 != null) ...[actions2],
+    actions: actions ?? [
+      if (actions1 != null) actions1,
+      if (actions2 != null) actions2,
+      if (actions3 != null) actions3,
     ],
   );
 

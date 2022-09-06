@@ -52,6 +52,7 @@ dependencies:
   async: ^2.8.2
   url_launcher: ^6.1.5
   share_plus: ^4.0.10+1
+  flutter_treeview: ^1.0.7+1
 
 dev_dependencies:
   flutter_test:

@@ -191,8 +191,12 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
           return const Center(child: Text("错误：未获取数据"));
         }
         var messageinfo = snapshot.data as MessageInfo;
-        if (messageinfo.desc != null) {
-          return Center(child: Text(messageinfo.desc!),);
+        if (messageinfo.success == false) {
+          if (messageinfo.desc != null) {
+            return Center(child: Text(messageinfo.desc!),);
+          } else {
+            return const Center(child: Text("出错啦"),);
+          }
         }
         return ListView(
           reverse: true,

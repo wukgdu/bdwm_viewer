@@ -100,7 +100,7 @@ class _ThreadAppState extends State<ThreadApp> {
             appBar: AppBar(
               title: Text(widget.boardName ?? "看帖"),
             ),
-            body: Text("错误：${snapshot.error}"),
+            body: Center(child: Text("错误：${snapshot.error}"),),
           );
         }
         if (!snapshot.hasData || snapshot.data == null) {
@@ -108,7 +108,7 @@ class _ThreadAppState extends State<ThreadApp> {
             appBar: AppBar(
               title: Text(widget.boardName ?? "看帖"),
             ),
-            body: const Text("错误：未获取数据"),
+            body: const Center(child: Text("错误：未获取数据"),),
           );
         }
         var threadPageInfo = snapshot.data as ThreadPageInfo;

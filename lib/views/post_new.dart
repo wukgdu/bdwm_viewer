@@ -117,10 +117,10 @@ class _PostNewPageState extends State<PostNewPage> {
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
-          return Text("错误：${snapshot.error}");
+          return Center(child: Text("错误：${snapshot.error}"),);
         }
         if (!snapshot.hasData || snapshot.data == null) {
-          return const Text("错误：未获取数据");
+          return const Center(child: Text("错误：未获取数据"),);
         }
         PostNewInfo postNewInfo;
         String? quoteText;

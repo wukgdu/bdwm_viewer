@@ -77,7 +77,7 @@ class _CollectionAppState extends State<CollectionApp> {
             appBar: AppBar(
               title: Text(widget.title),
             ),
-            body: Text("错误：${snapshot.error}"),
+            body: Center(child: Text("错误：${snapshot.error}"),),
           );
         }
         if (!snapshot.hasData || snapshot.data == null) {
@@ -85,7 +85,7 @@ class _CollectionAppState extends State<CollectionApp> {
             appBar: AppBar(
               title: Text(widget.title),
             ),
-            body: const Text("错误：未获取数据"),
+            body: const Center(child: Text("错误：未获取数据"),),
           );
         }
         var collectionList = snapshot.data as CollectionList;
@@ -223,7 +223,7 @@ class _CollectionArticleAppState extends State<CollectionArticleApp> {
             appBar: AppBar(
               title: Text(widget.title),
             ),
-            body: Text("错误：${snapshot.error}"),
+            body: Center(child: Text("错误：${snapshot.error}"),),
           );
         }
         if (!snapshot.hasData || snapshot.data == null) {
@@ -231,7 +231,7 @@ class _CollectionArticleAppState extends State<CollectionArticleApp> {
             appBar: AppBar(
               title: Text(widget.title),
             ),
-            body: const Text("错误：未获取数据"),
+            body: const Center(child: Text("错误：未获取数据"),),
           );
         }
         var collectionArticle = snapshot.data as CollectionArticle;
@@ -252,6 +252,63 @@ class _CollectionArticleAppState extends State<CollectionArticleApp> {
           body: CollectionArticlePage(collectionArticle: collectionArticle),
         );
       },
+    );
+  }
+}
+
+class CollectionImportApp extends StatefulWidget {
+  const CollectionImportApp({super.key});
+
+  @override
+  State<CollectionImportApp> createState() => _CollectionImportAppState();
+}
+
+class _CollectionImportAppState extends State<CollectionImportApp> {
+  String txt = "";
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("测试"),
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            TextButton(
+              onPressed: () {
+                showAlertDialog(context, "选择文集", const CollectionImportDialogBody(),
+                  actions1: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("1"),
+                  ),
+                  actions2: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("2"),
+                  ),
+                  actions3: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("3"),
+                  ),
+                ).then((value) {
+                  if (value != null) {
+                    setState(() {
+                      txt = value;
+                    });
+                  }
+                });
+              },
+              child: const Text("press"),
+            ),
+            Text(txt),
+          ],
+        )
+      ),
     );
   }
 }

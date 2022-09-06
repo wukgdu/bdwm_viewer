@@ -63,7 +63,7 @@ class _BoardAppState extends State<BoardApp> {
             appBar: AppBar(
               title: Text(widget.boardName),
             ),
-            body: Text("错误：${snapshot.error}"),
+            body: Center(child: Text("错误：${snapshot.error}"),),
           );
         }
         if (!snapshot.hasData || snapshot.data == null) {
@@ -71,7 +71,7 @@ class _BoardAppState extends State<BoardApp> {
             appBar: AppBar(
               title: Text(widget.boardName),
             ),
-            body: const Text("错误：未获取数据"),
+            body: const Center(child: Text("错误：未获取数据"),),
           );
         }
         var boardInfo = snapshot.data as BoardInfo;
