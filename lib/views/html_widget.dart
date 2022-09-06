@@ -312,7 +312,13 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
                   'title': "文章",
                 });
               } else {
-                showAlertDialog(context, "", SelectableText("使用默认浏览器打开链接?\n$link"),
+                var hereLink = link;
+                if (link.startsWith("https://bbs.pku.edu.cn/v2/jump-to.php")) {
+                  var parsedUrl = Uri.parse(link);
+                  var rawLink = parsedUrl.queryParameters['url'] ?? "";
+                  hereLink += "\n$rawLink";
+                }
+                showAlertDialog(context, "", SelectableText("使用默认浏览器打开链接?\n$hereLink"),
                   actions1: TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
