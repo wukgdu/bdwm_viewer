@@ -2,9 +2,17 @@ import 'package:flutter/material.dart';
 
 import '../views/favorite.dart';
 import '../views/drawer.dart';
+import '../views/constants.dart';
 
-class FavoriteApp extends StatelessWidget {
-  const FavoriteApp({Key? key}) : super(key: key);
+class FavoriteApp extends StatefulWidget {
+  const FavoriteApp({super.key});
+
+  @override
+  State<FavoriteApp> createState() => _FavoriteAppState();
+}
+
+class _FavoriteAppState extends State<FavoriteApp> {
+  bool? clearUnread;
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +22,15 @@ class FavoriteApp extends StatelessWidget {
       appBar: AppBar(
         title: const Text("版面收藏夹"),
       ),
-      body: const FavoritePage(),
+      floatingActionButton: IconButton(
+        onPressed: () {
+          setState(() {
+            clearUnread = true;
+          });
+        },
+        icon: const Icon(Icons.cleaning_services, color: bdwmPrimaryColor,),
+      ),
+      body: FavoritePage(clear: clearUnread,),
     );
   }
 }

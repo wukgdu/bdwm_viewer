@@ -1,3 +1,4 @@
+import 'package:bdwm_viewer/bdwm/set_read.dart';
 import 'package:flutter/material.dart';
 
 import '../html_parser/board_parser.dart';
@@ -187,6 +188,7 @@ class BoardPage extends StatefulWidget {
 
 class _BoardPageState extends State<BoardPage> {
   BoardInfo boardInfo = BoardInfo.empty();
+  bool updateToggle = false;
   final _titleFont = const TextStyle(fontWeight: FontWeight.bold, fontSize: 18);
   final _titleFont2 = const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.grey);
   // static const _boldFont = TextStyle(fontWeight: FontWeight.bold);
@@ -240,7 +242,49 @@ class _BoardPageState extends State<BoardPage> {
         if (widget.page <= 1 && boardInfo.intro.isNotEmpty)
           Container(
             margin: const EdgeInsets.only(bottom: _padding1, left: _padding2, right: _padding2),
-            child: Text(boardInfo.intro),
+            child: Row(
+              children: [
+                Expanded(child: Text(boardInfo.intro),),
+                GestureDetector(
+                  onTap: () {
+                    var threads = <int>[];
+                    for (var p in widget.boardInfo.boardPostInfo) {
+                      var pid = int.tryParse(p.bpID);
+                      var tid = int.tryParse(p.threadID);
+                      if (tid != null && tid >= 0) {
+                        if (pid != null && pid >= 0) {
+                          threads.add(tid);
+                        }
+                      }
+                    }
+                    // will set top read
+                    bdwmSetThreadRead(widget.bid, threads)
+                    .then((res) {
+                      var txt = "清除未读成功";
+                      if (!res.success) {
+                        if (res.error == -1) {
+                          txt = res.desc!;
+                        } else {
+                          txt = "清除未读失败";
+                        }
+                      }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(txt), duration: const Duration(milliseconds: 600),),
+                      );
+                      if (res.success) {
+                        for (var item in boardInfo.boardPostInfo) {
+                          item.isNew = false;
+                        }
+                        setState(() {
+                          updateToggle = !updateToggle;
+                        });
+                      }
+                    });
+                  },
+                  child: const Text("清除未读", style: TextStyle(color: bdwmPrimaryColor),),
+                ),
+              ],
+            ),
           ),
         if (widget.page <= 1 && boardInfo.admins.isNotEmpty)
           Container(

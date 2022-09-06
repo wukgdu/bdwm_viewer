@@ -36,7 +36,9 @@ class _FavoritePageState extends State<FavoritePage> {
       if (!mounted) { return; }
       // debugPrint("1 ${widget.clear}");
       if (widget.clear!=null) {
-        favoriteBoardInfo = value;
+        setState(() {
+          favoriteBoardInfo = value;
+        });
       } else {
         setState(() {
           favoriteBoardInfo = value;
@@ -49,8 +51,10 @@ class _FavoritePageState extends State<FavoritePage> {
   void didUpdateWidget(covariant FavoritePage oldWidget) {
     super.didUpdateWidget(oldWidget);
       // debugPrint("2 ${widget.clear}");
-    if (widget.clear!=null && widget.clear == true) {
+    var clear = widget.clear ?? false;
+    if (clear == true) {
       clearUnread();
+      clear = false;
     }
   }
 

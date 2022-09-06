@@ -60,7 +60,7 @@ class HomeApp extends StatefulWidget {
 class _HomeAppState extends State<HomeApp> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _selectedIdx = 0;
-  bool clearUnreadBoard = false;
+  bool? clearUnreadBoard;
   Widget _oneTab(Icon icon, Text text) {
     return Tab(
       child: Row(

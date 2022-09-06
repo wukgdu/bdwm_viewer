@@ -103,6 +103,10 @@ List<BoardPostInfo> parseBoardPost(Element? docu) {
     if (bpID == "-1") {
       continue;
     }
+    var pid = int.tryParse(bpID);
+    if (pid == null || pid < 0) {
+      continue;
+    }
     bool isNew = false;
     if (pdom.querySelector(".dot.unread") != null) {
       isNew = true;
@@ -122,7 +126,11 @@ List<BoardPostInfo> parseBoardPost(Element? docu) {
       }
     }
     String link = absThreadLink(pdom.querySelector(".link")?.attributes['href'] ?? "");
-    String threadID = pdom.attributes['data-itemid'] ?? "";
+    String threadID = pdom.attributes['data-itemid']?.trim() ?? "";
+    var tid = int.tryParse(threadID);
+    if (tid == null || tid < 0) {
+      continue;
+    }
     String userName = getTrimmedString(pdom.querySelector(".author .name"));
     String avatarLink = absImgSrc(pdom.querySelector(".avatar img")?.attributes['src'] ?? defaultAvator);
     String uid = getTrimmedString(pdom.querySelector(".author a")?.attributes['href']?.split("=").last ?? "");
