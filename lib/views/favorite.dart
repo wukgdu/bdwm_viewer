@@ -13,6 +13,7 @@ class FavoritePage extends StatefulWidget {
 
 class _FavoritePageState extends State<FavoritePage> {
   FavoriteBoardInfo favoriteBoardInfo = FavoriteBoardInfo.empty();
+  final _scrollController = ScrollController();
   Future<FavoriteBoardInfo> getData() async {
     var resp = await bdwmClient.get("$v2Host/favorite.php", headers: genHeaders2());
     if (resp == null) {
@@ -33,6 +34,12 @@ class _FavoritePageState extends State<FavoritePage> {
         favoriteBoardInfo = value;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   final _biggerFont = const TextStyle(fontSize: 16);
@@ -85,6 +92,7 @@ class _FavoritePageState extends State<FavoritePage> {
       );
     }
     return ListView(
+      controller: _scrollController,
       padding: const EdgeInsets.all(8),
       children: favoriteBoardInfo.favoriteBoards.map((FavoriteBoard item) {
         return _onepost(item);

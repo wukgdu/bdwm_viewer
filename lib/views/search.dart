@@ -47,6 +47,15 @@ class _ComplexSearchComponentState extends State<ComplexSearchComponent> {
     daysController.text = pss.days;
   }
 
+  @override
+  void dispose() {
+    titleController.dispose();
+    userController.dispose();
+    boardController.dispose();
+    daysController.dispose();
+    super.dispose();
+  }
+
   Widget titleBox(text) {
     return SizedBox(
       width: 80,
@@ -246,6 +255,12 @@ class _SimpleSearchComponentState extends State<SimpleSearchComponent> {
       "mode": widget.mode,
       "keyWord": textController.text,
     });
+  }
+
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
   }
 
   @override

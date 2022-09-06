@@ -573,6 +573,7 @@ class ReadThreadPage extends StatefulWidget {
 
 class _ReadThreadPageState extends State<ReadThreadPage> {
   final _titleFont = const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
+  final _scrollController = ScrollController();
   var itemKeys = <GlobalKey>[];
   String? postid;
 
@@ -608,6 +609,7 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     clearAllExtendedImageCache();
     super.dispose();
   }
@@ -620,18 +622,24 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          padding: const EdgeInsets.all(10.0),
-          alignment: Alignment.centerLeft,
-          // height: 20,
-          child: Text(
-            widget.threadPageInfo.title,
-            style: _titleFont,
+        GestureDetector(
+          onDoubleTap: () {
+            // Scrollable.ensureVisible(itemKeys[0].currentContext!, duration: const Duration(milliseconds: 1500));
+            _scrollController.animateTo(0, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
+          },
+          child: Container(
+            padding: const EdgeInsets.all(10.0),
+            alignment: Alignment.centerLeft,
+            // height: 20,
+            child: Text(
+              widget.threadPageInfo.title,
+              style: _titleFont,
+            ),
           ),
         ),
         Expanded(
           child: SingleChildScrollView(
-            controller: ScrollController(),
+            controller: _scrollController,
             padding: const EdgeInsets.all(8),
             child: Column(
               children: widget.threadPageInfo.posts.asMap().entries.map((pair) {

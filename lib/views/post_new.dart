@@ -99,6 +99,8 @@ class _PostNewPageState extends State<PostNewPage> {
 
   @override
   void dispose() {
+    titleValue.dispose();
+    contentValue.dispose();
     contentFocusNode.dispose();
     super.dispose();
   }
