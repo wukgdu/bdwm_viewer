@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../bdwm/req.dart';
+import '../bdwm/set_read.dart';
 import '../globalvars.dart';
 import '../html_parser/favorite_parser.dart';
 
 class FavoritePage extends StatefulWidget {
-  const FavoritePage({Key? key}) : super(key: key);
+  final bool? clear;
+  const FavoritePage({Key? key, this.clear}) : super(key: key);
 
   @override
   State<FavoritePage> createState() => _FavoritePageState();
@@ -14,6 +16,7 @@ class FavoritePage extends StatefulWidget {
 class _FavoritePageState extends State<FavoritePage> {
   FavoriteBoardInfo favoriteBoardInfo = FavoriteBoardInfo.empty();
   final _scrollController = ScrollController();
+  bool updateToggle = false;
   Future<FavoriteBoardInfo> getData() async {
     var resp = await bdwmClient.get("$v2Host/favorite.php", headers: genHeaders2());
     if (resp == null) {
@@ -29,10 +32,50 @@ class _FavoritePageState extends State<FavoritePage> {
     //   favoriteBoards = getExampleFavoriteBoard();
     // });
     getData().then((value) {
+      // debugPrint("get favorite data");
       if (!mounted) { return; }
-      setState(() {
+      // debugPrint("1 ${widget.clear}");
+      if (widget.clear!=null) {
         favoriteBoardInfo = value;
-      });
+      } else {
+        setState(() {
+          favoriteBoardInfo = value;
+        });
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant FavoritePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+      // debugPrint("2 ${widget.clear}");
+    if (widget.clear!=null && widget.clear == true) {
+      clearUnread();
+    }
+  }
+
+  void clearUnread() {
+    bdwmSetBoardRead(favoriteBoardInfo.favoriteBoards.map((e) => int.parse(e.boardLink.split("=").last)).toList())
+    .then((res) {
+      var txt = "清除未读成功";
+      if (!res.success) {
+        if (res.error == -1) {
+          txt = res.desc!;
+        } else {
+          txt = "清除未读失败";
+        }
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(txt), duration: const Duration(milliseconds: 600),),
+      );
+      if (res.success) {
+        for (var item in favoriteBoardInfo.favoriteBoards) {
+          item.unread = false;
+        }
+        setState(() {
+          updateToggle = !updateToggle;
+        });
+      }
     });
   }
 
@@ -102,6 +145,7 @@ class _FavoritePageState extends State<FavoritePage> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("favorite rebuild");
     return boardView();
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../globalvars.dart';
 import '../utils.dart';
 // import '../services.dart';
+import '../views/constants.dart';
 import '../views/top100.dart';
 import '../views/top10.dart';
 import '../views/favorite.dart';
@@ -56,7 +57,10 @@ class HomeApp extends StatefulWidget {
   State<HomeApp> createState() => _HomeAppState();
 }
 
-class _HomeAppState extends State<HomeApp> {
+class _HomeAppState extends State<HomeApp> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  int _selectedIdx = 0;
+  bool clearUnreadBoard = false;
   Widget _oneTab(Icon icon, Text text) {
     return Tab(
       child: Row(
@@ -66,76 +70,98 @@ class _HomeAppState extends State<HomeApp> {
     );
   }
   @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _selectedIdx = _tabController.index;
+    _tabController.addListener(() {
+      setState(() {
+        _selectedIdx = _tabController.index;
+        clearUnreadBoard = false;
+      });
+    });
+  }
+  @override
   void dispose() {
+    _tabController.dispose();
     clearAllExtendedImageCache();
     super.dispose();
   }
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        drawer: const MyDrawer(selectedIdx: 0,),
-        appBar: AppBar(
-          title: const Text("首页"),
-          actions: [
-            ValueListenableBuilder(
-              valueListenable: widget.mailCount,
-              builder: (context, count, Widget? child) {
-                return StackIcon(
-                  count: count as int,
-                  icon: const Icon(Icons.mail),
-                  callBack: () { quickNotify("OBViewer", "mail"); },
-                );
-              },
-            ),
-            ValueListenableBuilder(
-              valueListenable: widget.messageCount,
-              builder: (context, count, Widget? child) {
-                return StackIcon(
-                  count: count as int,
-                  icon: const Icon(Icons.message),
-                  callBack: () {
-                    // quickNotify("OBViewer", "message");
-                    Navigator.of(context).pushNamed('/message');
-                  },
-                );
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                Navigator.of(context).pushNamed('/search');
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.account_circle),
-              onPressed: () {
-                if (globalUInfo.login) {
-                  Navigator.of(context).pushNamed('/user', arguments: globalUInfo.uid);
-                } else {
-                  Navigator.of(context).pushNamedAndRemoveUntil('/me', (Route a) => false);
-                }
-              },
-            ),
-          ],
-          bottom: TabBar(
-            indicatorColor: const Color.fromARGB(159, 214, 53, 13),
-            labelStyle: const TextStyle(fontSize: 12),
-            tabs: [
-              _oneTab(const Icon(Icons.whatshot), const Text("热点")),
-              _oneTab(const Icon(Icons.trending_up), const Text("百大")),
-              _oneTab(const Icon(Icons.star), const Text("收藏")),
-            ],
+    return Scaffold(
+      drawer: const MyDrawer(selectedIdx: 0,),
+      appBar: AppBar(
+        title: const Text("首页"),
+        actions: [
+          ValueListenableBuilder(
+            valueListenable: widget.mailCount,
+            builder: (context, count, Widget? child) {
+              return StackIcon(
+                count: count as int,
+                icon: const Icon(Icons.mail),
+                callBack: () { quickNotify("OBViewer", "mail"); },
+              );
+            },
           ),
-        ),
-        body: const TabBarView(
-          children: [
-            TopHomePage(),
-            Top100Page(),
-            FavoritePage(),
+          ValueListenableBuilder(
+            valueListenable: widget.messageCount,
+            builder: (context, count, Widget? child) {
+              return StackIcon(
+                count: count as int,
+                icon: const Icon(Icons.message),
+                callBack: () {
+                  // quickNotify("OBViewer", "message");
+                  Navigator.of(context).pushNamed('/message');
+                },
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              Navigator.of(context).pushNamed('/search');
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.account_circle),
+            onPressed: () {
+              if (globalUInfo.login) {
+                Navigator.of(context).pushNamed('/user', arguments: globalUInfo.uid);
+              } else {
+                Navigator.of(context).pushNamedAndRemoveUntil('/me', (Route a) => false);
+              }
+            },
+          ),
+        ],
+        bottom: TabBar(
+          indicatorColor: const Color.fromARGB(159, 214, 53, 13),
+          labelStyle: const TextStyle(fontSize: 12),
+          controller: _tabController,
+          tabs: [
+            _oneTab(const Icon(Icons.whatshot), const Text("热点")),
+            _oneTab(const Icon(Icons.trending_up), const Text("百大")),
+            _oneTab(const Icon(Icons.star), const Text("收藏")),
           ],
         ),
+      ),
+      floatingActionButton: _selectedIdx != 2 ? null
+        : IconButton(
+          tooltip: "清除未读",
+          onPressed: () {
+            setState(() {
+              clearUnreadBoard = true;
+            });
+          },
+          icon: const Icon(Icons.cleaning_services, color: bdwmPrimaryColor,)
+        ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          const TopHomePage(),
+          const Top100Page(),
+          FavoritePage(clear: clearUnreadBoard),
+        ],
       ),
     );
   }
