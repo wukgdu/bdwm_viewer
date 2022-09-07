@@ -98,9 +98,9 @@ class _ComplexResultPageState extends State<ComplexResultPage> {
               ...csri.shortTexts.map((st) {
                 return GestureDetector(
                   onTap: () {
-                    naviGotoThreadByLink(context, st.link!, csri.boardName, pageDefault: "a");
+                    naviGotoThreadByLink(context, st.link, csri.boardName, pageDefault: "a");
                   },
-                  child: Text(st.text, style: _ts1,),
+                  child: Text("${st.time} - ${st.text}", style: _ts1,),
                 );
               }).toList(),
             ],

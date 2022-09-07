@@ -1,7 +1,6 @@
 import 'package:html/parser.dart' show parse;
 
 import './utils.dart';
-import '../utils.dart';
 
 class SimpleSearchResItem {
   String id = "";
@@ -90,6 +89,20 @@ SimpleSearchRes parseUserSearch(String htmlStr) {
   return SimpleSearchRes(res: res, maxPage: maxPage);
 }
 
+class TextAndLinkAndTime {
+  String text = "";
+  String link = "";
+  String time = "";
+
+  TextAndLinkAndTime.empty();
+  TextAndLinkAndTime({
+    required this.text,
+    required this.link,
+    required this.time,
+  });
+  TextAndLinkAndTime.pos(this.text, this.link, this.time);
+}
+
 class ComplexSearchResItem {
   String title = "";
   String boardName = "";
@@ -97,7 +110,7 @@ class ComplexSearchResItem {
   String bid = "";
   String threadid = "";
   String userName = "";
-  List<TextAndLink> shortTexts = <TextAndLink>[];
+  List<TextAndLinkAndTime> shortTexts = <TextAndLinkAndTime>[];
 
   ComplexSearchResItem.empty();
   ComplexSearchResItem({
@@ -153,7 +166,7 @@ ComplexSearchRes parsePostSearch(String htmlStr) {
     var threadid = item.attributes["data-tid"] ?? "";
     bid = item.attributes["data-bid"] ?? "";
 
-    var shortTexts = <TextAndLink>[];
+    var shortTexts = <TextAndLinkAndTime>[];
     var briefDom = item.querySelector(".brief");
     if (briefDom != null) {
       for (var bdom in briefDom.querySelectorAll("div")) {
@@ -164,7 +177,19 @@ ComplexSearchRes parsePostSearch(String htmlStr) {
         txt = txtArray.join(" ");
         var rlink = bdom.querySelector("a")?.attributes["href"];
         var link = rlink != null ? absThreadLink(rlink) : "";
-        shortTexts.add(TextAndLink(txt, link));
+        shortTexts.add(TextAndLinkAndTime.pos(txt, link, ""));
+      }
+    }
+    var infoItem = item.querySelector(".info");
+    if (infoItem != null) {
+      var i = 0;
+      for (var idom in infoItem.querySelectorAll("span")) {
+        if (i==0) {
+          i+=1;
+          continue;
+        }
+        shortTexts[i-1].time = getTrimmedString(idom);
+        i+=1;
       }
     }
 
