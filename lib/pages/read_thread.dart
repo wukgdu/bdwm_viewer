@@ -286,19 +286,39 @@ void naviGotoThread(context, String bid, String threadid, String page, String bo
 
 void naviGotoThreadByLink(context, String link, String boardName, {bool? needToBoard, String? pageDefault}) {
   var pb1 = link.indexOf('bid');
+  if (pb1 == -1) {
+    return;
+  }
   var pb2 = link.indexOf('&', pb1);
   var bid = link.substring(pb1+4, pb2 == -1 ? null : pb2);
+  var page = pageDefault ?? "1";
   String? postid;
   if (pageDefault != null) {
     var pp1 = link.indexOf('postid');
-    var pp2 = link.indexOf('&', pp1);
-    postid = link.substring(pp1+7, pp2 == -1 ? null : pp2);
-    postid = postid.split("#").first;
+    if (pp1 != -1) {
+      var pp2 = link.indexOf('&', pp1);
+      postid = link.substring(pp1+7, pp2 == -1 ? null : pp2);
+      postid = postid.split("#").first;
+    }
+  } else {
+    var pp1 = link.indexOf('postid');
+    if (pp1 != -1) {
+      var pp2 = link.indexOf('&', pp1);
+      postid = link.substring(pp1+7, pp2 == -1 ? null : pp2);
+      postid = postid.split("#").first;
+    }
+    var pg1 = link.indexOf("page");
+    if (pg1 != -1) {
+      var pg2 = link.indexOf('&', pg1);
+      page = link.substring(pg1+5, pg2 == -1 ? null : pg2);
+    }
   }
   var pt1 = link.indexOf('threadid');
+  if (pt1 == -1) {
+    return;
+  }
   var pt2 = link.indexOf('&', pt1);
   var threadid = link.substring(pt1+9, pt2 == -1 ? null : pt2);
-  var page = pageDefault ?? "1";
   Navigator.of(context).pushNamed('/thread', arguments: {
     'bid': bid,
     'threadid': threadid,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../pages/read_thread.dart';
 import './constants.dart';
 import './utils.dart';
 class PostSearchSettings {
@@ -291,6 +292,58 @@ class _SimpleSearchComponentState extends State<SimpleSearchComponent> {
   }
 }
 
+class JumpThreadSearch extends StatefulWidget {
+  const JumpThreadSearch({super.key});
+
+  @override
+  State<JumpThreadSearch> createState() => _JumpThreadSearchState();
+}
+
+class _JumpThreadSearchState extends State<JumpThreadSearch> {
+  TextEditingController textController = TextEditingController();
+
+  void startSearch() {
+    if (textController.text.isEmpty) { return; }
+    naviGotoThreadByLink(context, textController.text.trim(), "", needToBoard: true);
+  }
+
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Container(
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: textController,
+                onEditingComplete: () {
+                  startSearch();
+                },
+                decoration: const InputDecoration(
+                  hintText: "帖子链接",
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                startSearch();
+              },
+              child: const Text("跳转"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
 
@@ -311,6 +364,9 @@ class _SearchPageState extends State<SearchPage> {
         Divider(),
         Center(child: Text("搜索版面")),
         SimpleSearchComponent(mode: "board"),
+        Divider(),
+        Center(child: Text("跳转帖子")),
+        JumpThreadSearch(),
       ],
     );
   }
