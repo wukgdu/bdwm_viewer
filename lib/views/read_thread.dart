@@ -4,7 +4,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../bdwm/vote.dart';
 import '../bdwm/posts.dart';
+import '../bdwm/collection.dart';
 import '../bdwm/forward.dart';
+import './collection.dart';
 import './utils.dart';
 import '../utils.dart' show clearAllExtendedImageCache;
 import './constants.dart';
@@ -208,6 +210,36 @@ class _OperateComponentState extends State<OperateComponent> {
                 canReplyNotifier.value = !canReplyNotifier.value;
                 // });
               });
+            } else if (value == "收入文集") {
+              showCollectionDialog(context)
+              .then((value) {
+                if (value == null || value.isEmpty) {
+                  return;
+                }
+                var values = value.split(" ");
+                var mode = values[0];
+                var base = values[1];
+                bdwmCollectionImport(from: "post", bid: widget.bid, postid: widget.postid, threadid: widget.threadid, base: base, mode: mode)
+                .then((importRes) {
+                  var txt = "收藏成功";
+                  if (importRes.success == false) {
+                    var txt = "发生错误啦><";
+                    if (importRes.error == -1) {
+                      txt = importRes.desc ?? txt;
+                    } else if (importRes.error == 9) {
+                      txt = "您没有足够权限执行此操作";
+                    }
+                  }
+                  showAlertDialog(context, "收入文集", Text(txt),
+                    actions1: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("知道了"),
+                    ),
+                  );
+                });
+              });
             }
           },
           itemBuilder: (context) {
@@ -221,6 +253,10 @@ class _OperateComponentState extends State<OperateComponent> {
                   value: canReplyNotifier.value ? "设为不可回复" : "取消不可回复",
                   child: Text(canReplyNotifier.value ? "设为不可回复" : "取消不可回复"),
                 ),
+              const PopupMenuItem(
+                value: "收入文集",
+                child: Text("收入文集"),
+              ),
             ];
           },
         )
@@ -452,10 +488,11 @@ class AttachmentComponent extends StatelessWidget {
 class OnePostComponent extends StatelessWidget {
   final OnePostInfo onePostInfo;
   final String bid;
+  final String threadid;
   final String boardName;
   final Function refreshCallBack;
 
-  const OnePostComponent({Key? key, required this.onePostInfo, required this.bid, required this.refreshCallBack, required this.boardName}) : super(key: key);
+  const OnePostComponent({Key? key, required this.onePostInfo, required this.bid, required this.refreshCallBack, required this.boardName, required this.threadid}) : super(key: key);
 
   bool get simpleAttachment => false;
   final _contentFont = const TextStyle(fontSize: 16, fontWeight: FontWeight.normal);
@@ -530,7 +567,7 @@ class OnePostComponent extends StatelessWidget {
                     postID: onePostInfo.postID,
                   ),
                   const Divider(),
-                  OperateComponent(bid: bid, threadid: bid, postid: onePostInfo.postID, uid: onePostInfo.authorInfo.uid, refreshCallBack: refreshCallBack, boardName: boardName, onePostInfo: onePostInfo,),
+                  OperateComponent(bid: bid, threadid: threadid, postid: onePostInfo.postID, uid: onePostInfo.authorInfo.uid, refreshCallBack: refreshCallBack, boardName: boardName, onePostInfo: onePostInfo,),
                   if (item.attachmentInfo.isNotEmpty)
                     ...[
                       const Divider(),
@@ -615,7 +652,7 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
   }
 
   Widget _onepost(OnePostInfo item, int idx) {
-    return OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack, boardName: widget.threadPageInfo.board.text, key: itemKeys[idx]);
+    return OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack, boardName: widget.threadPageInfo.board.text, key: itemKeys[idx], threadid: widget.threadid,);
   }
 
   @override
