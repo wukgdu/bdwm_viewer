@@ -6,14 +6,13 @@ import '../globalvars.dart';
 import '../html_parser/favorite_parser.dart';
 
 class FavoritePage extends StatefulWidget {
-  final bool? clear;
-  const FavoritePage({Key? key, this.clear}) : super(key: key);
+  const FavoritePage({Key? key}) : super(key: key);
 
   @override
-  State<FavoritePage> createState() => _FavoritePageState();
+  State<FavoritePage> createState() => FavoritePageState();
 }
 
-class _FavoritePageState extends State<FavoritePage> {
+class FavoritePageState extends State<FavoritePage> {
   FavoriteBoardInfo favoriteBoardInfo = FavoriteBoardInfo.empty();
   final _scrollController = ScrollController();
   bool updateToggle = false;
@@ -35,15 +34,9 @@ class _FavoritePageState extends State<FavoritePage> {
       // debugPrint("get favorite data");
       if (!mounted) { return; }
       // debugPrint("1 ${widget.clear}");
-      if (widget.clear!=null) {
-        setState(() {
-          favoriteBoardInfo = value;
-        });
-      } else {
-        setState(() {
-          favoriteBoardInfo = value;
-        });
-      }
+      setState(() {
+        favoriteBoardInfo = value;
+      });
     });
   }
 
@@ -51,7 +44,7 @@ class _FavoritePageState extends State<FavoritePage> {
   void didUpdateWidget(covariant FavoritePage oldWidget) {
     super.didUpdateWidget(oldWidget);
       // debugPrint("2 ${widget.clear}");
-    var clear = widget.clear ?? false;
+    var clear = false;
     if (clear == true) {
       clearUnread();
       clear = false;

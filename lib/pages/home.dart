@@ -58,9 +58,9 @@ class HomeApp extends StatefulWidget {
 }
 
 class _HomeAppState extends State<HomeApp> with SingleTickerProviderStateMixin {
+  final keyFavorite = GlobalKey<FavoritePageState>();
   late TabController _tabController;
-  int _selectedIdx = 0;
-  bool? clearUnreadBoard;
+  final ValueNotifier<int> _selectedIdx = ValueNotifier<int>(0);
   Widget _oneTab(Icon icon, Text text) {
     return Tab(
       child: Row(
@@ -73,16 +73,13 @@ class _HomeAppState extends State<HomeApp> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _selectedIdx = _tabController.index;
     _tabController.addListener(() {
-      setState(() {
-        _selectedIdx = _tabController.index;
-        clearUnreadBoard = false;
-      });
+      _selectedIdx.value = _tabController.index;
     });
   }
   @override
   void dispose() {
+    _selectedIdx.dispose();
     _tabController.dispose();
     clearAllExtendedImageCache();
     super.dispose();
@@ -145,22 +142,32 @@ class _HomeAppState extends State<HomeApp> with SingleTickerProviderStateMixin {
           ],
         ),
       ),
-      floatingActionButton: _selectedIdx != 2 ? null
-        : IconButton(
+      floatingActionButton: ValueListenableBuilder(
+        valueListenable: _selectedIdx,
+        builder: ((context, value, child) {
+          var idx = value as int;
+          if (idx!=2) {
+            return Container();
+          }
+          return child!;
+        }),
+        child: IconButton(
           tooltip: "清除未读",
           onPressed: () {
-            setState(() {
-              clearUnreadBoard = true;
-            });
+            var state = keyFavorite.currentState;
+            if (state != null) {
+              state.clearUnread();
+            }
           },
           icon: const Icon(Icons.cleaning_services, color: bdwmPrimaryColor,)
         ),
+      ),
       body: TabBarView(
         controller: _tabController,
         children: [
           const TopHomePage(),
           const Top100Page(),
-          FavoritePage(clear: clearUnreadBoard),
+          FavoritePage(key: keyFavorite,),
         ],
       ),
     );

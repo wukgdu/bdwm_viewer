@@ -12,8 +12,7 @@ class FavoriteApp extends StatefulWidget {
 }
 
 class _FavoriteAppState extends State<FavoriteApp> {
-  bool? clearUnread;
-
+  final key = GlobalKey<FavoritePageState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,13 +23,14 @@ class _FavoriteAppState extends State<FavoriteApp> {
       ),
       floatingActionButton: IconButton(
         onPressed: () {
-          setState(() {
-            clearUnread = true;
-          });
+          var state = key.currentState;
+          if (state != null) {
+            state.clearUnread();
+          }
         },
         icon: const Icon(Icons.cleaning_services, color: bdwmPrimaryColor,),
       ),
-      body: FavoritePage(clear: clearUnread,),
+      body: FavoritePage(key: key,),
     );
   }
 }
