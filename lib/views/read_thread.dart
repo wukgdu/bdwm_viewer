@@ -219,6 +219,9 @@ class _OperateComponentState extends State<OperateComponent> {
                 var values = value.split(" ");
                 var mode = values[0];
                 var base = values[1];
+                if (base.isEmpty || base=="none") {
+                  return;
+                }
                 bdwmCollectionImport(from: "post", bid: widget.bid, postid: widget.postid, threadid: widget.threadid, base: base, mode: mode)
                 .then((importRes) {
                   var txt = "收藏成功";
