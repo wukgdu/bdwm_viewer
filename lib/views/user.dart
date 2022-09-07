@@ -31,7 +31,7 @@ class _UserOperationComponentState extends State<UserOperationComponent> {
   
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 48,
       height: 48,
       child:  TextButton(

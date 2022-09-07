@@ -1,10 +1,14 @@
+import 'dart:math' show min;
+
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 import 'package:flutter_treeview/flutter_treeview.dart';
 
 import '../bdwm/collection.dart';
 import '../html_parser/collection_parser.dart';
-import './read_thread.dart';
+import './constants.dart';
+import './utils.dart' show showAlertDialog;
+import './read_thread.dart' show AttachmentComponent;
 import './html_widget.dart';
 
 class CollectionPage extends StatefulWidget {
@@ -119,7 +123,7 @@ class CollectionImportDialogBody extends StatefulWidget {
 class _CollectionImportDialogBodyState extends State<CollectionImportDialogBody> {
   late CancelableOperation getDataCancelable;
   var _treeViewController = TreeViewController();
-  String _selectedNode = "";
+  String selectedNode = "";
   Set<String> visited = {};
 
   Future<CollectionRes> getData({String? path}) async {
@@ -130,7 +134,7 @@ class _CollectionImportDialogBodyState extends State<CollectionImportDialogBody>
   @override
   void initState() {
     super.initState();
-    _selectedNode = "";
+    selectedNode = "";
     getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
     });
   }
@@ -138,37 +142,43 @@ class _CollectionImportDialogBodyState extends State<CollectionImportDialogBody>
   @override
   void dispose() {
     // _treeVieweController.dispose();
+    visited.clear();
     getDataCancelable.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    TreeViewTheme treeViewTheme = TreeViewTheme(
+    final TreeViewTheme treeViewTheme = TreeViewTheme(
       expanderTheme: const ExpanderThemeData(
-        // type: ExpanderType.arrow,
+        type: ExpanderType.plusMinus,
         // modifier: ExpanderModifier.circleFilled,
         // position: ExpanderPosition.end,
         // color: Colors.grey.shade800,
         size: 20,
-        color: Colors.blue
+        animated: false,
+        color: bdwmPrimaryColor,
       ),
       labelStyle: const TextStyle(
         fontSize: 16,
         letterSpacing: 0.3,
       ),
-      parentLabelStyle: TextStyle(
+      parentLabelStyle: const TextStyle(
         fontSize: 16,
         letterSpacing: 0.1,
-        fontWeight: FontWeight.w800,
-        color: Colors.blue.shade700,
+        fontWeight: FontWeight.normal,
+        // color: Colors.blue.shade700
       ),
-      iconTheme: IconThemeData(
+      iconTheme: const IconThemeData(
         size: 18,
-        color: Colors.grey.shade800,
+        // color: Colors.grey.shade800,
       ),
       colorScheme: Theme.of(context).colorScheme,
     );
+
+    final dSize = MediaQuery.of(context).size;
+    final dWidth = dSize.width;
+    final dHeight = dSize.height;
     return FutureBuilder(
       future: getDataCancelable.value,
       builder: ((context, snapshot) {
@@ -204,9 +214,9 @@ class _CollectionImportDialogBodyState extends State<CollectionImportDialogBody>
               return Node(label: "skip", key: e.path);
             }).toList());
         }
-        return Container(
-          width: 200,
-          height: 200,
+        return SizedBox(
+          width: min(260, dWidth*0.8),
+          height: min(300, dHeight*0.8),
           child: TreeView(
             shrinkWrap: true,
             controller: _treeViewController,
@@ -235,7 +245,11 @@ class _CollectionImportDialogBodyState extends State<CollectionImportDialogBody>
                     }
                     visited.add(key);
                     setState(() {
-                      _treeViewController = _treeViewController;
+                      Node? node2 = _treeViewController.getNode(key);
+                      if (node2==null) {
+                        return;
+                      }
+                      _treeViewController = _treeViewController.withUpdateNode(key, node2.copyWith(expanded: expanded));
                     });
                   });
                 }
@@ -243,8 +257,8 @@ class _CollectionImportDialogBodyState extends State<CollectionImportDialogBody>
             },
             onNodeTap: ((key) {
               setState(() {
-                _selectedNode = key;
-                _treeViewController = _treeViewController.copyWith(selectedKey: key);
+                selectedNode = key;
+                _treeViewController = _treeViewController.copyWith(selectedKey: selectedNode);
               });
             }),
           ),
@@ -252,4 +266,28 @@ class _CollectionImportDialogBodyState extends State<CollectionImportDialogBody>
       }),
     );
   }
+}
+
+Future<String?> showCollectionDialog(BuildContext context) {
+  var key = GlobalKey<_CollectionImportDialogBodyState>();
+  return showAlertDialog(context, "选择文集", CollectionImportDialogBody(key: key,),
+    actions1: TextButton(
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+      child: const Text("不了"),
+    ),
+    actions2: TextButton(
+      onPressed: () {
+        Navigator.of(context).pop("post ${key.currentState?.selectedNode ?? 'none'}");
+      },
+      child: const Text("单帖"),
+    ),
+    actions3: TextButton(
+      onPressed: () {
+        Navigator.of(context).pop("thread ${key.currentState?.selectedNode ?? 'none'}");
+      },
+      child: const Text("同主题"),
+    ),
+  );
 }
