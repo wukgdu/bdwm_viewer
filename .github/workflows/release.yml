@@ -25,7 +25,7 @@ jobs:
       # - run: flutter test
       - run: flutter build apk --split-per-abi
       # - run: flutter build appbundle
-      - uses: ncipollo/release-action@v2
+      - uses: ncipollo/release-action@v1
         with:
           artifacts: "build/app/outputs/apk/release/*.apk"
           token: ${{ secrets.TOKEN }}
