@@ -7,7 +7,8 @@ const textLinkStyle = TextStyle(
 const textLinkSiblingStyle = TextStyle(
   color: Colors.black,
 );
-const Color hightlightColor = Color(0xfff8cea8);
+const Color highlightReplyColor = Color(0xfff8cea8);
+const Color highlightColor = Color(0xffea6242);
 
 const Map<String, Object> bdwmRichText = {
   'bc': {
@@ -38,4 +39,7 @@ const Map<String, Color> topicsLabelColor = {
   '保留': Color(0xff7cbec5),
   '精华': Color(0xff80c269),
   '文摘': Color(0xfffbba7a),
+  '置顶': Color(0xffe97c62),
+  '原创分': Color(0xff5cae97),
+  '原创': Color(0xff5cae97),
 };

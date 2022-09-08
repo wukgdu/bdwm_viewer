@@ -511,7 +511,7 @@ class OnePostComponent extends StatelessWidget {
         children: [
           Container(
             width: 52.0,
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(5.0),
             child: Column(
               children: [
                 GestureDetector(
@@ -529,16 +529,17 @@ class OnePostComponent extends StatelessWidget {
                 ),
                 if (item.postOwner)
                   const Text("楼主", style: TextStyle(fontSize: 12, color: bdwmPrimaryColor)),
-                Text(item.postNumber, style: TextStyle(fontSize: 12, color: item.postNumber.contains("高亮") ? hightlightColor : Colors.grey)),
+                Text(item.postNumber, style: TextStyle(fontSize: 12, color: item.postNumber.contains("高亮") ? highlightReplyColor : Colors.grey)),
                 if (item.isBaoLiu) genThreadLabel("保留"),
                 if (item.isWenZhai) genThreadLabel("文摘"),
+                if (item.isYuanChuang) genThreadLabel("原创"),
                 if (item.isJingHua) genThreadLabel("精华"),
               ],
             ),
           ),
           Expanded(
             child: Container(
-              padding: const EdgeInsets.only(top: 10.0, right: 10.0, bottom: 10.0),
+              padding: const EdgeInsets.only(top: 5.0, right: 5.0, bottom: 5.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

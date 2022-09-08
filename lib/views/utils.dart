@@ -203,10 +203,10 @@ Future<String?> showTextDialog(BuildContext context, String title) {
 
 Widget genThreadLabel(String label) {
   return Container(
-    width: 32,
+    width: 42,
     alignment: Alignment.center,
     decoration: BoxDecoration(
-      borderRadius: const BorderRadius.all(Radius.circular(5)),
+      borderRadius: const BorderRadius.all(Radius.circular(6)),
       // border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
       color: topicsLabelColor[label] ?? bdwmPrimaryColor,
     ),

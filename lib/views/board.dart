@@ -105,15 +105,20 @@ class OneThreadInBoard extends StatelessWidget {
                   ),
                 TextSpan(
                   text: boardPostInfo.title,
+                  style: boardPostInfo.isGaoLiang ? const TextStyle(color: highlightColor) : null,
                 ),
                 if (boardPostInfo.hasAttachment)
                   const WidgetSpan(child: Icon(Icons.attachment, color: bdwmPrimaryColor, size: 16), alignment: PlaceholderAlignment.middle),
                 if (boardPostInfo.lock)
                   const WidgetSpan(child: Icon(Icons.lock, color: bdwmPrimaryColor, size: 16), alignment: PlaceholderAlignment.middle),
+                if (boardPostInfo.isZhiDing)
+                  WidgetSpan(child: genThreadLabel("置顶"), alignment: PlaceholderAlignment.middle),
                 if (boardPostInfo.isBaoLiu)
                   WidgetSpan(child: genThreadLabel("保留"), alignment: PlaceholderAlignment.middle),
                 if (boardPostInfo.isWenZhai)
                   WidgetSpan(child: genThreadLabel("文摘"), alignment: PlaceholderAlignment.middle),
+                if (boardPostInfo.isYuanChuang)
+                  WidgetSpan(child: genThreadLabel("原创分"), alignment: PlaceholderAlignment.middle),
                 if (boardPostInfo.isJingHua)
                   WidgetSpan(child: genThreadLabel("精华"), alignment: PlaceholderAlignment.middle),
               ],

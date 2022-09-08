@@ -78,6 +78,7 @@ class OnePostInfo {
   bool isBaoLiu = false;
   bool isWenZhai = false;
   bool isJingHua = false;
+  bool isYuanChuang = false;
 
   OnePostInfo.empty();
   OnePostInfo({
@@ -103,6 +104,7 @@ class OnePostInfo {
     required this.isBaoLiu,
     required this.isWenZhai,
     required this.isJingHua,
+    required this.isYuanChuang,
   });
 }
 
@@ -197,7 +199,7 @@ OnePostInfo parseOnePost(Element document) {
 
   var postNumber = getTrimmedString(document.querySelector(".post-id"));
   var postIDDom = document.querySelector(".post-id");
-  bool isBaoLiu = false, isWenZhai = false, isJingHua = false;
+  bool isBaoLiu = false, isWenZhai = false, isJingHua = false, isYuanChuang = false;
   if (postIDDom != null) {
     for (var idom in postIDDom.querySelectorAll("img")) {
       var src = idom.attributes['src'] ?? "";
@@ -207,6 +209,8 @@ OnePostInfo parseOnePost(Element document) {
         isJingHua = true;
       } else if (src.contains("topics/bl")) {
         isBaoLiu = true;
+      } else if (src.contains("topics/yc")) {
+        isYuanChuang = true;
       }
     }
   }
@@ -333,7 +337,7 @@ OnePostInfo parseOnePost(Element document) {
     postNumber: postNumber, postOwner: postOwner, iVoteUp: iVoteUp, iVoteDown: iVoteDown,
     attachmentInfo: attachmentInfo, attachmentHtml: attachmentHtml, attachmentSlidesCount: attachmentSlidesCount,
     canReply: canReply, canDelete: canDelete, canModify: canModify, canSetReply: canSetReply,
-    isBaoLiu: isBaoLiu, isWenZhai: isWenZhai, isJingHua: isJingHua,
+    isBaoLiu: isBaoLiu, isWenZhai: isWenZhai, isJingHua: isJingHua, isYuanChuang: isYuanChuang,
   );
 }
 

@@ -24,6 +24,9 @@ class BoardPostInfo {
   bool isBaoLiu = false;
   bool isWenZhai = false;
   bool isJingHua = false;
+  bool isZhiDing = false;
+  bool isYuanChuang = false;
+  bool isGaoLiang = false;
 
   BoardPostInfo.empty();
   BoardPostInfo({
@@ -44,6 +47,9 @@ class BoardPostInfo {
     required this.isBaoLiu,
     required this.isWenZhai,
     required this.isJingHua,
+    required this.isZhiDing,
+    required this.isYuanChuang,
+    required this.isGaoLiang,
   });
 }
 
@@ -118,11 +124,16 @@ List<BoardPostInfo> parseBoardPost(Element? docu) {
       isNew = true;
     }
     var titleCont = pdom.querySelector(".title-cont");
-    String title = getTrimmedString(titleCont);
     bool lock = false;
     bool hasAttachment = false;
     bool isBaoLiu = false, isWenZhai = false, isJingHua = false;
+    bool isZhiDing = false, isYuanChuang = false, isGaoLiang = false;
+
+    String title = getTrimmedString(titleCont);
     if (titleCont != null) {
+      if (titleCont.classes.contains("gl")) {
+        isGaoLiang = true;
+      }
       for (var idom in titleCont.querySelectorAll("img")) {
         var src = idom.attributes['src'] ?? "";
         if (src.contains("topics/lock")) {
@@ -135,6 +146,10 @@ List<BoardPostInfo> parseBoardPost(Element? docu) {
           isJingHua = true;
         } else if (src.contains("topics/bl")) {
           isBaoLiu = true;
+        } else if (src.contains("topics/yc")) {
+          isYuanChuang = true;
+        } else if (src.contains("topics/zd")) {
+          isZhiDing = true;
         }
       }
     }
@@ -162,6 +177,7 @@ List<BoardPostInfo> parseBoardPost(Element? docu) {
       userName: userName, avatarLink: avatarLink, pTime: pTime, uid: uid, hasAttachment: hasAttachment,
       commentCount: commentCount, lastUser: lastUser, lastTime: lastTime, lock: lock,
       isBaoLiu: isBaoLiu, isWenZhai: isWenZhai, isJingHua: isJingHua,
+      isZhiDing: isZhiDing, isYuanChuang: isYuanChuang, isGaoLiang: isGaoLiang,
     ));
   }
   return boardPostInfo;
