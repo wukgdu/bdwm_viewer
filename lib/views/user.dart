@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 // import 'package:flutter_html/flutter_html.dart';
 
@@ -271,7 +273,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
             title: SelectableText.rich(
               TextSpan(
                 children: <InlineSpan>[
-                  TextSpan(text: user.bbsID),
+                  TextSpan(text: user.bbsID, style: serifFont),
                   const TextSpan(text: " ("),
                   // WidgetSpan(child: HtmlComponent(user.nickNameHtml),),
                   html2TextSpan(user.nickNameHtml),

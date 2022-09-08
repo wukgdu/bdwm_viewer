@@ -43,3 +43,5 @@ const Map<String, Color> topicsLabelColor = {
   '原创分': Color(0xff5cae97),
   '原创': Color(0xff5cae97),
 };
+
+const serifFont = TextStyle(fontFamily: 'serif');

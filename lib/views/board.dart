@@ -127,8 +127,15 @@ class OneThreadInBoard extends StatelessWidget {
           subtitle: specialOne ? null
             : Text.rich(
               TextSpan(
-                text: boardPostInfo.userName=="原帖已删除" ? boardPostInfo.userName : "${boardPostInfo.userName} 发表于 ${boardPostInfo.pTime}",
                 children: [
+                  boardPostInfo.userName=="原帖已删除"
+                  ? TextSpan(text: boardPostInfo.userName)
+                  : TextSpan(
+                    children: [
+                      TextSpan(text: boardPostInfo.userName, style: serifFont),
+                      TextSpan(text: " 发表于 ${boardPostInfo.pTime}"),
+                    ],
+                  ),
                   const TextSpan(text: "   "),
                   const WidgetSpan(
                     child: Icon(Icons.comment, size: 12),
@@ -137,7 +144,12 @@ class OneThreadInBoard extends StatelessWidget {
                   const TextSpan(text: " "),
                   TextSpan(text: boardPostInfo.commentCount),
                   const TextSpan(text: "\n"),
-                  TextSpan(text: "${boardPostInfo.lastUser} 最后回复于 ${boardPostInfo.lastTime}"),
+                  TextSpan(
+                    children: [
+                      TextSpan(text: boardPostInfo.lastUser, style: serifFont),
+                      TextSpan(text: " 最后回复于 ${boardPostInfo.lastTime}"),
+                    ],
+                  ),
                 ],
               )
             ),

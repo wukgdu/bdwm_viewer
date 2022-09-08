@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../html_parser/search_parser.dart';
+import './constants.dart';
 import '../pages/read_thread.dart';
 
 class SimpleResultPage extends StatefulWidget {
@@ -16,7 +17,7 @@ class _SimpleResultPageState extends State<SimpleResultPage> {
   Widget oneItem(SimpleSearchResItem ssri) {
     return Card(
       child: ListTile(
-        title: Text("${ssri.engName} ${ssri.name}"),
+        title: Text("${ssri.engName} ${ssri.name}", style: serifFont),
         trailing: const Icon(Icons.arrow_right),
         onTap: () {
           if (widget.mode=="user") {

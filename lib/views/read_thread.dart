@@ -546,7 +546,7 @@ class OnePostComponent extends StatelessWidget {
                   SelectableText.rich(
                     TextSpan(
                       children: [
-                        TextSpan(text: item.authorInfo.userName),
+                        TextSpan(text: item.authorInfo.userName, style: serifFont),
                         const TextSpan(text: ' ('),
                         // WidgetSpan(child: HtmlComponent(item.authorInfo.nickName, needSelect: true),),
                         html2TextSpan(item.authorInfo.nickName),
