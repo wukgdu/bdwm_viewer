@@ -1,15 +1,15 @@
-name: build and release
+name: OBViewer
 
 on:
   push:
-    branches:
-      - master
+    # branches:
+    #   - master
     tags:
       - 'v*'
 
 jobs:
   release:
-    name: Draft Github release
+    name: Release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
