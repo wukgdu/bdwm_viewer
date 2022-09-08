@@ -358,13 +358,10 @@ class _SearchPageState extends State<SearchPage> {
       children: const [
         Center(child: Text("搜索帖子")),
         ComplexSearchComponent(),
-        Divider(),
         Center(child: Text("搜索用户")),
         SimpleSearchComponent(mode: "user",),
-        Divider(),
         Center(child: Text("搜索版面")),
         SimpleSearchComponent(mode: "board"),
-        Divider(),
         Center(child: Text("跳转帖子")),
         JumpThreadSearch(),
       ],
