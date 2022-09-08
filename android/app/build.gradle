@@ -76,7 +76,7 @@ android {
         variant.outputs.all { output ->
             def buildType = variant.name
             def version = variant.versionName
-            def createTime = new Date().format('yyyyMMddHHmmss')
+            def createTime = new Date().format('yyyyMMddHHmmss', TimeZone.getTimeZone("GMT+08:00"))
             def abi = output.getFilter(com.android.build.OutputFile.ABI)
             // if (buildType == "debug") {
             // } else if (buildType == "release") {
