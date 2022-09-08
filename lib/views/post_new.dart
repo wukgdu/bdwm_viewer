@@ -206,7 +206,7 @@ class _PostNewPageState extends State<PostNewPage> {
                       var nSignature = signature?.value ?? "";
                       if (nSignature == "random") {
                         var moreCount = widget.postid == null ? 2 : 3;
-                        moreCount -= 1; // skip OBViewer
+                        // moreCount -= 1; // skip OBViewer // dont need skip since it is not here
                         var maxS = postNewInfo.signatureInfo.length - moreCount;
                         var randomI = math.Random().nextInt(maxS);
                         nSignature = randomI.toString();
