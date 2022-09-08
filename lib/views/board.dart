@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import '../html_parser/board_parser.dart';
 import './constants.dart';
 import '../bdwm/req.dart';
-import '../views/utils.dart';
 import '../bdwm/star_board.dart';
 import '../globalvars.dart';
 import './utils.dart';
@@ -96,7 +95,7 @@ class OneThreadInBoard extends StatelessWidget {
             TextSpan(
               children: <InlineSpan>[
                 if (pinned)
-                  const WidgetSpan(child: Icon(Icons.pin_drop, color: bdwmPrimaryColor, size: 16))
+                  const WidgetSpan(child: Icon(Icons.pin_drop, color: bdwmPrimaryColor, size: 16), alignment: PlaceholderAlignment.middle)
                 else if (ad)
                   TextSpan(text: boardPostInfo.bpID, style: const TextStyle(backgroundColor: Colors.amber, color: Colors.white))
                 else if (boardPostInfo.isNew)
@@ -108,9 +107,9 @@ class OneThreadInBoard extends StatelessWidget {
                   text: boardPostInfo.title,
                 ),
                 if (boardPostInfo.hasAttachment)
-                  const WidgetSpan(child: Icon(Icons.attachment, color: bdwmPrimaryColor, size: 16)),
+                  const WidgetSpan(child: Icon(Icons.attachment, color: bdwmPrimaryColor, size: 16), alignment: PlaceholderAlignment.middle),
                 if (boardPostInfo.lock)
-                  const WidgetSpan(child: Icon(Icons.lock, color: bdwmPrimaryColor, size: 16)),
+                  const WidgetSpan(child: Icon(Icons.lock, color: bdwmPrimaryColor, size: 16), alignment: PlaceholderAlignment.middle),
                 if (boardPostInfo.isBaoLiu)
                   WidgetSpan(child: genThreadLabel("保留"), alignment: PlaceholderAlignment.middle),
                 if (boardPostInfo.isWenZhai)
