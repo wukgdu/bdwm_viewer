@@ -528,8 +528,11 @@ class OnePostComponent extends StatelessWidget {
                   },
                 ),
                 if (item.postOwner)
-                  const Text("楼主", style: TextStyle(fontSize: 12, color: Colors.lightBlue)),
+                  const Text("楼主", style: TextStyle(fontSize: 12, color: bdwmPrimaryColor)),
                 Text(item.postNumber, style: TextStyle(fontSize: 12, color: item.postNumber.contains("高亮") ? hightlightColor : Colors.grey)),
+                if (item.isBaoLiu) genThreadLabel("保留"),
+                if (item.isWenZhai) genThreadLabel("文摘"),
+                if (item.isJingHua) genThreadLabel("精华"),
               ],
             ),
           ),

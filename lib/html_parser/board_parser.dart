@@ -21,6 +21,9 @@ class BoardPostInfo {
   String lastTime = "";
   bool lock = false;
   bool hasAttachment = false;
+  bool isBaoLiu = false;
+  bool isWenZhai = false;
+  bool isJingHua = false;
 
   BoardPostInfo.empty();
   BoardPostInfo({
@@ -38,6 +41,9 @@ class BoardPostInfo {
     required this.lastTime,
     required this.lock,
     required this.hasAttachment,
+    required this.isBaoLiu,
+    required this.isWenZhai,
+    required this.isJingHua,
   });
 }
 
@@ -104,7 +110,7 @@ List<BoardPostInfo> parseBoardPost(Element? docu) {
       continue;
     }
     var pid = int.tryParse(bpID);
-    if (pid == null || pid < 0) {
+    if (pid != null && pid < 0) {
       continue;
     }
     bool isNew = false;
@@ -115,13 +121,20 @@ List<BoardPostInfo> parseBoardPost(Element? docu) {
     String title = getTrimmedString(titleCont);
     bool lock = false;
     bool hasAttachment = false;
+    bool isBaoLiu = false, isWenZhai = false, isJingHua = false;
     if (titleCont != null) {
       for (var idom in titleCont.querySelectorAll("img")) {
-        if (idom.attributes['src']?.contains("lock") ?? false) {
+        var src = idom.attributes['src'] ?? "";
+        if (src.contains("topics/lock")) {
           lock = true;
-        }
-        if (idom.attributes['src']?.contains("attach.png") ?? false) {
+        } else if (src.contains("topics/attach")) {
           hasAttachment = true;
+        } else if (src.contains("topics/wz")) {
+          isWenZhai = true;
+        } else if (src.contains("topics/diamond")) {
+          isJingHua = true;
+        } else if (src.contains("topics/bl")) {
+          isBaoLiu = true;
         }
       }
     }
@@ -148,6 +161,7 @@ List<BoardPostInfo> parseBoardPost(Element? docu) {
       bpID: bpID, isNew: isNew, title: title, link: link, threadID: threadID,
       userName: userName, avatarLink: avatarLink, pTime: pTime, uid: uid, hasAttachment: hasAttachment,
       commentCount: commentCount, lastUser: lastUser, lastTime: lastTime, lock: lock,
+      isBaoLiu: isBaoLiu, isWenZhai: isWenZhai, isJingHua: isJingHua,
     ));
   }
   return boardPostInfo;

@@ -33,3 +33,9 @@ const Map<String, Object> bdwmRichText = {
     '#c0c0c0': 7,
   }
 };
+
+const Map<String, Color> topicsLabelColor = {
+  '保留': Color(0xff7cbec5),
+  '精华': Color(0xff80c269),
+  '文摘': Color(0xfffbba7a),
+};

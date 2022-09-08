@@ -75,6 +75,9 @@ class OnePostInfo {
   bool canModify = false;
   bool canDelete = false;
   bool canSetReply = false;
+  bool isBaoLiu = false;
+  bool isWenZhai = false;
+  bool isJingHua = false;
 
   OnePostInfo.empty();
   OnePostInfo({
@@ -97,6 +100,9 @@ class OnePostInfo {
     required this.canModify,
     required this.canDelete,
     required this.canSetReply,
+    required this.isBaoLiu,
+    required this.isWenZhai,
+    required this.isJingHua,
   });
 }
 
@@ -190,6 +196,20 @@ OnePostInfo parseOnePost(Element document) {
   }
 
   var postNumber = getTrimmedString(document.querySelector(".post-id"));
+  var postIDDom = document.querySelector(".post-id");
+  bool isBaoLiu = false, isWenZhai = false, isJingHua = false;
+  if (postIDDom != null) {
+    for (var idom in postIDDom.querySelectorAll("img")) {
+      var src = idom.attributes['src'] ?? "";
+      if (src.contains("topics/wz")) {
+        isWenZhai = true;
+      } else if (src.contains("topics/diamond")) {
+        isJingHua = true;
+      } else if (src.contains("topics/bl")) {
+        isBaoLiu = true;
+      }
+    }
+  }
   var postOwner = false;
   if (document.querySelector(".lz-tag") != null) {
     postOwner = true;
@@ -313,6 +333,7 @@ OnePostInfo parseOnePost(Element document) {
     postNumber: postNumber, postOwner: postOwner, iVoteUp: iVoteUp, iVoteDown: iVoteDown,
     attachmentInfo: attachmentInfo, attachmentHtml: attachmentHtml, attachmentSlidesCount: attachmentSlidesCount,
     canReply: canReply, canDelete: canDelete, canModify: canModify, canSetReply: canSetReply,
+    isBaoLiu: isBaoLiu, isWenZhai: isWenZhai, isJingHua: isJingHua,
   );
 }
 

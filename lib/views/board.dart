@@ -7,6 +7,7 @@ import '../bdwm/req.dart';
 import '../views/utils.dart';
 import '../bdwm/star_board.dart';
 import '../globalvars.dart';
+import './utils.dart';
 
 class StarBoard extends StatefulWidget {
   final int starCount;
@@ -110,6 +111,12 @@ class OneThreadInBoard extends StatelessWidget {
                   const WidgetSpan(child: Icon(Icons.attachment, color: bdwmPrimaryColor, size: 16)),
                 if (boardPostInfo.lock)
                   const WidgetSpan(child: Icon(Icons.lock, color: bdwmPrimaryColor, size: 16)),
+                if (boardPostInfo.isBaoLiu)
+                  WidgetSpan(child: genThreadLabel("保留"), alignment: PlaceholderAlignment.middle),
+                if (boardPostInfo.isWenZhai)
+                  WidgetSpan(child: genThreadLabel("文摘"), alignment: PlaceholderAlignment.middle),
+                if (boardPostInfo.isJingHua)
+                  WidgetSpan(child: genThreadLabel("精华"), alignment: PlaceholderAlignment.middle),
               ],
             )
           ),

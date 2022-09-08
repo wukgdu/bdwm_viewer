@@ -4,6 +4,7 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 
 import '../pages/detail_image.dart';
 import '../globalvars.dart' show networkErrorText;
+import './constants.dart' show topicsLabelColor, bdwmPrimaryColor;
 
 // https://github.com/daohoangson/flutter_widget_from_html/tree/master/packages/fwfh_selectable_text
 mixin SelectableTextFactory on WidgetFactory {
@@ -197,5 +198,18 @@ Future<String?> showTextDialog(BuildContext context, String title) {
       },
       child: const Text("确认"),
     ),
+  );
+}
+
+Widget genThreadLabel(String label) {
+  return Container(
+    width: 32,
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+      borderRadius: const BorderRadius.all(Radius.circular(5)),
+      // border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
+      color: topicsLabelColor[label] ?? bdwmPrimaryColor,
+    ),
+    child: Text(label, style: const TextStyle(color: Colors.white, fontSize: 12,),),
   );
 }
