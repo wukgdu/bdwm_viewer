@@ -364,7 +364,12 @@ class _PostNewPageState extends State<PostNewPage> {
                       showUploadDialog(context, postNewInfo.attachpath, postNewInfo.attachFiles)
                       .then((value) {
                         if (value == null) { return; }
-                        attachCount = int.parse(value);
+                        var content = jsonDecode(value);
+                        attachCount = content['count'];
+                        postNewInfo.attachFiles = [];
+                        for (var f in content['files']) {
+                          postNewInfo.attachFiles.add(f);
+                        }
                       },);
                     },
                     child: const Text("管理附件"),

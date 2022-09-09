@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math' show min;
 
 import 'package:file_picker/file_picker.dart';
@@ -157,7 +158,13 @@ Future<String?> showUploadDialog(BuildContext context, String attachpath, List<S
   return showAlertDialog(context, "管理附件", UploadDialogBody(key: key, attachpath: attachpath, attachFiles: attachFiles),
     actions1: TextButton(
       onPressed: () {
-        Navigator.of(context).pop(key.currentState!.count.toString());
+        if (key.currentContext == null) { return; }
+        var count = key.currentState!.count;
+        List<String> files = key.currentState!.filenames.map((e) => e.name).toList();
+        Navigator.of(context).pop(jsonEncode({
+          'count': count,
+          'files': files,
+        }));
       },
       child: const Text("确认"),
     ),
