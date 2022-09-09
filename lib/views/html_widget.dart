@@ -249,7 +249,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
                 child: Container(
                   constraints: const BoxConstraints(maxHeight: 200, maxWidth: 200),
                   // alignment: Alignment.centerLeft,
-                  child: WrapImageNetwork(imgLink: src,),
+                  child: WrapImageNetwork(imgLink: absImgSrc(src),),
                   // child: Image.network(
                   //   src,
                   //   errorBuilder: (context, error, stackTrace) {
@@ -259,7 +259,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
                 ),
                 onTap: () {
                   if (context != null) {
-                    gotoDetailImage(context: context, link: src, imgData: null, name: "image.jpg");
+                    gotoDetailImage(context: context, link: absImgSrc(src), imgData: null, name: "image.jpg");
                   }
                 }),
             ));
