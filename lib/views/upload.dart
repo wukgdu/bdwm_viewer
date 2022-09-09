@@ -158,6 +158,7 @@ class _UploadDialogBodyState extends State<UploadDialogBody> {
 Future<String?> showUploadDialog(BuildContext context, String attachpath, List<String> attachFiles) {
   var key = GlobalKey<_UploadDialogBodyState>();
   return showAlertDialog(context, "管理附件", UploadDialogBody(key: key, attachpath: attachpath, attachFiles: attachFiles),
+    barrierDismissible: false,
     actions1: TextButton(
       onPressed: () {
         if (key.currentContext == null) { return; }

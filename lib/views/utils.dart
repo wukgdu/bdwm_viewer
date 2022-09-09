@@ -94,7 +94,7 @@ HtmlWidget renderHtml(String htmlStr, {bool? needSelect = true, TextStyle? ts, B
   );
 }
 
-Future<String?> showAlertDialog(BuildContext context, String title, Widget content, {Widget? actions1, Widget? actions2, Widget? actions3, List<Widget>? actions}) {
+Future<String?> showAlertDialog(BuildContext context, String title, Widget content, {Widget? actions1, Widget? actions2, Widget? actions3, List<Widget>? actions, bool? barrierDismissible=true}) {
 
   // set up the buttons
   // set up the AlertDialog
@@ -111,6 +111,7 @@ Future<String?> showAlertDialog(BuildContext context, String title, Widget conte
   // show the dialog
   return showDialog<String>(
     context: context,
+    barrierDismissible: (barrierDismissible!=null&&barrierDismissible==false)?false:true,
     builder: (BuildContext context) {
       return alert;
     },
