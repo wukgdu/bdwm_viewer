@@ -36,6 +36,10 @@ class _WrapImageNetworkState extends State<WrapImageNetwork> {
 
   @override
   Widget build(BuildContext context) {
+    if ("://".allMatches(widget.imgLink).length > 1) {
+      return const Icon(Icons.broken_image);
+    }
+
     return ExtendedImage.network(
       widget.imgLink,
       fit: BoxFit.contain,
