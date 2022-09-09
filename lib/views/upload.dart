@@ -126,7 +126,9 @@ class _UploadDialogBodyState extends State<UploadDialogBody> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(e.name),
+                    Expanded(
+                      child: Text(e.name),
+                    ),
                     IconButton(
                       onPressed: e.status == "ok" ? () {
                         bdwmDeleteUpload(widget.attachpath, e.name)
