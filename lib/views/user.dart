@@ -31,9 +31,10 @@ class _UserOperationComponentState extends State<UserOperationComponent> {
   
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
+      alignment: Alignment.center,
       width: 48,
-      height: 48,
+      // height: 48,
       child:  TextButton(
         child: useradd ? const Text("取消关注") : const Text("关注"),
         onPressed: () {
