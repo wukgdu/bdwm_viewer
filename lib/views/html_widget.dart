@@ -316,9 +316,10 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
                 if (link.startsWith("https://bbs.pku.edu.cn/v2/jump-to.php")) {
                   var parsedUrl = Uri.parse(link);
                   var rawLink = parsedUrl.queryParameters['url'] ?? "";
-                  hereLink += "\n$rawLink";
+                  // hereLink += "\n$rawLink";
+                  hereLink = rawLink;
                 }
-                showAlertDialog(context, "", SelectableText("使用默认浏览器打开链接?\n$hereLink"),
+                showAlertDialog(context, "使用默认浏览器打开链接?", SelectableText(hereLink),
                   actions1: TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
