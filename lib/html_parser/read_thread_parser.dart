@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
 
-import '../utils.dart';
+import '../utils.dart' show TextAndLink, getQueryValue;
 import './utils.dart';
 
 class AuthorPostInfo {
@@ -397,7 +397,7 @@ ThreadPageInfo parseThread(String htmlStr) {
           boardName = getTrimmedString(ld);
           boardLink = absThreadLink(href);
         } else if (href.contains("post-read")) {
-          threadid = getEqualValue(href);
+          threadid = getQueryValue(href, "threadid") ?? "";
           title = getTrimmedString(ld);
         }
       }

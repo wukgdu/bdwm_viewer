@@ -62,3 +62,10 @@ void clearOneExtendedImageCache(String src, {bool? memory=true, bool? local=true
     }
   }
 }
+
+String? getQueryValue(String link, String name) {
+  var p1 = link.indexOf(name);
+  if (p1==-1) { return null; }
+  var p2 = link.indexOf("&", p1);
+  return link.substring(p1+name.length+1, p2==-1?null:p2);
+}
