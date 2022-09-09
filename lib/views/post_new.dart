@@ -221,9 +221,13 @@ class _PostNewPageState extends State<PostNewPage> {
                         );
                       }
                       var nContent = useHtmlContent ? bdwmTextFormat(contentValue.text) : contentValue.text;
+                      var nAttachPath = widget.postid == null
+                        ? attachCount > 0
+                          ? postNewInfo.attachpath : ""
+                        : postNewInfo.attachpath;
                       bdwmSimplePost(
                         bid: widget.bid, title: titleValue.text, content: nContent, useBDWM: useHtmlContent, parentid: widget.parentid,
-                        signature: nSignature, config: config, modify: widget.postid!=null, postid: widget.postid, attachpath: attachCount > 0 ? postNewInfo.attachpath : "")
+                        signature: nSignature, config: config, modify: widget.postid!=null, postid: widget.postid, attachpath: nAttachPath)
                       .then((value) {
                         if (value.success) {
                           // TODO: handle forward
