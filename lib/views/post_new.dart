@@ -361,7 +361,7 @@ class _PostNewPageState extends State<PostNewPage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      showUploadDialog(context, postNewInfo.attachpath)
+                      showUploadDialog(context, postNewInfo.attachpath, postNewInfo.attachFiles)
                       .then((value) {
                         if (value == null) { return; }
                         attachCount = int.parse(value);

@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as hdom;
+import 'package:html_unescape/html_unescape_small.dart';
 
 import './utils.dart';
 
@@ -35,6 +37,7 @@ class PostNewInfo {
   String? contentHtml;
   String? oriSignature;
   String attachpath = "";
+  List<String> attachFiles = [];
 
   PostNewInfo.empty();
   PostNewInfo.error({required this.errorMessage});
@@ -52,6 +55,7 @@ class PostNewInfo {
     this.oriSignature,
     required this.quoteInfo,
     required this.attachpath,
+    required this.attachFiles,
   });
 }
 
@@ -105,9 +109,20 @@ PostNewInfo parsePostNew(String htmlStr) {
   }
 
   var attachpath = "";
+  var attachFiles = <String>[];
   var uploadDom = editorDom.querySelector("a[data-action=file-upload]");
   if (uploadDom != null) {
     attachpath = uploadDom.attributes['data-upload-dir'] ?? "";
+    var attachStr = uploadDom.attributes['data-file-list'] ?? "";
+    if (attachStr.isNotEmpty) {
+      // attachStr = attachStr.replaceAll("&quot;", '');
+      var unescape = HtmlUnescape();
+      attachStr = unescape.convert(attachStr);
+      var jsonContent = jsonDecode(attachStr);
+      for (var jstr in jsonContent) {
+        attachFiles.add(jstr);
+      }
+    }
   }
 
   var signatureInfo = <SignatureItem>[];
@@ -150,7 +165,8 @@ PostNewInfo parsePostNew(String htmlStr) {
 
   return PostNewInfo(
     bid: bid, signatureInfo: signatureInfo, canNoreply: canNoreply, canRemind: canRemind, canForward: canForward, canAnony: canAnony,
-    titleText: titleText, contentText: contentText, contentHtml: contentHtml, oriSignature: oriSignature, quoteInfo: quoteInfo, attachpath: attachpath,
+    titleText: titleText, contentText: contentText, contentHtml: contentHtml, oriSignature: oriSignature, quoteInfo: quoteInfo,
+    attachpath: attachpath, attachFiles: attachFiles,
   );
 }
 

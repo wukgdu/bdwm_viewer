@@ -54,6 +54,7 @@ dependencies:
   share_plus: ^4.0.10+1
   flutter_treeview: ^1.0.7+1
   http_parser: ^4.0.1
+  html_unescape: ^2.0.0
 
 dev_dependencies:
   flutter_test:

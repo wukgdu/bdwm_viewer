@@ -23,7 +23,8 @@ class UploadFileStatus {
 
 class UploadDialogBody extends StatefulWidget {
   final String attachpath;
-  const UploadDialogBody({super.key, required this.attachpath});
+  final List<String> attachFiles;
+  const UploadDialogBody({super.key, required this.attachpath, required this.attachFiles});
 
   @override
   State<UploadDialogBody> createState() => _UploadDialogBodyState();
@@ -33,6 +34,16 @@ class _UploadDialogBodyState extends State<UploadDialogBody> {
   // List<UploadFileStatus> filenames = [UploadFileStatus(name: "haha.jpg", status: "ok")];
   List<UploadFileStatus> filenames = [];
   int count = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    count = widget.attachFiles.length;
+    for (var element in widget.attachFiles) {
+      filenames.add(UploadFileStatus(name: element, status: 'ok'));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final dSize = MediaQuery.of(context).size;
@@ -49,7 +60,7 @@ class _UploadDialogBodyState extends State<UploadDialogBody> {
               .then((couldDoIt) {
                 if (!couldDoIt) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("没有文件权限"), duration: const Duration(milliseconds: 1000),),
+                    const SnackBar(content: Text("没有文件权限"), duration: Duration(milliseconds: 1000),),
                   );
                   return;
                 }
@@ -84,7 +95,19 @@ class _UploadDialogBodyState extends State<UploadDialogBody> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(e.name),
-                    const Icon(Icons.delete, color: bdwmPrimaryColor,),
+                    IconButton(
+                      onPressed: () {
+                        bdwmDeleteUpload(widget.attachpath, e.name)
+                        .then((res) {
+                          if (res.success == false) { return; }
+                          setState(() {
+                            count = count - 1;
+                            filenames.removeWhere((element) => element.name == e.name);
+                          });
+                        });
+                      },
+                      icon: const Icon(Icons.delete, color: bdwmPrimaryColor,),
+                    ),
                   ],
                 );
               }).toList(),
@@ -96,9 +119,9 @@ class _UploadDialogBodyState extends State<UploadDialogBody> {
   }
 }
 
-Future<String?> showUploadDialog(BuildContext context, String attachpath) {
+Future<String?> showUploadDialog(BuildContext context, String attachpath, List<String> attachFiles) {
   var key = GlobalKey<_UploadDialogBodyState>();
-  return showAlertDialog(context, "管理附件", UploadDialogBody(key: key, attachpath: attachpath,),
+  return showAlertDialog(context, "管理附件", UploadDialogBody(key: key, attachpath: attachpath, attachFiles: attachFiles),
     actions1: TextButton(
       onPressed: () {
         Navigator.of(context).pop(key.currentState!.count.toString());
