@@ -110,6 +110,38 @@ class _OperateComponentState extends State<OperateComponent> {
           },
           child: const Text("转载"),
         ),
+        TextButton(
+          style: textButtonStyle,
+          onPressed: () {
+            showTextDialog(context, "转寄给")
+            .then((value) {
+              if (value == null || value.isEmpty) {
+                return;
+              }
+              bdwmForwrad("post", "mail", widget.bid, widget.postid, value)
+              .then((res) {
+                var title = "转寄";
+                var content = "成功";
+                if (!res.success) {
+                  if (res.error == -1) {
+                    content = res.desc!;
+                  } else {
+                    content = "用户不存在";
+                  }
+                }
+                showAlertDialog(context, title, Text(content),
+                  actions1: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("知道了"),
+                  ),
+                );
+              });
+            },);
+          },
+          child: const Text("转寄"),
+        ),
         // if (globalUInfo.uid == widget.uid && globalUInfo.login == true)
         if (widget.onePostInfo.canModify)
           TextButton(
@@ -128,67 +160,11 @@ class _OperateComponentState extends State<OperateComponent> {
             child: const Text("修改"),
           ),
         // if (globalUInfo.uid == widget.uid && globalUInfo.login == true)
-        if (widget.onePostInfo.canDelete)
-          TextButton(
-            style: textButtonStyle,
-            onPressed: () {
-              bdwmDeletePost(bid: widget.bid, postid: widget.postid).then((value) {
-                var title = "";
-                var content = "删除成功";
-                if (!value.success) {
-                  content = "删除失败";
-                  if (value.error == -1) {
-                    content = value.result!;
-                  }
-                }
-                showAlertDialog(context, title, Text(content),
-                  actions1: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text("知道了"),
-                  ),
-                ).then((value2) {
-                  if (value.success) {
-                    widget.refreshCallBack();
-                  }
-                });
-              });
-            },
-            child: const Text("删除"),
-          ),
         // const Spacer(),
         PopupMenuButton<String>(
           icon: const Icon(Icons.more_horiz, color: bdwmPrimaryColor,),
           onSelected: (value) {
-            if (value == "转寄") {
-              showTextDialog(context, "转寄给")
-              .then((value) {
-                if (value == null || value.isEmpty) {
-                  return;
-                }
-                bdwmForwrad("post", "mail", widget.bid, widget.postid, value)
-                .then((res) {
-                  var title = "转寄";
-                  var content = "成功";
-                  if (!res.success) {
-                    if (res.error == -1) {
-                      content = res.desc!;
-                    } else {
-                      content = "用户不存在";
-                    }
-                  }
-                  showAlertDialog(context, title, Text(content),
-                    actions1: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text("知道了"),
-                    ),
-                  );
-                });
-              },);
-            } else if (value.contains("回复")) {
+            if (value.contains("回复")) {
               var action = "unnoreply";
               if (canReplyNotifier.value) {
                 action = "noreply";
@@ -243,18 +219,42 @@ class _OperateComponentState extends State<OperateComponent> {
                   );
                 });
               });
+            } else if (value == "删除") {
+              bdwmDeletePost(bid: widget.bid, postid: widget.postid).then((value) {
+                var title = "";
+                var content = "删除成功";
+                if (!value.success) {
+                  content = "删除失败";
+                  if (value.error == -1) {
+                    content = value.result!;
+                  }
+                }
+                showAlertDialog(context, title, Text(content),
+                  actions1: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("知道了"),
+                  ),
+                ).then((value2) {
+                  if (value.success) {
+                    widget.refreshCallBack();
+                  }
+                });
+              });
             }
           },
           itemBuilder: (context) {
             return <PopupMenuEntry<String>>[
-              const PopupMenuItem(
-                value: "转寄",
-                child: Text("转寄"),
-              ),
               if (widget.onePostInfo.canSetReply)
                 PopupMenuItem(
                   value: canReplyNotifier.value ? "设为不可回复" : "取消不可回复",
                   child: Text(canReplyNotifier.value ? "设为不可回复" : "取消不可回复"),
+                ),
+              if (widget.onePostInfo.canDelete)
+                const PopupMenuItem(
+                  value: "删除",
+                  child: Text("删除"),
                 ),
               const PopupMenuItem(
                 value: "收入文集",
