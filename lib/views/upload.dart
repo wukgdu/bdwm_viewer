@@ -70,14 +70,45 @@ class _UploadDialogBodyState extends State<UploadDialogBody> {
                   if (res.count == 0) { return; }
                   for (var f in res.files) {
                     if (f.path == null) { continue; }
+                    bool hasIt = false;
+                    for (var fn in filenames) {
+                      if (f.name == fn.name) {
+                        hasIt = true;
+                        break;
+                      }
+                    }
+                    if (hasIt) { continue; }
+                    setState(() {
+                      filenames.add(UploadFileStatus(name: f.name, status: "..."));
+                    });
                     bdwmUpload(widget.attachpath, f.path!)
                     .then((uploadRes) {
                       if (uploadRes.success == true) {
                         debugPrint(uploadRes.name);
                         debugPrint(uploadRes.url);
+                        bool hasIt = false;
+                        for (var fn in filenames) {
+                          if (fn.name == f.name) {
+                            fn.name = uploadRes.name!;
+                            fn.status = 'ok';
+                            hasIt = true;
+                            break;
+                          }
+                        }
+                        if (hasIt) {
+                          setState(() {
+                            count = count + 1;
+                            filenames = filenames;
+                          });
+                        } else {
+                          setState(() {
+                            count = count + 1;
+                            filenames.add(UploadFileStatus(name: uploadRes.name!, status: "ok"));
+                          });
+                        }
+                      } else {
                         setState(() {
-                          count = count + 1;
-                          filenames.add(UploadFileStatus(name: uploadRes.name!, status: "ok"));
+                          filenames.removeWhere((element) => element.name == f.name);
                         });
                       }
                     });
@@ -96,7 +127,7 @@ class _UploadDialogBodyState extends State<UploadDialogBody> {
                   children: [
                     Text(e.name),
                     IconButton(
-                      onPressed: () {
+                      onPressed: e.status == "ok" ? () {
                         bdwmDeleteUpload(widget.attachpath, e.name)
                         .then((res) {
                           if (res.success == false) { return; }
@@ -105,8 +136,10 @@ class _UploadDialogBodyState extends State<UploadDialogBody> {
                             filenames.removeWhere((element) => element.name == e.name);
                           });
                         });
-                      },
-                      icon: const Icon(Icons.delete, color: bdwmPrimaryColor,),
+                      } : null,
+                      icon: e.status == 'ok'
+                        ? const Icon(Icons.delete, color: bdwmPrimaryColor,)
+                        : const Icon(Icons.circle_outlined, color: bdwmPrimaryColor,),
                     ),
                   ],
                 );
