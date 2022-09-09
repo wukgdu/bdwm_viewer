@@ -12,6 +12,18 @@ class TextAndLink {
   TextAndLink.empty();
 }
 
+Future<bool> checkAndRequestPermission(Permission p) async {
+  var couldDoIt = true;
+  var hasIt = await p.isGranted;
+  if (!hasIt) {
+    var status = await p.request();
+    if (!status.isGranted) {
+      couldDoIt = false;
+    }
+  }
+  return couldDoIt;
+}
+
 void quickNotify(String title, String content) async {
   var couldNotify = true;
   var hasP = await Permission.notification.isGranted;

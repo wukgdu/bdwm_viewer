@@ -11,6 +11,7 @@ import './constants.dart';
 import '../globalvars.dart';
 import '../html_parser/postnew_parser.dart';
 import './utils.dart';
+import '../views/upload.dart';
 
 class PostNewPage extends StatefulWidget {
   final String bid;
@@ -34,6 +35,7 @@ class _PostNewPageState extends State<PostNewPage> {
   final signatureOB = SignatureItem(key: "OBViewer", value: "OBViewer");
   static const vDivider = VerticalDivider();
   FocusNode contentFocusNode = FocusNode();
+  int attachCount = 0;
 
   late CancelableOperation getDataCancelable;
 
@@ -221,7 +223,7 @@ class _PostNewPageState extends State<PostNewPage> {
                       var nContent = useHtmlContent ? bdwmTextFormat(contentValue.text) : contentValue.text;
                       bdwmSimplePost(
                         bid: widget.bid, title: titleValue.text, content: nContent, useBDWM: useHtmlContent, parentid: widget.parentid,
-                        signature: nSignature, config: config, modify: widget.postid!=null, postid: widget.postid)
+                        signature: nSignature, config: config, modify: widget.postid!=null, postid: widget.postid, attachpath: attachCount > 0 ? postNewInfo.attachpath : "")
                       .then((value) {
                         if (value.success) {
                           // TODO: handle forward
@@ -272,6 +274,7 @@ class _PostNewPageState extends State<PostNewPage> {
               margin: const EdgeInsets.only(top: 0, left: 10, right: 10, bottom: 0),
               child: Wrap(
                 // alignment: WrapAlignment.center,
+                alignment: WrapAlignment.center,
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Checkbox(
@@ -330,30 +333,45 @@ class _PostNewPageState extends State<PostNewPage> {
             ),
             Container(
               margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
-              alignment: Alignment.center,
-              child: DropdownButton<SignatureItem>(
-                hint: const Text("签名档"),
-                icon: const Icon(Icons.arrow_drop_down),
-                value: signature,
-                items: [
-                  ...postNewInfo.signatureInfo.map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
-                    return DropdownMenuItem<SignatureItem>(
-                        value: item,
-                        child: Text(item.key),
-                      );
-                    }).toList(),
-                  DropdownMenuItem<SignatureItem>(
-                    value: signatureOB,
-                    child: const Text("OBViewer"),
-                  )
+              // alignment: Alignment.center,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  DropdownButton<SignatureItem>(
+                    hint: const Text("签名档"),
+                    icon: const Icon(Icons.arrow_drop_down),
+                    value: signature,
+                    items: [
+                      ...postNewInfo.signatureInfo.map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
+                        return DropdownMenuItem<SignatureItem>(
+                            value: item,
+                            child: Text(item.key),
+                          );
+                        }).toList(),
+                      DropdownMenuItem<SignatureItem>(
+                        value: signatureOB,
+                        child: const Text("OBViewer"),
+                      )
+                    ],
+                    onChanged: (SignatureItem? value) {
+                      setState(() {
+                        signature = value!;
+                      });
+                    },
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      showUploadDialog(context, postNewInfo.attachpath)
+                      .then((value) {
+                        if (value == null) { return; }
+                        attachCount = int.parse(value);
+                      },);
+                    },
+                    child: const Text("管理附件"),
+                  ),
                 ],
-                onChanged: (SignatureItem? value) {
-                  setState(() {
-                    signature = value!;
-                  });
-                },
               ),
-            ),
+            )
           ],
         );
       },

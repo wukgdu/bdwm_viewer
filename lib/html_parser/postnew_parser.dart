@@ -34,6 +34,7 @@ class PostNewInfo {
   String? contentText;
   String? contentHtml;
   String? oriSignature;
+  String attachpath = "";
 
   PostNewInfo.empty();
   PostNewInfo.error({required this.errorMessage});
@@ -50,6 +51,7 @@ class PostNewInfo {
     this.contentHtml,
     this.oriSignature,
     required this.quoteInfo,
+    required this.attachpath,
   });
 }
 
@@ -102,6 +104,12 @@ PostNewInfo parsePostNew(String htmlStr) {
     }
   }
 
+  var attachpath = "";
+  var uploadDom = editorDom.querySelector("a[data-action=file-upload]");
+  if (uploadDom != null) {
+    attachpath = uploadDom.attributes['data-upload-dir'] ?? "";
+  }
+
   var signatureInfo = <SignatureItem>[];
   if (selectOptionDom != null) {
     for (var sodom in selectOptionDom.querySelectorAll("option")) {
@@ -142,7 +150,7 @@ PostNewInfo parsePostNew(String htmlStr) {
 
   return PostNewInfo(
     bid: bid, signatureInfo: signatureInfo, canNoreply: canNoreply, canRemind: canRemind, canForward: canForward, canAnony: canAnony,
-    titleText: titleText, contentText: contentText, contentHtml: contentHtml, oriSignature: oriSignature, quoteInfo: quoteInfo,
+    titleText: titleText, contentText: contentText, contentHtml: contentHtml, oriSignature: oriSignature, quoteInfo: quoteInfo, attachpath: attachpath,
   );
 }
 

@@ -27,7 +27,7 @@ class PostRes {
   });
 }
 
-Future<PostRes> bdwmSimplePost({required String bid, required String title, required String content, required String signature, required Map<String, bool> config, bool? modify=false, String? postid, bool? useBDWM=false, String? parentid}) async {
+Future<PostRes> bdwmSimplePost({required String bid, required String title, required String content, required String signature, required Map<String, bool> config, bool? modify=false, String? postid, bool? useBDWM=false, String? parentid, String? attachpath}) async {
   var actionUrl = "$v2Host/ajax/create_post.php";
   if (modify == true) {
     actionUrl = "$v2Host/ajax/edit_post.php";
@@ -48,7 +48,8 @@ Future<PostRes> bdwmSimplePost({required String bid, required String title, requ
     'content': (useBDWM!=null&&useBDWM==true) ? contentStr : contentData,
     'bid': bid,
     'postinfo': <String, dynamic>{},
-    'actionid': ""
+    'actionid': "",
+    "attachpath": attachpath ?? "",
   };
   if (modify == true) {
     data['postid'] = postid!;
