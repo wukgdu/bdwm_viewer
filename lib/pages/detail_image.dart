@@ -3,24 +3,16 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 // import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:path/path.dart' as path;
 import 'package:extended_image/extended_image.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../utils.dart';
+import '../views/utils.dart' show SaveRes, genDownloadPath;
 
 void gotoDetailImage({required BuildContext context, required String link, String? name, Uint8List? imgData}) {
   Navigator.of(context).push(MaterialPageRoute(
     builder: (context) => DetailImage(imgLink: link, imgName: name, imgData: imgData,),
   ));
-}
-
-class SaveRes {
-  bool success = false;
-  String reason = "";
-  SaveRes(this.success, this.reason);
 }
 
 class DetailImage extends StatefulWidget {
@@ -59,64 +51,15 @@ class _DetailImageState extends State<DetailImage> {
   }
 
   Future<SaveRes> saveImage(Uint8List? data) async {
-    var couldStore = true;
-    var hasStoragePermission = await Permission.storage.isGranted;
-    if (!hasStoragePermission) {
-      var status = await Permission.storage.request();
-      if (!status.isGranted) {
-        couldStore = false;
-      }
-    }
+    var couldStore = await checkAndRequestPermission(Permission.storage);
     if (couldStore == false) {
       return SaveRes(false, "没有保存文件权限");
     }
-    Directory? downloadDir;
-    String? downloadPath;
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.android:
-        downloadDir = Directory('/storage/emulated/0/Download');
-        if (!downloadDir.existsSync()) {
-          var path = await FilePicker.platform.getDirectoryPath();
-          if (path != null) {
-            downloadDir = Directory(path);
-          }
-        }
-        break;
-      case TargetPlatform.iOS:
-        var path = await FilePicker.platform.getDirectoryPath();
-        if (path != null) {
-          downloadDir = Directory(path);
-        }
-        break;
-      case TargetPlatform.windows:
-      case TargetPlatform.linux:
-      case TargetPlatform.macOS:
-        String? outputFile = await FilePicker.platform.saveFile(
-          dialogTitle: "选择保存路径",
-          fileName: (imgName == null || imgName!.isEmpty) ? "image.png" : imgName,
-        );
-        if (outputFile == null) {
-          return SaveRes(false, "未设置保存路径");
-        } else {
-          downloadPath = outputFile;
-        }
-        break;
-      case TargetPlatform.fuchsia:
-      default:
-        downloadDir = await getDownloadsDirectory();
+    var saveRes = await genDownloadPath(name: imgName);
+    if (saveRes.success == false) {
+      return saveRes;
     }
-    if ((downloadDir == null) && (downloadPath == null)) {
-      return SaveRes(false, "未设置保存路径");
-    }
-    if (downloadDir != null && downloadPath == null) {
-      if (!downloadDir.existsSync()) {
-        return SaveRes(false, "保存目录不存在");
-      }
-      downloadPath ??= path.join(downloadDir.path, imgName ?? "image.jpg");
-    }
-    if (downloadPath == null) {
-      return SaveRes(false, "未设置保存路径");
-    }
+    var downloadPath = saveRes.reason;
     debugPrint(downloadPath);
 
     var imgData = data;

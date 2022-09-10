@@ -447,6 +447,12 @@ class AttachmentComponent extends StatelessWidget {
                       ]
                     ),
                   ),
+                  onLongPress: () {
+                    showLinkMenu(context, e.link);
+                  },
+                  onSecondaryTap: () {
+                    showLinkMenu(context, e.link);
+                  },
                   onTap: () async {
                     var parsedUrl = Uri.parse(e.link);
                     if (true || !await canLaunchUrl(parsedUrl)) {

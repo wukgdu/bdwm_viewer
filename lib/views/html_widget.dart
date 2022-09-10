@@ -283,6 +283,14 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
                 style: textLinkStyle,
               ),
             ),
+            onLongPress: () {
+              if (context == null) { return; }
+              showLinkMenu(context, link);
+            },
+            onSecondaryTap: () {
+              if (context == null) { return; }
+              showLinkMenu(context, link);
+            },
             onTap: () {
               if (context == null) {
                 return;

@@ -1,10 +1,18 @@
+import 'dart:io' show Directory, File;
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:http/http.dart' as http;
 // import 'package:fwfh_selectable_text/fwfh_selectable_text.dart';
 
 import '../pages/detail_image.dart';
 import '../globalvars.dart' show networkErrorText;
 import './constants.dart' show topicsLabelColor, bdwmPrimaryColor;
+import '../utils.dart' show quickNotify;
 
 // https://github.com/daohoangson/flutter_widget_from_html/tree/master/packages/fwfh_selectable_text
 mixin SelectableTextFactory on WidgetFactory {
@@ -213,4 +221,113 @@ Widget genThreadLabel(String label) {
     ),
     child: Text(label, style: const TextStyle(color: Colors.white, fontSize: 12,),),
   );
+}
+
+Future<bool?> showLinkMenu(BuildContext context, String link, {String? downloadPath, String? filename}) async {
+  var renderBox = context.findRenderObject() as RenderBox?;
+  if (renderBox == null) {
+    return Future(() => null);
+  }
+  var offset = renderBox.localToGlobal(Offset.zero);
+  var rect = Rect.fromLTWH(offset.dx, offset.dy, 0, 0);
+  var res = await showMenu(
+    context: context,
+    position: RelativeRect.fromSize(rect, const Size(200, 200)),
+    items: <PopupMenuEntry<String>>[
+      const PopupMenuItem(
+        value: "下载",
+        child: Text("下载"),
+      ),
+    ]
+  );
+  if (res == "下载") {
+    const seconds = 60;
+    var fn = filename ?? path.basename(link);
+    var saveRes = await genDownloadPath(name: fn);
+    if (saveRes.success == false) {
+      return false;
+    }
+    var down = downloadPath ?? saveRes.reason;
+    var timeout = false;
+    var resp = await http.get(Uri.parse(link)).timeout(const Duration(seconds: seconds), onTimeout: () {
+      timeout = true;
+      return http.Response("timeout", 502); // not exact statuscode, !=200
+    }).onError((error, stackTrace) {
+      return http.Response("error", 502); // not exact statuscode, !=200
+    });
+    if (resp.statusCode == 200) {
+      File(down).writeAsBytes(resp.bodyBytes).then((value) {
+        if (value.existsSync()) {
+          quickNotify("下载完成", down);
+        } else {
+          quickNotify("写入文件失败", down);
+        }
+      },);
+    } else {
+      if (timeout) {
+        quickNotify("下载超时", "超过$seconds秒");
+      } else {
+        quickNotify("下载失败", down);
+      }
+      return false;
+    }
+  }
+  return false;
+}
+
+class SaveRes {
+  bool success = false;
+  String reason = "";
+  SaveRes(this.success, this.reason);
+}
+
+Future<SaveRes> genDownloadPath({String? name}) async {
+  Directory? downloadDir;
+  String? downloadPath;
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.android:
+      downloadDir = Directory('/storage/emulated/0/Download');
+      if (!downloadDir.existsSync()) {
+        var path = await FilePicker.platform.getDirectoryPath();
+        if (path != null) {
+          downloadDir = Directory(path);
+        }
+      }
+      break;
+    case TargetPlatform.iOS:
+      var path = await FilePicker.platform.getDirectoryPath();
+      if (path != null) {
+        downloadDir = Directory(path);
+      }
+      break;
+    case TargetPlatform.windows:
+    case TargetPlatform.linux:
+    case TargetPlatform.macOS:
+      String? outputFile = await FilePicker.platform.saveFile(
+        dialogTitle: "选择保存路径",
+        fileName: (name == null || name.isEmpty) ? "image.png" : name,
+      );
+      if (outputFile == null) {
+        return SaveRes(false, "未设置保存路径");
+      } else {
+        downloadPath = outputFile;
+      }
+      break;
+    case TargetPlatform.fuchsia:
+    default:
+      downloadDir = await getDownloadsDirectory();
+  }
+  if ((downloadDir == null) && (downloadPath == null)) {
+    return SaveRes(false, "未设置保存路径");
+  }
+  if (downloadDir != null && downloadPath == null) {
+    if (!downloadDir.existsSync()) {
+      return SaveRes(false, "保存目录不存在");
+    }
+    downloadPath ??= path.join(downloadDir.path, name ?? "image.jpg");
+  }
+  if (downloadPath == null) {
+    return SaveRes(false, "未设置保存路径");
+  }
+  return SaveRes(true, downloadPath);
 }
