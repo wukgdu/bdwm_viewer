@@ -18,6 +18,7 @@ import './pages/favorite.dart';
 import './pages/search.dart';
 import './pages/search_result.dart';
 import './pages/message.dart';
+import './pages/friends.dart';
 import './views/search.dart';
 // import './pages/detail_image.dart';
 import './services.dart';
@@ -207,6 +208,9 @@ class _MainPageState extends State<MainPage> {
             break;
           case "/about":
             builder = (BuildContext context) => const AboutApp();
+            break;
+          case "/friend":
+            builder = (BuildContext context) => const FriendsApp();
             break;
           case "/search":
             builder = (BuildContext context) => const SearchApp();
