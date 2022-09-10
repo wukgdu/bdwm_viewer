@@ -97,7 +97,10 @@ class _HomeAppState extends State<HomeApp> with SingleTickerProviderStateMixin {
               return StackIcon(
                 count: count as int,
                 icon: const Icon(Icons.mail),
-                callBack: () { quickNotify("OBViewer", "mail"); },
+                callBack: () {
+                  // quickNotify("OBViewer", "mail");
+                  Navigator.of(context).pushNamed('/mail');
+                },
               );
             },
           ),

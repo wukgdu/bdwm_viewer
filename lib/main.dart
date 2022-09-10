@@ -19,7 +19,8 @@ import './pages/search.dart';
 import './pages/search_result.dart';
 import './pages/message.dart';
 import './pages/friends.dart';
-import './views/search.dart';
+import './pages/mail.dart';
+import './views/search.dart' show PostSearchSettings;
 // import './pages/detail_image.dart';
 import './services.dart';
 import './bdwm/mail.dart';
@@ -208,6 +209,9 @@ class _MainPageState extends State<MainPage> {
             break;
           case "/about":
             builder = (BuildContext context) => const AboutApp();
+            break;
+          case "/mail":
+            builder = (BuildContext context) => const MailListApp();
             break;
           case "/friend":
             builder = (BuildContext context) => const FriendsApp();
