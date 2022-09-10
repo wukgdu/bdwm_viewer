@@ -138,7 +138,7 @@ CollectionArticle parseCollectionArticle(String htmlStr) {
     uid = (titleDom.querySelector(".sender a")?.attributes['href'] ?? "").split("=").last;
     user = getTrimmedString(titleDom.querySelector(".sender a"));
   }
-  var content = contentDom.querySelector(".file-read")?.innerHtml ?? "";
+  var content = getTrimmedHtml(contentDom.querySelector(".file-read"));
   var attachmentInfo = <AttachmentInfo>[];
   var attachmentDom = contentDom.querySelector(".attachment");
   var attachmentHtml = "";

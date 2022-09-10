@@ -3,6 +3,7 @@ import 'package:html/parser.dart' show parse;
 import '../globalvars.dart';
 import '../utils.dart';
 import './utils.dart';
+import './read_thread_parser.dart' show AttachmentInfo, AttachmentType;
 
 class MailItemInfo {
   String title = "";
@@ -104,4 +105,88 @@ MailListInfo parseMailList(String htmlStr) {
     }
   }
   return MailListInfo(mailItems: mailItems, maxPage: maxPage);
+}
+
+class MailDetailInfo {
+  String user = "";
+  String uid = "";
+  String avatar = absImgSrc(defaultAvator);
+  String title = "";
+  String content = "";
+  String signatureHtml = "";
+  String time = "";
+  String attachmentHtml = "";
+  List<AttachmentInfo> attachmentInfo = <AttachmentInfo>[];
+  String? errorMessage;
+
+  MailDetailInfo.empty();
+  MailDetailInfo.error({required this.errorMessage,});
+  MailDetailInfo({
+    required this.user,
+    required this.uid,
+    required this.avatar,
+    required this.title,
+    required this.content,
+    required this.signatureHtml,
+    required this.attachmentHtml,
+    required this.attachmentInfo,
+    required this.time,
+    this.errorMessage,
+  });
+}
+
+MailDetailInfo parseMailDetailInfo(String htmlStr) {
+  var document = parse(htmlStr);
+  var errorMessage = checkError(document);
+  if (errorMessage != null) {
+    return MailDetailInfo.error(errorMessage: errorMessage);
+  }
+  var contentDom = document.querySelector(".mail-body");
+  if (contentDom == null) {
+    return MailDetailInfo.empty();
+  }
+  String title = "";
+  String uid = "";
+  String user = "";
+  String avatar = absImgSrc(contentDom.querySelector("img.avatar")?.attributes['src'] ?? defaultAvator);
+  var titleDom = contentDom.querySelector(".title");
+  if (titleDom != null) {
+    title = getTrimmedString(titleDom.children.first);
+    uid = (titleDom.querySelector(".sender a")?.attributes['href'] ?? "").split("=").last;
+    user = getTrimmedString(titleDom.querySelector(".sender a"));
+  }
+  var content = getTrimmedHtml(contentDom.querySelector(".file-read"));
+  var attachmentInfo = <AttachmentInfo>[];
+  var attachmentDom = contentDom.querySelector(".attachment");
+  var attachmentHtml = "";
+  // int attachmentSlidesCount = 0;
+  if (attachmentDom != null) {
+    var attachmentsDom = attachmentDom.querySelectorAll("li");
+    attachmentHtml = getTrimmedOuterHtml(attachmentDom.querySelector("ul"));
+    for (var adom in attachmentsDom) {
+      var a = adom.querySelector("a");
+      if (a == null) {
+        continue;
+      }
+      var name = getTrimmedString(a);
+      var link = a.attributes['href']?.trim() ?? "";
+      var size = getTrimmedString(adom.querySelector(".size"));
+      var thumbnailLink = "";
+      AttachmentType aType = AttachmentType.showText;
+      if (a.classes.contains("highslide")) {
+        aType = AttachmentType.showThumbnail;
+        thumbnailLink = getTrimmedString(adom.querySelector("img")?.attributes['src']);
+        name = getTrimmedString(adom.querySelector("img")?.attributes['alt']);
+        // attachmentSlidesCount += 1;
+      }
+      attachmentInfo.add(AttachmentInfo(text: name, link: link, size: size, type: aType, thumbnailLink: thumbnailLink));
+    }
+  }
+  var signatureHtml = getTrimmedHtml(contentDom.querySelector(".signature.file-read"));
+  var time = getTrimmedString(contentDom.querySelector(".content .right"));
+  return MailDetailInfo(
+    user: user, uid: uid, avatar: avatar, title: title, content: content,
+    attachmentHtml: attachmentHtml, attachmentInfo: attachmentInfo,
+    time: time, signatureHtml: signatureHtml,
+  );
 }

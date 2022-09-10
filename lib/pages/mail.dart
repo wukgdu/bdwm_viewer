@@ -170,3 +170,92 @@ class _MailListAppState extends State<MailListApp> {
     );
   }
 }
+
+class MailDetailApp extends StatefulWidget {
+  final String postid;
+  const MailDetailApp({super.key, required this.postid});
+
+  @override
+  State<MailDetailApp> createState() => _MailDetailAppState();
+}
+
+class _MailDetailAppState extends State<MailDetailApp> {
+  static const appTitle = "站内信";
+  late CancelableOperation getDataCancelable;
+
+  Future<MailDetailInfo> getData() async {
+    // return getExampleMailDetailInfo();
+    var url = "$v2Host/mail-read.php?postid=${widget.postid}";
+    var resp = await bdwmClient.get(url, headers: genHeaders2());
+    if (resp == null) {
+      return MailDetailInfo.error(errorMessage: networkErrorText);
+    }
+    return parseMailDetailInfo(resp.body);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+    },);
+  }
+
+  @override
+  void dispose() {
+    Future.microtask(() => getDataCancelable.cancel(),);
+    super.dispose();
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: getDataCancelable.value,
+      builder: (context, snapshot) {
+        // debugPrint(snapshot.connectionState.toString());
+        if (snapshot.connectionState != ConnectionState.done) {
+          // return const Center(child: CircularProgressIndicator());
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text(appTitle),
+            ),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (snapshot.hasError) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text(appTitle),
+            ),
+            body: Center(child: Text("错误：${snapshot.error}"),),
+          );
+        }
+        if (!snapshot.hasData || snapshot.data == null) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text(appTitle),
+            ),
+            body: const Center(child: Text("错误：未获取数据"),),
+          );
+        }
+        var mailDetailInfo = snapshot.data as MailDetailInfo;
+        if (mailDetailInfo.errorMessage != null) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text(appTitle),
+            ),
+            body: Center(
+              child: Text(mailDetailInfo.errorMessage!),
+            ),
+          );
+        }
+        return Scaffold(
+          appBar: AppBar(
+              title: const Text(appTitle),
+          ),
+          body: MailDetailPage(mailDetailInfo: mailDetailInfo, postid: widget.postid),
+        );
+      },
+    );
+  }
+}
