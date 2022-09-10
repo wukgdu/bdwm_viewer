@@ -17,13 +17,24 @@ class MailListApp extends StatefulWidget {
 class _MailListAppState extends State<MailListApp> {
   static const appTitle = "站内信";
   int page = 1;
+  String mode = "";
   late CancelableOperation getDataCancelable;
 
   Future<MailListInfo> getData() async {
     // return getExampleCollectionList();
     var url = "$v2Host/mail.php";
+    if (mode.isNotEmpty) {
+      if (mode=="删除") {
+        url += "?type=5";
+      } else if (mode=="星标") {
+        url += "?type=3";
+      } else if (mode=="已发送") {
+        url += "?type=4";
+      }
+    }
     if (page != 1) {
-      url += "?page=$page";
+      var prefix = mode.isEmpty ? "?" : "&";
+      url += "${prefix}page=$page";
     }
     var resp = await bdwmClient.get(url, headers: genHeaders2());
     if (resp == null) {
@@ -35,6 +46,15 @@ class _MailListAppState extends State<MailListApp> {
   void refresh() {
     setState(() {
       page = page;
+      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+      },);
+    });
+  }
+
+  void changeToMode(String mode_) {
+    setState(() {
+      page = 1;
+      mode = mode_;
       getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
       },);
     });
@@ -99,6 +119,35 @@ class _MailListAppState extends State<MailListApp> {
         return Scaffold(
           appBar: AppBar(
             title: const Text(appTitle),
+            actions: [
+              PopupMenuButton(
+                // icon: const Icon(Icons.more_horiz),
+                onSelected: (value) {
+                  if (value == null) { return; }
+                  changeToMode(value as String);
+                },
+                itemBuilder: (context) {
+                  return <PopupMenuEntry<String>>[
+                    const PopupMenuItem(
+                      value: "",
+                      child: Text("收件箱"),
+                    ),
+                    const PopupMenuItem(
+                      value: "已发送",
+                      child: Text("已发送"),
+                    ),
+                    const PopupMenuItem(
+                      value: "删除",
+                      child: Text("删除"),
+                    ),
+                    const PopupMenuItem(
+                      value: "星标",
+                      child: Text("星标"),
+                    ),
+                  ];
+                },
+              ),
+            ],
           ),
           body: MailListPage(mailListInfo: mailListInfo),
           bottomNavigationBar: BottomAppBar(
