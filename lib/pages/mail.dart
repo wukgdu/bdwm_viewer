@@ -111,6 +111,14 @@ class _MailListAppState extends State<MailListApp> {
                 children: <Widget>[
                   IconButton(
                     disabledColor: Colors.grey,
+                    tooltip: '刷新',
+                    icon: const Icon(Icons.refresh),
+                    onPressed: () {
+                      refresh();
+                    },
+                  ),
+                  IconButton(
+                    disabledColor: Colors.grey,
                     tooltip: '上一页',
                     icon: const Icon(Icons.arrow_back),
                     onPressed: page <= 1 ? null : () {

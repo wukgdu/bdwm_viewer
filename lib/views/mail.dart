@@ -21,6 +21,7 @@ class _MailListPageState extends State<MailListPage> {
           var item = widget.mailListInfo.mailItems[index];
           return Card(
             child: ListTile(
+              onTap: () { },
               leading: GestureDetector(
                 child: Container(
                   width: 40,
@@ -38,7 +39,7 @@ class _MailListPageState extends State<MailListPage> {
                   Navigator.of(context).pushNamed('/user', arguments: item.uid);
                 },
               ),
-              title: SelectableText.rich(
+              title: Text.rich(
                 TextSpan(
                   children: [
                     TextSpan(text: item.userName),
@@ -47,9 +48,14 @@ class _MailListPageState extends State<MailListPage> {
                   ]
                 ),
               ),
-              subtitle: SelectableText.rich(
+              subtitle: Text.rich(
                 TextSpan(
                   children: [
+                    if (item.unread)
+                      const WidgetSpan(
+                        alignment: PlaceholderAlignment.middle,
+                        child: Icon(Icons.circle, color: Colors.red, size: 8),
+                      ),
                     WidgetSpan(child: Text(
                       item.title,
                       overflow: TextOverflow.ellipsis,
