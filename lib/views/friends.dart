@@ -15,7 +15,7 @@ class FriendPage extends StatefulWidget {
 }
 
 class _FriendPageState extends State<FriendPage> {
-  var _scrollController = ScrollController();
+  final _scrollController = ScrollController();
   late CancelableOperation getDataCancelable;
   Future<FriendsInfo> getData() async {
     var url = "$v2Host/friend.php";
