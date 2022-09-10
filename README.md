@@ -50,7 +50,7 @@ https://github.com/wukgdu/bdwm_viewer/releases
 5. 用户
     1. [x] 关注用户
     2. [ ] 拉黑用户
-    3. [ ] 查看关注/拉黑用户
+    3. [x] 查看关注/拉黑用户
     4. [x] 看用户信息
 6. 消息
     1. 看
