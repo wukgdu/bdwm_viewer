@@ -287,10 +287,11 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
               if (context == null) { return; }
               showLinkMenu(context, link);
             },
-            onSecondaryTap: () {
-              if (context == null) { return; }
-              showLinkMenu(context, link);
-            },
+            // // secondary tap conflicts with copy
+            // onSecondaryTap: () {
+            //   if (context == null) { return; }
+            //   showLinkMenu(context, link);
+            // },
             onTap: () {
               if (context == null) {
                 return;
