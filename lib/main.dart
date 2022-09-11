@@ -215,13 +215,15 @@ class _MainPageState extends State<MainPage> {
             break;
           case "/mailDetail":
             String? postid;
+            String? mailType;
             if (settings.arguments != null) {
               var settingsMap = settings.arguments as Map;
               postid = settingsMap['postid'] as String;
+              mailType = settingsMap['type'] as String;
             } else {
               return null;
             }
-            builder = (BuildContext context) => MailDetailApp(postid: postid!,);
+            builder = (BuildContext context) => MailDetailApp(postid: postid!, type: mailType!,);
             break;
           case "/friend":
             builder = (BuildContext context) => const FriendsApp();

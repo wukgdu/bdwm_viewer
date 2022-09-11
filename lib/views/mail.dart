@@ -6,7 +6,8 @@ import './read_thread.dart' show AttachmentComponent;
 
 class MailListPage extends StatefulWidget {
   final MailListInfo mailListInfo;
-  const MailListPage({super.key, required this.mailListInfo});
+  final String type;
+  const MailListPage({super.key, required this.mailListInfo, required this.type});
 
   @override
   State<MailListPage> createState() => _MailListPageState();
@@ -26,6 +27,7 @@ class _MailListPageState extends State<MailListPage> {
               onTap: () {
                 Navigator.of(context).pushNamed('/mailDetail', arguments: {
                   'postid': item.id,
+                  'type': widget.type,
                 });
               },
               leading: GestureDetector(
@@ -91,7 +93,8 @@ class _MailListPageState extends State<MailListPage> {
 class MailDetailPage extends StatefulWidget {
   final MailDetailInfo mailDetailInfo;
   final String postid;
-  const MailDetailPage({super.key, required this.mailDetailInfo, required this.postid});
+  final String type;
+  const MailDetailPage({super.key, required this.mailDetailInfo, required this.postid, required this.type});
 
   @override
   State<MailDetailPage> createState() => _MailDetailPageState();

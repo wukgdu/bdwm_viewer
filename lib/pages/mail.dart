@@ -15,25 +15,19 @@ class MailListApp extends StatefulWidget {
 }
 
 class _MailListAppState extends State<MailListApp> {
-  static const appTitle = "站内信";
+  String appTitle = "站内信";
   int page = 1;
-  String mode = "";
+  String type = "";
   late CancelableOperation getDataCancelable;
 
   Future<MailListInfo> getData() async {
     // return getExampleCollectionList();
     var url = "$v2Host/mail.php";
-    if (mode.isNotEmpty) {
-      if (mode=="删除") {
-        url += "?type=5";
-      } else if (mode=="星标") {
-        url += "?type=3";
-      } else if (mode=="已发送") {
-        url += "?type=4";
-      }
+    if (type.isNotEmpty) {
+      url += "?type=$type";
     }
     if (page != 1) {
-      var prefix = mode.isEmpty ? "?" : "&";
+      var prefix = type.isEmpty ? "?" : "&";
       url += "${prefix}page=$page";
     }
     var resp = await bdwmClient.get(url, headers: genHeaders2());
@@ -51,10 +45,24 @@ class _MailListAppState extends State<MailListApp> {
     });
   }
 
-  void changeToMode(String mode_) {
+  void changeToMode(String mode) {
     setState(() {
       page = 1;
-      mode = mode_;
+      if (mode.isNotEmpty) {
+        if (mode=="删除") {
+          type = "5";
+          appTitle = "站内信/删除";
+        } else if (mode=="星标") {
+          type = "3";
+          appTitle = "站内信/星标";
+        } else if (mode=="已发送") {
+          type = "4";
+          appTitle = "站内信/已发送";
+        }
+      } else {
+        type = "";
+        appTitle = "站内信";
+      }
       getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
       },);
     });
@@ -84,7 +92,7 @@ class _MailListAppState extends State<MailListApp> {
           // return const Center(child: CircularProgressIndicator());
           return Scaffold(
             appBar: AppBar(
-              title: const Text(appTitle),
+              title: Text(appTitle),
             ),
             body: const Center(child: CircularProgressIndicator()),
           );
@@ -92,7 +100,7 @@ class _MailListAppState extends State<MailListApp> {
         if (snapshot.hasError) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text(appTitle),
+              title: Text(appTitle),
             ),
             body: Center(child: Text("错误：${snapshot.error}"),),
           );
@@ -100,7 +108,7 @@ class _MailListAppState extends State<MailListApp> {
         if (!snapshot.hasData || snapshot.data == null) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text(appTitle),
+              title: Text(appTitle),
             ),
             body: const Center(child: Text("错误：未获取数据"),),
           );
@@ -109,7 +117,7 @@ class _MailListAppState extends State<MailListApp> {
         if (mailListInfo.errorMessage != null) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text(appTitle),
+              title: Text(appTitle),
             ),
             body: Center(
               child: Text(mailListInfo.errorMessage!),
@@ -118,7 +126,7 @@ class _MailListAppState extends State<MailListApp> {
         }
         return Scaffold(
           appBar: AppBar(
-            title: const Text(appTitle),
+            title: Text(appTitle),
             actions: [
               PopupMenuButton(
                 // icon: const Icon(Icons.more_horiz),
@@ -149,7 +157,7 @@ class _MailListAppState extends State<MailListApp> {
               ),
             ],
           ),
-          body: MailListPage(mailListInfo: mailListInfo),
+          body: MailListPage(mailListInfo: mailListInfo, type: type,),
           bottomNavigationBar: BottomAppBar(
             shape: null,
             // color: Colors.blue,
@@ -222,19 +230,23 @@ class _MailListAppState extends State<MailListApp> {
 
 class MailDetailApp extends StatefulWidget {
   final String postid;
-  const MailDetailApp({super.key, required this.postid});
+  final String type;
+  const MailDetailApp({super.key, required this.postid, required this.type});
 
   @override
   State<MailDetailApp> createState() => _MailDetailAppState();
 }
 
 class _MailDetailAppState extends State<MailDetailApp> {
-  static const appTitle = "站内信";
+  String appTitle = "站内信";
   late CancelableOperation getDataCancelable;
 
   Future<MailDetailInfo> getData() async {
     // return getExampleMailDetailInfo();
     var url = "$v2Host/mail-read.php?postid=${widget.postid}";
+    if (widget.type.isNotEmpty) {
+      url = "$v2Host/mail-read.php?type=${widget.type}&postid=${widget.postid}";
+    }
     var resp = await bdwmClient.get(url, headers: genHeaders2());
     if (resp == null) {
       return MailDetailInfo.error(errorMessage: networkErrorText);
@@ -245,6 +257,17 @@ class _MailDetailAppState extends State<MailDetailApp> {
   @override
   void initState() {
     super.initState();
+    if (widget.type.isNotEmpty) {
+      if (widget.type=="5") {
+        appTitle = "站内信/删除";
+      } else if (widget.type=="3") {
+        appTitle = "站内信/星标";
+      } else if (widget.type=="4") {
+        appTitle = "站内信/已发送";
+      }
+    } else {
+      appTitle = "站内信";
+    }
     getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
     },);
   }
@@ -266,7 +289,7 @@ class _MailDetailAppState extends State<MailDetailApp> {
           // return const Center(child: CircularProgressIndicator());
           return Scaffold(
             appBar: AppBar(
-              title: const Text(appTitle),
+              title: Text(appTitle),
             ),
             body: const Center(child: CircularProgressIndicator()),
           );
@@ -274,7 +297,7 @@ class _MailDetailAppState extends State<MailDetailApp> {
         if (snapshot.hasError) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text(appTitle),
+              title: Text(appTitle),
             ),
             body: Center(child: Text("错误：${snapshot.error}"),),
           );
@@ -282,7 +305,7 @@ class _MailDetailAppState extends State<MailDetailApp> {
         if (!snapshot.hasData || snapshot.data == null) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text(appTitle),
+              title: Text(appTitle),
             ),
             body: const Center(child: Text("错误：未获取数据"),),
           );
@@ -291,7 +314,7 @@ class _MailDetailAppState extends State<MailDetailApp> {
         if (mailDetailInfo.errorMessage != null) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text(appTitle),
+              title: Text(appTitle),
             ),
             body: Center(
               child: Text(mailDetailInfo.errorMessage!),
@@ -300,9 +323,9 @@ class _MailDetailAppState extends State<MailDetailApp> {
         }
         return Scaffold(
           appBar: AppBar(
-              title: const Text(appTitle),
+              title: Text(appTitle),
           ),
-          body: MailDetailPage(mailDetailInfo: mailDetailInfo, postid: widget.postid),
+          body: MailDetailPage(mailDetailInfo: mailDetailInfo, postid: widget.postid, type: widget.type,),
         );
       },
     );
