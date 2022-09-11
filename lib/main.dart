@@ -20,6 +20,7 @@ import './pages/search_result.dart';
 import './pages/message.dart';
 import './pages/friends.dart';
 import './pages/mail.dart';
+import './pages/mail_new.dart';
 import './views/search.dart' show PostSearchSettings;
 // import './pages/detail_image.dart';
 import './services.dart';
@@ -110,6 +111,7 @@ class _MainPageState extends State<MainPage> {
         colorScheme: const ColorScheme.light().copyWith(primary: const Color(0xffe97c62)),
       ),
       home: HomeApp(messageCount: messageCount, mailCount: mailCount,),
+      // home: const MailNewApp(),
       // home: const ThreadApp(bid: "338", threadid: "18367551", page: "a", boardName: "ID文化", postid: "26066045",),
       // home: const SimpleSearchResultApp(mode: "user", keyWord: "onepiecexx",),
       // home: const ZoneApp(),
@@ -224,6 +226,16 @@ class _MainPageState extends State<MainPage> {
               return null;
             }
             builder = (BuildContext context) => MailDetailApp(postid: postid!, type: mailType!,);
+            break;
+          case "/mailNew":
+            String? parentid;
+            if (settings.arguments != null) {
+              var settingsMap = settings.arguments as Map;
+              parentid = settingsMap['parentid'] as String?;
+            } else {
+              return null;
+            }
+            builder = (BuildContext context) => MailNewApp(parentid: parentid,);
             break;
           case "/friend":
             builder = (BuildContext context) => const FriendsApp();
