@@ -226,6 +226,20 @@ class _MailNewPageState extends State<MailNewPage> {
           ),
         ),
         Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
+            borderRadius: const BorderRadius.all(Radius.circular(5)),
+          ),
+          margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
+          height: 200,
+          child: fquill.QuillEditor.basic(
+            controller: _controller,
+            readOnly: false, // true for view only mode
+            embedBuilders: [ImageEmbedBuilder()],
+            // locale: const Locale('zh', 'CN'),
+          ),
+        ),
+        Container(
           padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
           child: fquill.QuillToolbar.basic(
             controller: _controller,
@@ -292,20 +306,6 @@ class _MailNewPageState extends State<MailNewPage> {
                 }
               ),
             ],
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
-            borderRadius: const BorderRadius.all(Radius.circular(5)),
-          ),
-          margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
-          height: 200,
-          child: fquill.QuillEditor.basic(
-            controller: _controller,
-            readOnly: false, // true for view only mode
-            embedBuilders: [ImageEmbedBuilder()],
-            // locale: const Locale('zh', 'CN'),
           ),
         ),
         if (widget.quote!=null)
