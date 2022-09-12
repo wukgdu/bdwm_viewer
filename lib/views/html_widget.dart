@@ -265,9 +265,9 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
             ));
           }
         }
-        if (cdom != document.nodes.last) {
-          res.add(const TextSpan(text: "\n"));
-        }
+        // if (cdom != document.nodes.last) {
+        //   res.add(const TextSpan(text: "\n"));
+        // }
       } else if (ele.localName == "b") {
         res.add(TextSpan(children: travelHtml(ele, context: context), style: const TextStyle(fontWeight: FontWeight.bold,)));
       } else if (ele.localName == "u") {
@@ -534,9 +534,7 @@ void travelHtmlBack(hdom.Element? document, BDWMtext config, List<BDWMtext> res)
         }
         var colorIdx = (bdwmRichText['bc'] as Map<String, int>)[color];
         BDWMAnsiText bdwmText = (config as BDWMAnsiText).copy();
-        if (colorIdx != null) {
-          bdwmText.foreColor = colorIdx;
-        }
+        bdwmText.foreColor = colorIdx ?? 9;
         travelHtmlBack(ele, bdwmText, res);
       } else if (ele.localName == "span") {
         var spanStyle = ele.attributes['style'];
@@ -558,9 +556,7 @@ void travelHtmlBack(hdom.Element? document, BDWMtext config, List<BDWMtext> res)
         }
         var colorIdx = (bdwmRichText['bc'] as Map<String, int>)[bColor];
         BDWMAnsiText bdwmText = (config as BDWMAnsiText).copy();
-        if (colorIdx != null) {
-          bdwmText.backColor = colorIdx;
-        }
+        bdwmText.backColor = colorIdx ?? 9;
         travelHtmlBack(ele, bdwmText, res);
       } else if (ele.localName == "p") {
         if (ele.classes.contains('quotehead')) {
@@ -588,9 +584,9 @@ void travelHtmlBack(hdom.Element? document, BDWMtext config, List<BDWMtext> res)
         if (src != null && src.isNotEmpty) {
           res.add(BDWMImgText(type: "img", src: src));
         }
-        if (cdom != document.nodes.last) {
-          res.add(BDWMAnsiText.raw("\n"));
-        }
+        // if (cdom != document.nodes.last) {
+        //   res.add(BDWMAnsiText.raw("\n"));
+        // }
       } else if (ele.localName == "b") {
         BDWMAnsiText bdwmText = (config as BDWMAnsiText).copy();
         bdwmText.bold = true;

@@ -7,22 +7,6 @@ import 'package:html_unescape/html_unescape_small.dart';
 
 import './utils.dart';
 
-class SignatureItem {
-  String key = "无";
-  String value = "";
-
-  SignatureItem.empty();
-  SignatureItem({
-    required this.key,
-    required this.value,
-  });
-
-  @override
-  String toString() {
-    return key;
-  }
-}
-
 class PostNewInfo {
   String bid = "";
   List<SignatureItem> quoteInfo = <SignatureItem>[];

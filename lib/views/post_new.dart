@@ -10,6 +10,7 @@ import '../bdwm/req.dart';
 import './constants.dart';
 import '../globalvars.dart';
 import '../html_parser/postnew_parser.dart';
+import '../html_parser/utils.dart' show SignatureItem;
 import './utils.dart';
 import '../views/upload.dart';
 

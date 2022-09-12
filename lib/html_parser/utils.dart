@@ -63,3 +63,19 @@ String absThreadLink(String link) {
   }
   return "$v2Host/$link";
 }
+
+class SignatureItem {
+  String key = "无";
+  String value = "";
+
+  SignatureItem.empty();
+  SignatureItem({
+    required this.key,
+    required this.value,
+  });
+
+  @override
+  String toString() {
+    return key;
+  }
+}

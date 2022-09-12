@@ -61,3 +61,39 @@ Future<UnreadMailInfo?> bdwmGetUnreadMailCount() async {
   // }
   return UnreadMailInfo(success: resContent['success'], count: resContent['count'] ?? 0, unreadMailList: unreadMailList);
 }
+
+class MailRes {
+  bool success = false;
+  int error = 0;
+  String? result;
+
+  MailRes({
+    required this.success,
+    required this.error,
+    this.result,
+  });
+  MailRes.error({
+    required this.success,
+    required this.error,
+    this.result,
+  });
+}
+
+Future<MailRes> bdwmGetMailQuote({required String postid, String mode="simple"}) async {
+  var actionUrl = "$v2Host/ajax/get_mail_quote.php";
+  var data = {
+    "postid": postid,
+    "mode": mode,
+  };
+  var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
+  if (resp == null) {
+    return MailRes.error(success: false, error: -1, result: networkErrorText);
+  }
+  var respContent = json.decode(resp.body);
+  MailRes mailRes = MailRes(
+    success: respContent['success'],
+    error: respContent['error'] ?? 0,
+    result: respContent['quote'],
+  );
+  return mailRes;
+}

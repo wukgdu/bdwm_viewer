@@ -50,7 +50,7 @@ class NotifyMessage {
   }
 
   void updateValue(Function callBack) {
-    // return;
+    return;
     if (globalUInfo.login == false) { return; }
     bdwmGetUnreadMessageCount().then((value) {
       if (value == null) {
@@ -102,7 +102,7 @@ class NotifyMail {
   }
 
   void updateValue(Function callBack) {
-    // return;
+    return;
     if (globalUInfo.login == false) { return; }
     bdwmGetUnreadMailCount().then((value) {
       if (value == null) {
