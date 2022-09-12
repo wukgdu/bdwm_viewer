@@ -45,3 +45,5 @@ const Map<String, Color> topicsLabelColor = {
 };
 
 const serifFont = TextStyle(fontFamily: 'serif');
+
+const signatureOBViewer = [{"content":"发自 onepiece 的客户端\n","fore_color":8,"back_color":9,"bold":false,"blink":false,"underline":false,"reverse":false,"type":"ansi"},];

@@ -63,3 +63,53 @@ Future<TopSearchRes> bdwmTopSearch(String pref) async {
   );
   return topSearchRes;
 }
+
+class UserInfoRes {
+  bool success = false;
+  int error = 0;
+  String jsonStr = "";
+  List users = [];
+  String? desc;
+
+  UserInfoRes({
+    required this.success,
+    required this.error,
+    required this.jsonStr,
+    required this.users,
+  });
+  UserInfoRes.error({
+    required this.success,
+    required this.error,
+    required this.desc,
+  });
+}
+
+Future<UserInfoRes> bdwmUserInfoSearch(List<String> userNames) async {
+  var actionUrl = "$v2Host/ajax/get_userinfo_by_names.php";
+  var data = {
+    'names': jsonEncode(userNames),
+  };
+  var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
+  if (resp == null) {
+    return UserInfoRes.error(success: false, error: -1, desc: networkErrorText);
+  }
+  var content = json.decode(resp.body);
+  var users = [];
+  if (content['success'] == true) {
+    for (var u in content['result']) {
+      if (u is bool) {
+        // false
+        users.add(u);
+      } else {
+        users.add(IDandName(id: u['id'].toString(), name: u['username']));
+      }
+    }
+  }
+  UserInfoRes res = UserInfoRes(
+    success: content['success'],
+    error: content['error'] ?? 0,
+    jsonStr: resp.body,
+    users: users,
+  );
+  return res;
+}

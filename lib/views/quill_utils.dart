@@ -162,13 +162,13 @@ String quill2BDWMtext(List<dynamic> quillDelta) {
   while (idx >= 0) {
     var qd = quillDelta[idx];
     var attr = qd['attributes'];
-    // var insert = qd['insert'];
+    var insert = qd['insert'];
     if (attr != null) {
       if (attr['blockquote']!=null && attr['blockquote']==true) {
         // {insert: \n, attributes: {blockquote: true}}
         qd['del'] = true;
         var cidx = idx-1;
-        var newInsert = "";
+        var newInsert = insert; // \n
         while (cidx >= 0) {
           var cqd = quillDelta[cidx];
           var cinsert = cqd['insert'];

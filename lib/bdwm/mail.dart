@@ -97,3 +97,56 @@ Future<MailRes> bdwmGetMailQuote({required String postid, String mode="simple"})
   );
   return mailRes;
 }
+
+class MailSendRes {
+  bool success = false;
+  int error = 0;
+  String? result;
+  List<int> sent = [];
+
+
+  MailSendRes({
+    required this.success,
+    required this.error,
+    this.result,
+    required this.sent,
+  });
+  MailSendRes.error({
+    required this.success,
+    required this.error,
+    this.result,
+  });
+}
+
+Future<MailSendRes> bdwmCreateMail({required String title, required String content, required String signature, String? parentid, String? attachpath, required List<int> rcvuids}) async {
+  var actionUrl = "$v2Host/ajax/create_mail.php";
+  var data = {
+    'rcvuids': jsonEncode(rcvuids),
+    'title': title,
+    'content': content,
+    'postinfo': <String, dynamic>{},
+    "attachpath": attachpath ?? "",
+    "signature": signature,
+  };
+  if (parentid != null) {
+    (data['postinfo'] as Map)['parentid'] = int.parse(parentid);
+  }
+  data['postinfo'] = jsonEncode(data['postinfo']);
+  var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
+  if (resp == null) {
+    return MailSendRes.error(success: false, error: -1, result: networkErrorText);
+  }
+  var respContent = json.decode(resp.body);
+  var sent = <int>[];
+  if (respContent['success']==true) {
+    for (var s in respContent['sent']) {
+      sent.add(s as int);
+    }
+  }
+  MailSendRes res = MailSendRes(
+    success: respContent['success'],
+    error: respContent['error'] ?? 0,
+    sent: sent,
+  );
+  return res;
+}

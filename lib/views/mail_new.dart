@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 import 'package:flutter_quill/flutter_quill.dart' as fquill;
 import 'package:flutter_quill_extensions/embeds/builders.dart' show ImageEmbedBuilder;
 
+import '../bdwm/search.dart';
 import '../bdwm/mail.dart';
 import '../bdwm/req.dart';
 import './constants.dart';
@@ -72,6 +74,16 @@ class _MailNewPageState extends State<MailNewPage> {
     return ListView(
       children: [
         Container(
+          padding: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
+          child: TextField(
+            controller: receiveValue,
+            decoration: const InputDecoration(
+              labelText: "收件人",
+              border: OutlineInputBorder(),
+            ),
+          ),
+        ),
+        Container(
           margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
           child: Row(
             children: [
@@ -86,7 +98,76 @@ class _MailNewPageState extends State<MailNewPage> {
                 ),
               ),
               TextButton(
-                onPressed: () {
+                onPressed: () async {
+                  if (titleValue.text.isEmpty) {
+                    showAlertDialog(context, "有问题", const Text("标题不能为空"),
+                      actions1: TextButton(
+                        onPressed: () { Navigator.of(context).pop(); },
+                        child: const Text("知道了"),
+                      )
+                    );
+                    return;
+                  }
+                  if (_controller.document.length==0) {
+                    showAlertDialog(context, "有问题", const Text("内容不能为空"),
+                      actions1: TextButton(
+                        onPressed: () { Navigator.of(context).pop(); },
+                        child: const Text("知道了"),
+                      )
+                    );
+                    return;
+                  }
+
+                  if (receiveValue.text.isEmpty) {
+                    showAlertDialog(context, "有问题", const Text("收件人不能为空"),
+                      actions1: TextButton(
+                        onPressed: () { Navigator.of(context).pop(); },
+                        child: const Text("知道了"),
+                      )
+                    );
+                    return;
+                  }
+                  List<String> rcvuidsStr = receiveValue.text.split(RegExp(r";|\s+|,|，|；"));
+                  rcvuidsStr.removeWhere((element) => element.isEmpty);
+                  var userRes = await bdwmUserInfoSearch(rcvuidsStr);
+                  var rcvuids = <int>[];
+                  if (userRes.success == false) {
+                    if (!mounted) { return; }
+                    await showAlertDialog(context, "发送中", const Text("查找用户失败"),
+                      actions1: TextButton(
+                        onPressed: () { Navigator.of(context).pop(); },
+                        child: const Text("知道了"),
+                      ),
+                    );
+                    return;
+                  } else {
+                    var uidx = 0;
+                    for (var r in userRes.users) {
+                      if (r == false) {
+                        if (!mounted) { return; }
+                        await showAlertDialog(context, "发送中", Text("用户${rcvuidsStr[uidx]}不存在"),
+                          actions1: TextButton(
+                            onPressed: () { Navigator.of(context).pop(); },
+                            child: const Text("知道了"),
+                          ),
+                        );
+                        return;
+                      } else {
+                        rcvuids.add(int.parse((r as IDandName).id));
+                      }
+                      uidx += 1;
+                    }
+                  }
+
+                  var nSignature = signature?.value ?? "";
+                  if (nSignature == "random") {
+                    var maxS = widget.mailNewInfo.sigCount;
+                    var randomI = math.Random().nextInt(maxS);
+                    nSignature = randomI.toString();
+                  } else if (nSignature == "OBViewer") {
+                    nSignature = jsonEncode(signatureOBViewer);
+                  }
+
                   var quillDelta = _controller.document.toDelta().toJson();
                   debugPrint(quillDelta.toString());
                   var mailContent = quill2BDWMtext(quillDelta);
@@ -96,6 +177,48 @@ class _MailNewPageState extends State<MailNewPage> {
                     mailContent = "${mailContent.substring(0, mailContent.length-1)},${mailQuote.substring(1)}";
                   }
                   debugPrint(mailContent);
+
+                  var nAttachPath = attachCount > 0 ? widget.mailNewInfo.attachpath : "";
+                  bdwmCreateMail(
+                    rcvuids: rcvuids, title: titleValue.text, content: mailContent, parentid: widget.parentid,
+                    signature: nSignature, attachpath: nAttachPath)
+                  .then((value) {
+                    if (value.success == false) {
+                      var errReason = "发送失败，请稍后重试";
+                      if (value.error == -1) {
+                        errReason = value.result ?? networkErrorText;
+                      } else if (value.error == 9) {
+                        errReason = "您的发信权已被封禁";
+                      }
+                      showAlertDialog(context, "发送失败", Text(errReason),
+                        actions1: TextButton(
+                          onPressed: () { Navigator.of(context).pop(); },
+                          child: const Text("知道了"),
+                        ),
+                      );
+                    } else {
+                      var n = "";
+                      var uidx = 0;
+                      for (var u in rcvuids) {
+                        if (value.sent.contains(u) == false) {
+                          n += " ${rcvuidsStr[uidx]}";
+                        }
+                        uidx += 1;
+                      }
+                      var txt = "发送成功";
+                      if (n.isNotEmpty) {
+                        txt = "部分成功，发送给用户$n 的信件未发送成功";
+                      }
+                      showAlertDialog(context, "站内信", Text(txt),
+                        actions1: TextButton(
+                          onPressed: () { Navigator.of(context).pop(); },
+                          child: const Text("知道了"),
+                        ),
+                      ).then((value) {
+                        Navigator.of(context).pop();
+                      },);
+                    }
+                  });
                 },
                 child: const Text("发送", style: TextStyle(color: bdwmPrimaryColor)),
               ),
@@ -103,17 +226,7 @@ class _MailNewPageState extends State<MailNewPage> {
           ),
         ),
         Container(
-          padding: const EdgeInsets.all(10.0),
-          child: TextField(
-            controller: receiveValue,
-            decoration: const InputDecoration(
-              labelText: "收件人",
-              border: OutlineInputBorder(),
-            ),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
           child: fquill.QuillToolbar.basic(
             controller: _controller,
             toolbarSectionSpacing: 1,
@@ -142,6 +255,7 @@ class _MailNewPageState extends State<MailNewPage> {
             showCodeBlock: false,
             showColorButton: false,
             showRedo: false,
+            showUndo: false,
             showBackgroundColorButton: false,
             customButtons: [
               fquill.QuillCustomButton(
@@ -185,7 +299,7 @@ class _MailNewPageState extends State<MailNewPage> {
             border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
             borderRadius: const BorderRadius.all(Radius.circular(5)),
           ),
-          margin: const EdgeInsets.all(10.0),
+          margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
           height: 200,
           child: fquill.QuillEditor.basic(
             controller: _controller,
@@ -277,7 +391,7 @@ class _MailNewFuturePageState extends State<MailNewFuturePage> {
   }
 
   Future<String?> getMailQuote() async {
-    var resp = await bdwmGetMailQuote(postid: widget.parentid!);
+    var resp = await bdwmGetMailQuote(postid: widget.parentid!, mode: "full");
     if (!resp.success) {
       return networkErrorText;
     }

@@ -216,10 +216,7 @@ class _PostNewPageState extends State<PostNewPage> {
                       } else if (nSignature == "keep") {
                         nSignature = postNewInfo.oriSignature ?? "";
                       } else if (nSignature == "OBViewer") {
-                        nSignature = jsonEncode([
-                            {"content":"发自 onepiece 的客户端\n","fore_color":9,"back_color":9,"bold":false,"blink":false,"underline":false,"reverse":false,"type":"ansi"},
-                          ]
-                        );
+                        nSignature = jsonEncode(signatureOBViewer);
                       }
                       var nContent = useHtmlContent ? bdwmTextFormat(contentValue.text) : contentValue.text;
                       var nAttachPath = widget.postid == null
