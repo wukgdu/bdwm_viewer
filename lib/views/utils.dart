@@ -331,3 +331,27 @@ Future<SaveRes> genDownloadPath({String? name}) async {
   }
   return SaveRes(true, downloadPath);
 }
+
+Future<String?> showColorDialog(BuildContext context, List<String> hexRGBColor) {
+  var dialog = SimpleDialog(
+    title: const Text("选择颜色"),
+    children: hexRGBColor.map((c) {
+      return SimpleDialogOption(
+        onPressed: () {
+          Navigator.pop(context, c);
+        },
+        child: Container(
+          color: Color(int.parse("0xff${c.substring(1)}")),
+          child: Center(child: Text(c, style: const TextStyle(color: Colors.white))),
+        ),
+      );
+    }).toList(),
+  );
+
+  return showDialog<String>(
+    context: context,
+    builder: (BuildContext context) {
+      return dialog;
+    },
+  );
+}
