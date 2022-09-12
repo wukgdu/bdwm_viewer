@@ -403,12 +403,23 @@ class BDWMTextEditingController extends TextEditingController {
   }
 }
 
-String bdwmTextFormat(String htmlStr) {
+String bdwmTextFormat(String htmlStr, {bool? mail=false}) {
   var document = parse(htmlStr);
   var res = <BDWMtext>[];
   travelHtmlBack(document.querySelector("body"), BDWMAnsiText.empty(), res);
   if (res.isEmpty) {
     return '[{"type":"ansi","bold":false,"underline":false,"fore_color":9,"back_color":9,"content":"\\n"}]';
+  }
+  if (mail!=null && mail==true) {
+    int idx = res.length-1;
+    while (idx >= 0) {
+      var r = res[idx];
+      if (r is BDWMQuoteText) {
+        r.mail = true;
+        break;
+      }
+      idx -= 1;
+    }
   }
   return jsonEncode(res);
 }

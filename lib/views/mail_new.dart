@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 import 'package:flutter_quill/flutter_quill.dart' as fquill;
@@ -7,10 +9,12 @@ import '../bdwm/mail.dart';
 import '../bdwm/req.dart';
 import './constants.dart';
 import '../globalvars.dart';
+import './html_widget.dart';
 import './quill_utils.dart';
 import '../html_parser/utils.dart' show SignatureItem;
 import '../html_parser/mailnew_parser.dart';
 import './utils.dart';
+import './upload.dart';
 
 class MailNewPage extends StatefulWidget {
   final String? parentid;
@@ -32,25 +36,15 @@ class _MailNewPageState extends State<MailNewPage> {
   List<String>? friends;
   SignatureItem? signature;
   int attachCount = 0;
+  List<String> attachFiles = [];
+
   final signatureOB = SignatureItem(key: "OBViewer", value: "OBViewer");
   @override
   void initState() {
-    if (widget.content != null || widget.quote != null) {
-      var clist = [];
-      var qlist = [];
-      var deltaList = [];
-      if (widget.content != null) {
-        clist = html2Quill(widget.content!);
-      }
-      if (widget.quote != null) {
-        qlist = html2Quill(widget.quote!);
-        if (clist.isEmpty) {
-          qlist.insert(0, {"insert": "\n"});
-        }
-      }
-      deltaList = clist + qlist;
+    if (widget.content != null) {
+      var clist = html2Quill(widget.content!);
       _controller = fquill.QuillController(
-        document: fquill.Document.fromJson(deltaList),
+        document: fquill.Document.fromJson(clist),
         selection: const TextSelection.collapsed(offset: 0),
       );
     } else {
@@ -95,7 +89,13 @@ class _MailNewPageState extends State<MailNewPage> {
                 onPressed: () {
                   var quillDelta = _controller.document.toDelta().toJson();
                   debugPrint(quillDelta.toString());
-                  debugPrint(quill2BDWMtext(quillDelta));
+                  var mailContent = quill2BDWMtext(quillDelta);
+                  if (widget.quote != null) {
+                    var mailQuote = bdwmTextFormat(widget.quote!, mail: true);
+                    // ...{}] [{}...
+                    mailContent = "${mailContent.substring(0, mailContent.length-1)},${mailQuote.substring(1)}";
+                  }
+                  debugPrint(mailContent);
                 },
                 child: const Text("发送", style: TextStyle(color: bdwmPrimaryColor)),
               ),
@@ -186,7 +186,7 @@ class _MailNewPageState extends State<MailNewPage> {
             borderRadius: const BorderRadius.all(Radius.circular(5)),
           ),
           margin: const EdgeInsets.all(10.0),
-          height: 300,
+          height: 200,
           child: fquill.QuillEditor.basic(
             controller: _controller,
             readOnly: false, // true for view only mode
@@ -194,42 +194,60 @@ class _MailNewPageState extends State<MailNewPage> {
             // locale: const Locale('zh', 'CN'),
           ),
         ),
+        if (widget.quote!=null)
           Container(
             margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
-            // alignment: Alignment.center,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                  DropdownButton<SignatureItem>(
-                    hint: const Text("签名档"),
-                    icon: const Icon(Icons.arrow_drop_down),
-                    value: signature,
-                    items: [
-                      ...widget.mailNewInfo.signatureInfo.map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
-                        return DropdownMenuItem<SignatureItem>(
-                            value: item,
-                            child: Text(item.key),
-                          );
-                        }).toList(),
-                      DropdownMenuItem<SignatureItem>(
-                        value: signatureOB,
-                        child: const Text("OBViewer"),
-                      )
-                    ],
-                    onChanged: (SignatureItem? value) {
-                      setState(() {
-                        signature = value!;
-                      });
-                    },
-                  ),
-                TextButton(
-                  onPressed: () {
-                  },
-                  child: const Text("管理附件"),
-                ),
-              ],
+            height: 100,
+            child: SingleChildScrollView(
+              child: HtmlComponent(widget.quote!),
             ),
-          )
+          ),
+        Container(
+          margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
+          // alignment: Alignment.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+                DropdownButton<SignatureItem>(
+                  hint: const Text("签名档"),
+                  icon: const Icon(Icons.arrow_drop_down),
+                  value: signature,
+                  items: [
+                    ...widget.mailNewInfo.signatureInfo.map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
+                      return DropdownMenuItem<SignatureItem>(
+                          value: item,
+                          child: Text(item.key),
+                        );
+                      }).toList(),
+                    DropdownMenuItem<SignatureItem>(
+                      value: signatureOB,
+                      child: const Text("OBViewer"),
+                    )
+                  ],
+                  onChanged: (SignatureItem? value) {
+                    setState(() {
+                      signature = value!;
+                    });
+                  },
+                ),
+              TextButton(
+                onPressed: () {
+                  showUploadDialog(context, widget.mailNewInfo.attachpath, attachFiles)
+                  .then((value) {
+                    if (value == null) { return; }
+                    var content = jsonDecode(value);
+                    attachCount = content['count'];
+                    attachFiles = [];
+                    for (var f in content['files']) {
+                      attachFiles.add(f);
+                    }
+                  },);
+                },
+                child: const Text("管理附件"),
+              ),
+            ],
+          ),
+        )
       ],
     );
   }

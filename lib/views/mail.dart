@@ -144,6 +144,21 @@ class _MailDetailPageState extends State<MailDetailPage> {
               child: AttachmentComponent(attachments: widget.mailDetailInfo.attachmentInfo,),
             ),
           ),
+        if (widget.type.isEmpty) // 收件箱
+          Card(
+            child: Row(
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed("/mailNew", arguments: {
+                      'parentid': widget.postid,
+                    });
+                  },
+                  child: const Text("回复"),
+                )
+              ],
+            ),
+          ),
       ],
     );
   }

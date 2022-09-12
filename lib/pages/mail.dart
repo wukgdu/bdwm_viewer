@@ -128,6 +128,12 @@ class _MailListAppState extends State<MailListApp> {
           appBar: AppBar(
             title: Text(appTitle),
             actions: [
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/mailNew');
+                },
+              ),
               PopupMenuButton(
                 // icon: const Icon(Icons.more_horiz),
                 onSelected: (value) {

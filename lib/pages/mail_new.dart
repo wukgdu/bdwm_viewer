@@ -17,7 +17,8 @@ class _MailNewAppState extends State<MailNewApp> {
       appBar: AppBar(
         title: const Text("站内信/新建"),
       ),
-      body: MailNewFuturePage(parentid: widget.parentid,),
+      body: MailNewFuturePage(parentid: "24705760",),
+      // body: MailNewFuturePage(parentid: widget.parentid,),
     );
   }
 }

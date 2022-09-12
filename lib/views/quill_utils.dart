@@ -10,15 +10,18 @@ import './html_widget.dart';
 class QuillText {
   dynamic insert = "";
   Map<String, dynamic>? attributes;
+  Map<String, dynamic>? info;
 
   QuillText({
     required this.insert,
     this.attributes,
+    this.info,
   });
 
   QuillText.attr({
     required this.insert,
     required this.attributes,
+    this.info,
   });
 
   static copyAttribute(Map<String, dynamic>? attr) {
@@ -30,6 +33,9 @@ class QuillText {
     var data = <String, dynamic>{'insert': insert};
     if (attributes != null) {
       data['attributes'] = attributes;
+    }
+    if (info != null) {
+      data['info'] = info;
     }
     return data;
   }
@@ -92,19 +98,25 @@ void travelHtml2Quill(hdom.Element? document, Map<String, dynamic>? attributes, 
         travelHtml2Quill(ele, attributes2, res);
       } else if (ele.localName == "p") {
         if (ele.classes.contains('quotehead') || ele.classes.contains('blockquote')) {
+          // 不再处理quotehead，引用部分单独处理，此处代码无用
           if (ele.classes.contains('quotehead')) {
-            res.add(QuillText(insert: '" ${ele.text}', attributes: {'color': "#aaaaaa", 'quotehead': true,
-              'data-username': ele.attributes['data-username'] ?? "", 'data-nickname': ele.attributes['data-nickname'] ?? ""}));
+            // res.add(QuillText(insert: '" ${ele.text}', attributes: {'color': "#aaaaaa", 'quotehead': true,
+            //   'data-username': ele.attributes['data-username'] ?? "", 'data-nickname': ele.attributes['data-nickname'] ?? ""}));
+            res.add(QuillText(insert: ele.text, attributes: {'color': "#aaaaaa"}, info: {'quotehead': true,
+              'data-username': ele.attributes['data-username'] ?? "", 'data-nickname': ele.attributes['data-nickname'] ?? "" }));
+            res.add(QuillText(insert: '\n', attributes: {'blockquote': true}));
           } else {
-            res.add(QuillText(insert: '" ${ele.text}', attributes: {'color': "#aaaaaa", 'blockquote': true}));
+            res.add(QuillText(insert: ele.text, attributes: {'color': "#aaaaaa"}, info: {'blockquote': true}));
+            res.add(QuillText(insert: '\n', attributes: {'blockquote': true}));
           }
         } else {
-          travelHtml2Quill(ele, {'color': "#000000"}, res);
+          // travelHtml2Quill(ele, {'color': "#000000"}, res);
+          travelHtml2Quill(ele, {}, res);
+          res.add(QuillText(insert: "\n"));
         }
         // if (cdom != document.nodes.last) {
         //   res.add(QuillText(insert: "\n"));
         // }
-        res.add(QuillText(insert: "\n"));
       } else if (ele.localName == "h5") {
         res.add(QuillText(insert: ele.text, attributes: {'bold': true, 'size': 12}));
         if (cdom != document.nodes.last) {
@@ -146,6 +158,43 @@ void travelHtml2Quill(hdom.Element? document, Map<String, dynamic>? attributes, 
 
 String quill2BDWMtext(List<dynamic> quillDelta) {
   var res = <BDWMtext>[];
+  int idx = quillDelta.length-1;
+  while (idx >= 0) {
+    var qd = quillDelta[idx];
+    var attr = qd['attributes'];
+    // var insert = qd['insert'];
+    if (attr != null) {
+      if (attr['blockquote']!=null && attr['blockquote']==true) {
+        // {insert: \n, attributes: {blockquote: true}}
+        qd['del'] = true;
+        var cidx = idx-1;
+        var newInsert = "";
+        while (cidx >= 0) {
+          var cqd = quillDelta[cidx];
+          var cinsert = cqd['insert'];
+          if (cinsert is String) {
+            var returnIdx = cinsert.lastIndexOf("\n");
+            if (returnIdx != -1) {
+              cqd['insert'] = cinsert.substring(0, returnIdx+1);
+              newInsert = "${cinsert.substring(returnIdx+1)}$newInsert";
+              break;
+            }
+          } else {
+            // image
+            break;
+          }
+          newInsert = cinsert + newInsert;
+          cqd['del'] = true;
+          cidx -= 1;
+        }
+        idx = cidx;
+        quillDelta.removeWhere((element) => element['del']!=null);
+        quillDelta.insert(cidx+1, {"insert": newInsert, "attributes": {'blockquoteProcessed': true}});
+        continue;
+      }
+    }
+    idx -= 1;
+  }
   for (var qd in quillDelta) {
     var attr = qd['attributes'];
     var insert = qd['insert'];
@@ -165,11 +214,10 @@ String quill2BDWMtext(List<dynamic> quillDelta) {
       int foreColor = colorIdx ?? 9;
       int backColor = bColorIdx ?? 9;
       var content = insert;
-      if (attr['quotehead']!=null && attr['quotehead']==true) {
-        var username = attr['data-username'] ?? "";
-        var nickname = attr['data-nickname'] ?? "";
-        res.add(BDWMQuoteText(mail: true, nickname: nickname, username: username, type: 'quotehead'));
-      } else if (attr['blockquote']!=null && attr['blockquote']==true) {
+      if (attr['blockquote']!=null && attr['blockquote']==true) {
+        // shall not reach here
+        res.add(BDWMAnsiText(type: "quote", bold: bold, underline: underline, foreColor: foreColor, backColor: backColor, content: content));
+      } else if (attr['blockquoteProcessed']!=null && attr['blockquoteProcessed']==true) {
         res.add(BDWMAnsiText(type: "quote", bold: bold, underline: underline, foreColor: foreColor, backColor: backColor, content: content));
       } else {
         // normal, bold, underline, color, background color
