@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:async/async.dart';
+import 'package:bdwm_viewer/services_instance.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 
 import '../views/constants.dart';
 import '../html_parser/board_parser.dart';
@@ -12,7 +12,7 @@ import '../bdwm/message.dart';
 import '../bdwm/req.dart';
 import '../globalvars.dart';
 import '../utils.dart';
-import '../services.dart' show MessageBriefNotifier, NotifyMessage;
+import '../services.dart' show MessageBriefNotifier;
 
 class MessageListPage extends StatefulWidget {
   final MessageBriefNotifier users;
@@ -81,8 +81,7 @@ class _MessageListPageState extends State<MessageListPage> {
 class MessagePersonPage extends StatefulWidget {
   final String withWho;
   final int count = 50;
-  final NotifyMessage notifier;
-  const MessagePersonPage({super.key, required this.withWho, required this.notifier});
+  const MessagePersonPage({super.key, required this.withWho});
 
   @override
   State<MessagePersonPage> createState() => MessagePersonPageState();
@@ -113,7 +112,7 @@ class MessagePersonPageState extends State<MessagePersonPage> {
       // _controller.jumpTo(_controller.position.maxScrollExtent);
       var res = await bdwmSetMessagesRead(widget.withWho);
       if (res == true) {
-        widget.notifier.clearOne(widget.withWho);
+        unreadMessage.clearOne(widget.withWho);
       }
     });
   }

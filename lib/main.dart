@@ -24,6 +24,7 @@ import './pages/mail_new.dart';
 import './views/search.dart' show PostSearchSettings;
 // import './pages/detail_image.dart';
 import './services.dart';
+import './services_instance.dart';
 import './bdwm/mail.dart';
 import './utils.dart';
 
@@ -45,9 +46,6 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   Timer? timerMessage;
   Timer? timerMail;
-  final NotifyMessage unreadMessage = NotifyMessage();
-  final NotifyMail unreadMail = NotifyMail();
-  // NotifyMessageInfo unreadMessageInfo = NotifyMessageInfo.empty();
   ValueNotifier<int> messageCount = ValueNotifier<int>(0);
   ValueNotifier<int> mailCount = ValueNotifier<int>(0);
   MessageBriefNotifier messageBrief = MessageBriefNotifier([]);
@@ -212,7 +210,7 @@ class _MainPageState extends State<MainPage> {
             if (settings.arguments != null) {
               needBack = (settings.arguments as Map)['needBack'] ?? false;
             }
-            builder = (BuildContext context) => LoginApp(needBack: needBack, nMail: unreadMail, nMessage: unreadMessage,);
+            builder = (BuildContext context) => LoginApp(needBack: needBack);
             break;
           case "/about":
             builder = (BuildContext context) => const AboutApp();
@@ -272,7 +270,7 @@ class _MainPageState extends State<MainPage> {
             if (globalUInfo.login) {
               builder = (BuildContext context) => UserApp(uid: globalUInfo.uid);
             } else {
-              builder = (BuildContext context) => LoginApp(nMail: unreadMail, nMessage: unreadMessage,);
+              builder = (BuildContext context) => const LoginApp();
             }
             break;
           case "/user":
@@ -284,7 +282,7 @@ class _MainPageState extends State<MainPage> {
             break;
           case "/messagePerson":
             String userName = settings.arguments as String? ?? "deliver";
-            builder = (BuildContext context) => MessagePersonApp(userName: userName, notifier: unreadMessage);
+            builder = (BuildContext context) => MessagePersonApp(userName: userName);
             break;
           case "/home":
           default:

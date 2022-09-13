@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../views/message.dart';
-import '../services.dart' show MessageBriefNotifier, NotifyMessage;
+import '../services.dart' show MessageBriefNotifier;
 import '../views/utils.dart';
 import '../bdwm/search.dart';
 import '../bdwm/message.dart';
@@ -80,8 +80,7 @@ class _MessagelistAppState extends State<MessagelistApp> {
 
 class MessagePersonApp extends StatefulWidget {
   final String userName;
-  final NotifyMessage notifier;
-  const MessagePersonApp({super.key, required this.userName, required this.notifier});
+  const MessagePersonApp({super.key, required this.userName});
 
   @override
   State<MessagePersonApp> createState() => _MessagePersonAppState();
@@ -102,7 +101,7 @@ class _MessagePersonAppState extends State<MessagePersonApp> {
       appBar: AppBar(
         title: Text(widget.userName),
       ),
-      body: MessagePersonPage(withWho: widget.userName, notifier: widget.notifier, key: childKey),
+      body: MessagePersonPage(withWho: widget.userName, key: childKey),
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
         // color: Colors.blue,
