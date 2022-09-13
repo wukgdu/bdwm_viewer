@@ -13,7 +13,8 @@ import '../services.dart' show MessageBriefNotifier, NotifyMessage;
 
 class MessageListPage extends StatefulWidget {
   final MessageBriefNotifier users;
-  const MessageListPage({super.key, required this.users});
+  final Set<String> extraUsers;
+  const MessageListPage({super.key, required this.users, required this.extraUsers});
 
   @override
   State<MessageListPage> createState() => _MessageListPageState();
@@ -27,6 +28,12 @@ class _MessageListPageState extends State<MessageListPage> {
       builder: (context, value, child) {
         var users = value as List<TextAndLink>;
         bool deliver = false;
+        var usersSet = Set.from(users.map((e) => e.text));
+        for (var u in widget.extraUsers) {
+          if (!usersSet.contains(u)) {
+            users.insert(0, TextAndLink(u, "0"));
+          }
+        }
         for (var u in users) {
           if (u.text == "deliver") {
             deliver = true;

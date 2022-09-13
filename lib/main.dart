@@ -51,6 +51,11 @@ class _MainPageState extends State<MainPage> {
   ValueNotifier<int> messageCount = ValueNotifier<int>(0);
   ValueNotifier<int> mailCount = ValueNotifier<int>(0);
   MessageBriefNotifier messageBrief = MessageBriefNotifier([]);
+  Set<String> extraUsers = {};
+
+  void updateExtraUsers(String user) {
+    extraUsers.add(user);
+  }
 
   @override
   void initState() {
@@ -275,7 +280,7 @@ class _MainPageState extends State<MainPage> {
             builder = (BuildContext context) => UserApp(uid: userID, needBack: true,);
             break;
           case "/message":
-            builder = (BuildContext context) => MessagelistApp(brief: messageBrief,);
+            builder = (BuildContext context) => MessagelistApp(brief: messageBrief, extraUsers: extraUsers, callBack: updateExtraUsers);
             break;
           case "/messagePerson":
             String userName = settings.arguments as String? ?? "deliver";
