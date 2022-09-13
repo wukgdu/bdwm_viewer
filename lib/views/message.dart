@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import '../views/constants.dart';
 import '../html_parser/board_parser.dart';
@@ -82,10 +85,10 @@ class MessagePersonPage extends StatefulWidget {
   const MessagePersonPage({super.key, required this.withWho, required this.notifier});
 
   @override
-  State<MessagePersonPage> createState() => _MessagePersonPageState();
+  State<MessagePersonPage> createState() => MessagePersonPageState();
 }
 
-class _MessagePersonPageState extends State<MessagePersonPage> {
+class MessagePersonPageState extends State<MessagePersonPage> {
   late CancelableOperation getDataCancelable;
   final ScrollController _controller = ScrollController();
 
@@ -108,9 +111,17 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
     },);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       // _controller.jumpTo(_controller.position.maxScrollExtent);
-      var _ = await bdwmSetMessagesRead(widget.withWho);
-      widget.notifier.clearOne(widget.withWho);
+      var res = await bdwmSetMessagesRead(widget.withWho);
+      if (res == true) {
+        widget.notifier.clearOne(widget.withWho);
+      }
     });
+  }
+
+  void update() {
+    getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+    },);
+    setState(() { });
   }
 
   @override
@@ -143,7 +154,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
             border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
           ),
           constraints: BoxConstraints(
-            maxWidth: dWidth/1.7,
+            maxWidth: dWidth*0.7,
           ),
           child: SelectionArea(
             child: Text.rich(
@@ -170,7 +181,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
                             });
                           }
                         },
-                        child: const Text("点击查看", style: TextStyle(color: bdwmPrimaryColor)),
+                        child: const Text("[点击查看]", style: TextStyle(color: bdwmPrimaryColor)),
                       ),
                     ),
                 ]

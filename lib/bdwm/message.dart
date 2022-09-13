@@ -49,6 +49,15 @@ class MessageItem {
     required this.time,
     required this.content,
   });
+  MessageItem.fromMap(Map element) {
+    id = element['id'];
+    withWho = element['with'];
+    withuid = element['withuid'];
+    dir = element['dir'];
+    unread = element['unread'];
+    time = element['time'];
+    content = element['content'];
+  }
 }
 
 class MessageInfo {
@@ -87,14 +96,7 @@ Future<MessageInfo> bdwmGetMessages(String withWho, int count) async {
   }
   var messages = <MessageItem>[];
   for (var element in resContent['result']) {
-    var id = element['id'];
-    var withWho = element['with'];
-    var withuid = element['withuid'];
-    var dir = element['dir'];
-    var unread = element['unread'];
-    var time = element['time'];
-    var content = element['content'];
-    messages.add(MessageItem(id: id, withWho: withWho, withuid: withuid, dir: dir, unread: unread, time: time, content: content));
+    messages.add(MessageItem.fromMap(element));
   }
   return MessageInfo(success: true, error: 0, messages: messages);
 }
@@ -113,4 +115,42 @@ Future<bool> bdwmSetMessagesRead(String withWho) async {
     return false;
   }
   return true;
+}
+
+class MessageSendRes {
+  bool success = false;
+  int error = 0;
+  MessageItem? name;
+  String? desc;
+  MessageSendRes({
+    required this.success,
+    required this.name,
+    required this.error,
+  });
+  MessageSendRes.error({
+    required this.success,
+    required this.error,
+    required this.desc,
+  });
+}
+
+Future<MessageSendRes> bdwmSendMessages(String withWho, String content) async {
+  var actionUrl = "$v2Host/ajax/send_message.php";
+  var data = {
+    'user': withWho,
+    'content': content,
+  };
+  var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
+  if (resp == null) {
+    return MessageSendRes.error(success: false, error: -1, desc: networkErrorText);
+  }
+  var resContent = json.decode(resp.body);
+  if (resContent['success']==false) {
+    return MessageSendRes.error(success: false, error: resContent['error'] ?? 0, desc: "");
+  }
+  return MessageSendRes(
+    success: true,
+    error: resContent['error'] ?? 0,
+    name: MessageItem.fromMap(resContent['name']),
+  );
 }
