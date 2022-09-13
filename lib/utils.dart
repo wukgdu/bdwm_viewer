@@ -25,14 +25,7 @@ Future<bool> checkAndRequestPermission(Permission p) async {
 }
 
 void quickNotify(String title, String content) async {
-  var couldNotify = true;
-  var hasP = await Permission.notification.isGranted;
-  if (!hasP) {
-    var status = await Permission.notification.request();
-    if (!status.isGranted) {
-      couldNotify = false;
-    }
-  }
+  var couldNotify = await checkAndRequestPermission(Permission.notification);
   if (couldNotify == false) {
     return;
   }

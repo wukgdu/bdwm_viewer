@@ -184,3 +184,76 @@ Map<String, String> genHeadersForUpload() {
 }
 
 var globalUInfo = Uinfo.empty();
+
+class TmpContactInfo {
+  Set<String> contact = {};
+  String storage = "bdwmcontact.json";
+
+  TmpContactInfo.empty();
+  TmpContactInfo.initFromFile() {
+    init();
+  }
+
+  String gist() {
+    return contact.join(",");
+  }
+
+  Future<bool> addOne(String userName) async {
+    contact.add(userName);
+    return update();
+  }
+
+  Future<bool> addAll(Iterable<String> users) async {
+    contact.addAll(users);
+    return update();
+  }
+
+  Future<bool> removeOne(String userName) async {
+    contact.remove(userName);
+    return update();
+  }
+
+  Future<bool> removeAll() async {
+    contact.clear();
+    return update();
+  }
+
+  Future<bool> init() async {
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    String filename = "$dir/$storage";
+    // debugPrint(filename);
+    void writeInit() {
+      var file = File(filename).openWrite();
+      file.write(jsonEncode([]));
+      file.close();
+    }
+    if (File(filename).existsSync()) {
+      var content = File(filename).readAsStringSync();
+      if (content.isEmpty) {
+        writeInit();
+      }
+      var jsonContent = jsonDecode(content);
+      var idx = jsonContent.length-1;
+      while (idx >= 0) {
+        contact.add(jsonContent[idx]);
+        idx -= 1;
+      }
+    } else {
+      writeInit();
+    }
+    return true;
+  }
+
+  Future<bool> update() async {
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    String filename = "$dir/$storage";
+    var file = File(filename).openWrite();
+    var contactList = contact.toList();
+    contactList.sort();
+    file.write(jsonEncode(contactList));
+    file.close();
+    return true;
+  }
+}
+
+var globalContactInfo = TmpContactInfo.empty();

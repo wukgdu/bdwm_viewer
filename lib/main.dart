@@ -28,12 +28,12 @@ import './services_instance.dart';
 import './bdwm/mail.dart';
 import './utils.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // debugPaintSizeEnabled = true;
-  globalUInfo.init().then((res) {
-    runApp(const MainPage());
-  });
+  await globalUInfo.init();
+  await globalContactInfo.init();
+  runApp(const MainPage());
 }
 
 class MainPage extends StatefulWidget {
@@ -49,11 +49,6 @@ class _MainPageState extends State<MainPage> {
   ValueNotifier<int> messageCount = ValueNotifier<int>(0);
   ValueNotifier<int> mailCount = ValueNotifier<int>(0);
   MessageBriefNotifier messageBrief = MessageBriefNotifier([]);
-  Set<String> extraUsers = {};
-
-  void updateExtraUsers(String user) {
-    extraUsers.add(user);
-  }
 
   @override
   void initState() {
@@ -278,7 +273,7 @@ class _MainPageState extends State<MainPage> {
             builder = (BuildContext context) => UserApp(uid: userID, needBack: true,);
             break;
           case "/message":
-            builder = (BuildContext context) => MessagelistApp(brief: messageBrief, extraUsers: extraUsers, callBack: updateExtraUsers);
+            builder = (BuildContext context) => MessagelistApp(brief: messageBrief);
             break;
           case "/messagePerson":
             String userName = settings.arguments as String? ?? "deliver";

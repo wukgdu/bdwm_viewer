@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:async/async.dart';
-import 'package:bdwm_viewer/services_instance.dart';
 import 'package:flutter/material.dart';
 
 import '../views/constants.dart';
@@ -12,12 +11,12 @@ import '../bdwm/message.dart';
 import '../bdwm/req.dart';
 import '../globalvars.dart';
 import '../utils.dart';
+import '../services_instance.dart';
 import '../services.dart' show MessageBriefNotifier;
 
 class MessageListPage extends StatefulWidget {
   final MessageBriefNotifier users;
-  final Set<String> extraUsers;
-  const MessageListPage({super.key, required this.users, required this.extraUsers});
+  const MessageListPage({super.key, required this.users});
 
   @override
   State<MessageListPage> createState() => _MessageListPageState();
@@ -29,13 +28,16 @@ class _MessageListPageState extends State<MessageListPage> {
     return ValueListenableBuilder(
       valueListenable: widget.users,
       builder: (context, value, child) {
-        var users = value as List<TextAndLink>;
+        var users = (value as List<TextAndLink>).map((e) => TextAndLink(e.text, e.link)).toList();
         bool deliver = false;
-        var usersSet = Set.from(users.map((e) => e.text));
-        for (var u in widget.extraUsers) {
+        Set<String> usersSet = Set.from(users.map((e) => e.text));
+        for (var u in globalContactInfo.contact) {
           if (!usersSet.contains(u)) {
-            users.insert(0, TextAndLink(u, "0"));
+            users.add(TextAndLink(u, "0"));
           }
+        }
+        if (usersSet.isNotEmpty) {
+          globalContactInfo.addAll(usersSet);
         }
         for (var u in users) {
           if (u.text == "deliver") {
@@ -54,6 +56,29 @@ class _MessageListPageState extends State<MessageListPage> {
                 child: ListTile(
                   onTap: () {
                     Navigator.of(context).pushNamed('/messagePerson', arguments: e.text);
+                  },
+                  onLongPress: () {
+                    if (e.text == "deliver") { return; }
+                    showAlertDialog(context, "", const Text("删除此对话？"),
+                      actions1: TextButton(
+                        child: const Text("不了"), 
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      actions2: TextButton(
+                        child: const Text("对的"), 
+                        onPressed: () {
+                          Navigator.of(context).pop("yes");
+                        },
+                      ),
+                    ).then((value) {
+                      if (value!=null && value=="yes") {
+                        globalContactInfo.removeOne(e.text).then((value) {
+                          setState(() { });
+                        });
+                      }
+                    },);
                   },
                   leading: const Icon(Icons.person, color: bdwmPrimaryColor,),
                   title: Text(e.text),
@@ -158,7 +183,7 @@ class MessagePersonPageState extends State<MessagePersonPage> {
           child: SelectionArea(
             child: Text.rich(
               TextSpan(
-                text: "${DateTime.fromMillisecondsSinceEpoch(mi.time*1000)}\n",
+                text: "${DateTime.fromMillisecondsSinceEpoch(mi.time*1000).toString().split('.').first}\n",
                 children: [
                   TextSpan(text: rawContent),
                   if (link.isNotEmpty)

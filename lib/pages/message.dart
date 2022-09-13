@@ -6,23 +6,22 @@ import '../views/utils.dart';
 import '../bdwm/search.dart';
 import '../bdwm/message.dart';
 import '../views/constants.dart';
+import '../globalvars.dart' show globalContactInfo, globalUInfo;
 
 class MessagelistApp extends StatefulWidget {
   final MessageBriefNotifier brief;
-  final Set<String> extraUsers;
-  final Function callBack;
-  const MessagelistApp({Key? key, required this.brief, required this.extraUsers, required this.callBack}) : super(key: key);
+  const MessagelistApp({Key? key, required this.brief}) : super(key: key);
 
   @override
   State<MessagelistApp> createState() => _MessagelistAppState();
 }
 
 class _MessagelistAppState extends State<MessagelistApp> {
-  Set<String> extraUsers = {};
+  // Set<String> extraUsers = {};
   @override
   void initState() {
     super.initState();
-    extraUsers = widget.extraUsers;
+    // extraUsers = globalContactInfo.contact;
   }
   @override
   Widget build(BuildContext context) {
@@ -34,6 +33,10 @@ class _MessagelistAppState extends State<MessagelistApp> {
             onPressed: () async {
               var userNew = await showTextDialog(context, "添加对话");
               if (userNew == null) {
+                return;
+              }
+              userNew = userNew.trim();
+              if (userNew == globalUInfo.username) {
                 return;
               }
               var userRes = await bdwmUserInfoSearch([userNew]);
@@ -61,19 +64,20 @@ class _MessagelistAppState extends State<MessagelistApp> {
                   }
                 }
               }
-              if (extraUsers.contains(userNew)) {
+              if (globalContactInfo.contact.contains(userNew)) {
                 return;
               }
-              widget.callBack(userNew);
-              extraUsers.add(userNew);
-              setState(() {
-              });
+              // widget.callBack(userNew);
+              globalContactInfo.addOne(userNew).then((value) {
+                setState(() {
+                });
+              },);
             },
             icon: const Icon(Icons.add),
           ),
         ],
       ),
-      body: MessageListPage(users: widget.brief, extraUsers: extraUsers,),
+      body: MessageListPage(users: widget.brief),
     );
   }
 }
