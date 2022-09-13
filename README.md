@@ -62,7 +62,7 @@ https://github.com/wukgdu/bdwm_viewer/releases
     3. [x] 新到提醒
 7. 站内信
     1. [x] 看
-    2. [ ] 发
+    2. [x] 发
     3. [x] 新到提醒
     4. [ ] 各种操作
 
