@@ -688,7 +688,8 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
           ),
         ),
         Expanded(
-          child: SingleChildScrollView(
+          child: widget.postid != null
+          ? SingleChildScrollView(
             controller: _scrollController,
             padding: const EdgeInsets.all(8),
             child: Column(
@@ -696,6 +697,14 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
                 return _onepost(pair.value, pair.key);
               }).toList(),
             ),
+          )
+          : ListView.builder(
+            controller: _scrollController,
+            padding: const EdgeInsets.all(8),
+            itemCount: widget.threadPageInfo.posts.length,
+            itemBuilder: (context, index) {
+              return _onepost(widget.threadPageInfo.posts[index], index);
+            },
           ),
           // child: ListView(
           //   controller: ScrollController(),
@@ -703,14 +712,6 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
           //   children: widget.threadPageInfo.posts.asMap().entries.map((pair) {
           //     return _onepost(pair.value, pair.key);
           //   }).toList(),
-          // ),
-          // child: ListView.builder(
-          //   controller: ScrollController(),
-          //   padding: const EdgeInsets.all(8),
-          //   itemCount: widget.threadPageInfo.posts.length,
-          //   itemBuilder: (context, index) {
-          //     return _onepost(widget.threadPageInfo.posts[index]);
-          //   },
           // ),
         )
       ]
