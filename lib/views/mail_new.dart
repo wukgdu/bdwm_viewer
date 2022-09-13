@@ -43,6 +43,7 @@ class _MailNewPageState extends State<MailNewPage> {
   final signatureOB = SignatureItem(key: "OBViewer", value: "OBViewer");
   @override
   void initState() {
+    super.initState();
     if (widget.content != null && widget.content!.isNotEmpty) {
       var clist = html2Quill(widget.content!);
       _controller = fquill.QuillController(
@@ -58,7 +59,6 @@ class _MailNewPageState extends State<MailNewPage> {
     if (widget.receivers != null && widget.receivers!.isNotEmpty) {
       receiveValue.text = widget.receivers!;
     }
-    super.initState();
   }
 
   @override

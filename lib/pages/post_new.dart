@@ -20,7 +20,7 @@ class _PostNewAppState extends State<PostNewApp> {
       appBar: AppBar(
         title: Text(widget.boardName),
       ),
-      body: PostNewPage(bid: widget.bid, postid: widget.postid, parentid: widget.parentid,),
+      body: PostNewFuturePage(bid: widget.bid, postid: widget.postid, parentid: widget.parentid,),
     );
   }
 }

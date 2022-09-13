@@ -3,31 +3,36 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
+import 'package:flutter_quill/flutter_quill.dart' as fquill;
+import 'package:flutter_quill_extensions/embeds/builders.dart' show ImageEmbedBuilder;
 
 import '../bdwm/posts.dart';
-import '../views/html_widget.dart';
 import '../bdwm/req.dart';
-import './constants.dart';
 import '../globalvars.dart';
 import '../html_parser/postnew_parser.dart';
 import '../html_parser/utils.dart' show SignatureItem;
+import './constants.dart';
+import './html_widget.dart';
+import './quill_utils.dart';
+import './upload.dart';
 import './utils.dart';
-import '../views/upload.dart';
 
 class PostNewPage extends StatefulWidget {
   final String bid;
   final String? postid;
   final String? parentid;
   // final String boardName;
-  const PostNewPage({Key? key, required this.bid, this.postid, this.parentid}) : super(key: key);
+  final PostNewInfo postNewInfo;
+  final String? quoteText;
+  const PostNewPage({Key? key, required this.bid, this.postid, this.parentid, required this.postNewInfo, this.quoteText}) : super(key: key);
 
   @override
   State<PostNewPage> createState() => _PostNewPageState();
 }
 
 class _PostNewPageState extends State<PostNewPage> {
+  late final fquill.QuillController _controller;
   TextEditingController titleValue = TextEditingController();
-  TextEditingController contentValue = BDWMTextEditingController();
   bool needNoreply = false;
   bool needRemind = true;
   bool needForward = false;
@@ -35,12 +40,376 @@ class _PostNewPageState extends State<PostNewPage> {
   SignatureItem? signature;
   final signatureOB = SignatureItem(key: "OBViewer", value: "OBViewer");
   static const vDivider = VerticalDivider();
-  FocusNode contentFocusNode = FocusNode();
   int attachCount = 0;
+  List<String> attachFiles = [];
 
   late CancelableOperation getDataCancelable;
 
   bool useHtmlContent = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // _future = getData();
+    var content = widget.postNewInfo.contentHtml;
+    if (content!=null && content.isNotEmpty) {
+      var clist = html2Quill(content);
+      _controller = fquill.QuillController(
+        document: fquill.Document.fromJson(clist),
+        selection: const TextSelection.collapsed(offset: 0),
+      );
+    } else {
+      _controller = fquill.QuillController.basic();
+    }
+
+    if (widget.postNewInfo.titleText != null && widget.postNewInfo.titleText!.isNotEmpty) {
+      if (titleValue.text.isEmpty) {
+        titleValue.value = TextEditingValue(text: widget.postNewInfo.titleText!);
+      }
+    }
+
+    if (signature == null && widget.postid != null) {
+      for (var item in widget.postNewInfo.signatureInfo) {
+        if (item.value == "keep") {
+          signature = item;
+          break;
+        }
+      }
+    }
+
+    attachFiles = widget.postNewInfo.attachFiles;
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    titleValue.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    debugPrint("post new rebuild");
+    return ListView(
+      children: [
+        Container(
+          margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 10),
+          child: Row(
+            children: [
+              // const Text("标题"),
+              Expanded(
+                child: TextField(
+                  controller: titleValue,
+                  decoration: const InputDecoration(
+                    labelText: "标题",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  if (titleValue.text.isEmpty) {
+                    showAlertDialog(context, "有问题", const Text("标题不能为空"),
+                      actions1: TextButton(
+                        onPressed: () { Navigator.of(context).pop(); },
+                        child: const Text("知道了"),
+                      )
+                    );
+                    return;
+                  }
+                  if (_controller.document.length==0) {
+                    showAlertDialog(context, "有问题", const Text("内容不能为空"),
+                      actions1: TextButton(
+                        onPressed: () { Navigator.of(context).pop(); },
+                        child: const Text("知道了"),
+                      )
+                    );
+                    return;
+                  }
+                  var config = <String, bool>{};
+                  if (needNoreply) { config['no_reply'] = true; }
+                  if (needRemind) { config['mail_re'] = true; }
+                  if (needAnony) { config['anony'] = true; }
+                  var nSignature = signature?.value ?? "";
+                  if (nSignature == "random") {
+                    var moreCount = widget.postid == null ? 2 : 3;
+                    // moreCount -= 1; // skip OBViewer // dont need skip since it is not here
+                    var maxS = widget.postNewInfo.signatureInfo.length - moreCount;
+                    var randomI = math.Random().nextInt(maxS);
+                    nSignature = randomI.toString();
+                  } else if (nSignature == "keep") {
+                    nSignature = widget.postNewInfo.oriSignature ?? "";
+                  } else if (nSignature == "OBViewer") {
+                    nSignature = jsonEncode(signatureOBViewer);
+                  }
+
+                  var quillDelta = _controller.document.toDelta().toJson();
+                  debugPrint(quillDelta.toString());
+                  var postContent = quill2BDWMtext(quillDelta);
+                  if (widget.quoteText != null) {
+                    var mailQuote = bdwmTextFormat(widget.quoteText!, mail: false);
+                    // ...{}] [{}...
+                    postContent = "${postContent.substring(0, postContent.length-1)},${mailQuote.substring(1)}";
+                  }
+                  debugPrint(postContent);
+
+                  var nContent = useHtmlContent ? postContent : _controller.document.toPlainText();
+                  var nAttachPath = widget.postid == null
+                    ? attachCount > 0
+                      ? widget.postNewInfo.attachpath : ""
+                    : widget.postNewInfo.attachpath;
+                  bdwmSimplePost(
+                    bid: widget.bid, title: titleValue.text, content: nContent, useBDWM: useHtmlContent, parentid: widget.parentid,
+                    signature: nSignature, config: config, modify: widget.postid!=null, postid: widget.postid, attachpath: nAttachPath)
+                  .then((value) {
+                    if (value.success) {
+                      // TODO: handle forward
+                      showAlertDialog(context, "发送成功", const Text("rt"),
+                        actions1: TextButton(
+                          onPressed: () { Navigator.of(context).pop(); },
+                          child: const Text("知道了"),
+                        )
+                      ).then((value) {
+                        Navigator.of(context).pop(true);
+                      });
+                    } else {
+                      var errorMessage = "发送失败，请稍后重试";
+                      if (value.error == 43) {
+                        errorMessage = "对不起，您的帖子包含敏感词，请检查后发布";
+                      } else if (value.error == -1) {
+                        errorMessage = value.result!;
+                      }
+                      showAlertDialog(context, "发送失败", Text(errorMessage),
+                        actions1: TextButton(
+                          onPressed: () { Navigator.of(context).pop(); },
+                          child: const Text("知道了"),
+                        )
+                      );
+                    }
+                  });
+                },
+                child: const Text("发布", style: TextStyle(color: bdwmPrimaryColor)),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
+            borderRadius: const BorderRadius.all(Radius.circular(5)),
+          ),
+          margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
+          height: 200,
+          child: fquill.QuillEditor.basic(
+            controller: _controller,
+            readOnly: false, // true for view only mode
+            embedBuilders: [ImageEmbedBuilder()],
+            // locale: const Locale('zh', 'CN'),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+          child: fquill.QuillToolbar.basic(
+            controller: _controller,
+            toolbarSectionSpacing: 1,
+            showAlignmentButtons: false,
+            showBoldButton: true,
+            showUnderLineButton: true,
+            showStrikeThrough: false,
+            showDirection: false,
+            showFontFamily: false,
+            showFontSize: false,
+            showHeaderStyle: false,
+            showIndent: false,
+            showLink: false,
+            showSearchButton: false,
+            showListBullets: false,
+            showListNumbers: false,
+            showListCheck: false,
+            showDividers: false,
+            showRightAlignment: false,
+            showItalicButton: false,
+            showCenterAlignment: false,
+            showLeftAlignment: false,
+            showJustifyAlignment: false,
+            showSmallButton: false,
+            showInlineCode: false,
+            showCodeBlock: false,
+            showColorButton: false,
+            showRedo: false,
+            showUndo: false,
+            showBackgroundColorButton: false,
+            customButtons: [
+              fquill.QuillCustomButton(
+                icon: Icons.color_lens,
+                onTap: () {
+                  showColorDialog(context, (bdwmRichText['fc'] as Map<String, int>).keys.toList())
+                  .then((value) {
+                    if (value == null) { return; }
+                    _controller.formatSelection(fquill.ColorAttribute(value));
+                  });
+                }
+              ),
+              fquill.QuillCustomButton(
+                icon: Icons.format_color_fill,
+                onTap: () {
+                  showColorDialog(context, (bdwmRichText['bc'] as Map<String, int>).keys.toList())
+                  .then((value) {
+                    if (value == null) { return; }
+                    _controller.formatSelection(fquill.BackgroundAttribute(value));
+                  });
+                }
+              ),
+              fquill.QuillCustomButton(
+                icon: Icons.image,
+                onTap: () {
+                  showTextDialog(context, "图片链接")
+                  .then((value) {
+                    if (value==null) { return; }
+                    if (value.isEmpty) { return; }
+                    var index = _controller.selection.baseOffset;
+                    var length = _controller.selection.extentOffset - index;
+                    _controller.replaceText(index, length, fquill.BlockEmbed.image(value), null);
+                  },);
+                }
+              ),
+            ],
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(top: 0, left: 10, right: 10, bottom: 0),
+          child: Wrap(
+            // alignment: WrapAlignment.center,
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Checkbox(
+                value: needNoreply,
+                activeColor: bdwmPrimaryColor,
+                onChanged: widget.postNewInfo.canNoreply
+                  ? (value) {
+                    setState(() {
+                      needNoreply = value!;
+                    });
+                  }
+                  : null,
+              ),
+              const Text("不可回复"),
+              vDivider,
+              Checkbox(
+                value: needRemind,
+                activeColor: bdwmPrimaryColor,
+                onChanged: widget.postNewInfo.canRemind
+                  ? (value) {
+                    setState(() {
+                      needRemind = value!;
+                    });
+                  }
+                  : null,
+              ),
+              const Text("回复提醒"),
+              vDivider,
+              // Checkbox(
+              //   value: needForward,
+              //   activeColor: bdwmPrimaryColor,
+              //   onChanged: postNewInfo.canForward
+              //     ? (value) {
+              //       setState(() {
+              //         needForward = value!;
+              //       });
+              //     }
+              //     : null,
+              // ),
+              // const Text("抄送给原作者"),
+              vDivider,
+              Checkbox(
+                value: needAnony,
+                activeColor: bdwmPrimaryColor,
+                onChanged: widget.postNewInfo.canAnony
+                  ? (value) {
+                    setState(() {
+                      needAnony = value!;
+                    });
+                  }
+                  : null,
+              ),
+              const Text("匿名"),
+            ],
+          ),
+        ),
+        if (widget.quoteText!=null)
+          Container(
+            margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
+            constraints: const BoxConstraints(
+              maxHeight: 100,
+            ),
+            child: SingleChildScrollView(
+              child: HtmlComponent(widget.quoteText!),
+            ),
+          ),
+        Container(
+          margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
+          // alignment: Alignment.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              DropdownButton<SignatureItem>(
+                hint: const Text("签名档"),
+                icon: const Icon(Icons.arrow_drop_down),
+                value: signature,
+                items: [
+                  ...widget.postNewInfo.signatureInfo.map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
+                    return DropdownMenuItem<SignatureItem>(
+                        value: item,
+                        child: Text(item.key),
+                      );
+                    }).toList(),
+                  DropdownMenuItem<SignatureItem>(
+                    value: signatureOB,
+                    child: const Text("OBViewer"),
+                  )
+                ],
+                onChanged: (SignatureItem? value) {
+                  setState(() {
+                    signature = value!;
+                  });
+                },
+              ),
+              TextButton(
+                onPressed: () {
+                  showUploadDialog(context, widget.postNewInfo.attachpath, attachFiles)
+                  .then((value) {
+                    if (value == null) { return; }
+                    var content = jsonDecode(value);
+                    attachCount = content['count'];
+                    attachFiles = [];
+                    for (var f in content['files']) {
+                      attachFiles.add(f);
+                    }
+                  },);
+                },
+                child: const Text("管理附件"),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class PostNewFuturePage extends StatefulWidget {
+  final String bid;
+  final String? postid;
+  final String? parentid;
+  const PostNewFuturePage({super.key, required this.bid, this.postid, this.parentid});
+
+  @override
+  State<PostNewFuturePage> createState() => _PostNewFuturePageState();
+}
+
+class _PostNewFuturePageState extends State<PostNewFuturePage> {
+  late CancelableOperation getDataCancelable;
 
   Future<PostNewInfo> getData() async {
     var url = "$v2Host/post-new.php?bid=${widget.bid}";
@@ -64,53 +433,28 @@ class _PostNewPageState extends State<PostNewPage> {
     return resp.result!;
   }
 
-  Future<PostNewInfo> getExampleData() async {
-    debugPrint("get PostNew data");
-    return getData();
-  }
-
   @override
   void initState() {
     super.initState();
-    // _future = getData();
     if (widget.parentid == null) {
       getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
-        debugPrint("cancel it");
+        // debugPrint("cancel it");
       },);
     } else {
       getDataCancelable = CancelableOperation.fromFuture(Future.wait([getData(), getPostQuote()]), onCancel: () {
-        debugPrint("cancel it");
+        // debugPrint("cancel it");
       },);
     }
-    contentFocusNode.addListener(() {
-      if (contentFocusNode.hasFocus) {
-        var text = contentValue.text;
-        contentValue.clearComposing();
-        contentValue.clear();
-        (contentValue as BDWMTextEditingController).toggle();
-        contentValue.value = TextEditingValue(text: text);
-      } else {
-        var text = contentValue.text;
-        contentValue.clearComposing();
-        contentValue.clear();
-        (contentValue as BDWMTextEditingController).toggle();
-        contentValue.value = TextEditingValue(text: text);
-      }
-      contentValue.selection = TextSelection.fromPosition(const TextPosition(affinity: TextAffinity.downstream, offset: 0));
-    });
   }
 
   @override
   void dispose() {
-    titleValue.dispose();
-    contentValue.dispose();
-    contentFocusNode.dispose();
+    getDataCancelable.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("post rebuild");
     return FutureBuilder(
       future: getDataCancelable.value,
       builder: (context, snapshot) {
@@ -138,250 +482,11 @@ class _PostNewPageState extends State<PostNewPage> {
             child: Text(postNewInfo.errorMessage!),
           );
         }
-        if (postNewInfo.titleText != null && postNewInfo.titleText!.isNotEmpty) {
-          if (titleValue.text.isEmpty) {
-            titleValue.value = TextEditingValue(text: postNewInfo.titleText!);
-          }
-        }
-        if (postNewInfo.contentText != null && postNewInfo.contentText!.isNotEmpty) {
-          if (contentValue.text.isEmpty && !useHtmlContent) {
-            contentValue.value = TextEditingValue(text: postNewInfo.contentText!);
-          }
-        }
-        if (postNewInfo.contentHtml != null && postNewInfo.contentHtml!.isNotEmpty) {
-          if (contentValue.text.isEmpty && useHtmlContent) {
-            contentValue.value = TextEditingValue(text: postNewInfo.contentHtml!);
-          }
-        }
-        if (widget.parentid != null && quoteText != null && contentValue.text.isEmpty) {
-          if (useHtmlContent) {
-            contentValue.value = TextEditingValue(text: "\n$quoteText");
-          }
-        }
-        if (signature == null && widget.postid != null) {
-          for (var item in postNewInfo.signatureInfo) {
-            if (item.value == "keep") {
-              signature = item;
-              break;
-            }
-          }
-        }
-        return ListView(
-          children: [
-            Container(
-              margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 10),
-              child: Row(
-                children: [
-                  // const Text("标题"),
-                  Expanded(
-                    child: TextField(
-                      controller: titleValue,
-                      decoration: const InputDecoration(
-                        labelText: "标题",
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      if (titleValue.text.isEmpty) {
-                        showAlertDialog(context, "有问题", const Text("标题不能为空"),
-                          actions1: TextButton(
-                            onPressed: () { Navigator.of(context).pop(); },
-                            child: const Text("知道了"),
-                          )
-                        );
-                        return;
-                      }
-                      if (contentValue.text.isEmpty) {
-                        showAlertDialog(context, "有问题", const Text("内容不能为空"),
-                          actions1: TextButton(
-                            onPressed: () { Navigator.of(context).pop(); },
-                            child: const Text("知道了"),
-                          )
-                        );
-                        return;
-                      }
-                      var config = <String, bool>{};
-                      if (needNoreply) { config['no_reply'] = true; }
-                      if (needRemind) { config['mail_re'] = true; }
-                      if (needAnony) { config['anony'] = true; }
-                      var nSignature = signature?.value ?? "";
-                      if (nSignature == "random") {
-                        var moreCount = widget.postid == null ? 2 : 3;
-                        // moreCount -= 1; // skip OBViewer // dont need skip since it is not here
-                        var maxS = postNewInfo.signatureInfo.length - moreCount;
-                        var randomI = math.Random().nextInt(maxS);
-                        nSignature = randomI.toString();
-                      } else if (nSignature == "keep") {
-                        nSignature = postNewInfo.oriSignature ?? "";
-                      } else if (nSignature == "OBViewer") {
-                        nSignature = jsonEncode(signatureOBViewer);
-                      }
-                      var nContent = useHtmlContent ? bdwmTextFormat(contentValue.text) : contentValue.text;
-                      var nAttachPath = widget.postid == null
-                        ? attachCount > 0
-                          ? postNewInfo.attachpath : ""
-                        : postNewInfo.attachpath;
-                      bdwmSimplePost(
-                        bid: widget.bid, title: titleValue.text, content: nContent, useBDWM: useHtmlContent, parentid: widget.parentid,
-                        signature: nSignature, config: config, modify: widget.postid!=null, postid: widget.postid, attachpath: nAttachPath)
-                      .then((value) {
-                        if (value.success) {
-                          // TODO: handle forward
-                          showAlertDialog(context, "发送成功", const Text("rt"),
-                            actions1: TextButton(
-                              onPressed: () { Navigator.of(context).pop(); },
-                              child: const Text("知道了"),
-                            )
-                          ).then((value) {
-                            Navigator.of(context).pop(true);
-                          });
-                        } else {
-                          var errorMessage = "发送失败，请稍后重试";
-                          if (value.error == 43) {
-                            errorMessage = "对不起，您的帖子包含敏感词，请检查后发布";
-                          } else if (value.error == -1) {
-                            errorMessage = value.result!;
-                          }
-                          showAlertDialog(context, "发送失败", Text(errorMessage),
-                            actions1: TextButton(
-                              onPressed: () { Navigator.of(context).pop(); },
-                              child: const Text("知道了"),
-                            )
-                          );
-                        }
-                      });
-                    },
-                    child: const Text("发布", style: TextStyle(color: bdwmPrimaryColor)),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(top: 0, left: 10, right: 10, bottom: 10),
-              child: TextField(
-                minLines: 7,
-                maxLines: 14,
-                controller: contentValue,
-                focusNode: contentFocusNode,
-                decoration: const InputDecoration(
-                  alignLabelWithHint: true,
-                  labelText: "正文",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(top: 0, left: 10, right: 10, bottom: 0),
-              child: Wrap(
-                // alignment: WrapAlignment.center,
-                alignment: WrapAlignment.center,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  Checkbox(
-                    value: needNoreply,
-                    activeColor: bdwmPrimaryColor,
-                    onChanged: postNewInfo.canNoreply
-                      ? (value) {
-                        setState(() {
-                          needNoreply = value!;
-                        });
-                      }
-                      : null,
-                  ),
-                  const Text("不可回复"),
-                  vDivider,
-                  Checkbox(
-                    value: needRemind,
-                    activeColor: bdwmPrimaryColor,
-                    onChanged: postNewInfo.canRemind
-                      ? (value) {
-                        setState(() {
-                          needRemind = value!;
-                        });
-                      }
-                      : null,
-                  ),
-                  const Text("回复提醒"),
-                  vDivider,
-                  // Checkbox(
-                  //   value: needForward,
-                  //   activeColor: bdwmPrimaryColor,
-                  //   onChanged: postNewInfo.canForward
-                  //     ? (value) {
-                  //       setState(() {
-                  //         needForward = value!;
-                  //       });
-                  //     }
-                  //     : null,
-                  // ),
-                  // const Text("抄送给原作者"),
-                  vDivider,
-                  Checkbox(
-                    value: needAnony,
-                    activeColor: bdwmPrimaryColor,
-                    onChanged: postNewInfo.canAnony
-                      ? (value) {
-                        setState(() {
-                          needAnony = value!;
-                        });
-                      }
-                      : null,
-                  ),
-                  const Text("匿名"),
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
-              // alignment: Alignment.center,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  DropdownButton<SignatureItem>(
-                    hint: const Text("签名档"),
-                    icon: const Icon(Icons.arrow_drop_down),
-                    value: signature,
-                    items: [
-                      ...postNewInfo.signatureInfo.map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
-                        return DropdownMenuItem<SignatureItem>(
-                            value: item,
-                            child: Text(item.key),
-                          );
-                        }).toList(),
-                      DropdownMenuItem<SignatureItem>(
-                        value: signatureOB,
-                        child: const Text("OBViewer"),
-                      )
-                    ],
-                    onChanged: (SignatureItem? value) {
-                      setState(() {
-                        signature = value!;
-                      });
-                    },
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      showUploadDialog(context, postNewInfo.attachpath, postNewInfo.attachFiles)
-                      .then((value) {
-                        if (value == null) { return; }
-                        var content = jsonDecode(value);
-                        attachCount = content['count'];
-                        postNewInfo.attachFiles = [];
-                        for (var f in content['files']) {
-                          postNewInfo.attachFiles.add(f);
-                        }
-                      },);
-                    },
-                    child: const Text("管理附件"),
-                  ),
-                ],
-              ),
-            )
-          ],
+        return PostNewPage(
+          postNewInfo: postNewInfo, parentid: widget.parentid,
+          postid: widget.postid, bid: widget.bid, quoteText: quoteText,
         );
-      },
+      }
     );
   }
 }
