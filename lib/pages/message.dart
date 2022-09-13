@@ -91,67 +91,13 @@ class MessagePersonApp extends StatefulWidget {
 }
 
 class _MessagePersonAppState extends State<MessagePersonApp> {
-  TextEditingController contentController = TextEditingController();
-  var childKey = GlobalKey<MessagePersonPageState>();
-
-  @override
-  void dispose() {
-    contentController.dispose();
-    super.dispose();
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.userName),
       ),
-      body: MessagePersonPage(withWho: widget.userName, key: childKey),
-      bottomNavigationBar: BottomAppBar(
-        shape: const CircularNotchedRectangle(),
-        // color: Colors.blue,
-        child: Row(
-          children: [
-            IconButton(
-              onPressed: () {
-                var curState = childKey.currentState;
-                if (curState == null) { return; }
-                curState.update();
-              },
-              icon: const Icon(Icons.refresh, color: bdwmPrimaryColor,),
-            ),
-            Expanded(
-              child: TextField(
-                controller: contentController,
-                minLines: 1,
-                maxLines: 3,
-                readOnly: widget.userName == "deliver" ? true : false,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                var txt = contentController.text;
-                if (txt.isEmpty) {
-                  return;
-                }
-                bdwmSendMessages(widget.userName, txt)
-                .then((value) {
-                  if (value.success == false) {
-                    return;
-                  }
-                  if (!mounted) { return; }
-                  var curState = childKey.currentState;
-                  if (curState == null) { return; }
-                  curState.update();
-                },);
-              },
-              child: const Text("发送"),
-            ),
-          ],
-        ),
-      ),
+      body: MessagePersonPage(withWho: widget.userName),
     );
   }
 }

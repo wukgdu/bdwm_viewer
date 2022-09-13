@@ -109,12 +109,13 @@ class MessagePersonPage extends StatefulWidget {
   const MessagePersonPage({super.key, required this.withWho});
 
   @override
-  State<MessagePersonPage> createState() => MessagePersonPageState();
+  State<MessagePersonPage> createState() => _MessagePersonPageState();
 }
 
-class MessagePersonPageState extends State<MessagePersonPage> {
+class _MessagePersonPageState extends State<MessagePersonPage> {
   late CancelableOperation getDataCancelable;
   final ScrollController _controller = ScrollController();
+  TextEditingController contentController = TextEditingController();
 
   Future<MessageInfo> getData() async {
     // return getExampleCollectionList();
@@ -143,14 +144,16 @@ class MessagePersonPageState extends State<MessagePersonPage> {
   }
 
   void update() {
-    getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
-    },);
-    setState(() { });
+    setState(() {
+      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+      },);
+    });
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    contentController.dispose();
     Future.microtask(() => getDataCancelable.cancel(),);
     super.dispose();
   }
@@ -218,40 +221,87 @@ class MessagePersonPageState extends State<MessagePersonPage> {
   }
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getDataCancelable.value,
-      builder: (context, snapshot) {
-        // debugPrint(snapshot.connectionState.toString());
-        if (snapshot.connectionState != ConnectionState.done) {
-          return const Center(child: CircularProgressIndicator());
-          // return const Center(child: Text("加载中"));
-        }
-        if (snapshot.hasError) {
-          return Center(child: Text("错误：${snapshot.error}"));
-        }
-        if (!snapshot.hasData || snapshot.data == null) {
-          return const Center(child: Text("错误：未获取数据"));
-        }
-        var messageinfo = snapshot.data as MessageInfo;
-        if (messageinfo.success == false) {
-          if (messageinfo.desc != null) {
-            return Center(child: Text(messageinfo.desc!),);
-          } else {
-            return const Center(child: Text("出错啦"),);
-          }
-        }
-        return ListView(
-          reverse: true,
-          controller: _controller,
-          // itemCount: widget.count,
-          // itemBuilder: ((context, index) {
-          //   return oneItem(messageinfo.messages[index]);
-          // }),
-          children: messageinfo.messages.map((e) {
-            return oneItem(e);
-          }).toList(),
-        );
-      },
+    return Column(
+      children: [
+        Expanded(
+          child: FutureBuilder(
+            future: getDataCancelable.value,
+            builder: (context, snapshot) {
+              // debugPrint(snapshot.connectionState.toString());
+              if (snapshot.connectionState != ConnectionState.done) {
+                return const Center(child: CircularProgressIndicator());
+                // return const Center(child: Text("加载中"));
+              }
+              if (snapshot.hasError) {
+                return Center(child: Text("错误：${snapshot.error}"));
+              }
+              if (!snapshot.hasData || snapshot.data == null) {
+                return const Center(child: Text("错误：未获取数据"));
+              }
+              var messageinfo = snapshot.data as MessageInfo;
+              if (messageinfo.success == false) {
+                if (messageinfo.desc != null) {
+                  return Center(child: Text(messageinfo.desc!),);
+                } else {
+                  return const Center(child: Text("出错啦"),);
+                }
+              }
+              return ListView(
+                reverse: true,
+                controller: _controller,
+                // itemCount: widget.count,
+                // itemBuilder: ((context, index) {
+                //   return oneItem(messageinfo.messages[index]);
+                // }),
+                children: messageinfo.messages.map((e) {
+                  return oneItem(e);
+                }).toList(),
+              );
+            }
+          )
+        ),
+        Container(
+          padding: const EdgeInsets.only(bottom: 5, top: 5),
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  update();
+                },
+                icon: const Icon(Icons.refresh, color: bdwmPrimaryColor,),
+              ),
+              Expanded(
+                child: TextField(
+                  controller: contentController,
+                  minLines: 1,
+                  maxLines: 3,
+                  readOnly: widget.withWho == "deliver" ? true : false,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  var txt = contentController.text;
+                  if (txt.isEmpty) {
+                    return;
+                  }
+                  bdwmSendMessages(widget.withWho, txt)
+                  .then((value) {
+                    if (value.success == false) {
+                      return;
+                    }
+                    if (!mounted) { return; }
+                    update();
+                  },);
+                },
+                child: const Text("发送"),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
