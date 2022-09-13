@@ -227,6 +227,14 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
           res.add(const WidgetSpan(child: Text("图片"),));
         } else {
           if (src.startsWith("data")) {
+            var typePos1 = src.indexOf(":image/");
+            var srcType = "png";
+            if (typePos1 != -1) {
+              var typePos2 = src.indexOf(";");
+              if (typePos2 != -1) {
+                srcType = src.substring(typePos1+7, typePos2);
+              }
+            }
             var p1 = src.indexOf("base64,");
             var str = src.substring(p1+7);
             var data = base64Decode(str);
@@ -239,7 +247,10 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
                 ),
                 onTap: () {
                   if (context != null) {
-                    gotoDetailImage(context: context, link: "", imgData: data, name: "image.jpg");
+                    var curTime = DateTime.now().toIso8601String().replaceAll(":", "_");
+                    curTime = curTime.split(".").first;
+                    var imgName = "OBViewer-$curTime.$srcType";
+                    gotoDetailImage(context: context, link: "", imgData: data, name: imgName);
                   }
                 },
               )));
