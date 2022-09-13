@@ -12,9 +12,11 @@ import "../pages/detail_image.dart";
 import './html_widget.dart';
 
 class UserOperationComponent extends StatefulWidget {
-  final UserProfile user;
   final String uid;
-  const UserOperationComponent({super.key, required this.user, required this.uid});
+  final bool exist;
+  final String userName;
+  final String mode;
+  const UserOperationComponent({super.key, required this.exist, required this.uid, required this.userName, required this.mode});
 
   @override
   State<UserOperationComponent> createState() => _UserOperationComponentState();
@@ -26,55 +28,57 @@ class _UserOperationComponentState extends State<UserOperationComponent> {
   @override
   void initState() {
     super.initState();
-    useradd = widget.user.useradd;
+    useradd = widget.exist;
+  }
+
+  @override
+  void didUpdateWidget(covariant UserOperationComponent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    useradd = widget.exist;
   }
   
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      width: 48,
-      // height: 48,
-      child:  TextButton(
-        child: useradd ? const Text("取消关注") : const Text("关注"),
-        onPressed: () {
-          var uid = widget.uid;
-          var username = widget.user.bbsID;
-          if (username.isEmpty) { return; }
-          var action = "add";
+    String actionText = widget.mode == "reject" ? "拉黑" : "关注";
+    return GestureDetector(
+      child: Text(useradd ? "取消$actionText" : actionText, style: const TextStyle(color: bdwmPrimaryColor),),
+      onTap: () {
+        var uid = widget.uid;
+        var username = widget.userName;
+        if (username.isEmpty) { return; }
+        var action = "add";
+        if (useradd) {
+          action = "delete";
+        }
+        String? mode = widget.mode == "reject" ? "reject" : null;
+        var desc = "";
+        bdwmUsers(uid, action, desc, mode: mode).then((value) {
+          var title = "";
+          var content = "成功$actionText";
           if (useradd) {
-            action = "delete";
+            content = "成功取消$actionText";
           }
-          String? mode;
-          var desc = "";
-          bdwmUsers(uid, action, desc, mode: mode).then((value) {
-            var title = "";
-            var content = "成功关注";
-            if (useradd) {
-              content = "成功取消关注";
+          if (!value.success) {
+            if (value.error == -1) {
+              content = networkErrorText;
+            } else {
+              content = "失败啦，请稍候再试";
             }
-            if (!value.success) {
-              if (value.error == -1) {
-                content = networkErrorText;
-              } else {
-                content = "失败啦，请稍候再试";
-              }
-            }
-            showAlertDialog(context, title, Text(content),
-              actions1: TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text("知道了"),
-              ),
-            ).then((dialogValue) {
-              setState(() {
-                useradd = !useradd;
-              });
+          }
+          showAlertDialog(context, title, Text(content),
+            actions1: TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("知道了"),
+            ),
+          ).then((dialogValue) {
+            setState(() {
+              useradd = !useradd;
             });
           });
-        },
-      ),
+        });
+      },
     );
   }
 }
@@ -326,7 +330,17 @@ class _UserInfoPageState extends State<UserInfoPage> {
                   },
                 ),
               )
-              : UserOperationComponent(user: user, uid: widget.uid),
+              : Container(
+                alignment: Alignment.center,
+                width: 64,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    UserOperationComponent(exist: user.useradd, uid: widget.uid, userName: user.bbsID, mode: "add",),
+                    UserOperationComponent(exist: false, uid: widget.uid, userName: user.bbsID, mode: "reject",),
+                  ],
+                ),
+              ),
             ),
           ),
         Expanded(

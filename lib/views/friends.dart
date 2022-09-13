@@ -5,6 +5,7 @@ import '../bdwm/req.dart';
 import '../globalvars.dart';
 import './constants.dart';
 import '../html_parser/friends_parser.dart';
+import './user.dart' show UserOperationComponent;
 
 class FriendPage extends StatefulWidget {
   final String mode;
@@ -103,6 +104,11 @@ class _FriendPageState extends State<FriendPage> {
                     ),
                   ),
                   subtitle: Text(e.nickName),
+                  trailing: widget.mode == "fan"
+                    ? UserOperationComponent(exist: e.bidirection, uid: e.uid, userName: e.userName, mode: "friend",)
+                    : widget.mode=="reject"
+                      ? UserOperationComponent(exist: true, uid: e.uid, userName: e.userName, mode: "reject",) // 拉黑
+                      : UserOperationComponent(exist: true, uid: e.uid, userName: e.userName, mode: "friend",), // 关注
                 ),
               );
             })
