@@ -270,6 +270,7 @@ class _PostNewPageState extends State<PostNewPage> {
                     var index = _controller.selection.baseOffset;
                     var length = _controller.selection.extentOffset - index;
                     _controller.replaceText(index, length, fquill.BlockEmbed.image(value), null);
+                    _controller.formatText(index, 1, const fquill.StyleAttribute("mobileAlignment:topLeft;mobileWidth:150;mobileHeight:150"));
                   },);
                 }
               ),
