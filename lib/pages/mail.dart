@@ -285,6 +285,7 @@ class _MailDetailAppState extends State<MailDetailApp> {
   }
 
   void refresh() {
+    if (!mounted) { return; }
     setState(() {
       getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
       },);

@@ -102,6 +102,8 @@ class CollectionArticle {
   String attachmentHtml = "";
   List<AttachmentInfo> attachmentInfo = <AttachmentInfo>[];
   String? errorMessage;
+  String path = "";
+  bool canDelete = false;
 
   CollectionArticle.empty();
   CollectionArticle.error({required this.errorMessage,});
@@ -115,6 +117,8 @@ class CollectionArticle {
     required this.attachmentInfo,
     required this.time,
     this.errorMessage,
+    required this.path,
+    required this.canDelete,
   });
 }
 
@@ -166,8 +170,23 @@ CollectionArticle parseCollectionArticle(String htmlStr) {
     }
   }
   var time = getTrimmedString(contentDom.querySelector(".content .right"));
+
+  var path = "";
+  var pathDom = document.querySelector("div#page-collection-read");
+  if (pathDom!=null) {
+    path = pathDom.attributes['data-path'] ?? "";
+  }
+
+  bool canDelete = false;
+  var toolBoxDom = document.querySelector(".toolbox");
+  if (toolBoxDom!=null) {
+    if (toolBoxDom.querySelector("a.delete")!=null) {
+      canDelete = true;
+    }
+  }
+
   return CollectionArticle(
-    user: user, uid: uid, avatar: avatar, title: title, content: content,
-    attachmentHtml: attachmentHtml, attachmentInfo: attachmentInfo, time: time,
+    user: user, uid: uid, avatar: avatar, title: title, content: content, path: path,
+    attachmentHtml: attachmentHtml, attachmentInfo: attachmentInfo, time: time, canDelete: canDelete,
   );
 }

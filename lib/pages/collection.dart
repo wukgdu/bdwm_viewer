@@ -35,6 +35,7 @@ class _CollectionAppState extends State<CollectionApp> {
   }
 
   void refresh() {
+    if (!mounted) { return; }
     setState(() {
       page = page;
       getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
@@ -114,6 +115,15 @@ class _CollectionAppState extends State<CollectionApp> {
                 children: <Widget>[
                   IconButton(
                     disabledColor: Colors.grey,
+                    tooltip: '刷新',
+                    icon: const Icon(Icons.refresh),
+                    onPressed: () {
+                      if (!mounted) { return; }
+                      refresh();
+                    },
+                  ),
+                  IconButton(
+                    disabledColor: Colors.grey,
                     tooltip: '上一页',
                     icon: const Icon(Icons.arrow_back),
                     onPressed: page <= 1 ? null : () {
@@ -132,6 +142,7 @@ class _CollectionAppState extends State<CollectionApp> {
                       if (nPageStr == null) { return; }
                       if (nPageStr.isEmpty) { return; }
                       var nPage = int.parse(nPageStr);
+                      if (!mounted) { return; }
                       setState(() {
                         page = nPage;
                         getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
@@ -202,6 +213,12 @@ class _CollectionArticleAppState extends State<CollectionArticleApp> {
     super.dispose();
   }
 
+  void refresh() {
+    setState(() {
+      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+      },);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -249,7 +266,7 @@ class _CollectionArticleAppState extends State<CollectionArticleApp> {
           appBar: AppBar(
             title: Text(widget.title),
           ),
-          body: CollectionArticlePage(collectionArticle: collectionArticle),
+          body: CollectionArticlePage(collectionArticle: collectionArticle, refreshCallBack: () { refresh(); },),
         );
       },
     );

@@ -21,6 +21,13 @@ class CollectionPage extends StatefulWidget {
 }
 
 class _CollectionPageState extends State<CollectionPage> {
+  final _controller = ScrollController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   Widget oneItem(CollectionItem item) {
     return Card(
@@ -56,6 +63,7 @@ class _CollectionPageState extends State<CollectionPage> {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      controller: _controller,
       children: widget.collectionList.collectionItems.map((e) {
         return oneItem(e);
       }).toList(),
@@ -65,7 +73,8 @@ class _CollectionPageState extends State<CollectionPage> {
 
 class CollectionArticlePage extends StatefulWidget {
   final CollectionArticle collectionArticle;
-  const CollectionArticlePage({super.key, required this.collectionArticle});
+  final Function refreshCallBack;
+  const CollectionArticlePage({super.key, required this.collectionArticle, required this.refreshCallBack});
 
   @override
   State<CollectionArticlePage> createState() => _CollectionArticlePageState();
@@ -108,6 +117,93 @@ class _CollectionArticlePageState extends State<CollectionArticlePage> {
               child: AttachmentComponent(attachments: widget.collectionArticle.attachmentInfo,),
             ),
           ),
+        Wrap(
+          children: [
+            if (widget.collectionArticle.canDelete)
+              TextButton(
+                onPressed: () {
+                  showAlertDialog(context, "文集", const Text("确认删除？"),
+                    actions1: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("不了"),
+                    ),
+                    actions2: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop("ok");
+                      },
+                      child: const Text("删除"),
+                    ),
+                  ).then((value) {
+                    if (value==null) { return; }
+                    if (value.isEmpty) { return; }
+                    if (value == "ok") {
+                      bdwmOperateCollection(action: "delete", path: widget.collectionArticle.path)
+                      .then((CollectionImportRes res) {
+                        var title = "文集";
+                        var content = "删除成功";
+                        if (!res.success) {
+                          content = "删除失败";
+                          if (res.error == -1) {
+                            content = res.desc!;
+                          }
+                        }
+                        showAlertDialog(context, title, Text(content),
+                          actions1: TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("知道了"),
+                          ),
+                        ).then((value2) {
+                          if (res.success) {
+                            widget.refreshCallBack();
+                          }
+                        });
+                      });
+                    }
+                  });
+                },
+                child: const Text("删除"),
+              ),
+            TextButton(
+              onPressed: () {
+                showCollectionDialog(context, isSingle: true)
+                .then((value) {
+                  if (value == null || value.isEmpty) {
+                    return;
+                  }
+                  var base = value;
+                  if (base.isEmpty || base=="none") {
+                    return;
+                  }
+                  bdwmOperateCollection(action: "copy", path: widget.collectionArticle.path, tobase: value)
+                  .then((importRes) {
+                    var txt = "收藏成功";
+                    if (importRes.success == false) {
+                      var txt = "发生错误啦><";
+                      if (importRes.error == -1) {
+                        txt = importRes.desc ?? txt;
+                      } else if (importRes.error == 9) {
+                        txt = "您没有足够权限执行此操作";
+                      }
+                    }
+                    showAlertDialog(context, "收入文集", Text(txt),
+                      actions1: TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text("知道了"),
+                      ),
+                    );
+                  });
+                },);
+              },
+              child: const Text("收入文集"),
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -268,7 +364,7 @@ class _CollectionImportDialogBodyState extends State<CollectionImportDialogBody>
   }
 }
 
-Future<String?> showCollectionDialog(BuildContext context, {bool? isMail=false}) {
+Future<String?> showCollectionDialog(BuildContext context, {bool? isSingle=false}) {
   var key = GlobalKey<_CollectionImportDialogBodyState>();
   return showAlertDialog(context, "选择文集", CollectionImportDialogBody(key: key,),
     actions1: TextButton(
@@ -277,7 +373,7 @@ Future<String?> showCollectionDialog(BuildContext context, {bool? isMail=false})
       },
       child: const Text("不了"),
     ),
-    actions2: (isMail!=null&&isMail==true)
+    actions2: (isSingle!=null&&isSingle==true)
     ? TextButton(
       onPressed: () {
         Navigator.of(context).pop(key.currentState?.selectedNode ?? 'none');
@@ -290,7 +386,7 @@ Future<String?> showCollectionDialog(BuildContext context, {bool? isMail=false})
       },
       child: const Text("单帖"),
     ),
-    actions3: (isMail!=null&&isMail==true)
+    actions3: (isSingle!=null&&isSingle==true)
     ? null
     : TextButton(
       onPressed: () {

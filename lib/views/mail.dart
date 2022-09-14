@@ -164,7 +164,7 @@ class _MailDetailPageState extends State<MailDetailPage> {
                 ),
               TextButton(
                 onPressed: () {
-                showCollectionDialog(context, isMail: true)
+                showCollectionDialog(context, isSingle: true)
                 .then((value) {
                   if (value == null || value.isEmpty) {
                     return;

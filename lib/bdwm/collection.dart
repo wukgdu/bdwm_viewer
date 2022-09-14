@@ -95,7 +95,7 @@ class CollectionImportRes {
   CollectionImportRes({
     required this.success,
     required this.error,
-    required this.name,
+    this.name = "",
   });
 }
 
@@ -137,4 +137,25 @@ Future<CollectionImportRes> bdwmCollectionImport({required String from, required
     name: content['name'] ?? "",
   );
   return collectionImportRes;
+}
+
+Future<CollectionImportRes> bdwmOperateCollection({required String path, required String action, String? tobase}) async {
+  var actionUrl = "$v2Host/ajax/operate_collection.php";
+  var data = {
+    "action": action,
+    "path": path,
+  };
+  if (action=="copy") {
+    data['tobase'] = tobase ?? "";
+  }
+  var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
+  if (resp == null) {
+    return CollectionImportRes.error(success: false, error: -1, desc: networkErrorText);
+  }
+  var respContent = json.decode(resp.body);
+  CollectionImportRes res = CollectionImportRes(
+    success: respContent['success'],
+    error: respContent['error'] ?? 0,
+  );
+  return res;
 }
