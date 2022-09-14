@@ -43,7 +43,7 @@ https://github.com/wukgdu/bdwm_viewer/releases
     2. [x] 查看版面精华区
     3. [x] 收入文章到文集
     4. [ ] 管理文集
-    5. [ ] 收入他人文章
+    5. [x] 收入他人文章
 4. 搜索
     1. [x] 帖子高级搜索
     2. [x] 搜索用户
@@ -64,7 +64,7 @@ https://github.com/wukgdu/bdwm_viewer/releases
     1. [x] 看
     2. [x] 发
     3. [x] 新到提醒
-    4. [ ] 各种操作
+    4. [x] 各种操作
 
 ## 问题反馈
 https://github.com/wukgdu/bdwm_viewer/issues
