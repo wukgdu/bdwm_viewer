@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import '../html_parser/mail_parser.dart';
 import './html_widget.dart' show HtmlComponent;
 import './read_thread.dart' show AttachmentComponent;
+import './collection.dart' show showCollectionDialog;
+import '../bdwm/collection.dart';
+import '../bdwm/forward.dart';
+import './utils.dart';
+import '../bdwm/mail.dart' show bdwmOperateMail;
 
 class MailListPage extends StatefulWidget {
   final MailListInfo mailListInfo;
@@ -94,7 +99,8 @@ class MailDetailPage extends StatefulWidget {
   final MailDetailInfo mailDetailInfo;
   final String postid;
   final String type;
-  const MailDetailPage({super.key, required this.mailDetailInfo, required this.postid, required this.type});
+  final Function refreshCallBack;
+  const MailDetailPage({super.key, required this.mailDetailInfo, required this.postid, required this.type, required this.refreshCallBack});
 
   @override
   State<MailDetailPage> createState() => _MailDetailPageState();
@@ -144,10 +150,10 @@ class _MailDetailPageState extends State<MailDetailPage> {
               child: AttachmentComponent(attachments: widget.mailDetailInfo.attachmentInfo,),
             ),
           ),
-        if (widget.type.isEmpty) // 收件箱
-          Card(
-            child: Row(
-              children: [
+        Card(
+          child: Wrap(
+            children: [
+              if (widget.type.isEmpty) // 收件箱
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pushNamed("/mailNew", arguments: {
@@ -155,10 +161,154 @@ class _MailDetailPageState extends State<MailDetailPage> {
                     });
                   },
                   child: const Text("回复"),
-                )
-              ],
-            ),
+                ),
+              TextButton(
+                onPressed: () {
+                showCollectionDialog(context, isMail: true)
+                .then((value) {
+                  if (value == null || value.isEmpty) {
+                    return;
+                  }
+                  var base = value;
+                  if (base.isEmpty || base=="none") {
+                    return;
+                  }
+                  bdwmCollectionImport(from: "post", bid: "", postid: widget.postid, threadid: "", base: base, mode: "")
+                  .then((importRes) {
+                    var txt = "收藏成功";
+                    if (importRes.success == false) {
+                      var txt = "发生错误啦><";
+                      if (importRes.error == -1) {
+                        txt = importRes.desc ?? txt;
+                      } else if (importRes.error == 9) {
+                        txt = "您没有足够权限执行此操作";
+                      }
+                    }
+                    showAlertDialog(context, "收入文集", Text(txt),
+                      actions1: TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text("知道了"),
+                      ),
+                    );
+                  });
+                });
+                },
+                child: const Text("收入文集"),
+              ),
+              TextButton(
+                onPressed: () {
+                  showTextDialog(context, "转载到的版面")
+                  .then((value) {
+                    if (value == null || value.isEmpty) {
+                      return;
+                    }
+                    bdwmForwrad("mail", "post", "", widget.postid, value)
+                    .then((res) {
+                      var title = "转载";
+                      var content = "成功";
+                      if (!res.success) {
+                        if (res.error == -1) {
+                          content = res.desc!;
+                        } else {
+                          content = "该版面不存在，或需要特殊权限";
+                        }
+                      }
+                      showAlertDialog(context, title, Text(content),
+                        actions1: TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text("知道了"),
+                        ),
+                      );
+                    });
+                  },);
+                },
+                child: const Text("转载"),
+              ),
+              TextButton(
+                onPressed: () {
+                  showTextDialog(context, "转寄给")
+                  .then((value) {
+                    if (value == null || value.isEmpty) {
+                      return;
+                    }
+                    bdwmForwrad("mail", "mail", "", widget.postid, value)
+                    .then((res) {
+                      var title = "转寄";
+                      var content = "成功";
+                      if (!res.success) {
+                        if (res.error == -1) {
+                          content = res.desc!;
+                        } else {
+                          content = "用户不存在";
+                        }
+                      }
+                      showAlertDialog(context, title, Text(content),
+                        actions1: TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text("知道了"),
+                        ),
+                      );
+                    });
+                  },);
+                },
+                child: const Text("转寄"),
+              ),
+              TextButton(
+                onPressed: () {
+                  showAlertDialog(context, "站内信", const Text("确认删除？"),
+                    actions1: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("不了"),
+                    ),
+                    actions2: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop("ok");
+                      },
+                      child: const Text("删除"),
+                    ),
+                  ).then((value) {
+                    if (value==null) { return; }
+                    if (value.isEmpty) { return; }
+                    if (value == "ok") {
+                      bdwmOperateMail(postid: widget.postid, action: "delete")
+                      .then((mailRes) {
+                        var title = "站内信";
+                        var content = "删除成功";
+                        if (!mailRes.success) {
+                          content = "删除失败";
+                          if (mailRes.error == -1) {
+                            content = mailRes.result!;
+                          }
+                        }
+                        showAlertDialog(context, title, Text(content),
+                          actions1: TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("知道了"),
+                          ),
+                        ).then((value2) {
+                          if (mailRes.success) {
+                            widget.refreshCallBack();
+                          }
+                        });
+                      });
+                    }
+                  });
+                },
+                child: const Text("删除"),
+              ),
+            ],
           ),
+        ),
       ],
     );
   }

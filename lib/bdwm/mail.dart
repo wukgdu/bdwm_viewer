@@ -150,3 +150,21 @@ Future<MailSendRes> bdwmCreateMail({required String title, required String conte
   );
   return res;
 }
+
+Future<MailRes> bdwmOperateMail({required String postid, required String action}) async {
+  var actionUrl = "$v2Host/ajax/operate_mail.php";
+  var data = {
+    "list": '[$postid]',
+    "action": action,
+  };
+  var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
+  if (resp == null) {
+    return MailRes.error(success: false, error: -1, result: networkErrorText);
+  }
+  var respContent = json.decode(resp.body);
+  MailRes postRes = MailRes(
+    success: respContent['results'][0]==false,
+    error: respContent['error'] ?? 0,
+  );
+  return postRes;
+}

@@ -179,45 +179,45 @@ class _CollectionImportDialogBodyState extends State<CollectionImportDialogBody>
     final dSize = MediaQuery.of(context).size;
     final dWidth = dSize.width;
     final dHeight = dSize.height;
-    return FutureBuilder(
-      future: getDataCancelable.value,
-      builder: ((context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          // return const Center(child: CircularProgressIndicator());
-          return const Center(child: CircularProgressIndicator(),
-          );
-        }
-        if (snapshot.hasError) {
-          return Center(child: Text("错误：${snapshot.error}"));
-        }
-        if (!snapshot.hasData || snapshot.data == null) {
-          return const Center(child: Text("错误：未获取数据"),);
-        }
-        var collectionRes = snapshot.data as CollectionRes;
-        if (collectionRes.success == false) {
-          var txt = "";
-          if (collectionRes.error == -1) {
-            txt = collectionRes.desc!;
-          } else if (collectionRes.error == 9) {
-            txt = "您没有足够权限执行此操作";
-          } else {
-            txt = "发生错误啦><";
+    return SizedBox(
+      width: min(260, dWidth*0.8),
+      height: min(300, dHeight*0.8),
+      child: FutureBuilder(
+        future: getDataCancelable.value,
+        builder: ((context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            // return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(),
+            );
           }
-          return Center(child: Text(txt),);
-        }
-        if (_treeViewController.children.isEmpty) {
-          _treeViewController = _treeViewController.copyWith(
-            children: collectionRes.collections.map((e) {
-              if (e.isdir) {
-                return Node(key: e.path, label: e.title, parent: true);
-              }
-              return Node(label: "skip", key: e.path);
-            }).toList());
-        }
-        return SizedBox(
-          width: min(260, dWidth*0.8),
-          height: min(300, dHeight*0.8),
-          child: TreeView(
+          if (snapshot.hasError) {
+            return Center(child: Text("错误：${snapshot.error}"));
+          }
+          if (!snapshot.hasData || snapshot.data == null) {
+            return const Center(child: Text("错误：未获取数据"),);
+          }
+          var collectionRes = snapshot.data as CollectionRes;
+          if (collectionRes.success == false) {
+            var txt = "";
+            if (collectionRes.error == -1) {
+              txt = collectionRes.desc!;
+            } else if (collectionRes.error == 9) {
+              txt = "您没有足够权限执行此操作";
+            } else {
+              txt = "发生错误啦><";
+            }
+            return Center(child: Text(txt),);
+          }
+          if (_treeViewController.children.isEmpty) {
+            _treeViewController = _treeViewController.copyWith(
+              children: collectionRes.collections.map((e) {
+                if (e.isdir) {
+                  return Node(key: e.path, label: e.title, parent: true);
+                }
+                return Node(label: "skip", key: e.path);
+              }).toList());
+          }
+          return TreeView(
             shrinkWrap: true,
             controller: _treeViewController,
             allowParentSelect: true,
@@ -261,14 +261,14 @@ class _CollectionImportDialogBodyState extends State<CollectionImportDialogBody>
                 _treeViewController = _treeViewController.copyWith(selectedKey: selectedNode);
               });
             }),
-          ),
-        );
-      }),
+          );
+        }),
+      ),
     );
   }
 }
 
-Future<String?> showCollectionDialog(BuildContext context) {
+Future<String?> showCollectionDialog(BuildContext context, {bool? isMail=false}) {
   var key = GlobalKey<_CollectionImportDialogBodyState>();
   return showAlertDialog(context, "选择文集", CollectionImportDialogBody(key: key,),
     actions1: TextButton(
@@ -277,13 +277,22 @@ Future<String?> showCollectionDialog(BuildContext context) {
       },
       child: const Text("不了"),
     ),
-    actions2: TextButton(
+    actions2: (isMail!=null&&isMail==true)
+    ? TextButton(
+      onPressed: () {
+        Navigator.of(context).pop(key.currentState?.selectedNode ?? 'none');
+      },
+      child: const Text("收入"),
+    )
+    : TextButton(
       onPressed: () {
         Navigator.of(context).pop("post ${key.currentState?.selectedNode ?? 'none'}");
       },
       child: const Text("单帖"),
     ),
-    actions3: TextButton(
+    actions3: (isMail!=null&&isMail==true)
+    ? null
+    : TextButton(
       onPressed: () {
         Navigator.of(context).pop("thread ${key.currentState?.selectedNode ?? 'none'}");
       },

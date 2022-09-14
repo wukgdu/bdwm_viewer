@@ -358,7 +358,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
           )
         ),
         Container(
-          padding: const EdgeInsets.only(top: 10, bottom: 10),
+          padding: const EdgeInsets.only(top: 5, bottom: 5),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [

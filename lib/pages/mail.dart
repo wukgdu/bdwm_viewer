@@ -284,6 +284,12 @@ class _MailDetailAppState extends State<MailDetailApp> {
     super.dispose();
   }
 
+  void refresh() {
+    setState(() {
+      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+      },);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -331,7 +337,7 @@ class _MailDetailAppState extends State<MailDetailApp> {
           appBar: AppBar(
               title: Text(appTitle),
           ),
-          body: MailDetailPage(mailDetailInfo: mailDetailInfo, postid: widget.postid, type: widget.type,),
+          body: MailDetailPage(mailDetailInfo: mailDetailInfo, postid: widget.postid, type: widget.type, refreshCallBack: () { refresh(); },),
         );
       },
     );

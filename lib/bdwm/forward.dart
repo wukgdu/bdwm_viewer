@@ -68,6 +68,20 @@ Future<ForwardRes> bdwmForwrad(String from, String to, String fromID1, String fr
       "to": to,
       "touid": localToID,
     };
+  } else if (from == "mail" && to == "mail") {
+    data = {
+      "from": from,
+      "postid": fromID2,
+      "to": to,
+      "touid": localToID,
+    };
+  } else if (from == "mail" && to == "post") {
+    data = {
+      "from": from,
+      "postid": fromID2,
+      "to": to,
+      "tobid": localToID,
+    };
   }
   var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
   if (resp == null) {

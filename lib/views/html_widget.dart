@@ -207,6 +207,11 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
         if (ele.classes.contains('quotehead') || ele.classes.contains('blockquote')) {
           res.add(const WidgetSpan(child: Icon(Icons.format_quote, size: 14, color: Color(0xffA6DDE3))));
           res.add(TextSpan(text: ele.text, style: const TextStyle(color: Colors.grey, fontSize: 12)));
+        } else if (ele.classes.contains("zz-info")) {
+          res.add(TextSpan(
+            children: travelHtml(ele, context: context),
+            style: const TextStyle(color: bdwmPrimaryColor, backgroundColor: null),
+          ));
         } else {
           res.add(TextSpan(
             children: travelHtml(ele, context: context),

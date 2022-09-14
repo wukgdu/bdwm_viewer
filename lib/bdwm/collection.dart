@@ -101,7 +101,7 @@ class CollectionImportRes {
 
 Future<CollectionImportRes> bdwmCollectionImport({required String from, required String bid, required String postid, required String threadid, required String base, required String mode}) async {
   var actionUrl = "$v2Host/ajax/collection_import_thread.php";
-  if (mode == "post") {
+  if (mode == "post" || from == "mail") {
     actionUrl = "$v2Host/ajax/collection_import.php";
   }
   var data = {
@@ -111,6 +111,13 @@ Future<CollectionImportRes> bdwmCollectionImport({required String from, required
     'threadid': threadid,
     'base': base,
   };
+  if (from == "mail") {
+    data = {
+      'from': "mail",
+      'postid': postid,
+      'base': base,
+    };
+  }
   var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
   if (resp == null) {
     return CollectionImportRes.error(success: false, error: -1, desc: networkErrorText);
