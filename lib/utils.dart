@@ -10,6 +10,10 @@ class TextAndLink {
 
   TextAndLink(this.text, this.link);
   TextAndLink.empty();
+
+  String gist() {
+    return "$text[${link??''}]";
+  }
 }
 
 Future<bool> checkAndRequestPermission(Permission p) async {

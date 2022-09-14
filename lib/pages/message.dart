@@ -4,8 +4,6 @@ import '../views/message.dart';
 import '../services.dart' show MessageBriefNotifier;
 import '../views/utils.dart';
 import '../bdwm/search.dart';
-import '../bdwm/message.dart';
-import '../views/constants.dart';
 import '../globalvars.dart' show globalContactInfo, globalUInfo;
 
 class MessagelistApp extends StatefulWidget {

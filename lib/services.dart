@@ -140,9 +140,23 @@ class NotifyMail {
 }
 
 class MessageBriefNotifier extends ValueNotifier<List<TextAndLink>> {
+  String lastStr = "";
   MessageBriefNotifier(List<TextAndLink> value): super(value);
 
+  String arr2Str(List<UnreadMessageInfo> uv) {
+    if (uv.isEmpty) { return ""; }
+    uv.sort((a, b) {
+      return a.withWho.compareTo(b.withWho);
+    },);
+    return uv.map((e) => "${e.withWho}[${e.count}]").join(",");
+  }
+
   void newArray(NotifyMessageInfo nmi) {
+    String curStr = arr2Str(nmi.value);
+    if (curStr == lastStr) {
+      return;
+    }
+    lastStr = curStr;
     value.clear();
     for (var nsi in nmi.value) {
       value.add(TextAndLink(nsi.withWho, nsi.count.toString()));
