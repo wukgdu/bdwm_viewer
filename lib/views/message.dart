@@ -23,6 +23,14 @@ class MessageListPage extends StatefulWidget {
 }
 
 class _MessageListPageState extends State<MessageListPage> {
+  final _controller = ScrollController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -31,7 +39,9 @@ class _MessageListPageState extends State<MessageListPage> {
         var users = (value as List<TextAndLink>).map((e) => TextAndLink(e.text, e.link)).toList();
         bool deliver = false;
         Set<String> usersSet = Set.from(users.map((e) => e.text));
-        for (var u in globalContactInfo.contact) {
+        var clist = globalContactInfo.contact.toList(growable: false);
+        clist.sort();
+        for (var u in clist) {
           if (!usersSet.contains(u)) {
             users.add(TextAndLink(u, "0"));
           }
@@ -51,6 +61,7 @@ class _MessageListPageState extends State<MessageListPage> {
         return Container(
           padding: const EdgeInsets.all(10.0),
           child: ListView(
+            controller: _controller,
             children: users.map((e) {
               return Card(
                 child: ListTile(

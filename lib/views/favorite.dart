@@ -30,10 +30,12 @@ class FavoritePageState extends State<FavoritePage> {
     // setState(() {
     //   favoriteBoards = getExampleFavoriteBoard();
     // });
+    updateData();
+  }
+
+  Future<void> updateData() async {
     getData().then((value) {
-      // debugPrint("get favorite data");
       if (!mounted) { return; }
-      // debugPrint("1 ${widget.clear}");
       setState(() {
         favoriteBoardInfo = value;
       });
@@ -143,6 +145,9 @@ class FavoritePageState extends State<FavoritePage> {
   @override
   Widget build(BuildContext context) {
     debugPrint("favorite rebuild");
-    return boardView();
+    return RefreshIndicator(
+      onRefresh: updateData,
+      child: boardView(),
+    );
   }
 }

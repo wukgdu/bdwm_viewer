@@ -232,12 +232,8 @@ class TmpContactInfo {
       if (content.isEmpty) {
         writeInit();
       }
-      var jsonContent = jsonDecode(content);
-      var idx = jsonContent.length-1;
-      while (idx >= 0) {
-        contact.add(jsonContent[idx]);
-        idx -= 1;
-      }
+      List jsonContent = jsonDecode(content);
+      contact.addAll(jsonContent.map((e) => e as String));
     } else {
       writeInit();
     }
