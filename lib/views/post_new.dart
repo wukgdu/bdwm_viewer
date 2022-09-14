@@ -373,16 +373,16 @@ class _PostNewPageState extends State<PostNewPage> {
                 icon: const Icon(Icons.arrow_drop_down),
                 value: signature,
                 items: [
+                  DropdownMenuItem<SignatureItem>(
+                    value: signatureOB,
+                    child: const Text("OBViewer"),
+                  ),
                   ...widget.postNewInfo.signatureInfo.map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
                     return DropdownMenuItem<SignatureItem>(
                         value: item,
                         child: Text(item.key),
                       );
                     }).toList(),
-                  DropdownMenuItem<SignatureItem>(
-                    value: signatureOB,
-                    child: const Text("OBViewer"),
-                  )
                 ],
                 onChanged: (SignatureItem? value) {
                   setState(() {
