@@ -266,6 +266,7 @@ class _BoardPageState extends State<BoardPage> {
           Container(
             margin: const EdgeInsets.only(bottom: _padding1, left: _padding2, right: _padding2),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(child: Text(boardInfo.intro),),
                 GestureDetector(
