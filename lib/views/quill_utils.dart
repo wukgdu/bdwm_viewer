@@ -198,12 +198,12 @@ String quill2BDWMtext(List<dynamic> quillDelta) {
   for (var qd in quillDelta) {
     var attr = qd['attributes'];
     var insert = qd['insert'];
+    if ((insert is String)==false) { // image
+      res.add(BDWMImgText(type: 'img', src: insert['image'] ?? ""));
+      continue;
+    }
     if (attr == null) {
-      if (insert is String) { // normal text
-        res.add(BDWMAnsiText.raw(insert));
-      } else { // img
-        res.add(BDWMImgText(type: 'img', src: insert['image'] ?? ""));
-      }
+      res.add(BDWMAnsiText.raw(insert));
     } else {
       bool bold = (attr['bold'] as bool?) ?? false;
       bool underline = (attr['underline'] as bool?) ?? false;

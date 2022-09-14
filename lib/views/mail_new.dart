@@ -170,7 +170,21 @@ class _MailNewPageState extends State<MailNewPage> {
 
                   var quillDelta = _controller.document.toDelta().toJson();
                   debugPrint(quillDelta.toString());
-                  var mailContent = quill2BDWMtext(quillDelta);
+                  String mailContent = "";
+                  try {
+                    mailContent = quill2BDWMtext(quillDelta);
+                  } catch (e) {
+                    if (!mounted) { return; }
+                    showAlertDialog(context, "内容格式错误", Text("$e\n请返回后截图找 onepiece 报bug"),
+                      actions1: TextButton(
+                        onPressed: () { Navigator.of(context).pop(); },
+                        child: const Text("知道了"),
+                      ),
+                    );
+                  }
+                  if (mailContent.isEmpty) {
+                    return;
+                  }
                   if (widget.quote != null) {
                     var mailQuote = bdwmTextFormat(widget.quote!, mail: true);
                     // ...{}] [{}...

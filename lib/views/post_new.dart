@@ -107,7 +107,7 @@ class _PostNewPageState extends State<PostNewPage> {
                 ),
               ),
               TextButton(
-                onPressed: () {
+                onPressed: () async {
                   if (titleValue.text.isEmpty) {
                     showAlertDialog(context, "有问题", const Text("标题不能为空"),
                       actions1: TextButton(
@@ -145,7 +145,21 @@ class _PostNewPageState extends State<PostNewPage> {
 
                   var quillDelta = _controller.document.toDelta().toJson();
                   debugPrint(quillDelta.toString());
-                  var postContent = quill2BDWMtext(quillDelta);
+                  String postContent = "";
+                  try {
+                    postContent = quill2BDWMtext(quillDelta);
+                  } catch (e) {
+                    if (!mounted) { return; }
+                    showAlertDialog(context, "内容格式错误", Text("$e\n请返回后截图找 onepiece 报bug"),
+                      actions1: TextButton(
+                        onPressed: () { Navigator.of(context).pop(); },
+                        child: const Text("知道了"),
+                      ),
+                    );
+                  }
+                  if (postContent.isEmpty) {
+                    return;
+                  }
                   if (widget.quoteText != null) {
                     var mailQuote = bdwmTextFormat(widget.quoteText!, mail: false);
                     // ...{}] [{}...
