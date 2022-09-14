@@ -102,18 +102,6 @@ class _UserInfoPageState extends State<UserInfoPage> {
     return parseUser(resp.body);
   }
 
-  void updateTitle() {
-    // if (widget.changeTitle != null) {
-    //   if ((globalUInfo.uid == widget.uid) && (globalUInfo.login == true)) {
-    //     widget.changeTitle!("我");
-    //   } else if (widget.uid == "22776") {
-    //     widget.changeTitle!("作者");
-    //   } else {
-    //     widget.changeTitle!("用户");
-    //   }
-    // }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -368,6 +356,38 @@ class _UserInfoPageState extends State<UserInfoPage> {
                 ...[_multiLineItemForAdmin("担任版务", user.dutyBoards, user.dutyBoardLinks,)],
             ],
           )
+        ),
+        Container(
+          padding: const EdgeInsets.only(top: 10, bottom: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/messagePerson', arguments: user.bbsID);
+                },
+                child: Row(
+                  children: const [
+                    Icon(Icons.message_outlined, size: 14,),
+                    Text("发消息"),
+                  ],
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed("/mailNew", arguments: {
+                    'receiver': user.bbsID,
+                  });
+                },
+                child: Row(
+                  children: const [
+                    Icon(Icons.mail_outline, size: 14),
+                    Text("发站内信"),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );

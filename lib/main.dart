@@ -227,11 +227,13 @@ class _MainPageState extends State<MainPage> {
             break;
           case "/mailNew":
             String? parentid;
+            String? receiver;
             if (settings.arguments != null) {
               var settingsMap = settings.arguments as Map;
               parentid = settingsMap['parentid'] as String?;
+              receiver = settingsMap['receiver'] as String?;
             }
-            builder = (BuildContext context) => MailNewApp(parentid: parentid,);
+            builder = (BuildContext context) => MailNewApp(parentid: parentid, receiver: receiver);
             break;
           case "/friend":
             builder = (BuildContext context) => const FriendsApp();

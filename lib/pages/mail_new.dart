@@ -4,7 +4,8 @@ import '../views/mail_new.dart';
 
 class MailNewApp extends StatefulWidget {
   final String? parentid;
-  const MailNewApp({Key? key, this.parentid}) : super(key: key);
+  final String? receiver;
+  const MailNewApp({Key? key, this.parentid, this.receiver}) : super(key: key);
 
   @override
   State<MailNewApp> createState() => _MailNewAppState();
@@ -17,7 +18,7 @@ class _MailNewAppState extends State<MailNewApp> {
       appBar: AppBar(
         title: const Text("站内信/新建"),
       ),
-      body: MailNewFuturePage(parentid: widget.parentid,),
+      body: MailNewFuturePage(parentid: widget.parentid, receiver: widget.receiver),
     );
   }
 }

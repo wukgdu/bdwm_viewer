@@ -384,7 +384,8 @@ class _MailNewPageState extends State<MailNewPage> {
 
 class MailNewFuturePage extends StatefulWidget {
   final String? parentid;
-  const MailNewFuturePage({super.key, this.parentid});
+  final String? receiver;
+  const MailNewFuturePage({super.key, this.parentid, this.receiver});
 
   @override
   State<MailNewFuturePage> createState() => _MailNewFuturePageState();
@@ -461,7 +462,7 @@ class _MailNewFuturePageState extends State<MailNewFuturePage> {
         }
         return MailNewPage(
           mailNewInfo: mailNewInfo, parentid: widget.parentid,
-          title: mailNewInfo.title, receivers: mailNewInfo.receivers,
+          title: mailNewInfo.title, receivers: widget.receiver ?? mailNewInfo.receivers,
           content: null, quote: quoteText,
         );
       }
