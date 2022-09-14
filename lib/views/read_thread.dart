@@ -331,11 +331,6 @@ class _VoteComponentState extends State<VoteComponent> {
           voteUpCount = value.upCount;
           voteDownCount = value.downCount;
         });
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   const SnackBar(
-        //     content: Text("ok"),
-        //   ),
-        // );
       } else {
         var text = "";
         switch (value.error) {
@@ -343,16 +338,19 @@ class _VoteComponentState extends State<VoteComponent> {
             text = value.desc ?? "";
             break;
           case 9:
+          case 16:
             text = "抱歉，您没有本版回复(点赞)权限";
             break;
           case 11:
-          default:
             text = "暂时无法这么操作";
+            break;
+          default:
+            text = "操作失败";
         }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(text),
-            duration: const Duration(microseconds: 600),
+            duration: const Duration(milliseconds: 1000),
           ),
         );
       }
@@ -361,58 +359,52 @@ class _VoteComponentState extends State<VoteComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          margin: const EdgeInsets.only(top: 5),
-          // padding: const EdgeInsets.only(top: 10),
-          height: 26,
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(voteSize/2)),
-            // border: Border.all(width: 1, color: Colors.red),
-            border: Border.all(color: borderColor, width: 1.0, style: BorderStyle.solid),
+    return Container(
+      margin: const EdgeInsets.only(top: 5),
+      // padding: const EdgeInsets.only(top: 10),
+      height: 26,
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(voteSize/2)),
+        // border: Border.all(width: 1, color: Colors.red),
+        border: Border.all(color: borderColor, width: 1.0, style: BorderStyle.solid),
+      ),
+      child: Row(
+        // mainAxisAlignment: MainAxisAlignment.end,
+        // mainAxisSize: MainAxisSize.max,
+        children: [
+          widthSpacer,
+          GestureDetector(
+            child: Icon(
+              iVoteUp ? Icons.thumb_up : Icons.thumb_up_outlined,
+              size: voteSize, color: const Color(0xff5cae97),
+            ),
+            onTap: () {
+              vote("up");
+            },
           ),
-          child: Row(
-            // mainAxisAlignment: MainAxisAlignment.end,
-            // mainAxisSize: MainAxisSize.max,
-            children: [
-              widthSpacer,
-              GestureDetector(
-                child: Icon(
-                  iVoteUp ? Icons.thumb_up : Icons.thumb_up_outlined,
-                  size: voteSize, color: const Color(0xff5cae97),
-                ),
-                onTap: () {
-                  vote("up");
-                },
-              ),
-              widthSpacer,
-              const Text("赞 ", style: TextStyle(fontSize: voteSize)),
-              Text(voteUpCount.toString()),
-              const VerticalDivider(
-                color: borderColor,
-                width: 10.0,
-                thickness: 1.0,
-              ),
-              GestureDetector(
-                child: Icon(
-                  iVoteDown ? Icons.thumb_down : Icons.thumb_down_outlined,
-                  size: voteSize, color: const Color(0xffe97c62),
-                ),
-                onTap: () {
-                  vote("down");
-                },
-              ),
-              widthSpacer,
-              const Text("踩 ", style: TextStyle(fontSize: voteSize)),
-              Text(voteDownCount.toString()),
-              widthSpacer,
-            ],
+          widthSpacer,
+          // const Text("赞 ", style: TextStyle(fontSize: voteSize)),
+          Text(voteUpCount.toString()),
+          const VerticalDivider(
+            color: borderColor,
+            width: 10.0,
+            thickness: 1.0,
           ),
-        )
-      ],
+          GestureDetector(
+            child: Icon(
+              iVoteDown ? Icons.thumb_down : Icons.thumb_down_outlined,
+              size: voteSize, color: const Color(0xffe97c62),
+            ),
+            onTap: () {
+              vote("down");
+            },
+          ),
+          widthSpacer,
+          // const Text("踩 ", style: TextStyle(fontSize: voteSize)),
+          Text(voteDownCount.toString()),
+          widthSpacer,
+        ],
+      ),
     );
   }
 }
@@ -571,13 +563,19 @@ class OnePostComponent extends StatelessWidget {
                   const Divider(),
                   // renderHtml(item.content, ts: _contentFont, context: context),
                   HtmlComponent(item.content, ts: _contentFont),
-                  VoteComponent(
-                    iVoteUp: onePostInfo.iVoteUp,
-                    iVoteDown: onePostInfo.iVoteDown,
-                    voteUpCount: onePostInfo.upCount,
-                    voteDownCount: onePostInfo.downCount,
-                    bid: bid,
-                    postID: onePostInfo.postID,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      VoteComponent(
+                        iVoteUp: onePostInfo.iVoteUp,
+                        iVoteDown: onePostInfo.iVoteDown,
+                        voteUpCount: onePostInfo.upCount,
+                        voteDownCount: onePostInfo.downCount,
+                        bid: bid,
+                        postID: onePostInfo.postID,
+                      ),
+                    ],
                   ),
                   const Divider(),
                   OperateComponent(bid: bid, threadid: threadid, postid: onePostInfo.postID, uid: onePostInfo.authorInfo.uid, refreshCallBack: refreshCallBack, boardName: boardName, onePostInfo: onePostInfo,),

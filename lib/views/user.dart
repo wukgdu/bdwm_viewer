@@ -336,7 +336,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
             children: [
               _oneLineItem("性别", user.gender, icon: genderIcon),
               _oneLineItem("星座", user.constellation),
-              _oneLineItem("生命力", user.value, icon: const Icon(Icons.favorite_border)),
+              _oneLineItem("生命力", user.value),
               _oneLineItem("上站次数", user.countLogin),
               _oneLineItem("发帖数", user.countPost),
               _oneLineItem("积分", user.score),

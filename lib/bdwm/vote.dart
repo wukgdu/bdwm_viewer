@@ -19,7 +19,7 @@ class VoteRes {
   VoteRes.error({
     required this.error,
     required this.success,
-    required this.desc,
+    this.desc,
   });
 }
 
@@ -39,6 +39,12 @@ Future<VoteRes> bdwmVote(String bid, String postid, String action) async {
     );
   }
   var content = json.decode(resp.body);
+  if (content['success'] == false) {
+    return VoteRes.error(
+      success: false,
+      error: content['error'],
+    );
+  }
   VoteRes voteRes = VoteRes(
     success: content['success'],
     error: content['error'] ?? 0,

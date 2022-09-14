@@ -370,7 +370,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
                     if (true || !await canLaunchUrl(parsedUrl)) {
                       if (!await launchUrl(parsedUrl)) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("打开链接失败"), duration: Duration(microseconds: 600),),
+                          const SnackBar(content: Text("打开链接失败"), duration: Duration(milliseconds: 600),),
                         );
                       }
                     } else {
