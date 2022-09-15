@@ -43,6 +43,8 @@ class _WrapImageNetworkState extends State<WrapImageNetwork> {
       return const Icon(Icons.broken_image);
     }
 
+    try {
+
     return ExtendedImage.network(
       widget.imgLink,
       fit: BoxFit.contain,
@@ -81,6 +83,10 @@ class _WrapImageNetworkState extends State<WrapImageNetwork> {
       },
       // printError: false,
     );
+
+    } catch (e) {
+      return const Icon(Icons.broken_image);
+    }
   }
 }
 
