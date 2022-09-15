@@ -3,6 +3,7 @@ import 'dart:io';
 
 // import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:synchronized/synchronized.dart';
 
 const bbsHost = "https://bbs.pku.edu.cn";
 const v2Host = "https://bbs.pku.edu.cn/v2";
@@ -188,6 +189,7 @@ var globalUInfo = Uinfo.empty();
 class TmpContactInfo {
   Set<String> contact = {};
   String storage = "bdwmcontact.json";
+  Lock lock = Lock();
 
   TmpContactInfo.empty();
   TmpContactInfo.initFromFile() {
@@ -198,24 +200,38 @@ class TmpContactInfo {
     return contact.join(",");
   }
 
+  Future<Set<String>> getData() async {
+    return await lock.synchronized(() async {
+      return contact;
+    });
+  }
+
   Future<bool> addOne(String userName) async {
-    contact.add(userName);
-    return update();
+    return await lock.synchronized(() async {
+      contact.add(userName);
+      return await update();
+    });
   }
 
   Future<bool> addAll(Iterable<String> users) async {
-    contact.addAll(users);
-    return update();
+    return await lock.synchronized(() async {
+      contact.addAll(users);
+      return await update();
+    });
   }
 
   Future<bool> removeOne(String userName) async {
-    contact.remove(userName);
-    return update();
+    return await lock.synchronized(() async {
+      contact.remove(userName);
+      return await update();
+    });
   }
 
   Future<bool> removeAll() async {
-    contact.clear();
-    return update();
+    return await lock.synchronized(() async {
+      contact.clear();
+      return await update();
+    });
   }
 
   Future<bool> init() async {
