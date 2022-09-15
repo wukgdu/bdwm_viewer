@@ -166,10 +166,10 @@ class _PostNewPageState extends State<PostNewPage> {
                   if (postContent.isEmpty) {
                     return;
                   }
-                  if (widget.quoteText != null) {
-                    var mailQuote = bdwmTextFormat(widget.quoteText!, mail: false);
+                  if (quoteText != null) {
+                    var postQuote = bdwmTextFormat(quoteText!, mail: false);
                     // ...{}] [{}...
-                    postContent = "${postContent.substring(0, postContent.length-1)},${mailQuote.substring(1)}";
+                    postContent = "${postContent.substring(0, postContent.length-1)},${postQuote.substring(1)}";
                   }
                   debugPrint(postContent);
 

@@ -191,8 +191,8 @@ class _MailNewPageState extends State<MailNewPage> {
                   if (mailContent.isEmpty) {
                     return;
                   }
-                  if (widget.quote != null) {
-                    var mailQuote = bdwmTextFormat(widget.quote!, mail: true);
+                  if (quoteText != null) {
+                    var mailQuote = bdwmTextFormat(quoteText!, mail: true);
                     // ...{}] [{}...
                     mailContent = "${mailContent.substring(0, mailContent.length-1)},${mailQuote.substring(1)}";
                   }
