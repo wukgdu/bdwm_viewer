@@ -292,6 +292,10 @@ BoardInfo getExampleBoard() {
 
 String directToThread(String htmlStr, {bool? needLink=false}) {
   var document = parse(htmlStr);
+  var errorMessage = checkError(document);
+  if (errorMessage != null) {
+    return errorMessage;
+  }
   var link = document.querySelector(".view-full-post")?.attributes['href'];
   if (link == null) {
     return "";

@@ -214,6 +214,17 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
                               } else {
                                 var link2 = directToThread(value.body, needLink: true);
                                 if (link2.isEmpty) { return; }
+                                int? link2Int = int.tryParse(link2);
+                                if (link2Int == null && link2.startsWith("post-read.php")==false) {
+                                  if (!mounted) { return; }
+                                  showAlertDialog(context, "跳转失败", Text(link2),
+                                    actions1: TextButton(
+                                      onPressed: () { Navigator.of(context).pop(); },
+                                      child: const Text("知道了"),
+                                    ),
+                                  );
+                                }
+                                if (!mounted) { return; }
                                 naviGotoThreadByLink(context, link2, "", pageDefault: "a");
                               }
                             });

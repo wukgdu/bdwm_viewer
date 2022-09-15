@@ -8,8 +8,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 import "./utils.dart";
 import './constants.dart';
+import '../bdwm/req.dart';
 import '../pages/read_thread.dart';
 import '../html_parser/utils.dart';
+import '../globalvars.dart' show genHeaders2;
+import '../html_parser/board_parser.dart' show directToThread;
 import '../pages/detail_image.dart';
 
 class WrapImageNetwork extends StatefulWidget {
@@ -339,6 +342,25 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
                 Navigator.of(context).pushNamed('/collectionArticle', arguments: {
                   'link': link,
                   'title': "文章",
+                });
+              } else if (link.startsWith("https://bbs.pku.edu.cn/v2/post-read-single.php")) {
+                bdwmClient.get(link, headers: genHeaders2()).then((value) {
+                  if (value == null) {
+                    showNetWorkDialog(context);
+                  } else {
+                    var link2 = directToThread(value.body, needLink: true);
+                    if (link2.isEmpty) { return; }
+                    int? link2Int = int.tryParse(link2);
+                    if (link2Int == null && link2.startsWith("post-read.php")==false) {
+                      showAlertDialog(context, "跳转失败", Text(link2),
+                        actions1: TextButton(
+                          onPressed: () { Navigator.of(context).pop(); },
+                          child: const Text("知道了"),
+                        ),
+                      );
+                    }
+                    naviGotoThreadByLink(context, link2, "", pageDefault: "a");
+                  }
                 });
               } else {
                 var hereLink = link;

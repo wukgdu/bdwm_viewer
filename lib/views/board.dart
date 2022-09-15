@@ -167,6 +167,15 @@ class OneThreadInBoard extends StatelessWidget {
                   } else {
                     var threadid = directToThread(value.body);
                     if (threadid.isEmpty) { return; }
+                    int? link2Int = int.tryParse(threadid);
+                    if (link2Int == null) {
+                      showAlertDialog(context, "跳转失败", Text(threadid),
+                        actions1: TextButton(
+                          onPressed: () { Navigator.of(context).pop(); },
+                          child: const Text("知道了"),
+                        ),
+                      );
+                    }
                     Navigator.of(context).pushNamed('/thread', arguments: {
                       'bid': nBid,
                       'threadid': threadid,
