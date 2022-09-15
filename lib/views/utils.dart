@@ -355,3 +355,5 @@ Future<String?> showColorDialog(BuildContext context, List<String> hexRGBColor) 
     },
   );
 }
+
+typedef FutureOrFunction<T> = Future<T?> Function(String a);

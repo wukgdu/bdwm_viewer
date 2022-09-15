@@ -25,7 +25,8 @@ class MailNewPage extends StatefulWidget {
   final MailNewInfo mailNewInfo;
   final String? title;
   final String? receivers;
-  const MailNewPage({super.key, this.parentid, this.content, this.quote, required this.mailNewInfo, this.title, this.receivers});
+  final FutureOrFunction<String> updateQuote;
+  const MailNewPage({super.key, this.parentid, this.content, this.quote, required this.mailNewInfo, this.title, this.receivers, required this.updateQuote});
 
   @override
   State<MailNewPage> createState() => _MailNewPageState();
@@ -39,11 +40,16 @@ class _MailNewPageState extends State<MailNewPage> {
   SignatureItem? signature;
   int attachCount = 0;
   List<String> attachFiles = [];
+  final quoteModes = <SignatureItem>[SignatureItem(key: "精简引文", value: "simple"), SignatureItem(key: "完整引文", value: "full")];
+  late SignatureItem quoteMode;
+  String? quoteText;
 
   final signatureOB = SignatureItem(key: "OBViewer", value: "OBViewer");
   @override
   void initState() {
     super.initState();
+    quoteText = widget.quote;
+    quoteMode = quoteModes[1];
     if (widget.content != null && widget.content!.isNotEmpty) {
       var clist = html2Quill(widget.content!);
       _controller = fquill.QuillController(
@@ -323,39 +329,40 @@ class _MailNewPageState extends State<MailNewPage> {
             ],
           ),
         ),
-        if (widget.quote!=null)
+        if (quoteText!=null)
           Container(
             margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
             height: 100,
             child: SingleChildScrollView(
-              child: HtmlComponent(widget.quote!),
+              child: HtmlComponent(quoteText!),
             ),
           ),
         Container(
           margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
           // alignment: Alignment.center,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          child: Wrap(
+            alignment: WrapAlignment.spaceEvenly,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
+              if (widget.mailNewInfo.quoteInfo.isNotEmpty)
                 DropdownButton<SignatureItem>(
-                  hint: const Text("签名档"),
+                  hint: const Text("引文模式"),
                   icon: const Icon(Icons.arrow_drop_down),
-                  value: signature,
-                  items: [
-                    DropdownMenuItem<SignatureItem>(
-                      value: signatureOB,
-                      child: const Text("OBViewer"),
-                    ),
-                    ...widget.mailNewInfo.signatureInfo.map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
-                      return DropdownMenuItem<SignatureItem>(
-                          value: item,
-                          child: Text(item.key),
-                        );
-                      }).toList(),
-                  ],
+                  value: quoteMode,
+                  items: quoteModes.map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
+                    return DropdownMenuItem<SignatureItem>(
+                      value: item,
+                      child: Text(item.key),
+                    );
+                  }).toList(),
                   onChanged: (SignatureItem? value) {
-                    setState(() {
-                      signature = value!;
+                    if (value == null) { return; }
+                    widget.updateQuote(value.value).then((quoteValue) {
+                      if (!mounted) { return; }
+                      setState(() {
+                        quoteText = quoteValue;
+                        quoteMode = value;
+                      });
                     });
                   },
                 ),
@@ -373,6 +380,28 @@ class _MailNewPageState extends State<MailNewPage> {
                   },);
                 },
                 child: const Text("管理附件"),
+              ),
+              DropdownButton<SignatureItem>(
+                hint: const Text("签名档"),
+                icon: const Icon(Icons.arrow_drop_down),
+                value: signature,
+                items: [
+                  DropdownMenuItem<SignatureItem>(
+                    value: signatureOB,
+                    child: const Text("OBViewer"),
+                  ),
+                  ...widget.mailNewInfo.signatureInfo.map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
+                    return DropdownMenuItem<SignatureItem>(
+                        value: item,
+                        child: Text(item.key),
+                      );
+                    }).toList(),
+                ],
+                onChanged: (SignatureItem? value) {
+                  setState(() {
+                    signature = value!;
+                  });
+                },
               ),
             ],
           ),
@@ -406,8 +435,8 @@ class _MailNewFuturePageState extends State<MailNewFuturePage> {
     return parseMailNew(resp.body);
   }
 
-  Future<String?> getMailQuote() async {
-    var resp = await bdwmGetMailQuote(postid: widget.parentid!, mode: "full");
+  Future<String?> getMailQuote({String mode="full"}) async {
+    var resp = await bdwmGetMailQuote(postid: widget.parentid!, mode: mode);
     if (!resp.success) {
       return networkErrorText;
     }
@@ -464,6 +493,7 @@ class _MailNewFuturePageState extends State<MailNewFuturePage> {
           mailNewInfo: mailNewInfo, parentid: widget.parentid,
           title: mailNewInfo.title, receivers: widget.receiver ?? mailNewInfo.receivers,
           content: null, quote: quoteText,
+          updateQuote: (String mode) { return getMailQuote(mode: mode); },
         );
       }
     );

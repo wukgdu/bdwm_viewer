@@ -24,7 +24,8 @@ class PostNewPage extends StatefulWidget {
   // final String boardName;
   final PostNewInfo postNewInfo;
   final String? quoteText;
-  const PostNewPage({Key? key, required this.bid, this.postid, this.parentid, required this.postNewInfo, this.quoteText}) : super(key: key);
+  final FutureOrFunction<String> updateQuote;
+  const PostNewPage({Key? key, required this.bid, this.postid, this.parentid, required this.postNewInfo, this.quoteText, required this.updateQuote}) : super(key: key);
 
   @override
   State<PostNewPage> createState() => _PostNewPageState();
@@ -40,8 +41,11 @@ class _PostNewPageState extends State<PostNewPage> {
   SignatureItem? signature;
   final signatureOB = SignatureItem(key: "OBViewer", value: "OBViewer");
   static const vDivider = VerticalDivider();
+  final quoteModes = <SignatureItem>[SignatureItem(key: "精简引文", value: "simple"), SignatureItem(key: "完整引文", value: "full")];
+  late SignatureItem quoteMode;
   int attachCount = 0;
   List<String> attachFiles = [];
+  String? quoteText;
 
   late CancelableOperation getDataCancelable;
 
@@ -51,6 +55,8 @@ class _PostNewPageState extends State<PostNewPage> {
   void initState() {
     super.initState();
     // _future = getData();
+    quoteMode = quoteModes[0];
+    quoteText = widget.quoteText;
     var content = widget.postNewInfo.contentHtml;
     if (content!=null && content.isNotEmpty) {
       var clist = html2Quill(content);
@@ -352,22 +358,60 @@ class _PostNewPageState extends State<PostNewPage> {
             ],
           ),
         ),
-        if (widget.quoteText!=null)
+        if (quoteText!=null)
           Container(
             margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
             constraints: const BoxConstraints(
               maxHeight: 100,
             ),
             child: SingleChildScrollView(
-              child: HtmlComponent(widget.quoteText!),
+              child: HtmlComponent(quoteText!),
             ),
           ),
         Container(
           margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
           // alignment: Alignment.center,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          child: Wrap(
+            alignment: WrapAlignment.spaceEvenly,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
+              if (widget.postNewInfo.quoteInfo.isNotEmpty)
+                DropdownButton<SignatureItem>(
+                  hint: const Text("引文模式"),
+                  icon: const Icon(Icons.arrow_drop_down),
+                  value: quoteMode,
+                  items: quoteModes.map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
+                    return DropdownMenuItem<SignatureItem>(
+                      value: item,
+                      child: Text(item.key),
+                    );
+                  }).toList(),
+                  onChanged: (SignatureItem? value) {
+                    if (value == null) { return; }
+                    widget.updateQuote(value.value).then((quoteValue) {
+                      if (!mounted) { return; }
+                      setState(() {
+                        quoteText = quoteValue;
+                        quoteMode = value;
+                      });
+                    });
+                  },
+                ),
+              TextButton(
+                onPressed: () {
+                  showUploadDialog(context, widget.postNewInfo.attachpath, attachFiles)
+                  .then((value) {
+                    if (value == null) { return; }
+                    var content = jsonDecode(value);
+                    attachCount = content['count'];
+                    attachFiles = [];
+                    for (var f in content['files']) {
+                      attachFiles.add(f);
+                    }
+                  },);
+                },
+                child: const Text("管理附件"),
+              ),
               DropdownButton<SignatureItem>(
                 hint: const Text("签名档"),
                 icon: const Icon(Icons.arrow_drop_down),
@@ -389,21 +433,6 @@ class _PostNewPageState extends State<PostNewPage> {
                     signature = value!;
                   });
                 },
-              ),
-              TextButton(
-                onPressed: () {
-                  showUploadDialog(context, widget.postNewInfo.attachpath, attachFiles)
-                  .then((value) {
-                    if (value == null) { return; }
-                    var content = jsonDecode(value);
-                    attachCount = content['count'];
-                    attachFiles = [];
-                    for (var f in content['files']) {
-                      attachFiles.add(f);
-                    }
-                  },);
-                },
-                child: const Text("管理附件"),
               ),
             ],
           ),
@@ -440,8 +469,8 @@ class _PostNewFuturePageState extends State<PostNewFuturePage> {
     return parsePostNew(resp.body);
   }
 
-  Future<String?> getPostQuote() async {
-    var resp = await bdwmGetPostQuote(bid: widget.bid, postid: widget.parentid!);
+  Future<String?> getPostQuote({String mode="simple"}) async {
+    var resp = await bdwmGetPostQuote(bid: widget.bid, postid: widget.parentid!, mode: mode);
     if (!resp.success) {
       return networkErrorText;
     }
@@ -500,6 +529,7 @@ class _PostNewFuturePageState extends State<PostNewFuturePage> {
         return PostNewPage(
           postNewInfo: postNewInfo, parentid: widget.parentid,
           postid: widget.postid, bid: widget.bid, quoteText: quoteText,
+          updateQuote: (String mode) { return getPostQuote(mode: mode); },
         );
       }
     );
