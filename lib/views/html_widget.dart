@@ -368,7 +368,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
                   if (value == "ok") {
                     var parsedUrl = Uri.parse(link);
                     if (true || !await canLaunchUrl(parsedUrl)) {
-                      if (!await launchUrl(parsedUrl)) {
+                      if (!await launchUrl(parsedUrl, mode: LaunchMode.externalApplication)) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("打开链接失败"), duration: Duration(milliseconds: 600),),
                         );

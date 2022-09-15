@@ -442,13 +442,13 @@ class AttachmentComponent extends StatelessWidget {
                   onLongPress: () {
                     showLinkMenu(context, e.link);
                   },
-                  onSecondaryTap: () {
-                    showLinkMenu(context, e.link);
-                  },
+                  // onSecondaryTap: () {
+                  //   showLinkMenu(context, e.link);
+                  // },
                   onTap: () async {
                     var parsedUrl = Uri.parse(e.link);
                     if (true || !await canLaunchUrl(parsedUrl)) {
-                      if (!await launchUrl(parsedUrl)) {
+                      if (!await launchUrl(parsedUrl, mode: LaunchMode.externalApplication)) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("打开链接失败"), duration: Duration(milliseconds: 600),),
                         );
