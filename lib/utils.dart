@@ -66,3 +66,11 @@ String? getQueryValue(String link, String name) {
   var p2 = link.indexOf("&", p1);
   return link.substring(p1+name.length+1, p2==-1?null:p2);
 }
+
+int termStringLength(String str) {
+  int length = 0;
+  for (var cu in str.codeUnits) {
+    length += cu > 255 ? 2 : 1;
+  }
+  return length;
+}

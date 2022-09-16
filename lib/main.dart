@@ -21,6 +21,7 @@ import './pages/message.dart';
 import './pages/friends.dart';
 import './pages/mail.dart';
 import './pages/mail_new.dart';
+import './pages/funfunfun.dart';
 import './views/search.dart' show PostSearchSettings;
 // import './pages/detail_image.dart';
 import './services.dart';
@@ -280,6 +281,9 @@ class _MainPageState extends State<MainPage> {
           case "/messagePerson":
             String userName = settings.arguments as String? ?? "deliver";
             builder = (BuildContext context) => MessagePersonApp(userName: userName);
+            break;
+          case "/funfunfun":
+            builder = (BuildContext context) => const FunFunFunApp();
             break;
           case "/home":
           default:
