@@ -621,9 +621,15 @@ void travelHtmlBack(hdom.Element? document, BDWMtext config, List<BDWMtext> res)
           res.add(txt);
         } else if (ele.classes.contains('blockquote')) {
           var txt = BDWMAnsiText.raw(ele.text);
+          bool needNeline = true;
+          if (ele.text.isEmpty) {
+            // quote an empty line
+            txt.content = "\n";
+            needNeline = false;
+          }
           txt.type = "quote";
           res.add(txt);
-          if (cdom != document.nodes.last) {
+          if (needNeline && cdom != document.nodes.last) {
             res.add(BDWMAnsiText.raw("\n"));
           }
         } else {

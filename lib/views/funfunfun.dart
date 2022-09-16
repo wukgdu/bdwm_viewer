@@ -163,7 +163,7 @@ class _FunFunFunPageState extends State<FunFunFunPage> {
                 });
                 return;
               }
-              showAlertDialog(context, "十大拍照", const Text("将要读取当前十大每个帖子首页"),
+              showAlertDialog(context, "十大拍照", const Text("将要读取当前十大每个帖子的首页"),
                 actions1: TextButton(
                   onPressed: () { Navigator.of(context).pop(); },
                   child: const Text("不了"),
