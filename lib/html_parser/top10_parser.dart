@@ -168,3 +168,9 @@ HomeInfo getExampleHomeInfo() {
   final item = parseHome(htmlStr);
   return item;
 }
+
+List<Top10Item>? parseBigTen(String htmlStr) {
+  var document = parse(htmlStr);
+  var top10Info = parseTop10(document);
+  return top10Info;
+}

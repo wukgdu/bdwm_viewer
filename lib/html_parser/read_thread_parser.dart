@@ -349,7 +349,7 @@ String getEqualValue(String a, {String del="="}) {
   return "";
 }
 
-ThreadPageInfo parseThread(String htmlStr) {
+ThreadPageInfo parseThread(String htmlStr, {bool simple=false}) {
   var document = parse(htmlStr);
   var errorMessage = checkError(document);
   if (errorMessage != null) {
@@ -384,22 +384,20 @@ ThreadPageInfo parseThread(String htmlStr) {
   var boardName = "", boardLink = "";
   if (linkDom != null) {
     var linksDom = linkDom.querySelectorAll("a");
-    if (linksDom.isNotEmpty) {
-      for (var ld in linksDom) {
-        var href = ld.attributes['href'];
-        if (href==null) {
-          continue;
-        }
-        if (href.startsWith("board")) {
-          blockid = getEqualValue(href);
-        } else if (href.startsWith("thread")) {
-          boardid = getEqualValue(href);
-          boardName = getTrimmedString(ld);
-          boardLink = absThreadLink(href);
-        } else if (href.contains("post-read")) {
-          threadid = getQueryValue(href, "threadid") ?? "";
-          title = getTrimmedString(ld);
-        }
+    for (var ld in linksDom) {
+      var href = ld.attributes['href'];
+      if (href==null) {
+        continue;
+      }
+      if (href.startsWith("board")) {
+        blockid = getEqualValue(href);
+      } else if (href.startsWith("thread")) {
+        boardid = getEqualValue(href);
+        boardName = getTrimmedString(ld);
+        boardLink = absThreadLink(href);
+      } else if (href.contains("post-read")) {
+        threadid = getQueryValue(href, "threadid") ?? "";
+        title = getTrimmedString(ld);
       }
     }
   }
@@ -407,6 +405,9 @@ ThreadPageInfo parseThread(String htmlStr) {
   var postCards = document.querySelectorAll(".post-card");
   for (var pc in postCards) {
     posts.add(parseOnePost(pc));
+    if (simple==true) {
+      break;
+    }
   }
   return ThreadPageInfo(page: page, pageNum: pageNum, blockid: blockid, boardid: boardid, threadid: threadid, title: title, board: TextAndLink(boardName, boardLink), posts: posts);
 }
