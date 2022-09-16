@@ -686,7 +686,8 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
           ),
         ),
         Expanded(
-          child: widget.postid != null
+          // child: widget.postid != null
+          child: true
           ? SingleChildScrollView(
             controller: _scrollController,
             padding: const EdgeInsets.all(8),
