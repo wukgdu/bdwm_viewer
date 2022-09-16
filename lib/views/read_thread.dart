@@ -675,6 +675,9 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
             // Scrollable.ensureVisible(itemKeys[0].currentContext!, duration: const Duration(milliseconds: 1500));
             _scrollController.animateTo(0, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
           },
+          onLongPress: () {
+            _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
+          },
           child: Container(
             padding: const EdgeInsets.all(10.0),
             alignment: Alignment.centerLeft,
