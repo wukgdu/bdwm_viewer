@@ -38,6 +38,15 @@ class _MessageListPageState extends State<MessageListPage> {
       builder: (context, value, child) {
         var users = (value as List<TextAndLink>).map((e) => TextAndLink(e.text, e.link)).toList();
         bool deliver = false;
+        for (var u in users) {
+          if (u.text == "deliver") {
+            deliver = true;
+            break;
+          }
+        }
+        if (deliver == false) {
+          users.insert(0, TextAndLink("deliver", "0"));
+        }
         Set<String> usersSet = Set.from(users.map((e) => e.text));
         var clist = globalContactInfo.contact.toList(growable: false);
         clist.sort();
@@ -48,15 +57,6 @@ class _MessageListPageState extends State<MessageListPage> {
         }
         if (usersSet.isNotEmpty) {
           globalContactInfo.addAll(usersSet);
-        }
-        for (var u in users) {
-          if (u.text == "deliver") {
-            deliver = true;
-            break;
-          }
-        }
-        if (deliver == false) {
-          users.insert(0, TextAndLink("deliver", "0"));
         }
         return Container(
           padding: const EdgeInsets.all(10.0),
