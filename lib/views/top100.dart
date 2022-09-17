@@ -94,7 +94,7 @@ class _Top100PageState extends State<Top100Page> {
           child: Text("${item.id}")
         ),
         // dense: true,
-        onTap: () { naviGotoThreadByLink(context, item.contentLink, item.board, needToBoard: true); }
+        onTap: () { naviGotoThreadByLink(context, item.contentLink, item.board.split("(").first, needToBoard: true); }
       )
     );
   }
