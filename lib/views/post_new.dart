@@ -57,6 +57,7 @@ class _PostNewPageState extends State<PostNewPage> {
     // _future = getData();
     quoteMode = quoteModes[0];
     quoteText = widget.quoteText;
+    needAnony = widget.postNewInfo.canAnony;
     var content = widget.postNewInfo.contentHtml;
     if (content!=null && content.isNotEmpty) {
       var clist = html2Quill(content);
