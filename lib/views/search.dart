@@ -356,14 +356,14 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return ListView(
       children: const [
-        Center(child: Text("搜索帖子")),
-        ComplexSearchComponent(),
-        Center(child: Text("搜索用户")),
-        SimpleSearchComponent(mode: "user",),
         Center(child: Text("搜索版面")),
         SimpleSearchComponent(mode: "board"),
+        Center(child: Text("搜索用户")),
+        SimpleSearchComponent(mode: "user",),
         Center(child: Text("跳转帖子")),
         JumpThreadSearch(),
+        Center(child: Text("搜索帖子")),
+        ComplexSearchComponent(),
       ],
     );
   }
