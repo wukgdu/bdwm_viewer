@@ -50,7 +50,7 @@ Future<LoginRes> bdwmLogin(String username, String password) async {
   }
   List<String> res = parseCookie(resp.headers['set-cookie'] ?? "");
   if (res.isNotEmpty) {
-    globalUInfo.setInfo(res[1], res[0], username);
+    await globalUInfo.setInfo(res[1], res[0], username);
   }
   return LoginRes(true, 0);
 }

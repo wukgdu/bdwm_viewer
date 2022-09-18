@@ -13,7 +13,7 @@ Future<bool> bdwmLogout() async {
   if (!status['success']) {
     return false;
   }
-  globalUInfo.setLogout();
+  await globalUInfo.setLogout();
   // List<String> res = parseCookie(resp.headers['set-cookie'] ?? "");
   // if (res.isNotEmpty) {
   //   globalUInfo.setInfo(res[1], res[0], username);

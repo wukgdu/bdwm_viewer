@@ -10,10 +10,10 @@ import '../utils.dart';
 class BdwmClient {
   final http.Client client = http.Client();
 
-  void checkStatus(String cookie) {
+  Future<void> checkStatus(String cookie) async {
     if (globalUInfo.login) {
       // debugPrint(cookie);
-      globalUInfo.checkAndLogout(cookie);
+      await globalUInfo.checkAndLogout(cookie);
       if (globalUInfo.login == false) {
         quickNotify("OBViewer", "登录已失效");
       }
@@ -26,7 +26,7 @@ class BdwmClient {
     try {
       var resp = await client.post(Uri.parse(url), body: data, headers: headers)
         .timeout(const Duration(seconds: 10));
-      checkStatus(resp.headers['set-cookie'] ?? "");
+      await checkStatus(resp.headers['set-cookie'] ?? "");
       return resp;
     } on TimeoutException catch (_) {
       timeout = true;
@@ -51,7 +51,7 @@ class BdwmClient {
     try {
       var resp =  await client.get(Uri.parse(url), headers: headers)
         .timeout(const Duration(seconds: 10));
-      checkStatus(resp.headers['set-cookie'] ?? "");
+      await checkStatus(resp.headers['set-cookie'] ?? "");
       return resp;
     } on TimeoutException catch (_) {
       timeout = true;

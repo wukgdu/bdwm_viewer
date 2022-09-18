@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:synchronized/synchronized.dart';
 
+import './services_instance.dart';
+
 const bbsHost = "https://bbs.pku.edu.cn";
 const v2Host = "https://bbs.pku.edu.cn/v2";
 // const bbsHost = "";
@@ -44,12 +46,14 @@ class Uinfo {
     return "$username($uid): $skey ${login == true? 'online' : 'offline'}";
   }
 
-  void setInfo(String skey, String uid, String username) {
+  Future<void> setInfo(String skey, String uid, String username) async {
     this.skey = skey;
     this.uid = uid;
     this.username = username;
     login = true;
-    update();
+    await update();
+    await unreadMail.reInitWorker();
+    await unreadMessage.reInitWorker();
   }
 
   Future<bool> init() async {
@@ -86,7 +90,7 @@ class Uinfo {
     return true;
   }
 
-  void update() async {
+  Future<void> update() async {
     String dir = (await getApplicationDocumentsDirectory()).path;
     String filename = "$dir/$storage";
     var content = File(filename).readAsStringSync();
@@ -100,7 +104,7 @@ class Uinfo {
     file.close();
   }
 
-  void checkAndLogout(cookie) {
+  Future<void> checkAndLogout(cookie) async {
     if (login == false) {
       return;
     }
@@ -114,19 +118,19 @@ class Uinfo {
       uid = newUid;
       skey = newSkey;
       login = false;
-      update();
+      await update();
     } else if (newSkey != skey) {
       uid = newUid;
       skey = newSkey;
       login = true;
-      update();
+      await update();
     }
   }
 
-  void setLogout() {
+  Future<void> setLogout() async {
     login = false;
     username = "guest";
-    update();
+    await update();
   }
 }
 

@@ -20,11 +20,24 @@ class NotifyMessage {
   List<UnreadMessageInfo> value = <UnreadMessageInfo>[];
   int count = 0;
 
-  final pFromWorker = ReceivePort();
-  late SendPort pToWorker;
+  late ReceivePort pFromWorker;
+  SendPort? pToWorker;
   late Isolate worker;
   late StreamQueue<dynamic> events;
+  Future<void> reInitWorker() async {
+    // should call after initWork
+    await disposeWorker();
+    pToWorker = null;
+    pFromWorker = ReceivePort();
+    worker = await Isolate.spawn(
+      (List<dynamic> argv) { messageWorkerWork(argv[0], argv[1]); },
+      [pFromWorker.sendPort, globalUInfo],
+    );
+    events = StreamQueue<dynamic>(pFromWorker);
+    pToWorker = await events.next;
+  }
   Future<void> initWorker() async {
+    pFromWorker = ReceivePort();
     worker = await Isolate.spawn(
       (List<dynamic> argv) { messageWorkerWork(argv[0], argv[1]); },
       [pFromWorker.sendPort, globalUInfo],
@@ -33,7 +46,8 @@ class NotifyMessage {
     pToWorker = await events.next;
   }
   Future<List<UnreadMessageInfo>?> updateByWorker() async {
-    pToWorker.send("");
+    if (pToWorker == null) { return null; }
+    pToWorker!.send("");
     List<UnreadMessageInfo>? res = await events.next;
     return res;
   }
@@ -49,8 +63,10 @@ class NotifyMessage {
       p.send(res);
     });
   }
-  void disposeWorker() async {
-    pToWorker.send(null);
+  Future<void> disposeWorker() async {
+    if (pToWorker == null) { return; }
+    pToWorker!.send(null);
+    pFromWorker.close();
     await events.cancel();
   }
 
@@ -127,21 +143,34 @@ class NotifyMail {
   int lastUnreadTime = 0;
   UnreadMailInfo unreadMailInfo = UnreadMailInfo.empty();
 
-  final pFromWorker = ReceivePort();
-  late SendPort pToWorker;
+  late ReceivePort pFromWorker;
+  SendPort? pToWorker;
   late Isolate worker;
   late StreamQueue<dynamic> events;
-  Future<void> initWorker() async {
+  Future<void> reInitWorker() async {
+    // should call after initWork
+    await disposeWorker();
+    pToWorker = null;
+    pFromWorker = ReceivePort();
     worker = await Isolate.spawn(
       (List<dynamic> argv) { mailWorkerWork(argv[0], argv[1]); },
       [pFromWorker.sendPort, globalUInfo],
     );
     events = StreamQueue<dynamic>(pFromWorker);
+    pToWorker = await events.next;
+  }
+  Future<void> initWorker() async {
+    pFromWorker = ReceivePort();
+    worker = await Isolate.spawn(
+      (List<dynamic> argv) { mailWorkerWork(argv[0], argv[1]); },
+      [pFromWorker.sendPort, globalUInfo],
+    );
     events = StreamQueue<dynamic>(pFromWorker);
     pToWorker = await events.next;
   }
   Future<UnreadMailInfo?> updateByWorker() async {
-    pToWorker.send("");
+    if (pToWorker == null) { return null; }
+    pToWorker!.send("");
     UnreadMailInfo? res = await events.next;
     return res;
   }
@@ -157,8 +186,10 @@ class NotifyMail {
       p.send(res);
     });
   }
-  void disposeWorker() async {
-    pToWorker.send(null);
+  Future<void> disposeWorker() async {
+    if (pToWorker == null) { return; }
+    pToWorker!.send(null);
+    pFromWorker.close();
     await events.cancel();
   }
 
