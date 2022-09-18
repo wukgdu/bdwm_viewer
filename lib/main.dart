@@ -51,36 +51,36 @@ class _MainPageState extends State<MainPage> {
   ValueNotifier<int> mailCount = ValueNotifier<int>(0);
   MessageBriefNotifier messageBrief = MessageBriefNotifier([]);
 
-  @override
-  void initState() {
-    super.initState();
-
+  void updateUnreadMessageData() {
     unreadMessage.updateValue((NotifyMessageInfo info) {
       if (info.count != messageCount.value) {
         messageCount.value = info.count;
       }
       messageBrief.newArray(info);
     });
-    timerMessage = Timer.periodic(const Duration(seconds: 15), (timer) {
-      unreadMessage.updateValue((NotifyMessageInfo info) {
-        if (info.count != messageCount.value) {
-          messageCount.value = info.count;
-        }
-        messageBrief.newArray(info);
-      });
-    });
+  }
 
+  void updateUnreadMailData() {
     unreadMail.updateValue((UnreadMailInfo info) {
       if (info.count != mailCount.value) {
         mailCount.value = info.count;
       }
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    updateUnreadMessageData();
+    updateUnreadMailData();
+    timerMessage = Timer.periodic(const Duration(seconds: 15), (timer) {
+      updateUnreadMessageData();
+      timerMessage = timer;
+    });
     timerMail = Timer.periodic(const Duration(seconds: 15), (timer) {
-      unreadMail.updateValue((UnreadMailInfo info) {
-        if (info.count != mailCount.value) {
-          mailCount.value = info.count;
-        }
-      });
+      updateUnreadMailData();
+      timerMail = timer;
     });
   }
 
