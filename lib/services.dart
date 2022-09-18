@@ -1,3 +1,6 @@
+import 'dart:isolate';
+
+import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 
 import './bdwm/message.dart';
@@ -16,6 +19,40 @@ class NotifyMessage {
   var lastUnreadInfo = <String, int>{};
   List<UnreadMessageInfo> value = <UnreadMessageInfo>[];
   int count = 0;
+
+  final pFromWorker = ReceivePort();
+  late SendPort pToWorker;
+  late Isolate worker;
+  late StreamQueue<dynamic> events;
+  Future<void> initWorker() async {
+    worker = await Isolate.spawn(
+      (List<dynamic> argv) { messageWorkerWork(argv[0], argv[1]); },
+      [pFromWorker.sendPort, globalUInfo],
+    );
+    events = StreamQueue<dynamic>(pFromWorker);
+    pToWorker = await events.next;
+  }
+  Future<List<UnreadMessageInfo>?> updateByWorker() async {
+    pToWorker.send("");
+    List<UnreadMessageInfo>? res = await events.next;
+    return res;
+  }
+  static Future<void> messageWorkerWork(SendPort p, Uinfo globalUInfo_) async {
+    globalUInfo = globalUInfo_;
+    final commandPort = ReceivePort();
+    p.send(commandPort.sendPort);
+    commandPort.listen((message) async {
+      if (message == null) {
+        Isolate.exit();
+      }
+      var res = await bdwmGetUnreadMessageCount();
+      p.send(res);
+    });
+  }
+  void disposeWorker() async {
+    pToWorker.send(null);
+    await events.cancel();
+  }
 
   bool notifyP(List<UnreadMessageInfo> value) {
     bool notifyIt = false;
@@ -52,7 +89,8 @@ class NotifyMessage {
   void updateValue(Function callBack) {
     // return;
     if (globalUInfo.login == false) { return; }
-    bdwmGetUnreadMessageCount().then((value) {
+    // bdwmGetUnreadMessageCount().then((value) {
+    updateByWorker().then((value) {
       if (value == null) {
         return;
       }
@@ -89,6 +127,41 @@ class NotifyMail {
   int lastUnreadTime = 0;
   UnreadMailInfo unreadMailInfo = UnreadMailInfo.empty();
 
+  final pFromWorker = ReceivePort();
+  late SendPort pToWorker;
+  late Isolate worker;
+  late StreamQueue<dynamic> events;
+  Future<void> initWorker() async {
+    worker = await Isolate.spawn(
+      (List<dynamic> argv) { mailWorkerWork(argv[0], argv[1]); },
+      [pFromWorker.sendPort, globalUInfo],
+    );
+    events = StreamQueue<dynamic>(pFromWorker);
+    events = StreamQueue<dynamic>(pFromWorker);
+    pToWorker = await events.next;
+  }
+  Future<UnreadMailInfo?> updateByWorker() async {
+    pToWorker.send("");
+    UnreadMailInfo? res = await events.next;
+    return res;
+  }
+  static Future<void> mailWorkerWork(SendPort p, Uinfo globalUInfo_) async {
+    globalUInfo = globalUInfo_;
+    final commandPort = ReceivePort();
+    p.send(commandPort.sendPort);
+    commandPort.listen((message) async {
+      if (message == null) {
+        Isolate.exit();
+      }
+      var res = await bdwmGetUnreadMailCount();
+      p.send(res);
+    });
+  }
+  void disposeWorker() async {
+    pToWorker.send(null);
+    await events.cancel();
+  }
+
   bool notifyP(UnreadMailInfo value) {
     bool notifyIt = false;
     for (var e in value.unreadMailList) {
@@ -104,7 +177,8 @@ class NotifyMail {
   void updateValue(Function callBack) {
     // return;
     if (globalUInfo.login == false) { return; }
-    bdwmGetUnreadMailCount().then((value) {
+    // bdwmGetUnreadMailCount().then((value) {
+    updateByWorker().then((value) {
       if (value == null) {
         return;
       }

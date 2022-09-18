@@ -34,6 +34,8 @@ void main() async {
   // debugPaintSizeEnabled = true;
   await globalUInfo.init();
   await globalContactInfo.init();
+  await unreadMessage.initWorker();
+  await unreadMail.initWorker();
   runApp(const MainPage());
 }
 
