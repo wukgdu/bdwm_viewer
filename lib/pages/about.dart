@@ -6,8 +6,8 @@ import '../views/constants.dart' show bdwmPrimaryColor;
 
 class AboutApp extends StatelessWidget {
   const AboutApp({Key? key}) : super(key: key);
-  final _titleStyle = const TextStyle(fontSize: 22, fontWeight: FontWeight.normal);
-  final _contentStyle = const TextStyle(fontSize: 18);
+  final _titleStyle = const TextStyle(fontSize: 20, fontWeight: FontWeight.normal);
+  final _contentStyle = const TextStyle(fontSize: 16);
   final String innerLink = "https://bbs.pku.edu.cn/v2/collection-read.php?path=groups%2FGROUP_0%2FPersonalCorpus%2FO%2Fonepiece%2FD93F86C79%2FA862DAFBA";
   final String curVersion = "1.3.11";
 
@@ -60,14 +60,14 @@ class AboutApp extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          oneItem("北大未名BBS", "https://bbs.pku.edu.cn"),
+          oneItem("北大未名BBS", "https://bbs.pku.edu.cn", isLink: true),
           oneItem("关于此应用", "北大未名BBS第三方安卓客户端"),
           // oneItem("开发", "onepiece@bdwm"),
           addAuthor(context),
           oneItem("当前版本", curVersion),
           oneItem("站内更新", innerLink, isLink: true),
-          oneItem("开源", "https://github.com/wukgdu/bdwm_viewer", isLink: false),
-          oneItem("下载", "https://github.com/wukgdu/bdwm_viewer/releases", isLink: false),
+          oneItem("开源", "https://github.com/wukgdu/bdwm_viewer", isLink: true),
+          oneItem("下载", "https://github.com/wukgdu/bdwm_viewer/releases", isLink: true),
         ],
       ),
     );

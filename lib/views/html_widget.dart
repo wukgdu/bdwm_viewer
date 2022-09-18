@@ -126,7 +126,7 @@ class _HtmlComponentState extends State<HtmlComponent> {
     // return renderHtml(htmlStr, ts: ts, context: context, needSelect: needSelect);
     // var htmlStr = '''<p>asd<span style="background-color: #40ff40;">fs<font color="#c00000">a<u>d<b>fa</b></u><b>s</b></font><b>d</b></span>fa<br></p>''';
     var document = parse(htmlStr);
-    var res = travelHtml(document.querySelector("body"), context: context);
+    var res = travelHtml(document.querySelector("body"), context: context, ts: ts);
     var tspan = TextSpan(
       children: res,
       style: ts,
@@ -155,7 +155,7 @@ TextSpan html2TextSpan(String htmlStr, {TextStyle? ts}) {
   if (document == null) {
     return const TextSpan(text: "解析错误", style: TextStyle(color: Colors.black));
   }
-  var res = travelHtml(document.querySelector("body"), context: null);
+  var res = travelHtml(document.querySelector("body"), context: null, ts: ts);
   var tspan = TextSpan(
     children: res,
     style: ts,
@@ -163,7 +163,7 @@ TextSpan html2TextSpan(String htmlStr, {TextStyle? ts}) {
   return tspan;
 }
 
-List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
+List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, BuildContext? context}) {
   if (document == null) {
     return null;
   }
@@ -183,7 +183,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
         // for color
         var color = ele.attributes['color'];
         // var bColor = ele.attributes['background-color'];
-        res.add(TextSpan(children: travelHtml(ele, context: context),
+        res.add(TextSpan(children: travelHtml(ele, context: context, ts: ts),
           style: TextStyle(
             color: color!=null?Color(int.parse("0xff${color.substring(1)}")):null,
             // backgroundColor: bColor!=null?Color(int.parse("0xff${bColor.substring(1)}")) : null,
@@ -206,7 +206,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
           //   // color = spanStyle.substring(cp2, cp2+7);
           // }
         }
-        res.add(TextSpan(children: travelHtml(ele, context: context),
+        res.add(TextSpan(children: travelHtml(ele, context: context, ts: ts),
           style: TextStyle(
             // color: color!=null?Color(int.parse("0xff${color.substring(1)}")):null,
             backgroundColor: bColor!=null?Color(int.parse("0xff${bColor.substring(1)}")) : null,
@@ -218,12 +218,12 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
           res.add(TextSpan(text: ele.text, style: const TextStyle(color: Colors.grey, fontSize: 12)));
         } else if (ele.classes.contains("zz-info")) {
           res.add(TextSpan(
-            children: travelHtml(ele, context: context),
+            children: travelHtml(ele, context: context, ts: ts),
             style: const TextStyle(color: bdwmPrimaryColor, backgroundColor: null),
           ));
         } else {
           res.add(TextSpan(
-            children: travelHtml(ele, context: context),
+            children: travelHtml(ele, context: context, ts: ts),
             style: const TextStyle(color: Colors.black, backgroundColor: null),
           ));
         }
@@ -294,19 +294,20 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
         //   res.add(const TextSpan(text: "\n"));
         // }
       } else if (ele.localName == "b") {
-        res.add(TextSpan(children: travelHtml(ele, context: context), style: const TextStyle(fontWeight: FontWeight.bold,)));
+        res.add(TextSpan(children: travelHtml(ele, context: context, ts: ts), style: const TextStyle(fontWeight: FontWeight.bold,)));
       } else if (ele.localName == "u") {
-        res.add(TextSpan(children: travelHtml(ele, context: context), style: const TextStyle(decoration: TextDecoration.underline)));
+        res.add(TextSpan(children: travelHtml(ele, context: context, ts: ts), style: const TextStyle(decoration: TextDecoration.underline)));
       } else if (ele.localName == "a") {
         var href = ele.attributes['href'];
         var link = absThreadLink(href ?? "");
-        var ts = WidgetSpan(
+        var tspan = WidgetSpan(
           child: GestureDetector(
             child: Text.rich(
               TextSpan(
-                children: travelHtml(ele, context: context),
+                children: travelHtml(ele, context: context, ts: ts),
                 style: textLinkStyle,
               ),
+              style: ts,
             ),
             onLongPress: () {
               if (context == null) { return; }
@@ -412,7 +413,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {BuildContext? context}) {
             },
           ),
         );
-        res.add(ts);
+        res.add(tspan);
       } else {
         res.add(TextSpan(text: cdom.text));
       }
