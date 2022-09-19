@@ -4,7 +4,7 @@ import './bdwm/req.dart';
 import './utils.dart';
 
 const String innerLinkForBBS = "https://bbs.pku.edu.cn/v2/collection-read.php?path=groups%2FGROUP_0%2FPersonalCorpus%2FO%2Fonepiece%2FD93F86C79%2FA862DAFBA";
-const String curVersionForBBS = "1.3.12";
+const String curVersionForBBS = "1.4.0";
 
 bool isNewVersion(List<int> onlineNumbers, List<int> localNumbers) {
   if (onlineNumbers[0] > localNumbers[0]) { return true; }
@@ -14,20 +14,21 @@ bool isNewVersion(List<int> onlineNumbers, List<int> localNumbers) {
   return onlineNumbers[2] > localNumbers[2];
 }
 
-Future<void> checkUpdate() async {
+Future<bool> checkUpdate() async {
   var url = innerLinkForBBS;
   var resp = await bdwmClient.get(url, headers: genHeaders2());
   if (resp == null) {
-    return;
+    return false;
   }
   var versionOnline = await checkUpdateParser(resp.body);
-  if (versionOnline.isEmpty) { return; }
+  if (versionOnline.isEmpty) { return false; }
   List<int> versionOnlineNumbers = versionOnline.split(".").map((e) => int.parse(e)).toList();
   List<int> versionLocalNumbers = curVersionForBBS.split(".").map((e) => int.parse(e)).toList();
   bool thereIsNewVersion = isNewVersion(versionOnlineNumbers, versionLocalNumbers);
   if (thereIsNewVersion) {
     quickNotify("新版本", versionOnline);
   }
+  return true;
 }
 
 Future<void> checkUpdateByTime() async {
@@ -35,13 +36,17 @@ Future<void> checkUpdateByTime() async {
   var ld = DateTime.tryParse(lastTimeStr);
   var curDT = DateTime.now();
   if (ld==null) {
-    await globalConfigInfo.addOne('lastCheckTime', curDT.toString());
-    checkUpdate();
+    var doCheck = await checkUpdate();
+    if (doCheck) {
+      await globalConfigInfo.addOne('lastCheckTime', curDT.toString());
+    }
     return;
   }
   var deltaDT = curDT.difference(ld);
   if (deltaDT.inDays >= 7) {
-    await globalConfigInfo.addOne('lastCheckTime', curDT.toString());
-    checkUpdate();
+    var doCheck = await checkUpdate();
+    if (doCheck) {
+      await globalConfigInfo.addOne('lastCheckTime', curDT.toString());
+    }
   }
 }
