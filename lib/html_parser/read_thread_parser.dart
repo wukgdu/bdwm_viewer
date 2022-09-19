@@ -431,6 +431,17 @@ List<String> getShortInfoFromContent(String htmlStr) {
     tmpArr.removeWhere((element) => element.string.codeUnits.length > 1);
     firstLineText = tmpArr.join("");
   }
+  if (firstLineText.length != firstLineText.characters.length) {
+    // remove special character
+    var tmpArr = firstLineText.characters.split("".characters).toList();
+    tmpArr = tmpArr.map((e) {
+      if (e.string.length > 1) {
+        return Characters(String.fromCharCode(e.string.codeUnits[0]));
+      }
+      return e;
+    }).toList();
+    firstLineText = tmpArr.join("");
+  }
   res.add(firstLineText);
   var pdoms = document.querySelectorAll("p").reversed.toList();
   int idx = 0;
