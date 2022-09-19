@@ -97,6 +97,8 @@ class _MainPageState extends State<MainPage> {
     messageCount.dispose();
     mailCount.dispose();
     messageBrief.dispose();
+    unreadMail.disposeWorker();
+    unreadMessage.disposeWorker();
     clearAllExtendedImageCache();
     super.dispose();
   }
