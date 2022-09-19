@@ -30,6 +30,7 @@ import './services.dart';
 import './services_instance.dart';
 import './bdwm/mail.dart';
 import './utils.dart';
+import './check_update.dart' show checkUpdateByTime;
 
 void main() async {
   if (Platform.isAndroid) {
@@ -39,6 +40,8 @@ void main() async {
   // debugPaintSizeEnabled = true;
   await globalUInfo.init();
   await globalContactInfo.init();
+  await globalConfigInfo.init();
+  await checkUpdateByTime();
   await unreadMessage.initWorker();
   await unreadMail.initWorker();
   runApp(const MainPage());

@@ -78,12 +78,13 @@ class Uinfo {
       var content = File(filename).readAsStringSync();
       if (content.isEmpty) {
         writeInit();
+      } else {
+        var jsonContent = jsonDecode(content);
+        uid = jsonContent['users'][0]['uid'];
+        skey = jsonContent['users'][0]['skey'];
+        username = jsonContent['users'][0]['name'];
+        login = jsonContent['users'][0]['login'];
       }
-      var jsonContent = jsonDecode(content);
-      uid = jsonContent['users'][0]['uid'];
-      skey = jsonContent['users'][0]['skey'];
-      username = jsonContent['users'][0]['name'];
-      login = jsonContent['users'][0]['login'];
     } else {
       writeInit();
     }
@@ -251,9 +252,10 @@ class TmpContactInfo {
       var content = File(filename).readAsStringSync();
       if (content.isEmpty) {
         writeInit();
+      } else {
+        List jsonContent = jsonDecode(content);
+        contact.addAll(jsonContent.map((e) => e as String));
       }
-      List jsonContent = jsonDecode(content);
-      contact.addAll(jsonContent.map((e) => e as String));
     } else {
       writeInit();
     }
@@ -273,3 +275,72 @@ class TmpContactInfo {
 }
 
 var globalContactInfo = TmpContactInfo.empty();
+
+class BDWMConfig {
+  Map<String, dynamic> config = {};
+  String storage = "bdwmconfig.json";
+  Lock lock = Lock();
+
+  BDWMConfig.empty();
+  BDWMConfig.initFromFile() {
+    init();
+  }
+
+  String gist() {
+    return jsonEncode(config);
+  }
+
+  Future<Map<String, dynamic>> getData() async {
+    return await lock.synchronized(() async {
+      return config;
+    });
+  }
+
+  Future<bool> addOne(String key, dynamic value) async {
+    return await lock.synchronized(() async {
+      config[key] = value;
+      return await update();
+    });
+  }
+
+  Future<bool> addAll(Map<String, dynamic> pairs) async {
+    return await lock.synchronized(() async {
+      config.addAll(pairs);
+      return await update();
+    });
+  }
+
+  Future<bool> init() async {
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    String filename = "$dir/$storage";
+    // debugPrint(filename);
+    void writeInit() {
+      var file = File(filename).openWrite();
+      file.write(jsonEncode({}));
+      file.close();
+    }
+    if (File(filename).existsSync()) {
+      var content = File(filename).readAsStringSync();
+      if (content.isEmpty) {
+        writeInit();
+      } else {
+        Map<String, dynamic> jsonContent = jsonDecode(content);
+        config.addAll(jsonContent);
+      }
+    } else {
+      writeInit();
+    }
+    return true;
+  }
+
+  Future<bool> update() async {
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    String filename = "$dir/$storage";
+    var file = File(filename).openWrite();
+    file.write(jsonEncode(config));
+    file.close();
+    return true;
+  }
+}
+
+var globalConfigInfo = BDWMConfig.empty();

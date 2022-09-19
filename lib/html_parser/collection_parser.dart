@@ -6,6 +6,7 @@ import 'package:html/parser.dart' show parse;
 import '../globalvars.dart';
 import './utils.dart';
 import './read_thread_parser.dart';
+import '../services.dart' show innerLinkForBBS, curVersionForBBS;
 
 class CollectionItem {
   int id = 0;
@@ -189,4 +190,21 @@ CollectionArticle parseCollectionArticle(String htmlStr) {
     user: user, uid: uid, avatar: avatar, title: title, content: content, path: path,
     attachmentHtml: attachmentHtml, attachmentInfo: attachmentInfo, time: time, canDelete: canDelete,
   );
+}
+
+Future<String> checkUpdateParser(String htmlStr) async {
+  var document = parse(htmlStr);
+  var errorMessage = checkError(document);
+  if (errorMessage != null) {
+    return "";
+  }
+  var contentDom = document.querySelector(".collection-body");
+  if (contentDom == null) {
+    return "";
+  }
+  var firstPdom = contentDom.querySelector(".file-read p");
+  if (firstPdom == null) {
+    return "";
+  }
+  return getTrimmedString(firstPdom);
 }
