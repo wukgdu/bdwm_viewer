@@ -733,30 +733,23 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
     var newOrder = <TiebaFormItemInfo>[];
     if (widget.tiebaForm) {
       newOrder = computeTiebaIndex();
-      var newOrderCopy = newOrder.map((e) => e.copy()).toList();
-      newOrder.sort((a, b) {
-        var aPList = [];
-        var sIdx = a.oriIdx;
+      List<List<int>> ancestorLists = [];
+      for (var ele in newOrder) {
+        var aPList = <int>[];
+        var sIdx = ele.oriIdx;
         while (true) {
           aPList.add(sIdx);
-          var nIdx = newOrderCopy[sIdx].parentIdx;
+          var nIdx = newOrder[sIdx].parentIdx;
           if (nIdx == sIdx) {
             break;
           }
           sIdx = nIdx;
         }
-        var bPList = [];
-        sIdx = b.oriIdx;
-        while (true) {
-          bPList.add(sIdx);
-          var nIdx = newOrderCopy[sIdx].parentIdx;
-          if (nIdx == sIdx) {
-            break;
-          }
-          sIdx = nIdx;
-        }
-        aPList = aPList.reversed.toList();
-        bPList = bPList.reversed.toList();
+        ancestorLists.add(aPList.reversed.toList());
+      }
+      newOrder.sort((a, b) {
+        var aPList = ancestorLists[a.oriIdx];
+        var bPList = ancestorLists[b.oriIdx];
         int i=0;
         for (;i < aPList.length && i < bPList.length; i+=1) {
           if (aPList[i] == bPList[i]) {
