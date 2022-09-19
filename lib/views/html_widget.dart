@@ -153,7 +153,7 @@ TextSpan html2TextSpan(String htmlStr, {TextStyle? ts}) {
     document = null;
   }
   if (document == null) {
-    return const TextSpan(text: "解析错误", style: TextStyle(color: Colors.black));
+    return const TextSpan(text: "解析错误");
   }
   var res = travelHtml(document.querySelector("body"), context: null, ts: ts);
   var tspan = TextSpan(
@@ -224,7 +224,6 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
         } else {
           res.add(TextSpan(
             children: travelHtml(ele, context: context, ts: ts),
-            style: const TextStyle(color: Colors.black, backgroundColor: null),
           ));
         }
         if (cdom != document.nodes.last) {
@@ -442,9 +441,9 @@ class BDWMTextEditingController extends TextEditingController {
   @override
   TextSpan buildTextSpan({required BuildContext context, TextStyle? style, required bool withComposing}) {
     if (html) {
-      return html2TextSpan(text, ts: const TextStyle(color: Colors.black) );
+      return html2TextSpan(text);
     }
-    return TextSpan(text: text, style: const TextStyle(color: Colors.black));
+    return TextSpan(text: text);
   }
 }
 

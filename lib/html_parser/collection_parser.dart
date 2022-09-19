@@ -6,7 +6,6 @@ import 'package:html/parser.dart' show parse;
 import '../globalvars.dart';
 import './utils.dart';
 import './read_thread_parser.dart';
-import '../services.dart' show innerLinkForBBS, curVersionForBBS;
 
 class CollectionItem {
   int id = 0;

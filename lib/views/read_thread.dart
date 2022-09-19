@@ -429,12 +429,13 @@ class AttachmentComponent extends StatelessWidget {
                 child: GestureDetector(
                   child: Text.rich(
                     TextSpan(
-                      text: e.text,
-                      style: textLinkStyle,
                       children: [
                         TextSpan(
+                          text: e.text,
+                          style: textLinkStyle,
+                        ),
+                        TextSpan(
                           text: e.size,
-                          style: textLinkSiblingStyle,
                         ),
                       ]
                     ),

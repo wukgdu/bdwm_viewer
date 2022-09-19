@@ -40,7 +40,7 @@ class MyDrawer extends StatelessWidget {
               // maxHeight: 300,
               // maxWidth: dWidth,
             ),
-            child: Image.asset('assets/image/wei.jpg'),
+            child: Image.asset(Theme.of(context).brightness == Brightness.dark ? 'assets/image/wei_grey.jpg' : 'assets/image/wei.jpg'),
           ),
           Expanded(
             child: ListView(

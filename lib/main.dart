@@ -25,6 +25,7 @@ import './pages/mail.dart';
 import './pages/mail_new.dart';
 import './pages/funfunfun.dart';
 import './views/search.dart' show PostSearchSettings;
+import './views/constants.dart' show bdwmPrimaryColor, bdwmSurfaceColor;
 // import './pages/detail_image.dart';
 import './services.dart';
 import './services_instance.dart';
@@ -118,8 +119,14 @@ class _MainPageState extends State<MainPage> {
       title: 'OBViewer',
       theme: ThemeData(
         // #e97c62
-        // colorScheme: const ColorScheme.light().copyWith(primary: Colors.orangeAccent),
-        colorScheme: const ColorScheme.light().copyWith(primary: const Color(0xffe97c62)),
+        colorScheme: const ColorScheme.light().copyWith(primary: bdwmSurfaceColor),
+        brightness: Brightness.light,
+      ),
+      darkTheme: ThemeData(
+        colorScheme: const ColorScheme.dark().copyWith(primary: bdwmPrimaryColor, surface: Colors.grey[800]),
+        // brightness: Brightness.dark,
+        brightness: Brightness.dark,
+        useMaterial3: false,
       ),
       home: HomeApp(messageCount: messageCount, mailCount: mailCount,),
       // home: const MailNewApp(),

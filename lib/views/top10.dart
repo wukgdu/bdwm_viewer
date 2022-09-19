@@ -15,7 +15,7 @@ class TopHomePage extends StatefulWidget {
 
 class _TopHomePageState extends State<TopHomePage> {
   HomeInfo homeInfo = HomeInfo.empty();
-  final _titleFont = const TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.normal);
+  final _titleFont = const TextStyle(fontSize: 20, fontWeight: FontWeight.normal);
   final _scrollController = ScrollController();
 
   Future<HomeInfo> getData() async {
@@ -58,7 +58,6 @@ class _TopHomePageState extends State<TopHomePage> {
           item.title,
           textAlign: TextAlign.start,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 17, color: Colors.black, fontWeight: FontWeight.normal),
         ),
         subtitle: Row(
           children: [

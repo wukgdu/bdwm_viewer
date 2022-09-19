@@ -57,8 +57,8 @@ class ComplexResultPage extends StatefulWidget {
 
 class _ComplexResultPageState extends State<ComplexResultPage> {
   final _ts1 = const TextStyle(fontSize: 12, color: Colors.grey, height: 2);
-  final _ts2 = const TextStyle(fontSize: 16, color: Colors.black);
-  final _ts3 = const TextStyle(fontSize: 12, color: Colors.black);
+  final _ts2 = const TextStyle(fontSize: 16);
+  final _ts3 = const TextStyle(fontSize: 12);
 
   void gotoThread(ComplexSearchResItem csri) {
     Navigator.of(context).pushNamed('/thread', arguments: {
