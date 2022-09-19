@@ -324,7 +324,16 @@ Future<SaveRes> genDownloadPath({String? name}) async {
     if (!downloadDir.existsSync()) {
       return SaveRes(false, "保存目录不存在");
     }
-    downloadPath ??= path.join(downloadDir.path, name ?? "image.jpg");
+    var nameHere = name ?? "image.jpg";
+    downloadPath ??= path.join(downloadDir.path, nameHere);
+    if (File(downloadPath).existsSync()) {
+      var num = 0;
+      do {
+        num += 1;
+        var dotIdx = nameHere.lastIndexOf(".");
+        downloadPath = path.join(downloadDir.path, "${nameHere.substring(0, dotIdx)}_$num${nameHere.substring(dotIdx)}");
+      } while (File(downloadPath).existsSync());
+    }
   }
   if (downloadPath == null) {
     return SaveRes(false, "未设置保存路径");
