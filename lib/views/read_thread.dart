@@ -492,8 +492,9 @@ class OnePostComponent extends StatelessWidget {
   final String threadid;
   final String boardName;
   final Function refreshCallBack;
+  final int? subIdx;
 
-  const OnePostComponent({Key? key, required this.onePostInfo, required this.bid, required this.refreshCallBack, required this.boardName, required this.threadid}) : super(key: key);
+  const OnePostComponent({Key? key, required this.onePostInfo, required this.bid, required this.refreshCallBack, required this.boardName, required this.threadid, this.subIdx}) : super(key: key);
 
   bool get simpleAttachment => false;
   final _contentFont = const TextStyle(fontSize: 16, fontWeight: FontWeight.normal);
@@ -502,107 +503,126 @@ class OnePostComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     var item = onePostInfo;
     // double deviceWidth = MediaQuery.of(context).size.width;
-    return Card(
-      // color: item.postNumber.contains("高亮") ? hightlightColor : null,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 52.0,
-            padding: const EdgeInsets.all(5.0),
-            child: Column(
-              children: [
-                GestureDetector(
-                  child: CircleAvatar(
-                    radius: 15,
-                    backgroundColor: Colors.white,
-                    backgroundImage: NetworkImage(item.authorInfo.avatarLink),
-                  ),
-                  onTap: () {
-                    if (item.authorInfo.uid.isEmpty) {
-                      return;
-                    }
-                    Navigator.of(context).pushNamed('/user', arguments: item.authorInfo.uid);
-                  },
-                ),
-                if (item.postOwner)
-                  const Text("楼主", style: TextStyle(fontSize: 12, color: bdwmPrimaryColor)),
-                Text(item.postNumber, style: TextStyle(fontSize: 12, color: item.postNumber.contains("高亮") ? highlightReplyColor : Colors.grey)),
-                if (item.isBaoLiu) genThreadLabel("保留"),
-                if (item.isWenZhai) genThreadLabel("文摘"),
-                if (item.isYuanChuang) genThreadLabel("原创"),
-                if (item.isJingHua) genThreadLabel("精华"),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.only(top: 5.0, right: 5.0, bottom: 5.0),
+    return Container(
+      margin: subIdx == null ? null : EdgeInsets.only(left: 20.0*subIdx!),
+      child: Card(
+        // color: item.postNumber.contains("高亮") ? hightlightColor : null,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 52.0,
+              padding: const EdgeInsets.all(5.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SelectableText.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(text: item.authorInfo.userName, style: serifFont),
-                        const TextSpan(text: ' ('),
-                        // WidgetSpan(child: HtmlComponent(item.authorInfo.nickName, needSelect: true),),
-                        html2TextSpan(item.authorInfo.nickName),
-                        const TextSpan(text: ') '),
-                        TextSpan(text: item.authorInfo.status),
-                      ],
+                  GestureDetector(
+                    child: CircleAvatar(
+                      radius: 15,
+                      backgroundColor: Colors.white,
+                      backgroundImage: NetworkImage(item.authorInfo.avatarLink),
                     ),
+                    onTap: () {
+                      if (item.authorInfo.uid.isEmpty) {
+                        return;
+                      }
+                      Navigator.of(context).pushNamed('/user', arguments: item.authorInfo.uid);
+                    },
                   ),
-                  if (item.modifyTime.isNotEmpty)
-                    Text(
-                      item.modifyTime,
-                    ),
-                  Text(
-                    item.postTime,
-                  ),
-                  const Divider(),
-                  // renderHtml(item.content, ts: _contentFont, context: context),
-                  HtmlComponent(item.content, ts: _contentFont),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      VoteComponent(
-                        iVoteUp: onePostInfo.iVoteUp,
-                        iVoteDown: onePostInfo.iVoteDown,
-                        voteUpCount: onePostInfo.upCount,
-                        voteDownCount: onePostInfo.downCount,
-                        bid: bid,
-                        postID: onePostInfo.postID,
-                      ),
-                    ],
-                  ),
-                  const Divider(),
-                  OperateComponent(bid: bid, threadid: threadid, postid: onePostInfo.postID, uid: onePostInfo.authorInfo.uid, refreshCallBack: refreshCallBack, boardName: boardName, onePostInfo: onePostInfo,),
-                  if (item.attachmentInfo.isNotEmpty)
-                    ...[
-                      const Divider(),
-                      const Text("附件", style: TextStyle(fontWeight: FontWeight.bold)),
-                    ],
-                    if (simpleAttachment)
-                      ...[
-                        // renderHtml(item.attachmentHtml, context: context),
-                        HtmlComponent(item.attachmentHtml),
-                      ]
-                    else
-                      AttachmentComponent(attachments: onePostInfo.attachmentInfo),
-                  if (item.signature.isNotEmpty)
-                    ...[
-                      const Divider(),
-                      HtmlComponent(item.signature),
-                    ],
+                  if (item.postOwner)
+                    const Text("楼主", style: TextStyle(fontSize: 12, color: bdwmPrimaryColor)),
+                  Text(item.postNumber, style: TextStyle(fontSize: 12, color: item.postNumber.contains("高亮") ? highlightReplyColor : Colors.grey)),
+                  if (item.isBaoLiu) genThreadLabel("保留"),
+                  if (item.isWenZhai) genThreadLabel("文摘"),
+                  if (item.isYuanChuang) genThreadLabel("原创"),
+                  if (item.isJingHua) genThreadLabel("精华"),
                 ],
               ),
             ),
-          ),
-        ],
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.only(top: 5.0, right: 5.0, bottom: 5.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SelectableText.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(text: item.authorInfo.userName, style: serifFont),
+                          const TextSpan(text: ' ('),
+                          // WidgetSpan(child: HtmlComponent(item.authorInfo.nickName, needSelect: true),),
+                          html2TextSpan(item.authorInfo.nickName),
+                          const TextSpan(text: ') '),
+                          TextSpan(text: item.authorInfo.status),
+                        ],
+                      ),
+                    ),
+                    if (item.modifyTime.isNotEmpty)
+                      Text(
+                        item.modifyTime,
+                      ),
+                    Text(
+                      item.postTime,
+                    ),
+                    const Divider(),
+                    // renderHtml(item.content, ts: _contentFont, context: context),
+                    HtmlComponent(item.content, ts: _contentFont),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        VoteComponent(
+                          iVoteUp: onePostInfo.iVoteUp,
+                          iVoteDown: onePostInfo.iVoteDown,
+                          voteUpCount: onePostInfo.upCount,
+                          voteDownCount: onePostInfo.downCount,
+                          bid: bid,
+                          postID: onePostInfo.postID,
+                        ),
+                      ],
+                    ),
+                    const Divider(),
+                    OperateComponent(bid: bid, threadid: threadid, postid: onePostInfo.postID, uid: onePostInfo.authorInfo.uid, refreshCallBack: refreshCallBack, boardName: boardName, onePostInfo: onePostInfo,),
+                    if (item.attachmentInfo.isNotEmpty)
+                      ...[
+                        const Divider(),
+                        const Text("附件", style: TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                      if (simpleAttachment)
+                        ...[
+                          // renderHtml(item.attachmentHtml, context: context),
+                          HtmlComponent(item.attachmentHtml),
+                        ]
+                      else
+                        AttachmentComponent(attachments: onePostInfo.attachmentInfo),
+                    if (item.signature.isNotEmpty)
+                      ...[
+                        const Divider(),
+                        HtmlComponent(item.signature),
+                      ],
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+}
+
+class TiebaFormItemInfo {
+  int postid = 0;
+  int oriIdx = 0;
+  int parentIdx = 0; // for new order
+  int subIdx = 0; // for indent
+  TiebaFormItemInfo({
+    required this.postid,
+    required this.oriIdx,
+    required this.parentIdx,
+    required this.subIdx,
+  });
+  TiebaFormItemInfo copy() {
+    return TiebaFormItemInfo(postid: postid, oriIdx: oriIdx, parentIdx: parentIdx, subIdx: subIdx);
   }
 }
 
@@ -613,7 +633,8 @@ class ReadThreadPage extends StatefulWidget {
   final ThreadPageInfo threadPageInfo;
   final Function refreshCallBack;
   final String? postid;
-  const ReadThreadPage({Key? key, required this.bid, required this.threadid, required this.page, required this.threadPageInfo, required this.refreshCallBack, this.postid}) : super(key: key);
+  final bool tiebaForm;
+  const ReadThreadPage({Key? key, required this.bid, required this.threadid, required this.page, required this.threadPageInfo, required this.refreshCallBack, this.postid, required this.tiebaForm}) : super(key: key);
 
   @override
   State<ReadThreadPage> createState() => _ReadThreadPageState();
@@ -662,12 +683,93 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
     super.dispose();
   }
 
-  Widget _onepost(OnePostInfo item, int idx) {
-    return OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack, boardName: widget.threadPageInfo.board.text, key: itemKeys[idx], threadid: widget.threadid,);
+  Widget _onepost(OnePostInfo item, int idx, {int? subIdx}) {
+    return OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack, boardName: widget.threadPageInfo.board.text, key: itemKeys[idx], threadid: widget.threadid, subIdx: subIdx,);
+  }
+
+  List<TiebaFormItemInfo> computeTiebaIndex() {
+    var res = <TiebaFormItemInfo>[];
+    List<String> firstLine = [];
+    List<String> quoteID = [];
+    List<String> firstQuoteLine = [];
+    for (int i=0; i<widget.threadPageInfo.posts.length; i+=1) {
+      var res = getShortInfoFromContent(widget.threadPageInfo.posts[i].content);
+      firstLine.add(res[0]);
+      quoteID.add(res[1]);
+      firstQuoteLine.add(res[2]);
+    }
+    for (int i=0; i<widget.threadPageInfo.posts.length; i+=1) {
+      var postInfo = widget.threadPageInfo.posts[i];
+      var postid = int.parse(postInfo.postID);
+      var parentIdx= i;
+      var oriIdx = i;
+      var subIdx = 0;
+      if (i==0) {
+        res.add(TiebaFormItemInfo(postid: postid, oriIdx: oriIdx, parentIdx: parentIdx, subIdx: subIdx));
+        continue;
+      }
+      int j=i-1;
+      for (; j>=0; j-=1) {
+        if (quoteID[i] == widget.threadPageInfo.posts[j].authorInfo.userName) {
+          if (firstQuoteLine[i] == firstLine[j]) {
+            break;
+          }
+        }
+      }
+      if (j==-1) {
+        parentIdx = oriIdx;
+        subIdx = 0;
+      } else {
+        parentIdx = j;
+        subIdx = res[j].subIdx+1;
+      }
+      res.add(TiebaFormItemInfo(postid: postid, oriIdx: oriIdx, parentIdx: parentIdx, subIdx: subIdx));
+    }
+    return res;
   }
 
   @override
   Widget build(BuildContext context) {
+    var newOrder = <TiebaFormItemInfo>[];
+    if (widget.tiebaForm) {
+      newOrder = computeTiebaIndex();
+      var newOrderCopy = newOrder.map((e) => e.copy()).toList();
+      newOrder.sort((a, b) {
+        var aPList = [];
+        var sIdx = a.oriIdx;
+        while (true) {
+          aPList.add(sIdx);
+          var nIdx = newOrderCopy[sIdx].parentIdx;
+          if (nIdx == sIdx) {
+            break;
+          }
+          sIdx = nIdx;
+        }
+        var bPList = [];
+        sIdx = b.oriIdx;
+        while (true) {
+          bPList.add(sIdx);
+          var nIdx = newOrderCopy[sIdx].parentIdx;
+          if (nIdx == sIdx) {
+            break;
+          }
+          sIdx = nIdx;
+        }
+        aPList = aPList.reversed.toList();
+        bPList = bPList.reversed.toList();
+        int i=0;
+        for (;i < aPList.length && i < bPList.length; i+=1) {
+          if (aPList[i] == bPList[i]) {
+            continue;
+          }
+          return aPList[i] - bPList[i];
+        }
+        if (i < aPList.length) {
+          return 1;
+        }
+        return -1;
+      },);
+    }
     return Column(
       children: [
         GestureDetector(
@@ -679,7 +781,7 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
             _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
           },
           child: Container(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(5.0),
             alignment: Alignment.centerLeft,
             // height: 20,
             child: Text(
@@ -694,7 +796,13 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
           ? SingleChildScrollView(
             controller: _scrollController,
             padding: const EdgeInsets.all(8),
-            child: Column(
+            child: widget.tiebaForm
+            ? Column(
+              children: newOrder.map((e) {
+                return _onepost(widget.threadPageInfo.posts[e.oriIdx], e.oriIdx, subIdx: e.subIdx > 5 ? 5 : e.subIdx);
+              }).toList(),
+            )
+            : Column(
               children: widget.threadPageInfo.posts.asMap().entries.map((pair) {
                 return _onepost(pair.value, pair.key);
               }).toList(),

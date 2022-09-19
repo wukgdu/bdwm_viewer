@@ -27,6 +27,7 @@ class _ThreadAppState extends State<ThreadApp> {
   int page = 1;
   late CancelableOperation getDataCancelable;
   String? postid;
+  bool tiebaForm = false;
   // Future<ThreadPageInfo>? _future;
   @override
   void initState() {
@@ -131,6 +132,14 @@ class _ThreadAppState extends State<ThreadApp> {
             actions: [
               IconButton(
                 onPressed: () {
+                  setState(() {
+                    tiebaForm = !tiebaForm;
+                  });
+                },
+                icon: Icon(tiebaForm ? Icons.change_circle : Icons.account_tree),
+              ),
+              IconButton(
+                onPressed: () {
                   final box = context.findRenderObject() as RenderBox?;
                   Share.shareWithResult(
                     "$v2Host/post-read.php?bid=${threadPageInfo.boardid}&threadid=${threadPageInfo.threadid}",
@@ -162,6 +171,7 @@ class _ThreadAppState extends State<ThreadApp> {
             ],
           ),
           body: ReadThreadPage(bid: widget.bid, threadid: widget.threadid, page: page.toString(), threadPageInfo: threadPageInfo, postid: postid,
+            tiebaForm: tiebaForm,
             refreshCallBack: () {
               refresh();
             },
@@ -331,6 +341,7 @@ void naviGotoThreadByLink(context, String link, String boardName, {bool? needToB
 class _ThreadApp2State extends State<ThreadApp> {
   int page = 0;
   ThreadPageInfo threadPageInfo = ThreadPageInfo.empty();
+  bool tiebaForm = false;
 
   void updateThreadPageInfo() {
     getData().then((value) {
@@ -372,6 +383,7 @@ class _ThreadApp2State extends State<ThreadApp> {
         title: Text(widget.boardName ?? "看帖"),
       ),
       body: ReadThreadPage(bid: widget.bid, threadid: widget.threadid, page: page.toString(), threadPageInfo: threadPageInfo,
+        tiebaForm: tiebaForm,
         refreshCallBack: () {
           page = page;
           updateThreadPageInfo();

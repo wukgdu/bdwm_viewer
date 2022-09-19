@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
+import 'package:characters/characters.dart';
 
 import '../utils.dart' show TextAndLink, getQueryValue;
 import './utils.dart';
@@ -417,4 +418,44 @@ ThreadPageInfo getExampleThread() {
   var htmlStr = File(filename).readAsStringSync();
   final items = parseThread(htmlStr);
   return items;
+}
+
+List<String> getShortInfoFromContent(String htmlStr) {
+  var res = <String>[];
+  var document = parse(htmlStr);
+  var fpdom = document.querySelector("p");
+  var firstLineText = fpdom?.text ?? "";
+  if (firstLineText.length != firstLineText.runes.length) {
+    // remove emoji
+    var tmpArr = firstLineText.characters.split("".characters).toList();
+    tmpArr.removeWhere((element) => element.string.codeUnits.length > 1);
+    firstLineText = tmpArr.join("");
+  }
+  res.add(firstLineText);
+  var pdoms = document.querySelectorAll("p").reversed.toList();
+  int idx = 0;
+  var findQuoteP = false;
+  for (var pdom in pdoms) {
+    var pdomText = pdom.text;
+    if (pdomText.contains("在 ta 的帖子中提到：")) {
+      findQuoteP = true;
+      res.add(pdomText.split(" (").first);
+      if (idx >= 1) {
+        if (pdoms[idx-1].classes.contains("blockquote")) {
+          res.add(pdoms[idx-1].text);
+        } else {
+          res.add("");
+        }
+      } else {
+        res.add("");
+      }
+      break;
+    }
+    idx += 1;
+  }
+  if (findQuoteP == false) {
+    res.add("");
+    res.add("");
+  }
+  return res;
 }
