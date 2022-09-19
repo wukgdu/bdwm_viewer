@@ -224,55 +224,57 @@ Widget genThreadLabel(String label) {
 }
 
 Future<bool?> showLinkMenu(BuildContext context, String link, {String? downloadPath, String? filename}) async {
-  var renderBox = context.findRenderObject() as RenderBox?;
-  if (renderBox == null) {
-    return Future(() => null);
-  }
-  var offset = renderBox.localToGlobal(Offset.zero);
-  var rect = Rect.fromLTWH(offset.dx, offset.dy, 0, 0);
-  var res = await showMenu(
+  return showModalBottomSheet<bool>(
     context: context,
-    position: RelativeRect.fromSize(rect, const Size(200, 200)),
-    items: <PopupMenuEntry<String>>[
-      const PopupMenuItem(
-        value: "下载",
-        child: Text("下载"),
-      ),
-    ]
+    builder: (BuildContext context) {
+      return Container(
+        margin: const EdgeInsets.all(10.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Center(child: SelectableText(link),),
+            const Divider(),
+            ElevatedButton(
+              child: const Text('下载'),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                const seconds = 60;
+                var fn = filename ?? path.basename(link);
+                var saveRes = await genDownloadPath(name: fn);
+                if (saveRes.success == false) {
+                  return;
+                }
+                var down = downloadPath ?? saveRes.reason;
+                var timeout = false;
+                var resp = await http.get(Uri.parse(link)).timeout(const Duration(seconds: seconds), onTimeout: () {
+                  timeout = true;
+                  return http.Response("timeout", 502); // not exact statuscode, !=200
+                }).onError((error, stackTrace) {
+                  return http.Response("error", 502); // not exact statuscode, !=200
+                });
+                if (resp.statusCode == 200) {
+                  File(down).writeAsBytes(resp.bodyBytes).then((value) {
+                    if (value.existsSync()) {
+                      quickNotify("下载完成", down);
+                    } else {
+                      quickNotify("写入文件失败", down);
+                    }
+                  },);
+                } else {
+                  if (timeout) {
+                    quickNotify("下载超时", "超过$seconds秒");
+                  } else {
+                    quickNotify("下载失败", down);
+                  }
+                }
+              }
+            ),
+          ],
+        ),
+      );
+    },
   );
-  if (res == "下载") {
-    const seconds = 60;
-    var fn = filename ?? path.basename(link);
-    var saveRes = await genDownloadPath(name: fn);
-    if (saveRes.success == false) {
-      return false;
-    }
-    var down = downloadPath ?? saveRes.reason;
-    var timeout = false;
-    var resp = await http.get(Uri.parse(link)).timeout(const Duration(seconds: seconds), onTimeout: () {
-      timeout = true;
-      return http.Response("timeout", 502); // not exact statuscode, !=200
-    }).onError((error, stackTrace) {
-      return http.Response("error", 502); // not exact statuscode, !=200
-    });
-    if (resp.statusCode == 200) {
-      File(down).writeAsBytes(resp.bodyBytes).then((value) {
-        if (value.existsSync()) {
-          quickNotify("下载完成", down);
-        } else {
-          quickNotify("写入文件失败", down);
-        }
-      },);
-    } else {
-      if (timeout) {
-        quickNotify("下载超时", "超过$seconds秒");
-      } else {
-        quickNotify("下载失败", down);
-      }
-      return false;
-    }
-  }
-  return false;
 }
 
 class SaveRes {
