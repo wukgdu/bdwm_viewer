@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 // import 'package:flutter/rendering.dart';
 
 import './globalvars.dart';
@@ -30,6 +32,9 @@ import './bdwm/mail.dart';
 import './utils.dart';
 
 void main() async {
+  if (Platform.isAndroid) {
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+  }
   WidgetsFlutterBinding.ensureInitialized();
   // debugPaintSizeEnabled = true;
   await globalUInfo.init();
