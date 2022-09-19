@@ -9,7 +9,7 @@ class AboutApp extends StatelessWidget {
   final _titleStyle = const TextStyle(fontSize: 20, fontWeight: FontWeight.normal);
   final _contentStyle = const TextStyle(fontSize: 16);
   final String innerLink = "https://bbs.pku.edu.cn/v2/collection-read.php?path=groups%2FGROUP_0%2FPersonalCorpus%2FO%2Fonepiece%2FD93F86C79%2FA862DAFBA";
-  final String curVersion = "1.3.11";
+  final String curVersion = "1.3.12";
 
   Widget addAuthor(BuildContext context) {
     return Card(
