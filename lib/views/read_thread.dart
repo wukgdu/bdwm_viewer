@@ -11,7 +11,7 @@ import './utils.dart';
 import '../utils.dart' show clearAllExtendedImageCache;
 import './constants.dart';
 import '../html_parser/read_thread_parser.dart';
-// import '../globalvars.dart';
+import '../globalvars.dart' show globalConfigInfo;
 import '../pages/detail_image.dart';
 import './html_widget.dart';
 
@@ -505,28 +505,59 @@ class AttachmentComponent extends StatelessWidget {
   }
 }
 
-class OnePostComponent extends StatelessWidget {
+class OnePostComponent extends StatefulWidget {
   final OnePostInfo onePostInfo;
   final String bid;
   final String threadid;
   final String boardName;
   final Function refreshCallBack;
   final int? subIdx;
+  final bool? hideIt;
 
-  const OnePostComponent({Key? key, required this.onePostInfo, required this.bid, required this.refreshCallBack, required this.boardName, required this.threadid, this.subIdx}) : super(key: key);
+  const OnePostComponent({Key? key, required this.onePostInfo, required this.bid, required this.refreshCallBack,
+    required this.boardName, required this.threadid, this.subIdx, this.hideIt}) : super(key: key);
 
+  @override
+  State<OnePostComponent> createState() => _OnePostComponentState();
+}
+
+class _OnePostComponentState extends State<OnePostComponent> {
   bool get simpleAttachment => false;
   final _contentFont = const TextStyle(fontSize: 16, fontWeight: FontWeight.normal);
+  late bool hideIt;
+  @override
+  void initState() {
+    super.initState();
+    hideIt = widget.hideIt ?? false;
+  }
+
+  @override
+  void didUpdateWidget(covariant OnePostComponent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    hideIt = widget.hideIt ?? false;
+  }
 
   @override
   Widget build(BuildContext context) {
-    var item = onePostInfo;
+    var item = widget.onePostInfo;
     // double deviceWidth = MediaQuery.of(context).size.width;
     return Container(
-      margin: subIdx == null ? null : EdgeInsets.only(left: 20.0*subIdx!),
+      margin: widget.subIdx == null ? null : EdgeInsets.only(left: 20.0*widget.subIdx!),
       child: Card(
         // color: item.postNumber.contains("高亮") ? hightlightColor : null,
-        child: Row(
+        child: hideIt
+        ? Container(
+          alignment: Alignment.center,
+          child: ElevatedButton(
+            onPressed: () {
+              setState(() {
+                hideIt = false;
+              });
+            },
+            child: Text("${item.postNumber}：该帖子被`不看ta'折叠，点击展开"),
+          ),
+        )
+        : Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
@@ -590,17 +621,20 @@ class OnePostComponent extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         VoteComponent(
-                          iVoteUp: onePostInfo.iVoteUp,
-                          iVoteDown: onePostInfo.iVoteDown,
-                          voteUpCount: onePostInfo.upCount,
-                          voteDownCount: onePostInfo.downCount,
-                          bid: bid,
-                          postID: onePostInfo.postID,
+                          iVoteUp: widget.onePostInfo.iVoteUp,
+                          iVoteDown: widget.onePostInfo.iVoteDown,
+                          voteUpCount: widget.onePostInfo.upCount,
+                          voteDownCount: widget.onePostInfo.downCount,
+                          bid: widget.bid,
+                          postID: widget.onePostInfo.postID,
                         ),
                       ],
                     ),
                     const Divider(),
-                    OperateComponent(bid: bid, threadid: threadid, postid: onePostInfo.postID, uid: onePostInfo.authorInfo.uid, refreshCallBack: refreshCallBack, boardName: boardName, onePostInfo: onePostInfo,),
+                    OperateComponent(bid: widget.bid, threadid: widget.threadid, postid: widget.onePostInfo.postID,
+                      uid: widget.onePostInfo.authorInfo.uid, refreshCallBack: widget.refreshCallBack,
+                      boardName: widget.boardName, onePostInfo: widget.onePostInfo,
+                    ),
                     if (item.attachmentInfo.isNotEmpty)
                       ...[
                         const Divider(),
@@ -612,7 +646,7 @@ class OnePostComponent extends StatelessWidget {
                           HtmlComponent(item.attachmentHtml),
                         ]
                       else
-                        AttachmentComponent(attachments: onePostInfo.attachmentInfo),
+                        AttachmentComponent(attachments: widget.onePostInfo.attachmentInfo),
                     if (item.signature.isNotEmpty)
                       ...[
                         const Divider(),
@@ -703,7 +737,16 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
   }
 
   Widget _onepost(OnePostInfo item, int idx, {int? subIdx}) {
-    return OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack, boardName: widget.threadPageInfo.board.text, key: itemKeys[idx], threadid: widget.threadid, subIdx: subIdx,);
+    var userName = item.authorInfo.userName;
+    Set<String> seeNoHimHer = globalConfigInfo.getSeeNoThem();
+    var hideIt = false;
+    if (seeNoHimHer.contains(userName)) {
+      hideIt = true;
+    }
+    return OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack,
+      boardName: widget.threadPageInfo.board.text, key: itemKeys[idx], threadid: widget.threadid,
+      subIdx: subIdx, hideIt: hideIt,
+    );
   }
 
   List<TiebaFormItemInfo> computeTiebaIndex() {

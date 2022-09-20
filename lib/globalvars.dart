@@ -60,7 +60,7 @@ class Uinfo {
     String dir = (await getApplicationDocumentsDirectory()).path;
     String filename = "$dir/$storage";
     // debugPrint(filename);
-    void writeInit() {
+    Future<void> writeInit() async {
       var file = File(filename).openWrite();
       Map<String, Object> content = <String, Object>{
         "users": [{
@@ -72,12 +72,13 @@ class Uinfo {
         "primary": 0
       };
       file.write(jsonEncode(content));
-      file.close();
+      await file.flush();
+      await file.close();
     }
     if (File(filename).existsSync()) {
       var content = File(filename).readAsStringSync();
       if (content.isEmpty) {
-        writeInit();
+        await writeInit();
       } else {
         var jsonContent = jsonDecode(content);
         uid = jsonContent['users'][0]['uid'];
@@ -86,7 +87,7 @@ class Uinfo {
         login = jsonContent['users'][0]['login'];
       }
     } else {
-      writeInit();
+      await writeInit();
     }
     return true;
   }
@@ -102,7 +103,8 @@ class Uinfo {
     jsonContent['users'][0]['login'] = login;
     var file = File(filename).openWrite();
     file.write(jsonEncode(jsonContent));
-    file.close();
+    await file.flush();
+    await file.close();
   }
 
   Future<void> checkAndLogout(cookie) async {
@@ -243,21 +245,22 @@ class TmpContactInfo {
     String dir = (await getApplicationDocumentsDirectory()).path;
     String filename = "$dir/$storage";
     // debugPrint(filename);
-    void writeInit() {
+    Future<void> writeInit() async {
       var file = File(filename).openWrite();
       file.write(jsonEncode([]));
-      file.close();
+      await file.flush();
+      await file.close();
     }
     if (File(filename).existsSync()) {
       var content = File(filename).readAsStringSync();
       if (content.isEmpty) {
-        writeInit();
+        await writeInit();
       } else {
         List jsonContent = jsonDecode(content);
         contact.addAll(jsonContent.map((e) => e as String));
       }
     } else {
-      writeInit();
+      await writeInit();
     }
     return true;
   }
@@ -269,7 +272,8 @@ class TmpContactInfo {
     var contactList = contact.toList();
     contactList.sort();
     file.write(jsonEncode(contactList));
-    file.close();
+    await file.flush();
+    await file.close();
     return true;
   }
 }
@@ -277,7 +281,11 @@ class TmpContactInfo {
 var globalContactInfo = TmpContactInfo.empty();
 
 class BDWMConfig {
-  Map<String, dynamic> config = {};
+  Map<String, dynamic> config = {
+    "lastCheckTime": "",
+    seeNoThemKey: [],
+  };
+  static const seeNoThemKey = "seeNoThem";
   String storage = "bdwmconfig.json";
   Lock lock = Lock();
 
@@ -310,25 +318,33 @@ class BDWMConfig {
     });
   }
 
+  Set<String> getSeeNoThem() {
+    return config[seeNoThemKey];
+  }
+
   Future<bool> init() async {
     String dir = (await getApplicationDocumentsDirectory()).path;
     String filename = "$dir/$storage";
     // debugPrint(filename);
-    void writeInit() {
+    Future<void> writeInit() async {
       var file = File(filename).openWrite();
-      file.write(jsonEncode({}));
-      file.close();
+      file.write(jsonEncode(config));
+      await file.flush();
+      await file.close();
     }
     if (File(filename).existsSync()) {
       var content = File(filename).readAsStringSync();
       if (content.isEmpty) {
-        writeInit();
+        await writeInit();
       } else {
         Map<String, dynamic> jsonContent = jsonDecode(content);
         config.addAll(jsonContent);
+        List seeNoHimHerList = config[seeNoThemKey] ?? <String>[];
+        Set<String> seeNoHimHer = Set<String>.from(seeNoHimHerList.map((e) => e as String));
+        config[seeNoThemKey] = seeNoHimHer;
       }
     } else {
-      writeInit();
+      await writeInit();
     }
     return true;
   }
@@ -338,7 +354,8 @@ class BDWMConfig {
     String filename = "$dir/$storage";
     var file = File(filename).openWrite();
     file.write(jsonEncode(config));
-    file.close();
+    await file.flush();
+    await file.close();
     return true;
   }
 }
