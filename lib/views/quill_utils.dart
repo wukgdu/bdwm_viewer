@@ -68,7 +68,7 @@ void travelHtml2Quill(hdom.Element? document, Map<String, dynamic>? attributes, 
       if (cdom.text == "\n") {
         continue;
       }
-      res.add(QuillText(insert: cdom.text ?? "", attributes: attributes));
+      res.add(QuillText(insert: getNormalSpaceString(cdom.text ?? ""), attributes: attributes));
     } else if (cdom.nodeType == hdom.Node.ELEMENT_NODE) {
       var ele = cdom as hdom.Element;
       if (ele.localName == "font") {
@@ -102,11 +102,11 @@ void travelHtml2Quill(hdom.Element? document, Map<String, dynamic>? attributes, 
           if (ele.classes.contains('quotehead')) {
             // res.add(QuillText(insert: '" ${ele.text}', attributes: {'color': "#aaaaaa", 'quotehead': true,
             //   'data-username': ele.attributes['data-username'] ?? "", 'data-nickname': ele.attributes['data-nickname'] ?? ""}));
-            res.add(QuillText(insert: ele.text, attributes: {'color': "#aaaaaa"}, info: {'quotehead': true,
+            res.add(QuillText(insert: getNormalSpaceString(ele.text), attributes: {'color': "#aaaaaa"}, info: {'quotehead': true,
               'data-username': ele.attributes['data-username'] ?? "", 'data-nickname': ele.attributes['data-nickname'] ?? "" }));
             res.add(QuillText(insert: '\n', attributes: {'blockquote': true}));
           } else {
-            res.add(QuillText(insert: ele.text, attributes: {'color': "#aaaaaa"}, info: {'blockquote': true}));
+            res.add(QuillText(insert: getNormalSpaceString(ele.text), attributes: {'color': "#aaaaaa"}, info: {'blockquote': true}));
             res.add(QuillText(insert: '\n', attributes: {'blockquote': true}));
           }
         } else {

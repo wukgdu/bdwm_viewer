@@ -10,34 +10,56 @@ String? checkError(Document document) {
   return null;
 }
 
+String? tryGetNormalSpaceString(String? dom) {
+  if (dom == null) { return null; }
+  return dom.replaceAll("\u00a0", " ");
+}
+
+String getNormalSpaceString(String dom) {
+  return dom.replaceAll("\u00a0", " ");
+}
+
 String getTrimmedString(var dom) {
   if (dom == null) {
     return "";
   }
+  var resStr = "";
   if (dom is String) {
-    return dom.trim();
+    resStr = dom.trim();
+  } else {
+    resStr = dom.text.trim();
   }
-  return dom.text.trim();
+  // &nbsp;[\u00a0;160] -> [\u0020;32]
+  resStr = resStr.replaceAll("\u00a0", " ");
+  return resStr;
 }
 
 String getTrimmedHtml(var dom) {
   if (dom == null) {
     return "";
   }
+  var resStr = "";
   if (dom is Text) {
-    return dom.text.trim();
+    resStr = dom.text.trim();
+  } else {
+    resStr = dom.innerHtml.trim();
   }
-  return dom.innerHtml.trim();
+  resStr = resStr.replaceAll("\u00a0", " ");
+  return resStr;
 }
 
 String getTrimmedOuterHtml(var dom) {
   if (dom == null) {
     return "";
   }
+  var resStr = "";
   if (dom is Text) {
-    return dom.text.trim();
+    resStr = dom.text.trim();
+  } else {
+    resStr = dom.outerHtml.trim();
   }
-  return dom.outerHtml.trim();
+  resStr = resStr.replaceAll("\u00a0", " ");
+  return resStr;
 }
 
 String absImgSrc(String src) {

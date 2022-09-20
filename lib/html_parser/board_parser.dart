@@ -208,7 +208,7 @@ BoardInfo parseBoardInfo(String htmlStr) {
     var statDom = headDom.querySelector("#stat");
     if (statDom != null) {
       var numsDom = statDom.querySelectorAll('span');
-      var statText = statDom.text;
+      var statText = getTrimmedString(statDom);
       var startPos = 0;
       var spanI = 0;
       while (true) {
@@ -244,7 +244,7 @@ BoardInfo parseBoardInfo(String htmlStr) {
     if (adminDom != null) {
       var adminsDom = adminDom.querySelectorAll("a");
       for (var adom in adminsDom) {
-        var userName = adom.text;
+        var userName = getTrimmedString(adom);
         var link = absThreadLink(adom.attributes['href'] ?? "");
         var uid = adom.attributes['href']?.split("=").last ?? "15265";
         admins.add(AdminInfo(userName: userName, link: link, uid: uid));
@@ -257,11 +257,11 @@ BoardInfo parseBoardInfo(String htmlStr) {
     var pagingsDom = pagingDom.querySelectorAll(".paging-button");
     if (pagingsDom.isNotEmpty) {
       pagingsDom.removeWhere((element) {
-        var etext = element.text;
+        var etext = getTrimmedString(element);
         return etext.contains("返回") || etext.contains("页") || etext.contains("跳");
       });
       pagingsDom.map((e) {
-        var txt = e.text;
+        var txt = getTrimmedString(e);
         if (txt.contains(".")) {
           txt = txt.replaceAll(".", "");
         }

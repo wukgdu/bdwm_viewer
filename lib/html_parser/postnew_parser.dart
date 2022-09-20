@@ -132,11 +132,13 @@ PostNewInfo parsePostNew(String htmlStr) {
   var contentDom = editorDom.querySelector("#post-origin");
   var contentText = "";
   var pCount = contentDom?.querySelectorAll("p").length ?? 0;
-  for (var cdom in contentDom?.querySelectorAll("p") ?? []) {
-    pCount -= 1;
-    contentText += cdom.text;
-    if (pCount > 0) {
-      contentText += "\n";
+  if (contentDom!=null) {
+    for (var cdom in contentDom.querySelectorAll("p")) {
+      pCount -= 1;
+      contentText += getNormalSpaceString(cdom.text);
+      if (pCount > 0) {
+        contentText += "\n";
+      }
     }
   }
   var contentHtml = getTrimmedHtml(contentDom);

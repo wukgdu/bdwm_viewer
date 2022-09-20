@@ -88,7 +88,7 @@ List<Top10Item>? parseTop10(Document document) {
     String itemBoard = "";
     if (domInfo != null) {
       domInfo.querySelector(".iconfont")?.remove();
-      List<String> infos = domInfo.text.split(" ");
+      List<String> infos = getTrimmedString(domInfo).split(" ");
       infos.removeWhere((element) => element.isEmpty);
       if (infos.length == 2) {
         itemBoard = infos[0];
@@ -117,7 +117,7 @@ List<BlockItem> parseBlockItem(Element document) {
     String itemBoard = "";
     if (domInfo != null) {
       domInfo.querySelector(".iconfont")?.remove();
-      List<String> infos = domInfo.text.split(" ");
+      List<String> infos = getTrimmedString(domInfo).split(" ");
       infos.removeWhere((element) => element.isEmpty);
       if (infos.length == 2) {
         itemBoard = infos[0];

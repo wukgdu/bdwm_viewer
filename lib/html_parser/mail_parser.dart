@@ -98,7 +98,7 @@ MailListInfo parseMailList(String htmlStr) {
   int maxPage = 0;
   var pagingDivsDom = document.querySelectorAll(".paging div");
   for (var pdd in pagingDivsDom) {
-    var txt = pdd.text;
+    var txt = getTrimmedString(pdd);
     if (txt.startsWith("/")) {
       maxPage = int.parse(txt.substring(2)); // <div>/ 2</div>
       break;

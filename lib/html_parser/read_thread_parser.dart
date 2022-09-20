@@ -147,7 +147,7 @@ AuthorPostInfo parseUserPost(Element? document) {
   String rating = "", postCount = "";
   var detailDom = document.querySelector(".detail");
   if (detailDom != null) {
-    var texts = detailDom.text.trim().split(" ");
+    var texts = getTrimmedString(detailDom).split(" ");
     texts.removeWhere((element) => element.isEmpty);
     for (var text in texts) {
       var values = text.split("：");
@@ -227,7 +227,7 @@ OnePostInfo parseOnePost(Element document) {
   if (voteDom != null) {
     var votesDom = voteDom.querySelectorAll(".text");
     for (var vd in votesDom) {
-      var vdt = vd.text;
+      var vdt = getTrimmedString(vd);
       var p1 = vdt.indexOf('(');
       var p2 = vdt.indexOf(')');
       var value = int.parse(vdt.substring(p1+1, p2));
@@ -364,11 +364,11 @@ ThreadPageInfo parseThread(String htmlStr, {bool simple=false}) {
     var pagingsDom = pagingDom.querySelectorAll(".paging-button");
     if (pagingsDom.isNotEmpty) {
       pagingsDom.removeWhere((element) {
-        var etext = element.text;
+        var etext = getTrimmedString(element);
         return etext.contains("返回") || etext.contains("页") || etext.contains("跳");
       });
       pagingsDom.map((e) {
-        var txt = e.text;
+        var txt = getTrimmedString(e);
         if (txt.contains(".")) {
           txt = txt.replaceAll(".", "");
         }
@@ -424,7 +424,7 @@ List<String> getShortInfoFromContent(String htmlStr) {
   var res = <String>[];
   var document = parse(htmlStr);
   var fpdom = document.querySelector("p");
-  var firstLineText = fpdom?.text ?? "";
+  var firstLineText = getTrimmedString(fpdom);
   if (firstLineText.length != firstLineText.runes.length) {
     // remove emoji
     var tmpArr = firstLineText.characters.split("".characters).toList();
@@ -447,13 +447,13 @@ List<String> getShortInfoFromContent(String htmlStr) {
   int idx = 0;
   var findQuoteP = false;
   for (var pdom in pdoms) {
-    var pdomText = pdom.text;
+    var pdomText = getTrimmedString(pdom);
     if (pdomText.contains("在 ta 的帖子中提到：")) {
       findQuoteP = true;
       res.add(pdomText.split(" (").first);
       if (idx >= 1) {
         if (pdoms[idx-1].classes.contains("blockquote")) {
-          res.add(pdoms[idx-1].text);
+          res.add(getTrimmedString(pdoms[idx-1]));
         } else {
           res.add("");
         }
