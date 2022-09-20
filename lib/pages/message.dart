@@ -68,8 +68,7 @@ class _MessagelistAppState extends State<MessagelistApp> {
               }
               // widget.callBack(userNew);
               globalContactInfo.addOne(userNew).then((value) {
-                setState(() {
-                });
+                setState(() { });
               },);
             },
             icon: const Icon(Icons.add),

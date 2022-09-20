@@ -807,7 +807,7 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
           child: true
           ? SingleChildScrollView(
             controller: _scrollController,
-            padding: const EdgeInsets.all(8),
+            // padding: const EdgeInsets.all(8),
             child: widget.tiebaForm
             ? Column(
               children: newOrder.map((e) {

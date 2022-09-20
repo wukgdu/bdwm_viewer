@@ -21,76 +21,73 @@ class MailListPage extends StatefulWidget {
 class _MailListPageState extends State<MailListPage> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(5.0),
-      child: ListView.builder(
-        itemCount: widget.mailListInfo.mailItems.length,
-        itemBuilder: (context, index) {
-          var item = widget.mailListInfo.mailItems[index];
-          return Card(
-            child: ListTile(
+    return ListView.builder(
+      itemCount: widget.mailListInfo.mailItems.length,
+      itemBuilder: (context, index) {
+        var item = widget.mailListInfo.mailItems[index];
+        return Card(
+          child: ListTile(
+            onTap: () {
+              Navigator.of(context).pushNamed('/mailDetail', arguments: {
+                'postid': item.id,
+                'type': widget.type,
+              });
+            },
+            leading: GestureDetector(
+              child: Container(
+                width: 40,
+                alignment: Alignment.center,
+                child: CircleAvatar(
+                  // radius: 100,
+                  backgroundColor: Colors.white,
+                  backgroundImage: NetworkImage(item.avatar),
+                ),
+              ),
               onTap: () {
-                Navigator.of(context).pushNamed('/mailDetail', arguments: {
-                  'postid': item.id,
-                  'type': widget.type,
-                });
+                if (item.uid.isEmpty) {
+                  return;
+                }
+                Navigator.of(context).pushNamed('/user', arguments: item.uid);
               },
-              leading: GestureDetector(
-                child: Container(
-                  width: 40,
-                  alignment: Alignment.center,
-                  child: CircleAvatar(
-                    // radius: 100,
-                    backgroundColor: Colors.white,
-                    backgroundImage: NetworkImage(item.avatar),
-                  ),
-                ),
-                onTap: () {
-                  if (item.uid.isEmpty) {
-                    return;
-                  }
-                  Navigator.of(context).pushNamed('/user', arguments: item.uid);
-                },
-              ),
-              title: Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(text: item.userName),
-                    const TextSpan(text: "  "),
-                    TextSpan(text: item.time),
-                  ]
-                ),
-              ),
-              subtitle: Text.rich(
-                TextSpan(
-                  children: [
-                    if (item.unread)
-                      const WidgetSpan(
-                        alignment: PlaceholderAlignment.middle,
-                        child: Icon(Icons.circle, color: Colors.red, size: 8),
-                      ),
-                    WidgetSpan(child: Text(
-                      item.title,
-                      overflow: TextOverflow.ellipsis,
-                    )),
-                    if (item.hasAttachment)
-                      const WidgetSpan(
-                        alignment: PlaceholderAlignment.middle,
-                        child: Icon(Icons.attachment),
-                      ),
-                    const TextSpan(text: "\n"),
-                    WidgetSpan(child: Text(
-                      item.content,
-                      overflow: TextOverflow.ellipsis,
-                    )),
-                  ],
-                ),
-              ),
-              isThreeLine: true,
             ),
-          );
-        },
-      ),
+            title: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(text: item.userName),
+                  const TextSpan(text: "  "),
+                  TextSpan(text: item.time),
+                ]
+              ),
+            ),
+            subtitle: Text.rich(
+              TextSpan(
+                children: [
+                  if (item.unread)
+                    const WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: Icon(Icons.circle, color: Colors.red, size: 8),
+                    ),
+                  WidgetSpan(child: Text(
+                    item.title,
+                    overflow: TextOverflow.ellipsis,
+                  )),
+                  if (item.hasAttachment)
+                    const WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: Icon(Icons.attachment),
+                    ),
+                  const TextSpan(text: "\n"),
+                  WidgetSpan(child: Text(
+                    item.content,
+                    overflow: TextOverflow.ellipsis,
+                  )),
+                ],
+              ),
+            ),
+            isThreeLine: true,
+          ),
+        );
+      },
     );
   }
 }
