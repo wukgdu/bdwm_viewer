@@ -134,7 +134,7 @@ class _TopHomePageState extends State<TopHomePage> {
           }
           return ListView.builder(
             controller: _scrollController,
-            padding: const EdgeInsets.all(8),
+            // padding: const EdgeInsets.all(8),
             itemCount: homeInfo.blockInfo.length+1,
             itemBuilder: (context, index) {
               if (index==0) {

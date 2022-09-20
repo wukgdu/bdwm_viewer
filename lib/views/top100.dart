@@ -115,7 +115,6 @@ class _Top100PageState extends State<Top100Page> {
           }
           return ListView(
             controller: _scrollController,
-            padding: const EdgeInsets.all(8),
             children: top100Info.items.map((Top100Item item) {
               return _onepost(item);
             }).toList(),
