@@ -220,26 +220,44 @@ class _OperateComponentState extends State<OperateComponent> {
                 });
               });
             } else if (value == "删除") {
-              bdwmDeletePost(bid: widget.bid, postid: widget.postid).then((value) {
-                var title = "";
-                var content = "删除成功";
-                if (!value.success) {
-                  content = "删除失败";
-                  if (value.error == -1) {
-                    content = value.result!;
+              showAlertDialog(context, "删除帖子", const Text("确认删除？"),
+                actions1: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("不了"),
+                ),
+                actions2: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop("ok");
+                  },
+                  child: const Text("删除"),
+                ),
+              ).then((value) {
+                if (value==null) { return; }
+                if (value.isEmpty) { return; }
+                if (value != "ok") { return; }
+                bdwmDeletePost(bid: widget.bid, postid: widget.postid).then((value) {
+                  var title = "";
+                  var content = "删除成功";
+                  if (!value.success) {
+                    content = "删除失败";
+                    if (value.error == -1) {
+                      content = value.result!;
+                    }
                   }
-                }
-                showAlertDialog(context, title, Text(content),
-                  actions1: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text("知道了"),
-                  ),
-                ).then((value2) {
-                  if (value.success) {
-                    widget.refreshCallBack();
-                  }
+                  showAlertDialog(context, title, Text(content),
+                    actions1: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("知道了"),
+                    ),
+                  ).then((value2) {
+                    if (value.success) {
+                      widget.refreshCallBack();
+                    }
+                  });
                 });
               });
             }
