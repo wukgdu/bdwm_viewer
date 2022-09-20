@@ -22,7 +22,7 @@ class UserApp extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
       ),
-      body: UserInfoPage(uid: uid),
+      body: UserFuturePage(uid: uid),
     );
   }
 }

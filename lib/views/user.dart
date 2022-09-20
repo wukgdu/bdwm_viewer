@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_html/flutter_html.dart';
+import 'package:async/async.dart';
 
 import "../html_parser/user_parser.dart";
 import "../bdwm/req.dart";
@@ -85,47 +85,33 @@ class _UserOperationComponentState extends State<UserOperationComponent> {
 
 class UserInfoPage extends StatefulWidget {
   final String uid;
-  const UserInfoPage({Key? key, required this.uid}) : super(key: key);
+  final UserProfile user;
+  const UserInfoPage({Key? key, required this.uid, required this.user}) : super(key: key);
 
   @override
   State<UserInfoPage> createState() => _UserInfoPageState();
 }
 
 class _UserInfoPageState extends State<UserInfoPage> {
-  UserProfile user = UserProfile();
-
-  Future<UserProfile> getData() async {
-    var resp = await bdwmClient.get("$v2Host/user.php?uid=${widget.uid}", headers: genHeaders());
-    if (resp == null) {
-      return UserProfile.error(errorMessage: networkErrorText);
-    }
-    return parseUser(resp.body);
-  }
+  late UserProfile user;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    // debugPrint("init user");
-    getData().then((value) {
-      // getExampleTop100();
-      setState(() {
-        user = value;
-      });
-    });
+    user = widget.user;
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
   void didUpdateWidget(covariant UserInfoPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    getData().then((value) {
-      // getExampleTop100();
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        user = value;
-      });
-    });
+    user = widget.user;
   }
 
   Widget _oneLineItem(String label, String value, {Icon? icon}) {
@@ -333,6 +319,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
           ),
         Expanded(
           child: ListView(
+            controller: _scrollController,
             children: [
               _oneLineItem("性别", user.gender, icon: genderIcon),
               _oneLineItem("星座", user.constellation),
@@ -390,6 +377,60 @@ class _UserInfoPageState extends State<UserInfoPage> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class UserFuturePage extends StatefulWidget {
+  final String uid;
+  const UserFuturePage({super.key, required this.uid});
+
+  @override
+  State<UserFuturePage> createState() => _UserFuturePageState();
+}
+
+class _UserFuturePageState extends State<UserFuturePage> {
+  late CancelableOperation getDataCancelable;
+
+  Future<UserProfile> getData() async {
+    var resp = await bdwmClient.get("$v2Host/user.php?uid=${widget.uid}", headers: genHeaders());
+    if (resp == null) {
+      return UserProfile.error(errorMessage: networkErrorText);
+    }
+    return parseUser(resp.body);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {});
+  }
+
+  @override
+  void dispose() {
+    getDataCancelable.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: getDataCancelable.value,
+      builder: (context, snapshot) {
+        // debugPrint(snapshot.connectionState.toString());
+        if (snapshot.connectionState != ConnectionState.done) {
+          // return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text("错误：${snapshot.error}"),);
+        }
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const Center(child: Text("错误：未获取数据"),);
+        }
+        UserProfile userInfo = snapshot.data as UserProfile;
+        return UserInfoPage(uid: widget.uid, user: userInfo);
+      },
     );
   }
 }
