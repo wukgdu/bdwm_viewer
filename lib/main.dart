@@ -42,7 +42,7 @@ void main() async {
   await globalUInfo.init();
   await globalContactInfo.init();
   await globalConfigInfo.init();
-  await checkUpdateByTime();
+  checkUpdateByTime();
   await unreadMessage.initWorker();
   await unreadMail.initWorker();
   runApp(const MainPage());

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../bdwm/req.dart';
 import '../globalvars.dart';
 import '../html_parser/top10_parser.dart';
-import "./utils.dart";
+import 'package:async/async.dart';
 import '../pages/read_thread.dart';
 
 class TopHomePage extends StatefulWidget {
@@ -14,9 +14,9 @@ class TopHomePage extends StatefulWidget {
 }
 
 class _TopHomePageState extends State<TopHomePage> {
-  HomeInfo homeInfo = HomeInfo.empty();
   final _titleFont = const TextStyle(fontSize: 20, fontWeight: FontWeight.normal);
   final _scrollController = ScrollController();
+  late CancelableOperation getDataCancelable;
 
   Future<HomeInfo> getData() async {
     var resp = await bdwmClient.get("$v2Host/mobile/home.php", headers: genHeaders());
@@ -30,23 +30,22 @@ class _TopHomePageState extends State<TopHomePage> {
   void initState() {
     super.initState();
     // homeInfo = getExampleHomeInfo();
-    updateData();
+    getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {});
     // _scrollController.addListener(() {
     //   debugPrint(_scrollController.offset);
     // });
   }
 
   Future<void> updateData() async {
-    getData().then((value) {
-      if (!mounted) { return; }
-      setState(() {
-        homeInfo = value;
-      });
+    if (!mounted) { return; }
+    setState(() {
+      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {});
     });
   }
 
   @override
   void dispose() {
+    getDataCancelable.cancel();
     _scrollController.dispose();
     super.dispose();
   }
@@ -108,95 +107,83 @@ class _TopHomePageState extends State<TopHomePage> {
     );
   }
 
-  checkData(HomeInfo homeInfo) {
-    WidgetsBinding.instance.addPostFrameCallback((_){
-      var title = "遇到问题";
-      var content = "";
-      var showIt = false;
-      if (homeInfo.top10Info == null) {
-        content = "不清楚什么问题";
-        showIt = true;
-      } else if (homeInfo.top10Info!.length == 1) {
-        content = homeInfo.top10Info![0].title;
-        showIt = true;
-      }
-      if (showIt == false) {
-        return;
-      }
-      showAlertDialog(context, title, Text(content),
-        actions1: TextButton(
-          child: const Text("登录"),
-          onPressed: () { Navigator.pushReplacementNamed(context, '/login', arguments: {'needBack': false}); },
-        ),
-        actions2: TextButton(
-          child: const Text("知道了"),
-          onPressed: () { Navigator.pop(context, 'OK'); },
-        ),
-      );
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    // checkData(homeInfo);
     debugPrint("** top10 rebuild");
-    if (homeInfo.errorMessage != null) {
-      return Center(
-        child: Text(homeInfo.errorMessage!),
-      );
-    }
-    return RefreshIndicator(
-      onRefresh: updateData,
-      child: ListView.builder(
-        controller: _scrollController,
-        padding: const EdgeInsets.all(8),
-        itemCount: homeInfo.blockInfo.length+1,
-        itemBuilder: (context, index) {
-          if (index==0) {
-            return Card(
-              child: Column(
-                // mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text("全站十大", style: _titleFont),
-                  const Divider(),
-                  if (!(homeInfo.top10Info == null) && homeInfo.top10Info!.length > 1)
-                    ...homeInfo.top10Info!.map((item) {
-                      return _oneTen(item);
-                    }).toList()
-                  else if (!(homeInfo.top10Info == null) && homeInfo.top10Info!.length == 1)
-                    ListTile(
-                      // title: Text("全站十大", style: _titleFont),
-                      title: Text(homeInfo.top10Info![0].title),
-                      // isThreeLine: true,
-                      trailing: IconButton(
-                        icon: const Icon(Icons.login),
-                        onPressed: () { Navigator.pushReplacementNamed(context, '/login', arguments: {'needBack': false}); },
-                      )
-                    ),
-                ]
-              ),
-            );
-          } else {
-            var blockOne = homeInfo.blockInfo[index-1];
-            return Card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(blockOne.blockName, style: _titleFont),
-                  const Divider(),
-                  if (blockOne.blockItems.isNotEmpty)
-                    ...blockOne.blockItems.map((item) {
-                      return _oneBlockItem(item);
-                    }).toList()
-                  else
-                    const Text("该分区暂无热门主题帖"),
-                ],
-              ),
-            );
-          }
-        },
-      ),
+    return FutureBuilder(
+      future: getDataCancelable.value,
+      builder: (context, snapshot) {
+        // debugPrint(snapshot.connectionState.toString());
+        if (snapshot.connectionState != ConnectionState.done) {
+          // return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text("错误：${snapshot.error}"),);
+        }
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const Center(child: Text("错误：未获取数据"),);
+        }
+        HomeInfo homeInfo = snapshot.data as HomeInfo;
+        if (homeInfo.errorMessage != null) {
+          return Center(
+            child: Text(homeInfo.errorMessage!),
+          );
+        }
+        return RefreshIndicator(
+          onRefresh: updateData,
+          child: ListView.builder(
+            controller: _scrollController,
+            padding: const EdgeInsets.all(8),
+            itemCount: homeInfo.blockInfo.length+1,
+            itemBuilder: (context, index) {
+              if (index==0) {
+                return Card(
+                child: Column(
+                  // mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text("全站十大", style: _titleFont),
+                    const Divider(),
+                    if (!(homeInfo.top10Info == null) && homeInfo.top10Info!.length > 1)
+                      ...homeInfo.top10Info!.map((item) {
+                        return _oneTen(item);
+                      }).toList()
+                    else if (!(homeInfo.top10Info == null) && homeInfo.top10Info!.length == 1)
+                      ListTile(
+                        // title: Text("全站十大", style: _titleFont),
+                        title: Text(homeInfo.top10Info![0].title),
+                        // isThreeLine: true,
+                        trailing: IconButton(
+                          icon: const Icon(Icons.login),
+                          onPressed: () { Navigator.pushReplacementNamed(context, '/login', arguments: {'needBack': false}); },
+                        )
+                      ),
+                  ]
+                ),
+              );
+              } else {
+                var blockOne = homeInfo.blockInfo[index-1];
+                return Card(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(blockOne.blockName, style: _titleFont),
+                      const Divider(),
+                      if (blockOne.blockItems.isNotEmpty)
+                        ...blockOne.blockItems.map((item) {
+                          return _oneBlockItem(item);
+                        }).toList()
+                      else
+                        const Text("该分区暂无热门主题帖"),
+                    ],
+                  ),
+                );
+              }
+            }
+          ),
+        );
+      },
     );
   }
 }
