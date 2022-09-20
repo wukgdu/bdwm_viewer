@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:async/async.dart';
 
 import '../bdwm/req.dart';
 import '../globalvars.dart';
 import '../html_parser/top10_parser.dart';
-import 'package:async/async.dart';
 import '../pages/read_thread.dart';
 
 class TopHomePage extends StatefulWidget {
@@ -110,58 +110,58 @@ class _TopHomePageState extends State<TopHomePage> {
   @override
   Widget build(BuildContext context) {
     debugPrint("** top10 rebuild");
-    return FutureBuilder(
-      future: getDataCancelable.value,
-      builder: (context, snapshot) {
-        // debugPrint(snapshot.connectionState.toString());
-        if (snapshot.connectionState != ConnectionState.done) {
-          // return const Center(child: CircularProgressIndicator());
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Center(child: Text("错误：${snapshot.error}"),);
-        }
-        if (!snapshot.hasData || snapshot.data == null) {
-          return const Center(child: Text("错误：未获取数据"),);
-        }
-        HomeInfo homeInfo = snapshot.data as HomeInfo;
-        if (homeInfo.errorMessage != null) {
-          return Center(
-            child: Text(homeInfo.errorMessage!),
-          );
-        }
-        return RefreshIndicator(
-          onRefresh: updateData,
-          child: ListView.builder(
+    return RefreshIndicator(
+      onRefresh: updateData,
+      child: FutureBuilder(
+        future: getDataCancelable.value,
+        builder: (context, snapshot) {
+          // debugPrint(snapshot.connectionState.toString());
+          if (snapshot.connectionState != ConnectionState.done) {
+            // return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text("错误：${snapshot.error}"),);
+          }
+          if (!snapshot.hasData || snapshot.data == null) {
+            return const Center(child: Text("错误：未获取数据"),);
+          }
+          HomeInfo homeInfo = snapshot.data as HomeInfo;
+          if (homeInfo.errorMessage != null) {
+            return Center(
+              child: Text(homeInfo.errorMessage!),
+            );
+          }
+          return ListView.builder(
             controller: _scrollController,
             padding: const EdgeInsets.all(8),
             itemCount: homeInfo.blockInfo.length+1,
             itemBuilder: (context, index) {
               if (index==0) {
                 return Card(
-                child: Column(
-                  // mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text("全站十大", style: _titleFont),
-                    const Divider(),
-                    if (!(homeInfo.top10Info == null) && homeInfo.top10Info!.length > 1)
-                      ...homeInfo.top10Info!.map((item) {
-                        return _oneTen(item);
-                      }).toList()
-                    else if (!(homeInfo.top10Info == null) && homeInfo.top10Info!.length == 1)
-                      ListTile(
-                        // title: Text("全站十大", style: _titleFont),
-                        title: Text(homeInfo.top10Info![0].title),
-                        // isThreeLine: true,
-                        trailing: IconButton(
-                          icon: const Icon(Icons.login),
-                          onPressed: () { Navigator.pushReplacementNamed(context, '/login', arguments: {'needBack': false}); },
-                        )
-                      ),
-                  ]
-                ),
-              );
+                  child: Column(
+                    // mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text("全站十大", style: _titleFont),
+                      const Divider(),
+                      if (!(homeInfo.top10Info == null) && homeInfo.top10Info!.length > 1)
+                        ...homeInfo.top10Info!.map((item) {
+                          return _oneTen(item);
+                        }).toList()
+                      else if (!(homeInfo.top10Info == null) && homeInfo.top10Info!.length == 1)
+                        ListTile(
+                          // title: Text("全站十大", style: _titleFont),
+                          title: Text(homeInfo.top10Info![0].title),
+                          // isThreeLine: true,
+                          trailing: IconButton(
+                            icon: const Icon(Icons.login),
+                            onPressed: () { Navigator.pushReplacementNamed(context, '/login', arguments: {'needBack': false}); },
+                          )
+                        ),
+                    ]
+                  ),
+                );
               } else {
                 var blockOne = homeInfo.blockInfo[index-1];
                 return Card(
@@ -180,10 +180,10 @@ class _TopHomePageState extends State<TopHomePage> {
                   ),
                 );
               }
-            }
-          ),
-        );
-      },
+            },
+          );
+        },
+      ),
     );
   }
 }

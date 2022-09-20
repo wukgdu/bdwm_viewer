@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:async/async.dart';
 
 import '../bdwm/req.dart';
 import '../globalvars.dart';
@@ -13,8 +14,9 @@ class Top100Page extends StatefulWidget {
 }
 
 class _Top100PageState extends State<Top100Page> {
-  Top100Info top100info = Top100Info.empty();
   final _scrollController = ScrollController();
+  late CancelableOperation getDataCancelable;
+
   Future<Top100Info> getData() async {
     var resp = await bdwmClient.get("$v2Host/hot-topic.php", headers: genHeaders());
     if (resp == null) {
@@ -24,36 +26,24 @@ class _Top100PageState extends State<Top100Page> {
   }
 
   Future<void> updateData() async {
-    getData().then((value) {
-      // getExampleTop100();
-      if (!mounted) { return; }
-      setState(() {
-        top100info = value;
-      });
+    if (!mounted) { return; }
+    setState(() {
+      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {});
     });
   }
 
   @override
   void initState() {
     super.initState();
-    updateData();
+    getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {});
   }
 
   @override
   void dispose() {
+    getDataCancelable.cancel();
     _scrollController.dispose();
     super.dispose();
   }
-
-  // @override
-  // void didUpdateWidget(oldWidget) {
-  //   super.didUpdateWidget(oldWidget);
-  //   getData().then((value) {
-  //     setState(() {
-  //       top100items = value;
-  //     });
-  //   });
-  // }
 
   // final _biggerFont = const TextStyle(fontSize: 16);
   Widget _onepost(Top100Item item) {
@@ -101,21 +91,37 @@ class _Top100PageState extends State<Top100Page> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(top100info.items.length.toString());
-    if (top100info.errorMessage != null) {
-      return Center(
-        child: Text(top100info.errorMessage!),
-      );
-    }
     return RefreshIndicator(
       onRefresh: updateData,
-      child: ListView(
-          controller: _scrollController,
-          padding: const EdgeInsets.all(8),
-          children: top100info.items.map((Top100Item item) {
-            return _onepost(item);
-          }).toList(),
-        ),
+      child: FutureBuilder(
+        future: getDataCancelable.value,
+        builder: (context, snapshot) {
+          // debugPrint(snapshot.connectionState.toString());
+          if (snapshot.connectionState != ConnectionState.done) {
+            // return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text("错误：${snapshot.error}"),);
+          }
+          if (!snapshot.hasData || snapshot.data == null) {
+            return const Center(child: Text("错误：未获取数据"),);
+          }
+          Top100Info top100Info = snapshot.data as Top100Info;
+          if (top100Info.errorMessage != null) {
+            return Center(
+              child: Text(top100Info.errorMessage!),
+            );
+          }
+          return ListView(
+            controller: _scrollController,
+            padding: const EdgeInsets.all(8),
+            children: top100Info.items.map((Top100Item item) {
+              return _onepost(item);
+            }).toList(),
+          );
+        }
+      ),
     );
   }
 }
