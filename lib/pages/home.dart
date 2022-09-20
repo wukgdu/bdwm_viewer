@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../globalvars.dart';
 import '../utils.dart';
 // import '../services.dart';
-import '../views/constants.dart';
 import '../views/top100.dart';
 import '../views/top10.dart';
 import '../views/favorite.dart';
@@ -58,9 +57,7 @@ class HomeApp extends StatefulWidget {
 }
 
 class _HomeAppState extends State<HomeApp> with SingleTickerProviderStateMixin {
-  final keyFavorite = GlobalKey<FavoritePageState>();
   late TabController _tabController;
-  final ValueNotifier<int> _selectedIdx = ValueNotifier<int>(0);
   Widget _oneTab(Icon icon, Text text) {
     return Tab(
       child: Row(
@@ -73,13 +70,9 @@ class _HomeAppState extends State<HomeApp> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(() {
-      _selectedIdx.value = _tabController.index;
-    });
   }
   @override
   void dispose() {
-    _selectedIdx.dispose();
     _tabController.dispose();
     clearAllExtendedImageCache();
     super.dispose();
@@ -145,32 +138,12 @@ class _HomeAppState extends State<HomeApp> with SingleTickerProviderStateMixin {
           ],
         ),
       ),
-      floatingActionButton: ValueListenableBuilder(
-        valueListenable: _selectedIdx,
-        builder: ((context, value, child) {
-          var idx = value as int;
-          if (idx!=2) {
-            return Container();
-          }
-          return child!;
-        }),
-        child: IconButton(
-          tooltip: "清除未读",
-          onPressed: () {
-            var state = keyFavorite.currentState;
-            if (state != null) {
-              state.clearUnread();
-            }
-          },
-          icon: const Icon(Icons.cleaning_services, color: bdwmPrimaryColor,)
-        ),
-      ),
       body: TabBarView(
         controller: _tabController,
-        children: [
-          const TopHomePage(),
-          const Top100Page(),
-          FavoritePage(key: keyFavorite,),
+        children: const [
+          TopHomePage(),
+          Top100Page(),
+          FavoriteFuturePage(),
         ],
       ),
     );

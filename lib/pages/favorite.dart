@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../views/favorite.dart';
 import '../views/drawer.dart';
-import '../views/constants.dart';
 
 class FavoriteApp extends StatefulWidget {
   const FavoriteApp({super.key});
@@ -12,7 +11,6 @@ class FavoriteApp extends StatefulWidget {
 }
 
 class _FavoriteAppState extends State<FavoriteApp> {
-  final key = GlobalKey<FavoritePageState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,16 +19,7 @@ class _FavoriteAppState extends State<FavoriteApp> {
       appBar: AppBar(
         title: const Text("版面收藏夹"),
       ),
-      floatingActionButton: IconButton(
-        onPressed: () {
-          var state = key.currentState;
-          if (state != null) {
-            state.clearUnread();
-          }
-        },
-        icon: const Icon(Icons.cleaning_services, color: bdwmPrimaryColor,),
-      ),
-      body: FavoritePage(key: key,),
+      body: const FavoriteFuturePage(),
     );
   }
 }

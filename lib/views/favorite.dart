@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:async/async.dart';
 
 import '../bdwm/req.dart';
 import '../bdwm/set_read.dart';
 import '../globalvars.dart';
 import '../html_parser/favorite_parser.dart';
 
-class FavoritePage extends StatefulWidget {
-  const FavoritePage({Key? key}) : super(key: key);
+class FavoriteFuturePage extends StatefulWidget {
+  const FavoriteFuturePage({Key? key}) : super(key: key);
 
   @override
-  State<FavoritePage> createState() => FavoritePageState();
+  State<FavoriteFuturePage> createState() => _FavoriteFuturePageState();
 }
 
-class FavoritePageState extends State<FavoritePage> {
-  FavoriteBoardInfo favoriteBoardInfo = FavoriteBoardInfo.empty();
-  final _scrollController = ScrollController();
-  bool updateToggle = false;
+class _FavoriteFuturePageState extends State<FavoriteFuturePage> {
+  late CancelableOperation getDataCancelable;
+
   Future<FavoriteBoardInfo> getData() async {
     var resp = await bdwmClient.get("$v2Host/favorite.php", headers: genHeaders2());
     if (resp == null) {
@@ -27,30 +27,80 @@ class FavoritePageState extends State<FavoritePage> {
   @override
   void initState() {
     super.initState();
-    // setState(() {
-    //   favoriteBoards = getExampleFavoriteBoard();
-    // });
-    updateData();
+    getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {});
   }
 
   Future<void> updateData() async {
-    getData().then((value) {
-      if (!mounted) { return; }
-      setState(() {
-        favoriteBoardInfo = value;
-      });
+    if (!mounted) { return; }
+    setState(() {
+      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {});
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant FavoriteFuturePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    getDataCancelable.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    debugPrint("favorite rebuild");
+    return RefreshIndicator(
+      onRefresh: updateData,
+      child: FutureBuilder(
+        future: getDataCancelable.value,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text("错误：${snapshot.error}"),);
+          }
+          if (!snapshot.hasData || snapshot.data == null) {
+            return const Center(child: Text("错误：未获取数据"),);
+          }
+          FavoriteBoardInfo favoriteBoardInfo = snapshot.data as FavoriteBoardInfo;
+          return FavoritePage(favoriteBoardInfo: favoriteBoardInfo);
+        }
+      )
+    );
+  }
+}
+
+class FavoritePage extends StatefulWidget {
+  final FavoriteBoardInfo favoriteBoardInfo;
+  const FavoritePage({super.key, required this.favoriteBoardInfo});
+
+  @override
+  State<FavoritePage> createState() => FavoritePageState();
+}
+
+class FavoritePageState extends State<FavoritePage> {
+  late FavoriteBoardInfo favoriteBoardInfo;
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    favoriteBoardInfo = widget.favoriteBoardInfo;
   }
 
   @override
   void didUpdateWidget(covariant FavoritePage oldWidget) {
     super.didUpdateWidget(oldWidget);
-      // debugPrint("2 ${widget.clear}");
-    var clear = false;
-    if (clear == true) {
-      clearUnread();
-      clear = false;
-    }
+    favoriteBoardInfo = widget.favoriteBoardInfo;
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   void clearUnread() {
@@ -71,17 +121,9 @@ class FavoritePageState extends State<FavoritePage> {
         for (var item in favoriteBoardInfo.favoriteBoards) {
           item.unread = false;
         }
-        setState(() {
-          updateToggle = !updateToggle;
-        });
+        setState(() { });
       }
     });
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
   }
 
   final _biggerFont = const TextStyle(fontSize: 16);
@@ -127,27 +169,31 @@ class FavoritePageState extends State<FavoritePage> {
     );
   }
 
-  Widget boardView() {
+  @override
+  Widget build(BuildContext context) {
     if (favoriteBoardInfo.errorMessage != null) {
       return Center(
         child: Text(favoriteBoardInfo.errorMessage!),
       );
     }
-    return ListView(
-      controller: _scrollController,
-      padding: const EdgeInsets.all(8),
-      children: favoriteBoardInfo.favoriteBoards.map((FavoriteBoard item) {
-        return _onepost(item);
-      }).toList(),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    debugPrint("favorite rebuild");
-    return RefreshIndicator(
-      onRefresh: updateData,
-      child: boardView(),
+    return Column(
+      children: [
+        Expanded(
+          child: ListView(
+            controller: _scrollController,
+            children: favoriteBoardInfo.favoriteBoards.map((FavoriteBoard item) {
+              return _onepost(item);
+            }).toList(),
+          ),
+        ),
+        Container(
+          alignment: Alignment.center,
+          child: TextButton(
+            onPressed: () { clearUnread(); },
+            child: const Text("清除未读")
+          ),
+        ),
+      ],
     );
   }
 }
