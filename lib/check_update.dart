@@ -22,11 +22,15 @@ Future<bool> checkUpdate() async {
   }
   var versionOnline = await checkUpdateParser(resp.body);
   if (versionOnline.isEmpty) { return false; }
-  List<int> versionOnlineNumbers = versionOnline.split(".").map((e) => int.parse(e)).toList();
-  List<int> versionLocalNumbers = curVersionForBBS.split(".").map((e) => int.parse(e)).toList();
-  bool thereIsNewVersion = isNewVersion(versionOnlineNumbers, versionLocalNumbers);
-  if (thereIsNewVersion) {
-    quickNotify("新版本", versionOnline);
+  try {
+    List<int> versionOnlineNumbers = versionOnline.split(".").map((e) => int.parse(e)).toList();
+    List<int> versionLocalNumbers = curVersionForBBS.split(".").map((e) => int.parse(e)).toList();
+    bool thereIsNewVersion = isNewVersion(versionOnlineNumbers, versionLocalNumbers);
+    if (thereIsNewVersion) {
+      quickNotify("新版本", versionOnline);
+    }
+  } catch (e) {
+    quickNotify("新版本检查失败", e.toString());
   }
   return true;
 }
@@ -38,7 +42,7 @@ Future<void> checkUpdateByTime() async {
   if (ld==null) {
     var doCheck = await checkUpdate();
     if (doCheck) {
-      await globalConfigInfo.setLastCheckTime(curDT.toString());
+      await globalConfigInfo.setLastCheckTime(curDT.toIso8601String());
     }
     return;
   }
@@ -46,7 +50,7 @@ Future<void> checkUpdateByTime() async {
   if (deltaDT.inDays >= 7) {
     var doCheck = await checkUpdate();
     if (doCheck) {
-      await globalConfigInfo.setLastCheckTime(curDT.toString());
+      await globalConfigInfo.setLastCheckTime(curDT.toIso8601String());
     }
   }
 }
