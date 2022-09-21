@@ -570,7 +570,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                 children: [
                   GestureDetector(
                     child: CircleAvatar(
-                      radius: 15,
+                      // radius: 20,
                       backgroundColor: Colors.white,
                       backgroundImage: NetworkImage(item.authorInfo.avatarLink),
                     ),
@@ -599,6 +599,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                   children: [
                     SelectableText.rich(
                       TextSpan(
+                        style: const TextStyle(height: 1.0),
                         children: [
                           TextSpan(text: item.authorInfo.userName, style: serifFont),
                           const TextSpan(text: ' ('),
