@@ -65,13 +65,17 @@ class SeeNoThemAppState extends State<SeeNoThemApp> {
                   // only one result
                   if (r == false) {
                     if (!mounted) { return; }
-                    await showAlertDialog(context, "添加失败", Text("用户 $userNew 不存在"),
+                    var res = await showAlertDialog(context, "添加失败", Text("用户 $userNew 不存在"),
                       actions1: TextButton(
+                        onPressed: () { Navigator.of(context).pop("add"); },
+                        child: const Text("仍要添加"),
+                      ),
+                      actions2: TextButton(
                         onPressed: () { Navigator.of(context).pop(); },
                         child: const Text("知道了"),
                       ),
                     );
-                    return;
+                    if (res == null) { return; }
                   }
                 }
               }
