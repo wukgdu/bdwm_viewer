@@ -161,7 +161,7 @@ Future<String?> showUploadDialog(BuildContext context, String attachpath, List<S
     barrierDismissible: false,
     actions1: TextButton(
       onPressed: () {
-        if (key.currentContext == null) { return; }
+        if (key.currentState == null) { return; }
         var count = key.currentState!.count;
         List<String> files = key.currentState!.filenames.map((e) => e.name).toList();
         Navigator.of(context).pop(jsonEncode({
