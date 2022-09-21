@@ -24,8 +24,9 @@ class PostNewPage extends StatefulWidget {
   // final String boardName;
   final PostNewInfo postNewInfo;
   final String? quoteText;
+  final String? nickName;
   final FutureOrFunction<String> updateQuote;
-  const PostNewPage({Key? key, required this.bid, this.postid, this.parentid, required this.postNewInfo, this.quoteText, required this.updateQuote}) : super(key: key);
+  const PostNewPage({Key? key, required this.bid, this.postid, this.parentid, required this.postNewInfo, this.quoteText, required this.updateQuote, this.nickName}) : super(key: key);
 
   @override
   State<PostNewPage> createState() => _PostNewPageState();
@@ -168,7 +169,7 @@ class _PostNewPageState extends State<PostNewPage> {
                     return;
                   }
                   if (quoteText != null) {
-                    var postQuote = bdwmTextFormat(quoteText!, mail: false);
+                    var postQuote = bdwmTextFormat(quoteText!, mail: false, nickName: widget.nickName);
                     // ...{}] [{}...
                     postContent = "${postContent.substring(0, postContent.length-1)},${postQuote.substring(1)}";
                   }
@@ -366,7 +367,7 @@ class _PostNewPageState extends State<PostNewPage> {
               maxHeight: 100,
             ),
             child: SingleChildScrollView(
-              child: HtmlComponent(quoteText!),
+              child: HtmlComponent(quoteText!, nickName: widget.nickName,),
             ),
           ),
         Container(
@@ -447,7 +448,8 @@ class PostNewFuturePage extends StatefulWidget {
   final String bid;
   final String? postid;
   final String? parentid;
-  const PostNewFuturePage({super.key, required this.bid, this.postid, this.parentid});
+  final String? nickName;
+  const PostNewFuturePage({super.key, required this.bid, this.postid, this.parentid, this.nickName});
 
   @override
   State<PostNewFuturePage> createState() => _PostNewFuturePageState();
@@ -530,6 +532,7 @@ class _PostNewFuturePageState extends State<PostNewFuturePage> {
         return PostNewPage(
           postNewInfo: postNewInfo, parentid: widget.parentid,
           postid: widget.postid, bid: widget.bid, quoteText: quoteText,
+          nickName: widget.nickName,
           updateQuote: (String mode) { return getPostQuote(mode: mode); },
         );
       }

@@ -168,16 +168,18 @@ class _MainPageState extends State<MainPage> {
             String? bid;
             String? postid;
             String? parentid;
+            String? nickName;
             if (settings.arguments != null) {
               var settingsMap = settings.arguments as Map;
               bid = settingsMap['bid'] as String;
               boardName = settingsMap['boardName'] as String;
               postid = settingsMap['postid'] as String?;
               parentid = settingsMap['parentid'] as String?;
+              nickName = settingsMap['nickName'] as String?;
             } else {
               return null;
             }
-            builder = (BuildContext context) => PostNewApp(boardName: boardName ?? "版面", bid: bid ?? "", postid: postid, parentid: parentid);
+            builder = (BuildContext context) => PostNewApp(boardName: boardName ?? "版面", bid: bid ?? "", postid: postid, parentid: parentid, nickName: nickName);
             break;
           case "/zone":
             builder = (BuildContext context) => const ZoneApp();

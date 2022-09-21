@@ -94,7 +94,8 @@ class HtmlComponent extends StatefulWidget {
   final String htmlStr;
   final bool? needSelect;
   final TextStyle? ts;
-  const HtmlComponent(this.htmlStr, {Key? key, this.needSelect, this.ts}) : super(key: key);
+  final String? nickName;
+  const HtmlComponent(this.htmlStr, {Key? key, this.needSelect, this.ts, this.nickName}) : super(key: key);
 
   @override
   State<HtmlComponent> createState() => _HtmlComponentState();
@@ -104,6 +105,7 @@ class _HtmlComponentState extends State<HtmlComponent> {
   String htmlStr = "";
   bool? needSelect;
   TextStyle? ts;
+  String? nickName;
   
   @override
   void initState() {
@@ -111,6 +113,7 @@ class _HtmlComponentState extends State<HtmlComponent> {
     htmlStr = widget.htmlStr;
     needSelect = widget.needSelect;
     ts = widget.ts;
+    nickName = widget.nickName;
   }
 
   @override
@@ -119,6 +122,7 @@ class _HtmlComponentState extends State<HtmlComponent> {
     htmlStr = widget.htmlStr;
     needSelect = widget.needSelect;
     ts = widget.ts;
+    nickName = widget.nickName;
   }
 
   @override
@@ -126,7 +130,7 @@ class _HtmlComponentState extends State<HtmlComponent> {
     // return renderHtml(htmlStr, ts: ts, context: context, needSelect: needSelect);
     // var htmlStr = '''<p>asd<span style="background-color: #40ff40;">fs<font color="#c00000">a<u>d<b>fa</b></u><b>s</b></font><b>d</b></span>fa<br></p>''';
     var document = parse(htmlStr);
-    var res = travelHtml(document.querySelector("body"), context: context, ts: ts);
+    var res = travelHtml(document.querySelector("body"), context: context, ts: ts, nickName: nickName);
     var tspan = TextSpan(
       children: res,
       style: ts,
@@ -163,7 +167,7 @@ TextSpan html2TextSpan(String htmlStr, {TextStyle? ts}) {
   return tspan;
 }
 
-List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, BuildContext? context}) {
+List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, BuildContext? context, String? nickName}) {
   if (document == null) {
     return null;
   }
@@ -215,7 +219,17 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
       } else if (ele.localName == "p") {
         if (ele.classes.contains('quotehead') || ele.classes.contains('blockquote')) {
           res.add(const WidgetSpan(child: Icon(Icons.format_quote, size: 14, color: Color(0xffA6DDE3))));
-          res.add(TextSpan(text: ele.text, style: const TextStyle(color: Colors.grey, fontSize: 12)));
+          var addText = ele.text;
+          if (ele.classes.contains('quotehead') && (nickName != null)) {
+            int p1 = addText.indexOf('(');
+            if (p1!=-1) {
+              int p2 = addText.indexOf(')', p1);
+              if (p2!=-1 && p1+1!=p2) {
+                addText = addText.replaceRange(p1+1, p2, nickName);
+              }
+            }
+          }
+          res.add(TextSpan(text: addText, style: const TextStyle(color: Colors.grey, fontSize: 12)));
         } else if (ele.classes.contains("zz-info")) {
           res.add(TextSpan(
             children: travelHtml(ele, context: context, ts: ts),
@@ -447,19 +461,24 @@ class BDWMTextEditingController extends TextEditingController {
   }
 }
 
-String bdwmTextFormat(String htmlStr, {bool? mail=false}) {
+String bdwmTextFormat(String htmlStr, {bool? mail=false, String? nickName}) {
   var document = parse(htmlStr);
   var res = <BDWMtext>[];
   travelHtmlBack(document.querySelector("body"), BDWMAnsiText.empty(), res);
   if (res.isEmpty) {
     return '[{"type":"ansi","bold":false,"underline":false,"fore_color":9,"back_color":9,"content":"\\n"}]';
   }
-  if (mail!=null && mail==true) {
+  if (mail!=null || nickName!=null) {
     int idx = res.length-1;
     while (idx >= 0) {
       var r = res[idx];
       if (r is BDWMQuoteText) {
-        r.mail = true;
+        if (mail != null) {
+          r.mail = mail;
+        }
+        if (nickName != null) {
+          r.nickname = nickName;
+        }
         break;
       }
       idx -= 1;

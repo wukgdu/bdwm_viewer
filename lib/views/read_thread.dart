@@ -68,6 +68,9 @@ class _OperateComponentState extends State<OperateComponent> {
                     'bid': widget.bid,
                     'boardName': "",
                     'parentid': widget.postid,
+                    // Anonymous's nickname
+                    'nickName': widget.onePostInfo.authorInfo.userName == "Anonymous"
+                      ? widget.onePostInfo.authorInfo.nickName : null,
                   }).then((value) {
                     if (value == true) {
                       widget.refreshCallBack();
