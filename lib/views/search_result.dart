@@ -36,13 +36,10 @@ class _SimpleResultPageState extends State<SimpleResultPage> {
   }
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10.0),
-      child: ListView(
-        children: widget.ssRes.res.map((e) {
-          return oneItem(e);
-        }).toList(),
-      ),
+    return ListView(
+      children: widget.ssRes.res.map((e) {
+        return oneItem(e);
+      }).toList(),
     );
   }
 }
@@ -112,13 +109,10 @@ class _ComplexResultPageState extends State<ComplexResultPage> {
   }
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10.0),
-      child: ListView(
-        children: widget.csRes.resItems.map((e) {
-          return oneItem(e);
-        }).toList(),
-      ),
+    return ListView(
+      children: widget.csRes.resItems.map((e) {
+        return oneItem(e);
+      }).toList(),
     );
   }
 }
