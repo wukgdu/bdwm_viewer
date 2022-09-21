@@ -740,7 +740,7 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
     var userName = item.authorInfo.userName;
     Set<String> seeNoHimHer = globalConfigInfo.getSeeNoThem();
     var hideIt = false;
-    if (seeNoHimHer.contains(userName)) {
+    if (seeNoHimHer.contains(userName.toLowerCase())) {
       hideIt = true;
     }
     return OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack,

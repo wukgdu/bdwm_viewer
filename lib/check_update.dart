@@ -32,13 +32,13 @@ Future<bool> checkUpdate() async {
 }
 
 Future<void> checkUpdateByTime() async {
-  String lastTimeStr = globalConfigInfo.config['lastCheckTime'] ?? "";
+  String lastTimeStr = globalConfigInfo.getLastCheckTime();
   var ld = DateTime.tryParse(lastTimeStr);
   var curDT = DateTime.now();
   if (ld==null) {
     var doCheck = await checkUpdate();
     if (doCheck) {
-      await globalConfigInfo.addOne('lastCheckTime', curDT.toString());
+      await globalConfigInfo.setLastCheckTime(curDT.toString());
     }
     return;
   }
@@ -46,7 +46,7 @@ Future<void> checkUpdateByTime() async {
   if (deltaDT.inDays >= 7) {
     var doCheck = await checkUpdate();
     if (doCheck) {
-      await globalConfigInfo.addOne('lastCheckTime', curDT.toString());
+      await globalConfigInfo.setLastCheckTime(curDT.toString());
     }
   }
 }

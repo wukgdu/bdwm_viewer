@@ -189,6 +189,15 @@ class _FunFunFunPageState extends State<FunFunFunPage> {
         ),
         if (showBigTen)
           Card(child: bigTenWidget ?? const Center(child: Text("生成十大拍照失败"))),
+        Card(
+          child: ListTile(
+            onTap: () {
+              Navigator.of(context).pushNamed('/seeNoThem');
+            },
+            title: const Text("不看ta"),
+            trailing: const Icon(Icons.arrow_right),
+          )
+        ),
       ],
     );
   }

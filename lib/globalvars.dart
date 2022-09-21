@@ -281,12 +281,10 @@ class TmpContactInfo {
 var globalContactInfo = TmpContactInfo.empty();
 
 class BDWMConfig {
-  Map<String, dynamic> config = {
-    "lastCheckTime": "",
-    seeNoThemKey: [],
-  };
-  static const seeNoThemKey = "seeNoThem";
+  String lastCheckTime = "";
+  Set<String> seeNoThem = {};
   String storage = "bdwmconfig.json";
+
   Lock lock = Lock();
 
   BDWMConfig.empty();
@@ -294,32 +292,43 @@ class BDWMConfig {
     init();
   }
 
+  Map toJson() {
+    return {
+      "lastCheckTime": lastCheckTime,
+      "seeNoThem": seeNoThem.toList(),
+    };
+  }
   String gist() {
-    return jsonEncode(config);
+    return jsonEncode(toJson());
   }
 
-  Future<Map<String, dynamic>> getData() async {
-    return await lock.synchronized(() async {
-      return config;
-    });
+  String getLastCheckTime() {
+    return lastCheckTime;
   }
 
-  Future<bool> addOne(String key, dynamic value) async {
+  Future<bool> setLastCheckTime(String newTime) async {
     return await lock.synchronized(() async {
-      config[key] = value;
-      return await update();
-    });
-  }
-
-  Future<bool> addAll(Map<String, dynamic> pairs) async {
-    return await lock.synchronized(() async {
-      config.addAll(pairs);
+      lastCheckTime = newTime;
       return await update();
     });
   }
 
   Set<String> getSeeNoThem() {
-    return config[seeNoThemKey];
+    return seeNoThem;
+  }
+
+  Future<bool> addOneSeeNo(String userName) async {
+    return await lock.synchronized(() async {
+      seeNoThem.add(userName);
+      return await update();
+    });
+  }
+
+  Future<bool> removeOneSeeNo(String userName) async {
+    return await lock.synchronized(() async {
+      seeNoThem.remove(userName);
+      return await update();
+    });
   }
 
   Future<bool> init() async {
@@ -328,7 +337,7 @@ class BDWMConfig {
     // debugPrint(filename);
     Future<void> writeInit() async {
       var file = File(filename).openWrite();
-      file.write(jsonEncode(config));
+      file.write(jsonEncode(toJson()));
       await file.flush();
       await file.close();
     }
@@ -338,10 +347,10 @@ class BDWMConfig {
         await writeInit();
       } else {
         Map<String, dynamic> jsonContent = jsonDecode(content);
-        config.addAll(jsonContent);
-        List seeNoHimHerList = config[seeNoThemKey] ?? <String>[];
-        Set<String> seeNoHimHer = Set<String>.from(seeNoHimHerList.map((e) => e as String));
-        config[seeNoThemKey] = seeNoHimHer;
+
+        lastCheckTime = jsonContent['lastCheckTime'] ?? "";
+        List seeNoHimHerList = jsonContent['seeNoThem'] ?? <String>[];
+        seeNoThem = Set<String>.from(seeNoHimHerList.map((e) => e as String));
       }
     } else {
       await writeInit();
@@ -353,7 +362,7 @@ class BDWMConfig {
     String dir = (await getApplicationDocumentsDirectory()).path;
     String filename = "$dir/$storage";
     var file = File(filename).openWrite();
-    file.write(jsonEncode(config));
+    file.write(jsonEncode(toJson()));
     await file.flush();
     await file.close();
     return true;
