@@ -39,15 +39,7 @@ Future<void> checkUpdateByTime() async {
   String lastTimeStr = globalConfigInfo.getLastCheckTime();
   var ld = DateTime.tryParse(lastTimeStr);
   var curDT = DateTime.now();
-  if (ld==null) {
-    var doCheck = await checkUpdate();
-    if (doCheck) {
-      await globalConfigInfo.setLastCheckTime(curDT.toIso8601String());
-    }
-    return;
-  }
-  var deltaDT = curDT.difference(ld);
-  if (deltaDT.inDays >= 7) {
+  if (ld==null || curDT.difference(ld).inDays >= 7) {
     var doCheck = await checkUpdate();
     if (doCheck) {
       await globalConfigInfo.setLastCheckTime(curDT.toIso8601String());
