@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  pasteboard
   permission_handler_windows
   quick_notify
   url_launcher_windows
