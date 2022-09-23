@@ -282,6 +282,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
         Container(
           padding: const EdgeInsets.only(bottom: 5, top: 5),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               IconButton(
                 onPressed: () {
@@ -297,6 +298,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
                   readOnly: widget.withWho == "deliver" ? true : false,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.all(8.0),
                   ),
                 ),
               ),
