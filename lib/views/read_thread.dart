@@ -606,7 +606,10 @@ class _OnePostComponentState extends State<OnePostComponent> {
                           // WidgetSpan(child: HtmlComponent(item.authorInfo.nickName, needSelect: true),),
                           html2TextSpan(item.authorInfo.nickName),
                           const TextSpan(text: ') '),
-                          TextSpan(text: item.authorInfo.status),
+                          TextSpan(
+                            text: item.authorInfo.status,
+                            style: TextStyle(color: item.authorInfo.status.contains("在线") ? onlineColor : Colors.grey),
+                          ),
                         ],
                       ),
                     ),

@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 const bdwmPrimaryColor = Color(0xffea6242);
 const bdwmSurfaceColor = Color(0xffe97c62);
 const textLinkStyle = TextStyle(
-  color: Color(0xffea6242),
+  color: bdwmPrimaryColor,
 );
 const Color highlightReplyColor = Color(0xfff8cea8);
 const Color highlightColor = Color(0xffea6242);
+const Color onlineColor = Color(0xff5cae97);
 
 const Map<String, Object> bdwmRichText = {
   'bc': {

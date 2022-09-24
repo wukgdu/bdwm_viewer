@@ -255,7 +255,10 @@ class _UserInfoPageState extends State<UserInfoPage> {
                   // WidgetSpan(child: HtmlComponent(user.nickNameHtml),),
                   html2TextSpan(user.nickNameHtml),
                   const TextSpan(text: ") "),
-                  TextSpan(text: user.status),
+                  TextSpan(
+                    text: user.status,
+                    style: TextStyle(color: user.status.contains("在线") ? onlineColor : Colors.grey),
+                  ),
                 ],
               ),
             ),
