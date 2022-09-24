@@ -111,111 +111,106 @@ class _DetailImageState extends State<DetailImage> {
           ),
         ],
       ),
-      body: GestureDetector(
-        child: Center(
-          // child: Image.network(imgLink),
-          child: imgData == null
-          ? ExtendedImage.network(
-            imgLink,
-            fit: BoxFit.contain,
-            cache: true,
-            enableMemoryCache: true,
-            clearMemoryCacheWhenDispose: true,
-            clearMemoryCacheIfFailed: true,
-            handleLoadingProgress: true,
-            filterQuality: FilterQuality.high,
-            cancelToken: cancelIt,
-            timeLimit: const Duration(seconds: 60),
-            loadStateChanged: (ExtendedImageState state) {
-              switch (state.extendedImageLoadState) {
-                case LoadState.loading:
-                  var curByte = state.loadingProgress?.cumulativeBytesLoaded ?? 0;
-                  var sumByte = state.loadingProgress?.expectedTotalBytes ?? -1;
-                  if (sumByte == -1) {
-                    return const Text("加载中");
-                  }
-                  var text = "${(curByte * 100 / sumByte).toStringAsFixed(0)}%";
-                  // return Text(text);
-                  return CircularProgressIndicator(
-                    value: curByte / sumByte,
-                    semanticsLabel: '加载中',
-                    semanticsValue: text,
-                    backgroundColor: Colors.amberAccent,
-                  );
-                case LoadState.completed:
-                  return null;
-                case LoadState.failed:
-                  return Center(child: SelectableText("加载失败：$imgLink"));
-                default:
-                  return null;
-              }
-            },
-            mode: ExtendedImageMode.gesture,
-            initGestureConfigHandler: (state) {
-              return GestureConfig(
-                minScale: 1.0,
-                animationMinScale: 0.7,
-                maxScale: 3.0,
-                animationMaxScale: 3.5,
-                speed: 1.0,
-                inertialSpeed: 100.0,
-                initialScale: 1.0,
-                inPageView: false,
-                initialAlignment: InitialAlignment.center,
-              );
-            },
-          )
-          : ExtendedImage.memory(
-            imgData!,
-            fit: BoxFit.contain,
-            enableMemoryCache: true,
-            clearMemoryCacheWhenDispose: true,
-            clearMemoryCacheIfFailed: true,
-            filterQuality: FilterQuality.high,
-            loadStateChanged: (ExtendedImageState state) {
-              switch (state.extendedImageLoadState) {
-                case LoadState.loading:
-                  var curByte = state.loadingProgress?.cumulativeBytesLoaded ?? 0;
-                  var sumByte = state.loadingProgress?.expectedTotalBytes ?? -1;
-                  if (sumByte == -1) {
-                    return const Text("加载中");
-                  }
-                  var text = "${(curByte * 100 / sumByte).toStringAsFixed(0)}%";
-                  // return Text(text);
-                  return LinearProgressIndicator(
-                    value: curByte / sumByte,
-                    semanticsLabel: '加载中',
-                    semanticsValue: text,
-                    backgroundColor: Colors.amberAccent,
-                  );
-                case LoadState.completed:
-                  return null;
-                case LoadState.failed:
-                  return Center(child: SelectableText("加载失败：$imgLink"));
-                default:
-                  return null;
-              }
-            },
-            mode: ExtendedImageMode.gesture,
-            initGestureConfigHandler: (state) {
-              return GestureConfig(
-                minScale: 1.0,
-                animationMinScale: 0.7,
-                maxScale: 3.0,
-                animationMaxScale: 3.5,
-                speed: 1.0,
-                inertialSpeed: 100.0,
-                initialScale: 1.0,
-                inPageView: false,
-                initialAlignment: InitialAlignment.center,
-              );
-            },
-          ),
+      body: Center(
+        // child: Image.network(imgLink),
+        child: imgData == null
+        ? ExtendedImage.network(
+          imgLink,
+          fit: BoxFit.contain,
+          cache: true,
+          enableMemoryCache: true,
+          clearMemoryCacheWhenDispose: true,
+          clearMemoryCacheIfFailed: true,
+          handleLoadingProgress: true,
+          filterQuality: FilterQuality.high,
+          cancelToken: cancelIt,
+          timeLimit: const Duration(seconds: 60),
+          loadStateChanged: (ExtendedImageState state) {
+            switch (state.extendedImageLoadState) {
+              case LoadState.loading:
+                var curByte = state.loadingProgress?.cumulativeBytesLoaded ?? 0;
+                var sumByte = state.loadingProgress?.expectedTotalBytes ?? -1;
+                if (sumByte == -1) {
+                  return const Text("加载中");
+                }
+                var text = "${(curByte * 100 / sumByte).toStringAsFixed(0)}%";
+                // return Text(text);
+                return CircularProgressIndicator(
+                  value: curByte / sumByte,
+                  semanticsLabel: '加载中',
+                  semanticsValue: text,
+                  backgroundColor: Colors.amberAccent,
+                );
+              case LoadState.completed:
+                return null;
+              case LoadState.failed:
+                return Center(child: SelectableText("加载失败：$imgLink"));
+              default:
+                return null;
+            }
+          },
+          mode: ExtendedImageMode.gesture,
+          initGestureConfigHandler: (state) {
+            return GestureConfig(
+              minScale: 1.0,
+              animationMinScale: 0.7,
+              maxScale: 3.0,
+              animationMaxScale: 3.5,
+              speed: 1.0,
+              inertialSpeed: 100.0,
+              initialScale: 1.0,
+              inPageView: false,
+              initialAlignment: InitialAlignment.center,
+            );
+          },
+        )
+        : ExtendedImage.memory(
+          imgData!,
+          fit: BoxFit.contain,
+          enableMemoryCache: true,
+          clearMemoryCacheWhenDispose: true,
+          clearMemoryCacheIfFailed: true,
+          filterQuality: FilterQuality.high,
+          loadStateChanged: (ExtendedImageState state) {
+            switch (state.extendedImageLoadState) {
+              case LoadState.loading:
+                var curByte = state.loadingProgress?.cumulativeBytesLoaded ?? 0;
+                var sumByte = state.loadingProgress?.expectedTotalBytes ?? -1;
+                if (sumByte == -1) {
+                  return const Text("加载中");
+                }
+                var text = "${(curByte * 100 / sumByte).toStringAsFixed(0)}%";
+                // return Text(text);
+                return LinearProgressIndicator(
+                  value: curByte / sumByte,
+                  semanticsLabel: '加载中',
+                  semanticsValue: text,
+                  backgroundColor: Colors.amberAccent,
+                );
+              case LoadState.completed:
+                return null;
+              case LoadState.failed:
+                return Center(child: SelectableText("加载失败：$imgLink"));
+              default:
+                return null;
+            }
+          },
+          mode: ExtendedImageMode.gesture,
+          initGestureConfigHandler: (state) {
+            return GestureConfig(
+              minScale: 1.0,
+              animationMinScale: 0.7,
+              maxScale: 3.0,
+              animationMaxScale: 3.5,
+              speed: 1.0,
+              inertialSpeed: 100.0,
+              initialScale: 1.0,
+              inPageView: false,
+              initialAlignment: InitialAlignment.center,
+            );
+          },
         ),
       ),
-      // onTap: () {
-      //   Navigator.pop(context);
-      // },
     );
   }
 }
