@@ -198,6 +198,15 @@ class _FunFunFunPageState extends State<FunFunFunPage> {
             trailing: const Icon(Icons.arrow_right),
           )
         ),
+        Card(
+          child: ListTile(
+            onTap: () {
+              Navigator.of(context).pushNamed('/friendsPosts');
+            },
+            title: const Text("朋友动态"),
+            trailing: const Icon(Icons.arrow_right),
+          )
+        ),
       ],
     );
   }

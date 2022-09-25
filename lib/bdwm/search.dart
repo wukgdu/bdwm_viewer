@@ -113,3 +113,31 @@ Future<UserInfoRes> bdwmUserInfoSearch(List<String> userNames) async {
   );
   return res;
 }
+
+Future<UserInfoRes> bdwmGetFriends() async {
+  var actionUrl = "$v2Host/ajax/get_friends.php";
+  var data = {};
+  var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
+  if (resp == null) {
+    return UserInfoRes.error(success: false, error: -1, desc: networkErrorText);
+  }
+  var content = json.decode(resp.body);
+  var users = [];
+  if (content['success'] == true) {
+    for (var u in content['result']) {
+      if (u['uinfo'] != null) {
+        Map uinfo = u['uinfo'];
+        String uid = uinfo['id']?.toString() ?? "";
+        String userName = uinfo['username'] ?? "";
+        users.add(IDandName(id: uid, name: userName));
+      }
+    }
+  }
+  UserInfoRes res = UserInfoRes(
+    success: content['success'],
+    error: content['error'] ?? 0,
+    jsonStr: resp.body,
+    users: users,
+  );
+  return res;
+}
