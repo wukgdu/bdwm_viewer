@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../views/drawer.dart';
 import '../views/funfunfun.dart';
+import '../views/constants.dart';
 
 class FunFunFunApp extends StatelessWidget {
   const FunFunFunApp({super.key});
@@ -15,6 +16,12 @@ class FunFunFunApp extends StatelessWidget {
         title: const Text("玩"),
       ),
       body: const FunFunFunPage(),
+      floatingActionButton: IconButton(
+        icon: const Icon(Icons.home, color: bdwmPrimaryColor),
+        onPressed: () {
+          Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+        },
+      ),
     );
   }
 }
