@@ -63,56 +63,53 @@ class _FriendPageState extends State<FriendPage> {
         if (friendsInfo.errorMessage != null) {
           return Center(child: Text(friendsInfo.errorMessage!),);
         }
-        return Container(
-          padding: const EdgeInsets.all(5.0),
-          child: ListView.builder(
-            controller: _scrollController,
-            itemCount: friendsInfo.friends.length,
-            itemBuilder: ((context, index) {
-              var e = friendsInfo.friends[index];
-              return Card(
-                child: ListTile(
-                  leading: GestureDetector(
-                    child: Container(
-                      width: 40,
-                      alignment: Alignment.center,
-                      child: CircleAvatar(
-                        // radius: 100,
-                        backgroundColor: Colors.white,
-                        backgroundImage: NetworkImage(e.avatar),
-                      ),
-                    ),
-                    onTap: () {
-                      if (e.uid.isEmpty) {
-                        return;
-                      }
-                      Navigator.of(context).pushNamed('/user', arguments: e.uid);
-                    },
-                  ),
-                  title: Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(text: e.userName, style: serifFont),
-                        const TextSpan(text: " "),
-                        TextSpan(text: e.onlineStatus),
-                        if (e.bidirection)
-                          const WidgetSpan(
-                            child: Icon(Icons.swap_horiz,),
-                            alignment: PlaceholderAlignment.middle
-                          ),
-                      ]
+        return ListView.builder(
+          controller: _scrollController,
+          itemCount: friendsInfo.friends.length,
+          itemBuilder: ((context, index) {
+            var e = friendsInfo.friends[index];
+            return Card(
+              child: ListTile(
+                leading: GestureDetector(
+                  child: Container(
+                    width: 40,
+                    alignment: Alignment.center,
+                    child: CircleAvatar(
+                      // radius: 100,
+                      backgroundColor: Colors.white,
+                      backgroundImage: NetworkImage(e.avatar),
                     ),
                   ),
-                  subtitle: Text(e.nickName),
-                  trailing: widget.mode == "fan"
-                    ? UserOperationComponent(exist: e.bidirection, uid: e.uid, userName: e.userName, mode: "friend",)
-                    : widget.mode=="reject"
-                      ? UserOperationComponent(exist: true, uid: e.uid, userName: e.userName, mode: "reject",) // 拉黑
-                      : UserOperationComponent(exist: true, uid: e.uid, userName: e.userName, mode: "friend",), // 关注
+                  onTap: () {
+                    if (e.uid.isEmpty) {
+                      return;
+                    }
+                    Navigator.of(context).pushNamed('/user', arguments: e.uid);
+                  },
                 ),
-              );
-            })
-          ),
+                title: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(text: e.userName, style: serifFont),
+                      const TextSpan(text: " "),
+                      TextSpan(text: e.onlineStatus),
+                      if (e.bidirection)
+                        const WidgetSpan(
+                          child: Icon(Icons.swap_horiz,),
+                          alignment: PlaceholderAlignment.middle
+                        ),
+                    ]
+                  ),
+                ),
+                subtitle: Text(e.nickName),
+                trailing: widget.mode == "fan"
+                  ? UserOperationComponent(exist: e.bidirection, uid: e.uid, userName: e.userName, mode: "friend",)
+                  : widget.mode=="reject"
+                    ? UserOperationComponent(exist: true, uid: e.uid, userName: e.userName, mode: "reject",) // 拉黑
+                    : UserOperationComponent(exist: true, uid: e.uid, userName: e.userName, mode: "friend",), // 关注
+              ),
+            );
+          })
         );
       }
     );
