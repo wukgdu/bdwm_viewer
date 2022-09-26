@@ -2,6 +2,9 @@ import 'dart:math' show min;
 
 import 'package:flutter/material.dart';
 
+import '../globalvars.dart' show globalUInfo;
+import './constants.dart' show bdwmPrimaryColor;
+
 class MyDrawer extends StatelessWidget {
   final int selectedIdx;
   const MyDrawer({Key? key, required this.selectedIdx}) : super(key: key);
@@ -34,10 +37,19 @@ class MyDrawer extends StatelessWidget {
       width: dWidth,
       child: Column(
         children: [
-          Container(
-            // margin: const EdgeInsets.only(top: 0, bottom: 0),
-            padding: const EdgeInsets.only(top: 0, left: 0, right: 0, bottom: 0),
-            child: Image.asset(Theme.of(context).brightness == Brightness.dark ? 'assets/image/wei_grey.jpg' : 'assets/image/wei.jpg'),
+          Stack(
+            alignment: Alignment.bottomLeft,
+            children: [
+              Image.asset(Theme.of(context).brightness == Brightness.dark ? 'assets/image/wei_grey.jpg' : 'assets/image/wei.jpg'),
+              Container(
+                margin: const EdgeInsets.only(left: 10.0, bottom: 10.0),
+                child: CircleAvatar(
+                  radius: 25,
+                  backgroundColor: globalUInfo.login ? bdwmPrimaryColor : Colors.grey,
+                  child: Text(globalUInfo.username[0].toUpperCase(), style: const TextStyle(fontSize: 30, height: 1.05, color: Colors.white),),
+                ),
+              ),
+            ],
           ),
           Expanded(
             child: ListView(
