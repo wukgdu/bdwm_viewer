@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 // import 'package:fwfh_selectable_text/fwfh_selectable_text.dart';
@@ -317,7 +316,7 @@ Future<SaveRes> genDownloadPath({String? name}) async {
       break;
     case TargetPlatform.fuchsia:
     default:
-      downloadDir = await getDownloadsDirectory();
+      downloadDir = null;
   }
   if ((downloadDir == null) && (downloadPath == null)) {
     return SaveRes(false, "未设置保存路径");

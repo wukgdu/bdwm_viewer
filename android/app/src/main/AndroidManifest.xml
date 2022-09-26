@@ -11,7 +11,7 @@
         android:name="${applicationName}"
         android:hasFragileUserData="true"
         android:extractNativeLibs="true"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_wei">
         <activity
             android:name=".MainActivity"
