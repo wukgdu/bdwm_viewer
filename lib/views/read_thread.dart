@@ -489,7 +489,7 @@ class AttachmentComponent extends StatelessWidget {
         } else if (e.type == AttachmentType.showThumbnail) {
           return GestureDetector(
             child: Container(
-              constraints: const BoxConstraints(maxHeight: 200, maxWidth: 200),
+              constraints: const BoxConstraints(maxHeight: 150),
               child: Image.network(
                 e.thumbnailLink,
                 errorBuilder: (context, error, stackTrace) {

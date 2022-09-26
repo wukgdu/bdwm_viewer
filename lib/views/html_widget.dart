@@ -268,7 +268,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
             res.add(WidgetSpan(
               child: GestureDetector(
                 child: Container(
-                  constraints: const BoxConstraints(maxHeight: 200, maxWidth: 200),
+                  constraints: const BoxConstraints(maxHeight: 150),
                   // alignment: Alignment.centerLeft,
                   child: Image.memory(data,)
                 ),
@@ -285,7 +285,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
             res.add(WidgetSpan(
               child: GestureDetector(
                 child: Container(
-                  constraints: const BoxConstraints(maxHeight: 200, maxWidth: 200),
+                  constraints: const BoxConstraints(maxHeight: 150),
                   // alignment: Alignment.centerLeft,
                   child: WrapImageNetwork(imgLink: absImgSrc(src),),
                   // child: Image.network(
