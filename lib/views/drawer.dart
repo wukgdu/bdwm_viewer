@@ -46,7 +46,7 @@ class MyDrawer extends StatelessWidget {
                 child: CircleAvatar(
                   radius: 25,
                   backgroundColor: globalUInfo.login ? bdwmPrimaryColor : Colors.grey,
-                  child: Text(globalUInfo.username[0].toUpperCase(), style: const TextStyle(fontSize: 30, height: 1.05, color: Colors.white),),
+                  child: Text(globalUInfo.username[0].toUpperCase(), style: const TextStyle(fontSize: 30, height: null, color: Colors.white),),
                 ),
               ),
             ],
