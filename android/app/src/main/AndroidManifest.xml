@@ -9,6 +9,9 @@
         android:requestLegacyExternalStorage="true"
         android:label="OBViewer"
         android:name="${applicationName}"
+        android:hasFragileUserData="true"
+        android:extractNativeLibs="true"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_wei">
         <activity
             android:name=".MainActivity"
