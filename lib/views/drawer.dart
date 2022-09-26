@@ -35,11 +35,13 @@ class MyDrawer extends StatelessWidget {
       child: Column(
         children: [
           Container(
+            // margin: const EdgeInsets.only(top: 0, bottom: 0),
             padding: const EdgeInsets.only(top: 0, left: 0, right: 0, bottom: 0),
             child: Image.asset(Theme.of(context).brightness == Brightness.dark ? 'assets/image/wei_grey.jpg' : 'assets/image/wei.jpg'),
           ),
           Expanded(
             child: ListView(
+              padding: const EdgeInsets.all(0.0),
               children: <Widget>[
                 _oneItem(context, "/home", icon: const Icon(Icons.home), text: const Text('首页'), idx: 0),
                 _oneItem(context, "/zone", icon: const Icon(Icons.list), text: const Text('版面目录'), idx: 1),

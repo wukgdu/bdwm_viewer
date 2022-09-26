@@ -157,14 +157,14 @@ class _FriendsPostsPageState extends State<FriendsPostsPage> {
         child: Container(
           padding: const EdgeInsets.all(5.0),
           decoration: const BoxDecoration(
-            border: Border(top: BorderSide(color: bdwmPrimaryColor, width: 3.0)),
+            border: Border(top: BorderSide(color: bdwmPrimaryColor, width: 1.0)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text.rich(
                 TextSpan(
-                  style: const TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 18),
                   children: [
                     TextSpan(text: item.title),
                     const TextSpan(text: " "),
