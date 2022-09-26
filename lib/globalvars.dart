@@ -50,10 +50,10 @@ class Uinfo {
     this.skey = skey;
     this.uid = uid;
     this.username = username;
-    login = true;
-    await update();
     await unreadMail.reInitWorker();
     await unreadMessage.reInitWorker();
+    login = true;
+    await update();
   }
 
   Future<bool> init() async {
