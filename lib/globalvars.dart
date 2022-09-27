@@ -32,7 +32,7 @@ List<String> parseCookie(String cookie) {
 class Uinfo {
   String skey = "a946e957f047df88";
   String uid = "15265";
-  String username = "";
+  String username = "guest";
   bool login = false;
   String storage = "bdwmusers.json";
 
