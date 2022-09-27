@@ -51,3 +51,4 @@ app.*.map.json
 *.jks
 *.jks.old
 /android/key.properties
+*.jks.txt
