@@ -29,14 +29,14 @@ class FriendsPostsItem {
       var timeStr =recentDay[0]; 
       if (timeStr == "昨天") {
         var date = DateTime.now().toLocal().subtract(const Duration(days: 1));
-        formatedTimeString = "${date.year}-${date.month}-${date.day} ${tstr.substring(3)}";
+        formatedTimeString = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} ${tstr.substring(3)}";
       } else if (timeStr == "前天") {
         var date = DateTime.now().toLocal().subtract(const Duration(days: 2));
-        formatedTimeString = "${date.year}-${date.month}-${date.day} ${tstr.substring(3)}";
+        formatedTimeString = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} ${tstr.substring(3)}";
       } else if (timeStr.contains(":")) {
         // 今天
         var date = DateTime.now().toLocal();
-        formatedTimeString = "${date.year}-${date.month}-${date.day} $tstr";
+        formatedTimeString = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} $tstr";
       } else {
         int t = 0;
         int idx = 0;
@@ -49,7 +49,7 @@ class FriendsPostsItem {
           idx += 1;
         }
         var date = DateTime.now().toLocal().subtract(Duration(minutes: t));
-        formatedTimeString = "${date.year}-${date.month}-${date.day} ${date.hour}:${date.minute}";
+        formatedTimeString = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
       }
     } else if (recentDay.length == 2) {
       var date = DateTime.now().toLocal();
