@@ -35,10 +35,21 @@ class OperateComponent extends StatefulWidget {
 
 class _OperateComponentState extends State<OperateComponent> {
   var canReplyNotifier = ValueNotifier<bool>(false);
-  static const textButtonStyle = ButtonStyle(
-    minimumSize: MaterialStatePropertyAll(Size(50, 20)),
+  final textButtonStyle = TextButton.styleFrom(
+    minimumSize: const Size(50, 20),
+    padding: const EdgeInsets.all(6.0),
     // textStyle: MaterialStatePropertyAll(TextStyle(fontSize: 12)),
   );
+  Widget sizedTextButton({required Widget child, required void Function()? onPressed, ButtonStyle? style}) {
+    return SizedBox(
+      height: 30,
+      child: TextButton(
+        style: style,
+        onPressed: onPressed,
+        child: child,
+      ),
+    );
+  }
   @override
   void initState() {
     super.initState();
@@ -60,13 +71,13 @@ class _OperateComponentState extends State<OperateComponent> {
           valueListenable: canReplyNotifier,
           builder: (context, value, child) {
             var canReply = value as bool;
-            return TextButton(
+            return sizedTextButton(
               style: textButtonStyle,
               onPressed: !canReply ? null
                 : () {
                   Navigator.of(context).pushNamed('/post', arguments: {
                     'bid': widget.bid,
-                    'boardName': "",
+                    'boardName': "回帖",
                     'parentid': widget.postid,
                     // Anonymous's nickname
                     'nickName': widget.onePostInfo.authorInfo.userName == "Anonymous"
@@ -81,7 +92,7 @@ class _OperateComponentState extends State<OperateComponent> {
             );
           },
         ),
-        TextButton(
+        sizedTextButton(
           style: textButtonStyle,
           onPressed: () {
             showTextDialog(context, "转载到的版面")
@@ -113,7 +124,7 @@ class _OperateComponentState extends State<OperateComponent> {
           },
           child: const Text("转载"),
         ),
-        TextButton(
+        sizedTextButton(
           style: textButtonStyle,
           onPressed: () {
             showTextDialog(context, "转寄给")
@@ -147,12 +158,12 @@ class _OperateComponentState extends State<OperateComponent> {
         ),
         // if (globalUInfo.uid == widget.uid && globalUInfo.login == true)
         if (widget.onePostInfo.canModify)
-          TextButton(
+          sizedTextButton(
             style: textButtonStyle,
             onPressed: () {
               Navigator.of(context).pushNamed('/post', arguments: {
                 'bid': widget.bid,
-                'boardName': "",
+                'boardName': "修改",
                 'postid': widget.postid,
               }).then((value) {
                 if (value == true) {
@@ -167,6 +178,7 @@ class _OperateComponentState extends State<OperateComponent> {
         PopupMenuButton<String>(
           child: const SizedBox(
             width: 30,
+            height: 30,
             child: Icon(Icons.more_horiz, color: bdwmPrimaryColor,),
           ),
           onSelected: (value) {
