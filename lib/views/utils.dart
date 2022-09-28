@@ -6,6 +6,7 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:path/path.dart' as path;
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:share_plus/share_plus.dart';
 // import 'package:fwfh_selectable_text/fwfh_selectable_text.dart';
 
 import '../pages/detail_image.dart';
@@ -367,3 +368,32 @@ Future<String?> showColorDialog(BuildContext context, List<String> hexRGBColor) 
 }
 
 typedef FutureOrFunction<T> = Future<T?> Function(String a);
+
+void shareWithResultWrap(BuildContext context, String text, {String? subject}) {
+  final box = context.findRenderObject() as RenderBox?;
+  if (box == null) { return; }
+  Share.shareWithResult(
+    text,
+    subject: subject,
+    sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
+  ).then((result) {
+    var txt = "";
+    switch (result.status) {
+      case ShareResultStatus.success:
+        txt = "分享成功";
+        break;
+      case ShareResultStatus.dismissed:
+        txt = "分享取消";
+        break;
+      case ShareResultStatus.unavailable:
+        txt = "分享不可用";
+        break;
+      default:
+        txt = "分享状态未知";
+    }
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(txt),
+      duration: const Duration(milliseconds: 600),
+    ));
+  });
+}

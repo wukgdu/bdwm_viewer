@@ -105,8 +105,14 @@ class _CollectionAppState extends State<CollectionApp> {
             title: Text(collectionList.title),
             actions: [
               IconButton(
-                onPressed: widget.link.contains("%2F") ? () {
+                onPressed: (widget.link.contains("%2F") || Uri.parse(widget.link).query.contains("/")) ? () {
                   var p1 = widget.link.lastIndexOf("%2F");
+                  if (p1 == -1) {
+                    p1 = widget.link.lastIndexOf("/");
+                  }
+                  if (p1 == -1) {
+                    return;
+                  }
                   var newLink = widget.link.substring(0, p1);
                   Navigator.of(context).pushNamed('/collection', arguments: {
                     'link': newLink,
@@ -114,6 +120,13 @@ class _CollectionAppState extends State<CollectionApp> {
                   });
                 } : null,
                 icon: const Icon(Icons.arrow_upward)
+              ),
+              IconButton(
+                onPressed: () {
+                  if (!mounted) { return; }
+                  shareWithResultWrap(context, widget.link, subject: "分享个人文集");
+                },
+                icon: const Icon(Icons.share),
               ),
             ],
           ),
@@ -282,6 +295,12 @@ class _CollectionArticleAppState extends State<CollectionArticleApp> {
               IconButton(
                 onPressed: () {
                   var p1 = widget.link.lastIndexOf("%2F");
+                  if (p1 == -1) {
+                    p1 = widget.link.lastIndexOf("/");
+                  }
+                  if (p1 == -1) {
+                    return;
+                  }
                   var newLink = widget.link.substring(0, p1);
                   newLink = newLink.replaceFirst("collection-read.php", "collection.php");
                   Navigator.of(context).pushNamed('/collection', arguments: {
@@ -290,6 +309,13 @@ class _CollectionArticleAppState extends State<CollectionArticleApp> {
                   });
                 },
                 icon: const Icon(Icons.arrow_upward)
+              ),
+              IconButton(
+                onPressed: () {
+                  if (!mounted) { return; }
+                  shareWithResultWrap(context, widget.link, subject: "分享个人文集");
+                },
+                icon: const Icon(Icons.share),
               ),
             ],
           ),
