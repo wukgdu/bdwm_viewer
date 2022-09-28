@@ -165,7 +165,10 @@ class _OperateComponentState extends State<OperateComponent> {
         // if (globalUInfo.uid == widget.uid && globalUInfo.login == true)
         // const Spacer(),
         PopupMenuButton<String>(
-          icon: const Icon(Icons.more_horiz, color: bdwmPrimaryColor,),
+          child: const SizedBox(
+            width: 30,
+            child: Icon(Icons.more_horiz, color: bdwmPrimaryColor,),
+          ),
           onSelected: (value) {
             if (value.contains("回复")) {
               var action = "unnoreply";
@@ -564,8 +567,8 @@ class _OnePostComponentState extends State<OnePostComponent> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: 52.0,
-              padding: const EdgeInsets.all(5.0),
+              width: 62.0,
+              padding: const EdgeInsets.all(10.0),
               child: Column(
                 children: [
                   GestureDetector(
@@ -593,7 +596,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
             ),
             Expanded(
               child: Container(
-                padding: const EdgeInsets.only(top: 5.0, right: 5.0, bottom: 5.0),
+                padding: const EdgeInsets.only(top: 10.0, right: 10.0, bottom: 10.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -616,9 +619,11 @@ class _OnePostComponentState extends State<OnePostComponent> {
                     if (item.modifyTime.isNotEmpty)
                       Text(
                         item.modifyTime,
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                     Text(
                       item.postTime,
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                     const Divider(),
                     // renderHtml(item.content, ts: _contentFont, context: context),
@@ -843,7 +848,7 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
             _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
           },
           child: Container(
-            padding: const EdgeInsets.all(5.0),
+            padding: const EdgeInsets.all(10.0),
             alignment: Alignment.centerLeft,
             // height: 20,
             child: Text(
