@@ -102,9 +102,22 @@ class _CollectionAppState extends State<CollectionApp> {
         }
         return Scaffold(
           appBar: AppBar(
-            title: Text(widget.title),
+            title: Text(collectionList.title),
+            actions: [
+              IconButton(
+                onPressed: widget.link.contains("%2F") ? () {
+                  var p1 = widget.link.lastIndexOf("%2F");
+                  var newLink = widget.link.substring(0, p1);
+                  Navigator.of(context).pushNamed('/collection', arguments: {
+                    'link': newLink,
+                    'title': "获取父目录中",
+                  });
+                } : null,
+                icon: const Icon(Icons.arrow_upward)
+              ),
+            ],
           ),
-          body: CollectionPage(collectionList: collectionList, title: widget.title),
+          body: CollectionPage(collectionList: collectionList, title: collectionList.title),
           bottomNavigationBar: BottomAppBar(
             shape: null,
             // color: Colors.blue,
@@ -265,6 +278,20 @@ class _CollectionArticleAppState extends State<CollectionArticleApp> {
         return Scaffold(
           appBar: AppBar(
             title: Text(widget.title),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  var p1 = widget.link.lastIndexOf("%2F");
+                  var newLink = widget.link.substring(0, p1);
+                  newLink = newLink.replaceFirst("collection-read.php", "collection.php");
+                  Navigator.of(context).pushNamed('/collection', arguments: {
+                    'link': newLink,
+                    'title': "获取父目录中",
+                  });
+                },
+                icon: const Icon(Icons.arrow_upward)
+              ),
+            ],
           ),
           body: CollectionArticlePage(collectionArticle: collectionArticle, refreshCallBack: () { refresh(); },),
         );

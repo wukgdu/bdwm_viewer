@@ -31,6 +31,7 @@ class CollectionItem {
 class CollectionList {
   List<CollectionItem> collectionItems = <CollectionItem>[];
   int maxPage = 0;
+  String title = "";
   String? errorMessage;
 
   CollectionList.empty();
@@ -41,6 +42,7 @@ class CollectionList {
     required this.collectionItems,
     this.errorMessage,
     required this.maxPage,
+    required this.title,
   });
 }
 
@@ -53,6 +55,13 @@ CollectionList parseCollectionList(String htmlStr) {
   var listDom = document.querySelector(".collection-list");
   if (listDom == null) {
     return CollectionList.empty();
+  }
+  var collectionTitle = "";
+  var pathDom = document.querySelector(".collection-path");
+  if (pathDom!=null) {
+    collectionTitle = pathDom.querySelectorAll("a").map((e) {
+      return getTrimmedString(e);
+    }).last;
   }
   var listItemsDom = listDom.querySelectorAll(".collection-item");
   List<CollectionItem> collectionItems = <CollectionItem>[];
@@ -75,7 +84,7 @@ CollectionList parseCollectionList(String htmlStr) {
       break;
     }
   }
-  return CollectionList(collectionItems: collectionItems, maxPage: maxPage);
+  return CollectionList(collectionItems: collectionItems, maxPage: maxPage, title: collectionTitle);
 }
 
 CollectionList getExampleCollectionList() {
