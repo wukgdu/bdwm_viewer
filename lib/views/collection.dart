@@ -43,6 +43,16 @@ class _CollectionPageState extends State<CollectionPage> {
               'link': item.link,
               'title': widget.title,
             });
+          } else if (item.type == "link_dir") {
+            Navigator.of(context).pushNamed('/collection', arguments: {
+              'link': item.link,
+              'title': widget.title,
+            });
+          } else if (item.type == "link_file") {
+            Navigator.of(context).pushNamed('/collectionArticle', arguments: {
+              'link': item.link,
+              'title': widget.title,
+            });
           }
         },
         leading: item.type == "dir" ? const Icon(Icons.folder) : const Icon(Icons.article),
