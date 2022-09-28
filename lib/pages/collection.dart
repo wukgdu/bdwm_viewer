@@ -105,15 +105,12 @@ class _CollectionAppState extends State<CollectionApp> {
             title: Text(collectionList.title),
             actions: [
               IconButton(
-                onPressed: (widget.link.contains("%2F") || Uri.parse(widget.link).query.contains("/")) ? () {
+                onPressed: (widget.link.contains("?")) ? () {
                   var p1 = widget.link.lastIndexOf("%2F");
                   if (p1 == -1) {
-                    p1 = widget.link.lastIndexOf("/");
+                    p1 = Uri.parse(widget.link).query.lastIndexOf("/");
                   }
-                  if (p1 == -1) {
-                    return;
-                  }
-                  var newLink = widget.link.substring(0, p1);
+                  var newLink = p1 == -1 ? "$v2Host/collection.php" : widget.link.substring(0, p1);
                   Navigator.of(context).pushNamed('/collection', arguments: {
                     'link': newLink,
                     'title': "获取父目录中",
