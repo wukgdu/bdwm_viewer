@@ -14,12 +14,19 @@ https://github.com/wukgdu/bdwm_viewer/releases
 1. 安装 flutter 
     1. https://flutter.dev/
     2. 把 flutter/bin 加入环境变量
-    3. `flutter doctor` 看一看结果
+    3. [Using Flutter in China](https://docs.flutter.dev/community/china)，修改几个资源网址
+    4. `flutter doctor` 看一看结果
 2. `git clone https://github.com/wukgdu/bdwm_viewer.git`
-3. 进入目录（删除pubspec.lock，应该不用，下一步不行了就删掉）
+3. 进入目录
 4. `flutter pub get`
-5. 调试 `flutter run` （选择一个target）
-6. 编译 `flutter build apk --split-per-abi`
+5. USB连接安卓手机，`flutter devices`看是否有该设备
+6. 调试 `flutter run` （选择一个 target，上一步的手机设备）
+    1. 或者直接用 VSCode 调试。但是 VSCode 调试会在一些奇怪的 caught exceptions 止住，比如图片未加载完取消或失败，坑
+    2. 此时的签名是 flutter 的 debug 签名，不安全
+7. 编译 `flutter build apk --split-per-abi`
+    1. 自行编译后的签名会和原本的签名不同，因为签名没有公开
+    2. 编译得到的 apk 使用 arm64-v8a 的即可
+8. 实现代码在 lib/ 下，欢迎发 pull requests
 
 ## 功能
 1. 看帖
@@ -68,5 +75,3 @@ https://github.com/wukgdu/bdwm_viewer/releases
 
 ## 问题反馈
 https://github.com/wukgdu/bdwm_viewer/issues
-
-欢迎发pull requests
