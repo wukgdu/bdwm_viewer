@@ -34,7 +34,7 @@ class _MessagelistAppState extends State<MessagelistApp> {
                 return;
               }
               userNew = userNew.trim();
-              if (userNew == globalUInfo.username) {
+              if (userNew.toLowerCase() == globalUInfo.username.toLowerCase()) {
                 return;
               }
               var userRes = await bdwmUserInfoSearch([userNew]);
@@ -60,8 +60,11 @@ class _MessagelistAppState extends State<MessagelistApp> {
                     );
                     return;
                   }
+                  userNew = (r as IDandName).name;
+                  break;
                 }
               }
+              if (userNew == null) { return; }
               var tmpContact = await globalContactInfo.getData();
               if (tmpContact.contains(userNew)) {
                 return;
