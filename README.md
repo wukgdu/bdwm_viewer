@@ -10,6 +10,8 @@ OBViewer
 ### 使用预编译apk
 https://github.com/wukgdu/bdwm_viewer/releases
 
+使用 arm64-v8a 版本即可，如有问题再尝试未标注 abi 的体积最大的 apk
+
 ### 源码构建
 1. 安装 flutter 
     1. https://flutter.dev/
