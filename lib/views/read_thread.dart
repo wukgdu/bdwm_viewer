@@ -410,34 +410,52 @@ class _VoteComponentState extends State<VoteComponent> {
         children: [
           widthSpacer,
           GestureDetector(
-            child: Icon(
-              iVoteUp ? Icons.thumb_up : Icons.thumb_up_outlined,
-              size: voteSize, color: const Color(0xff5cae97),
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  WidgetSpan(
+                    child: Icon(
+                      iVoteUp ? Icons.thumb_up : Icons.thumb_up_outlined,
+                      size: voteSize, color: const Color(0xff5cae97),
+                    ),
+                    alignment: PlaceholderAlignment.middle,
+                  ),
+                  const TextSpan(text: " "),
+                  TextSpan(text: voteUpCount.toString()),
+                ]
+              ),
             ),
             onTap: () {
               vote("up");
             },
           ),
-          widthSpacer,
           // const Text("赞 ", style: TextStyle(fontSize: voteSize)),
-          Text(voteUpCount.toString()),
           const VerticalDivider(
             color: borderColor,
             width: 10.0,
             thickness: 1.0,
           ),
           GestureDetector(
-            child: Icon(
-              iVoteDown ? Icons.thumb_down : Icons.thumb_down_outlined,
-              size: voteSize, color: const Color(0xffe97c62),
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  WidgetSpan(
+                    child: Icon(
+                      iVoteDown ? Icons.thumb_down : Icons.thumb_down_outlined,
+                      size: voteSize, color: const Color(0xffe97c62),
+                    ),
+                    alignment: PlaceholderAlignment.middle,
+                  ),
+                  const TextSpan(text: " "),
+                  TextSpan(text: voteDownCount.toString()),
+                ]
+              ),
             ),
             onTap: () {
               vote("down");
             },
           ),
-          widthSpacer,
           // const Text("踩 ", style: TextStyle(fontSize: voteSize)),
-          Text(voteDownCount.toString()),
           widthSpacer,
         ],
       ),
