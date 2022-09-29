@@ -638,7 +638,6 @@ class _OnePostComponentState extends State<OnePostComponent> {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     const Divider(),
-                    // renderHtml(item.content, ts: _contentFont, context: context),
                     HtmlComponent(item.content, ts: _contentFont),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -659,23 +658,17 @@ class _OnePostComponentState extends State<OnePostComponent> {
                       uid: widget.onePostInfo.authorInfo.uid, refreshCallBack: widget.refreshCallBack,
                       boardName: widget.boardName, onePostInfo: widget.onePostInfo,
                     ),
-                    if (item.attachmentInfo.isNotEmpty)
-                      ...[
-                        const Divider(),
-                        const Text("附件", style: TextStyle(fontWeight: FontWeight.bold)),
-                      ],
-                      if (simpleAttachment)
-                        ...[
-                          // renderHtml(item.attachmentHtml, context: context),
-                          HtmlComponent(item.attachmentHtml),
-                        ]
-                      else
-                        AttachmentComponent(attachments: widget.onePostInfo.attachmentInfo),
-                    if (item.signature.isNotEmpty)
-                      ...[
-                        const Divider(),
-                        HtmlComponent(item.signature),
-                      ],
+                    if (item.attachmentInfo.isNotEmpty) ...[
+                      const Divider(),
+                      const Text("附件", style: TextStyle(fontWeight: FontWeight.bold)),
+                      simpleAttachment
+                      ? HtmlComponent(item.attachmentHtml)
+                      : AttachmentComponent(attachments: widget.onePostInfo.attachmentInfo),
+                    ],
+                    if (item.signature.isNotEmpty) ...[
+                      const Divider(),
+                      HtmlComponent(item.signature),
+                    ],
                   ],
                 ),
               ),

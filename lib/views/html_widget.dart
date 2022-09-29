@@ -127,7 +127,6 @@ class _HtmlComponentState extends State<HtmlComponent> {
 
   @override
   Widget build(BuildContext context) {
-    // return renderHtml(htmlStr, ts: ts, context: context, needSelect: needSelect);
     // var htmlStr = '''<p>asd<span style="background-color: #40ff40;">fs<font color="#c00000">a<u>d<b>fa</b></u><b>s</b></font><b>d</b></span>fa<br></p>''';
     var document = parse(htmlStr);
     var res = travelHtml(document.querySelector("body"), context: context, ts: ts, nickName: nickName);

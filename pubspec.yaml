@@ -39,7 +39,7 @@ dependencies:
   crypto: ^3.0.2
   # flutter_html: ^2.2.1
   path_provider: ^2.0.11
-  flutter_widget_from_html_core: ^0.8.5+3
+  # flutter_widget_from_html_core: ^0.8.5+3
   # fwfh_selectable_text: ^0.8.3+1
   quick_notify: ^0.2.1
   extended_image: ^6.2.1
