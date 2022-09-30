@@ -4,6 +4,7 @@ import '../views/message.dart';
 import '../services.dart' show MessageBriefNotifier;
 import '../views/utils.dart';
 import '../bdwm/search.dart';
+import '../services_instance.dart';
 import '../globalvars.dart' show globalContactInfo, globalUInfo;
 
 class MessagelistApp extends StatefulWidget {
@@ -27,6 +28,15 @@ class _MessagelistAppState extends State<MessagelistApp> {
       appBar: AppBar(
         title: const Text("消息"),
         actions: [
+          IconButton(
+            onPressed: () async {
+              var value = await showConfirmDialog(context, "强制提醒", "清空消息提醒数据，下次查询时提醒所有新旧未读消息");
+              if (value == null) { return; }
+              if (value != "yes") { return; }
+              unreadMessage.clearAll();
+            },
+            icon: const Icon(Icons.notifications),
+          ),
           IconButton(
             onPressed: () async {
               var userNew = await showTextDialog(context, "添加对话");
