@@ -258,23 +258,10 @@ class _MailDetailPageState extends State<MailDetailPage> {
               ),
               TextButton(
                 onPressed: () {
-                  showAlertDialog(context, "站内信", const Text("确认删除？"),
-                    actions1: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text("不了"),
-                    ),
-                    actions2: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop("ok");
-                      },
-                      child: const Text("删除"),
-                    ),
-                  ).then((value) {
+                  showConfirmDialog(context, "站内信", "确认删除？").then((value) {
                     if (value==null) { return; }
                     if (value.isEmpty) { return; }
-                    if (value == "ok") {
+                    if (value == "yes") {
                       bdwmOperateMail(postid: widget.postid, action: "delete")
                       .then((mailRes) {
                         var title = "站内信";

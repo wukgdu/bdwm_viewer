@@ -44,6 +44,34 @@ Future<String?> showNetWorkDialog(BuildContext context) {
   );
 }
 
+Future<String?> showInformDialog(BuildContext context, String title, String content) {
+  return showAlertDialog(context, title, Text(content),
+    actions1: TextButton(
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+      child: const Text("知道了"),
+    ),
+  );
+}
+
+Future<String?> showConfirmDialog(BuildContext context, String title, String content) {
+  return showAlertDialog(context, title, SelectableText(content),
+    actions1: TextButton(
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+      child: const Text("不了"),
+    ),
+    actions2: TextButton(
+      onPressed: () {
+        Navigator.of(context).pop("yes");
+      },
+      child: const Text("对的"),
+    ),
+  );
+}
+
 Future<String?> showPageDialog(BuildContext context, int curPage, int maxPage) {
   TextEditingController pageValue = TextEditingController();
   Widget content() {

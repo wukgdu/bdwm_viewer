@@ -163,18 +163,9 @@ class _FunFunFunPageState extends State<FunFunFunPage> {
                 });
                 return;
               }
-              showAlertDialog(context, "十大拍照", const Text("将要读取当前十大每个帖子的首页"),
-                actions1: TextButton(
-                  onPressed: () { Navigator.of(context).pop(); },
-                  child: const Text("不了"),
-                ),
-                actions2: TextButton(
-                  onPressed: () { Navigator.of(context).pop("ok"); },
-                  child: const Text("确认"),
-                ),
-              ).then((value) {
+              showConfirmDialog(context, "十大拍照", "将要读取当前十大每个帖子的首页").then((value) {
                 if (value == null) { return; }
-                if (value == "ok") {
+                if (value == "yes") {
                   if (!mounted) { return; }
                   setState(() {
                     showBigTen = true;

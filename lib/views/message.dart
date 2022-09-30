@@ -68,20 +68,7 @@ class _MessageListPageState extends State<MessageListPage> {
                 },
                 onLongPress: () {
                   if (e.text == "deliver") { return; }
-                  showAlertDialog(context, "", const Text("删除此对话？"),
-                    actions1: TextButton(
-                      child: const Text("不了"),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    actions2: TextButton(
-                      child: const Text("对的"),
-                      onPressed: () {
-                        Navigator.of(context).pop("yes");
-                      },
-                    ),
-                  ).then((value) {
+                  showConfirmDialog(context, "", "删除此对话？",).then((value) {
                     if (value!=null && value=="yes") {
                       globalContactInfo.removeOne(e.text).then((value) {
                         setState(() { });

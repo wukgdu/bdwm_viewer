@@ -389,24 +389,11 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
                   // hereLink += "\n$rawLink";
                   hereLink = rawLink;
                 }
-                showAlertDialog(context, "使用默认浏览器打开链接?", SelectableText(hereLink),
-                  actions1: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text("不了"),
-                  ),
-                  actions2: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop("ok");
-                    },
-                    child: const Text("好"),
-                  ),
-                ).then((value) async {
+                showConfirmDialog(context, "使用默认浏览器打开链接?", hereLink).then((value) async {
                   if (value == null) {
                     return;
                   }
-                  if (value == "ok") {
+                  if (value == "yes") {
                     var parsedUrl = Uri.parse(link);
                     if (true || !await canLaunchUrl(parsedUrl)) {
                       if (!await launchUrl(parsedUrl, mode: LaunchMode.externalApplication)) {

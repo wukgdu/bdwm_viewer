@@ -7,7 +7,7 @@ import 'package:flutter_treeview/flutter_treeview.dart';
 import '../bdwm/collection.dart';
 import '../html_parser/collection_parser.dart';
 import './constants.dart';
-import './utils.dart' show showAlertDialog;
+import './utils.dart' show showConfirmDialog, showInformDialog, showAlertDialog;
 import './read_thread.dart' show AttachmentComponent;
 import './html_widget.dart';
 
@@ -132,23 +132,10 @@ class _CollectionArticlePageState extends State<CollectionArticlePage> {
             if (widget.collectionArticle.canDelete)
               TextButton(
                 onPressed: () {
-                  showAlertDialog(context, "文集", const Text("确认删除？"),
-                    actions1: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text("不了"),
-                    ),
-                    actions2: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop("ok");
-                      },
-                      child: const Text("删除"),
-                    ),
-                  ).then((value) {
+                  showConfirmDialog(context, "文集", "确认删除？").then((value) {
                     if (value==null) { return; }
                     if (value.isEmpty) { return; }
-                    if (value == "ok") {
+                    if (value == "yes") {
                       bdwmOperateCollection(action: "delete", path: widget.collectionArticle.path)
                       .then((CollectionImportRes res) {
                         var title = "文集";
@@ -159,14 +146,7 @@ class _CollectionArticlePageState extends State<CollectionArticlePage> {
                             content = res.desc!;
                           }
                         }
-                        showAlertDialog(context, title, Text(content),
-                          actions1: TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text("知道了"),
-                          ),
-                        ).then((value2) {
+                        showInformDialog(context, title, content).then((value2) {
                           if (res.success) {
                             widget.refreshCallBack();
                           }
@@ -199,14 +179,7 @@ class _CollectionArticlePageState extends State<CollectionArticlePage> {
                         txt = "您没有足够权限执行此操作";
                       }
                     }
-                    showAlertDialog(context, "收入文集", Text(txt),
-                      actions1: TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text("知道了"),
-                      ),
-                    );
+                    showInformDialog(context, "收入文集", txt,);
                   });
                 },);
               },
