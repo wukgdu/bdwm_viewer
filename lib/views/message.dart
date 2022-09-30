@@ -153,6 +153,17 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
     super.dispose();
   }
 
+  String replaceWithEmoji(String rawContent) {
+    var newContent = rawContent;
+    for (var emojiText in messageEmojis.keys) {
+      var emoji = messageEmojis[emojiText];
+      if (emoji == null) { continue; }
+      if (emoji.isEmpty) { continue; }
+      newContent = newContent.replaceAll(emojiText, emoji);
+    }
+    return newContent;
+  }
+
   Widget oneItem(MessageItem mi) {
     var dWidth = MediaQuery.of(context).size.width;
     var content = mi.content;
@@ -183,7 +194,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
               TextSpan(
                 text: "${DateTime.fromMillisecondsSinceEpoch(mi.time*1000).toString().split('.').first}\n",
                 children: [
-                  TextSpan(text: rawContent),
+                  TextSpan(text: replaceWithEmoji(rawContent)),
                   if (link.isNotEmpty)
                     WidgetSpan(
                       child: GestureDetector(
