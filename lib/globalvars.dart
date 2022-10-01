@@ -283,6 +283,8 @@ var globalContactInfo = TmpContactInfo.empty();
 class BDWMConfig {
   String lastCheckTime = "";
   String lastLoginTime = "";
+  bool showWelcome = true;
+  bool useImgInMessage = true;
   Set<String> seeNoThem = {};
   String storage = "bdwmconfig.json";
 
@@ -295,12 +297,16 @@ class BDWMConfig {
 
   Map toJson() {
     return {
+      "showWelcome": showWelcome,
+      "useImgInMessage": useImgInMessage,
       "lastLoginTime": lastLoginTime,
       "lastCheckTime": lastCheckTime,
       "seeNoThem": seeNoThem.toList(),
     };
   }
   void fromJson(Map<String, dynamic> jsonContent) {
+    showWelcome = jsonContent['showWelcome'] ?? true;
+    useImgInMessage = jsonContent['useImgInMessage'] ?? true;
     lastLoginTime = jsonContent['lastLoginTime'] ?? "";
     lastCheckTime = jsonContent['lastCheckTime'] ?? "";
     List seeNoHimHerList = jsonContent['seeNoThem'] ?? <String>[];
@@ -308,6 +314,28 @@ class BDWMConfig {
   }
   String gist() {
     return jsonEncode(toJson());
+  }
+
+  bool getUseImgInMessage() {
+    return useImgInMessage;
+  }
+
+  Future<bool> setUseImgInMessage(bool newValue) async {
+    return await lock.synchronized(() async {
+      useImgInMessage = newValue;
+      return await update();
+    });
+  }
+
+  bool getShowWelcome() {
+    return showWelcome;
+  }
+
+  Future<bool> setShowWelcome(bool newValue) async {
+    return await lock.synchronized(() async {
+      showWelcome = newValue;
+      return await update();
+    });
   }
 
   String getLastCheckTime() {

@@ -111,6 +111,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
   late CancelableOperation getDataCancelable;
   final ScrollController _controller = ScrollController();
   TextEditingController contentController = TextEditingController();
+  final emojiKeyList = messageEmojis.keys.toList();
 
   Future<MessageInfo> getData() async {
     // return getExampleCollectionList();
@@ -153,6 +154,29 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
     super.dispose();
   }
 
+  TextSpan genContentTextSpan(String rawContent) {
+    if (!globalConfigInfo.getUseImgInMessage()) {
+      return TextSpan(text: replaceWithEmoji(rawContent));
+    }
+    String tmpK = UniqueKey().toString();
+    String tmpK2 = UniqueKey().toString();
+    var newContent = rawContent;
+    for (int i=0; i<emojiKeyList.length; i+=1) {
+      var emojiText = emojiKeyList[i];
+      newContent = newContent.replaceAll(emojiText, "$tmpK$tmpK2-${i+1}-$emojiText$tmpK");
+    }
+    List<String> stringChildren = newContent.split(tmpK);
+    return TextSpan(
+      children: stringChildren.map((e) {
+        if (e.startsWith(tmpK2)) {
+          var arr = e.split('-');
+          String emojiIdx = arr[1];
+          return WidgetSpan(child: Image.network("$v2Host/images/emoji/Expression_$emojiIdx.png", height: 20,));
+        }
+        return TextSpan(text: e);
+      },).toList(),
+    );
+  }
   String replaceWithEmoji(String rawContent) {
     var newContent = rawContent;
     for (var emojiText in messageEmojis.keys) {
@@ -194,7 +218,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
               TextSpan(
                 text: "${DateTime.fromMillisecondsSinceEpoch(mi.time*1000).toString().split('.').first}\n",
                 children: [
-                  TextSpan(text: replaceWithEmoji(rawContent)),
+                  genContentTextSpan(rawContent),
                   if (link.isNotEmpty)
                     WidgetSpan(
                       child: GestureDetector(
