@@ -102,12 +102,18 @@ List<Top10Item>? parseTop10(Document document) {
     String countComments = "";
     String itemBoard = "";
     if (domInfo != null) {
-      domInfo.querySelector(".iconfont")?.remove();
-      List<String> infos = getTrimmedString(domInfo).split(" ");
-      infos.removeWhere((element) => element.isEmpty);
-      if (infos.length == 2) {
-        itemBoard = infos[0];
-        countComments = infos[1];
+      var domInfoNodes = domInfo.nodes;
+      if (domInfoNodes.length < 3) {
+        domInfo.querySelector(".iconfont")?.remove();
+        List<String> infos = getTrimmedString(domInfo).split(" ");
+        infos.removeWhere((element) => element.isEmpty);
+        if (infos.length >= 2) {
+          itemBoard = infos.getRange(0, infos.length-1).join(" ");
+          countComments = infos.last;
+        }
+      } else {
+        itemBoard = getTrimmedString(domInfoNodes[0]);
+        countComments = getTrimmedString(domInfoNodes[2]);
       }
     }
     top10Items.add(Top10Item(id: itemID, title: itemTitle, board: itemBoard, link: itemLink, countComments: countComments));
@@ -131,12 +137,18 @@ List<BlockItem> parseBlockItem(Element document) {
     String countComments = "";
     String itemBoard = "";
     if (domInfo != null) {
-      domInfo.querySelector(".iconfont")?.remove();
-      List<String> infos = getTrimmedString(domInfo).split(" ");
-      infos.removeWhere((element) => element.isEmpty);
-      if (infos.length == 2) {
-        itemBoard = infos[0];
-        countComments = infos[1];
+      var domInfoNodes = domInfo.nodes;
+      if (domInfoNodes.length < 3) {
+        domInfo.querySelector(".iconfont")?.remove();
+        List<String> infos = getTrimmedString(domInfo).split(" ");
+        infos.removeWhere((element) => element.isEmpty);
+        if (infos.length >= 2) {
+          itemBoard = infos.getRange(0, infos.length-1).join(" ");
+          countComments = infos.last;
+        }
+      } else {
+        itemBoard = getTrimmedString(domInfoNodes[0]);
+        countComments = getTrimmedString(domInfoNodes[2]);
       }
     }
     blockItems.add(BlockItem(title: itemTitle, board: itemBoard, link: itemLink, countComments: countComments));
