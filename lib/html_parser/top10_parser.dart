@@ -54,6 +54,7 @@ class BlockOne {
 
 class WelcomeInfo {
   String imgLink = "";
+  String actionLink = "";
   String? errorMessage;
 
   WelcomeInfo.empty();
@@ -62,6 +63,7 @@ class WelcomeInfo {
   });
   WelcomeInfo({
     required this.imgLink,
+    required this.actionLink,
   });
 }
 
@@ -196,6 +198,13 @@ WelcomeInfo parseWelcomeFromHtml(String htmlStr) {
     var welcomeImgLink = dialogWelcomeDom.querySelector("#welcome-image")?.attributes['src'];
     if (welcomeImgLink != null) {
       welcomeInfo.imgLink = absImgSrc(welcomeImgLink);
+    }
+    var imgDom = dialogWelcomeDom.querySelector("a.image");
+    if (imgDom != null) {
+      var href = imgDom.attributes['href'] ?? "";
+      if (href.isNotEmpty) {
+        welcomeInfo.actionLink = absThreadLink(href);
+      }
     }
   }
   return welcomeInfo;

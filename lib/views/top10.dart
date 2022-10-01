@@ -64,7 +64,17 @@ class _TopHomePageState extends State<TopHomePage> {
             },
             child: Image.network(welcomeInfo.imgLink),
           ),
-          actions1: TextButton(
+          actions1: welcomeInfo.actionLink.isNotEmpty ? TextButton(
+            onPressed: () async {
+              var value = await showConfirmDialog(context, "打开", welcomeInfo.actionLink);
+              if (value == null || value != "yes") { return; }
+              if (!mounted) { return; }
+              Navigator.of(context).pop();
+              naviGotoThreadByLink(context, welcomeInfo.actionLink, "", needToBoard: true);
+            },
+            child: const Text("进入主题帖"),
+          ) : null,
+          actions2: TextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
