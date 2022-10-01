@@ -5,6 +5,8 @@ import '../bdwm/req.dart';
 import '../globalvars.dart';
 import '../html_parser/top10_parser.dart';
 import '../pages/read_thread.dart';
+import './utils.dart';
+import '../pages/detail_image.dart';
 
 class TopHomePage extends StatefulWidget {
   const TopHomePage({Key? key}) : super(key: key);
@@ -17,6 +19,14 @@ class _TopHomePageState extends State<TopHomePage> {
   final _titleFont = const TextStyle(fontSize: 20, fontWeight: FontWeight.normal);
   final _scrollController = ScrollController();
   late CancelableOperation getDataCancelable;
+
+  Future<WelcomeInfo> getWelcomeData() async {
+    var resp = await bdwmClient.get("$v2Host/home.php", headers: genHeaders());
+    if (resp == null) {
+      return WelcomeInfo.error(errorMessage: networkErrorText);
+    }
+    return parseWelcomeFromHtml(resp.body);
+  }
 
   Future<HomeInfo> getData() async {
     var resp = await bdwmClient.get("$v2Host/mobile/home.php", headers: genHeaders());
@@ -34,6 +44,35 @@ class _TopHomePageState extends State<TopHomePage> {
     // _scrollController.addListener(() {
     //   debugPrint(_scrollController.offset);
     // });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      String lastLoginTimeStr = globalConfigInfo.getLastLoginTime();
+      var ld = DateTime.tryParse(lastLoginTimeStr);
+      var curDT = DateTime.now();
+      // ld = null;
+      if (ld==null || "${curDT.year}-${curDT.month}-${curDT.day}" != "${ld.year}-${ld.month}-${ld.day}") {
+        if (!mounted) { return; }
+        var welcomeInfo = await getWelcomeData();
+        if (welcomeInfo.errorMessage != null) { return; }
+        if (welcomeInfo.imgLink.isEmpty) { return; }
+        if (!mounted) { return; }
+        var saveUpdate = globalConfigInfo.setLastLoginTime(curDT.toIso8601String());
+        showAlertDialog(context, "今日进站",
+          GestureDetector(
+            onTap: () {
+              gotoDetailImage(context: context, link: welcomeInfo.imgLink);
+            },
+            child: Image.network(welcomeInfo.imgLink),
+          ),
+          actions1: TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text("进入未名BBS"),
+          ),
+        );
+        await saveUpdate;
+      }
+    });
   }
 
   Future<void> updateData() async {

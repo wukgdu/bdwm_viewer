@@ -52,6 +52,19 @@ class BlockOne {
   });
 }
 
+class WelcomeInfo {
+  String imgLink = "";
+  String? errorMessage;
+
+  WelcomeInfo.empty();
+  WelcomeInfo.error({
+    required this.errorMessage,
+  });
+  WelcomeInfo({
+    required this.imgLink,
+  });
+}
+
 class HomeInfo {
   List<Top10Item>? top10Info = <Top10Item>[];
   List<BlockOne> blockInfo = <BlockOne>[];
@@ -173,4 +186,17 @@ List<Top10Item>? parseBigTen(String htmlStr) {
   var document = parse(htmlStr);
   var top10Info = parseTop10(document);
   return top10Info;
+}
+
+WelcomeInfo parseWelcomeFromHtml(String htmlStr) {
+  var document = parse(htmlStr);
+  WelcomeInfo welcomeInfo = WelcomeInfo.empty();
+  var dialogWelcomeDom = document.querySelector("#dialog-welcome");
+  if (dialogWelcomeDom != null) {
+    var welcomeImgLink = dialogWelcomeDom.querySelector("#welcome-image")?.attributes['src'];
+    if (welcomeImgLink != null) {
+      welcomeInfo.imgLink = absImgSrc(welcomeImgLink);
+    }
+  }
+  return welcomeInfo;
 }

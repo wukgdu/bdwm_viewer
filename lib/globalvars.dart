@@ -282,6 +282,7 @@ var globalContactInfo = TmpContactInfo.empty();
 
 class BDWMConfig {
   String lastCheckTime = "";
+  String lastLoginTime = "";
   Set<String> seeNoThem = {};
   String storage = "bdwmconfig.json";
 
@@ -294,9 +295,16 @@ class BDWMConfig {
 
   Map toJson() {
     return {
+      "lastLoginTime": lastLoginTime,
       "lastCheckTime": lastCheckTime,
       "seeNoThem": seeNoThem.toList(),
     };
+  }
+  void fromJson(Map<String, dynamic> jsonContent) {
+    lastLoginTime = jsonContent['lastLoginTime'] ?? "";
+    lastCheckTime = jsonContent['lastCheckTime'] ?? "";
+    List seeNoHimHerList = jsonContent['seeNoThem'] ?? <String>[];
+    seeNoThem = Set<String>.from(seeNoHimHerList.map((e) => e as String));
   }
   String gist() {
     return jsonEncode(toJson());
@@ -309,6 +317,17 @@ class BDWMConfig {
   Future<bool> setLastCheckTime(String newTime) async {
     return await lock.synchronized(() async {
       lastCheckTime = newTime;
+      return await update();
+    });
+  }
+
+  String getLastLoginTime() {
+    return lastLoginTime;
+  }
+
+  Future<bool> setLastLoginTime(String newTime) async {
+    return await lock.synchronized(() async {
+      lastLoginTime = newTime;
       return await update();
     });
   }
@@ -347,10 +366,7 @@ class BDWMConfig {
         await writeInit();
       } else {
         Map<String, dynamic> jsonContent = jsonDecode(content);
-
-        lastCheckTime = jsonContent['lastCheckTime'] ?? "";
-        List seeNoHimHerList = jsonContent['seeNoThem'] ?? <String>[];
-        seeNoThem = Set<String>.from(seeNoHimHerList.map((e) => e as String));
+        fromJson(jsonContent);
       }
     } else {
       await writeInit();
