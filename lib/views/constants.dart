@@ -8,6 +8,18 @@ const textLinkStyle = TextStyle(
 const Color highlightReplyColor = Color(0xfff8cea8);
 const Color highlightColor = Color(0xffea6242);
 const Color onlineColor = Color(0xff5cae97);
+const Color vip0Color = Color(0xff45c2ee);
+const Color vip1Color = Color(0xffe63229);
+const Color vip2Color = Color(0xfff3b467);
+
+Color? getVipColor(int vipIdentity, {Color? defaultColor=Colors.grey}) {
+  switch (vipIdentity) {
+    case 0: return vip0Color;
+    case 1: return vip1Color;
+    case 2: return vip2Color;
+    default: return defaultColor;
+  }
+}
 
 const Map<String, Object> bdwmRichText = {
   'bc': {

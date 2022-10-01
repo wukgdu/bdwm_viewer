@@ -254,8 +254,15 @@ class _UserInfoPageState extends State<UserInfoPage> {
                   TextSpan(text: user.bbsID, style: serifFont),
                   const TextSpan(text: " ("),
                   // WidgetSpan(child: HtmlComponent(user.nickNameHtml),),
-                  html2TextSpan(user.nickNameHtml),
+                  user.vipIdentity != -1
+                  ? TextSpan(text: user.nickName, style: TextStyle(
+                    color: getVipColor(user.vipIdentity, defaultColor: null),
+                  ))
+                  : html2TextSpan(user.nickNameHtml),
                   const TextSpan(text: ") "),
+                  if (user.vipIdentity != -1) ...[
+                    WidgetSpan(child: genVipLabel(user.vipIdentity)),
+                  ],
                   TextSpan(
                     text: user.status,
                     style: TextStyle(color: user.status.contains("在线") ? onlineColor : Colors.grey),

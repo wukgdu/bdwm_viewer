@@ -617,8 +617,15 @@ class _OnePostComponentState extends State<OnePostComponent> {
                           TextSpan(text: item.authorInfo.userName, style: serifFont),
                           const TextSpan(text: ' ('),
                           // WidgetSpan(child: HtmlComponent(item.authorInfo.nickName, needSelect: true),),
-                          html2TextSpan(item.authorInfo.nickName),
+                          item.authorInfo.vipIdentity == -1
+                          ? html2TextSpan(item.authorInfo.nickName)
+                          : TextSpan(text: item.authorInfo.nickName, style: TextStyle(
+                            color: getVipColor(item.authorInfo.vipIdentity, defaultColor: null),
+                          )),
                           const TextSpan(text: ') '),
+                          if (item.authorInfo.vipIdentity != -1) ...[
+                            WidgetSpan(child: genVipLabel(item.authorInfo.vipIdentity)),
+                          ],
                           TextSpan(
                             text: item.authorInfo.status,
                             style: TextStyle(color: item.authorInfo.status.contains("在线") ? onlineColor : Colors.grey),

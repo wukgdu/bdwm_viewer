@@ -9,7 +9,7 @@ import 'package:share_plus/share_plus.dart';
 // import 'package:fwfh_selectable_text/fwfh_selectable_text.dart';
 
 import '../globalvars.dart' show networkErrorText;
-import './constants.dart' show topicsLabelColor, bdwmPrimaryColor;
+import './constants.dart';
 import '../utils.dart' show quickNotify;
 
 Future<String?> showAlertDialog(BuildContext context, String title, Widget content, {Widget? actions1, Widget? actions2, Widget? actions3, List<Widget>? actions, bool? barrierDismissible=true}) {
@@ -142,6 +142,19 @@ Future<String?> showTextDialog(BuildContext context, String title) {
       },
       child: const Text("确认"),
     ),
+  );
+}
+
+Widget genVipLabel(int vipIdentity) {
+  return Container(
+    width: 16,
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+      borderRadius: const BorderRadius.all(Radius.circular(6)),
+      // border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
+      color: getVipColor(vipIdentity),
+    ),
+    child: const Text("V", style: TextStyle(color: Colors.white, fontSize: 14,),),
   );
 }
 

@@ -34,6 +34,7 @@ class UserProfile {
   String? errorMessage;
   bool useradd = false;
   bool? userreject;
+  int vipIdentity = -1;
 
   UserProfile();
   UserProfile.error({required this.errorMessage});
@@ -66,6 +67,7 @@ class UserProfile {
     this.errorMessage,
     required this.useradd,
     this.userreject,
+    required this.vipIdentity,
   });
 
   @override
@@ -96,6 +98,19 @@ UserProfile parseUser(String htmlStr) {
   String? duty;
   if (tmpDutyDom != null) {
     duty = getTrimmedString(tmpDutyDom);
+  }
+
+  int vipIdentity = -1;
+  var vipDom = nickInfo.querySelector(".verified-identity");
+  if (vipDom != null) {
+    if (vipDom.classes.contains("identity-1")) {
+      vipIdentity = 1;
+    } else if (vipDom.className.contains("identity-0")) {
+      vipIdentity = 0;
+    } else if (vipDom.className.contains("identity-2")) {
+      vipIdentity = 2;
+    }
+    nickName = getTrimmedString(vipDom);
   }
 
   String? personalCollectionLink;
@@ -183,7 +198,7 @@ UserProfile parseUser(String htmlStr) {
     personalCollection: TextAndLink(personalCollection, personalCollectionLink), gender: gender, constellation: constellation,
     countLogin: countLogin, countPost: countPost, value: value, score: score, rankName: rankName, avatarFrameLink: avatarFrameLink,
     rating: rating, recentLogin: recentLogin, recentLogout: recentLogout, signature: signature, signatureHtml: signatureHtml,
-    timeReg: timeReg, timeOnline: timeOnline, duty: duty, dutyBoards: dutyBoards, dutyBoardLinks: dutyBoardLinks,
+    timeReg: timeReg, timeOnline: timeOnline, duty: duty, dutyBoards: dutyBoards, dutyBoardLinks: dutyBoardLinks, vipIdentity: vipIdentity,
   );
 }
 

@@ -18,6 +18,7 @@ class AuthorPostInfo {
   String rating = "";
   String avatarLink = "";
   String avatarFrame = "";
+  int vipIdentity = -1;
 
   AuthorPostInfo.empty();
   AuthorPostInfo({
@@ -31,6 +32,7 @@ class AuthorPostInfo {
     required this.rating,
     required this.avatarLink,
     required this.avatarFrame,
+    required this.vipIdentity,
   });
 }
 
@@ -144,6 +146,18 @@ AuthorPostInfo parseUserPost(Element? document) {
   String nickName = getTrimmedHtml(document.querySelector(".nickname"));
   String status = getTrimmedString(document.querySelector(".username span"));
 
+  int vipIdentity = -1;
+  var nickDom = document.querySelector(".nickname");
+  if (nickDom != null) {
+    if (nickDom.className.contains("identity-1")) {
+      vipIdentity = 1;
+    } else if (nickDom.className.contains("identity-0")) {
+      vipIdentity = 0;
+    } else if (nickDom.className.contains("identity-2")) {
+      vipIdentity = 2;
+    }
+  }
+
   String rating = "", postCount = "";
   var detailDom = document.querySelector(".detail");
   if (detailDom != null) {
@@ -175,7 +189,8 @@ AuthorPostInfo parseUserPost(Element? document) {
 
   return AuthorPostInfo(
     userName: userName, uid: uid, nickName: nickName, status: status, postCount: postCount,
-    rating: rating, avatarLink: avatarLink, avatarFrame: avatarFrame, rankName: rankName, score: score
+    rating: rating, avatarLink: avatarLink, avatarFrame: avatarFrame, rankName: rankName, score: score,
+    vipIdentity: vipIdentity,
   );
 }
 
