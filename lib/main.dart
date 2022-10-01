@@ -26,6 +26,7 @@ import './pages/mail_new.dart';
 import './pages/funfunfun.dart';
 import './pages/see_no_them.dart';
 import './pages/friends_posts.dart';
+import './pages/settings.dart';
 import './views/search.dart' show PostSearchSettings;
 import './views/constants.dart' show bdwmPrimaryColor, bdwmSurfaceColor;
 // import './pages/detail_image.dart';
@@ -313,6 +314,9 @@ class _MainPageState extends State<MainPage> {
             break;
           case "/friendsPosts":
             builder = (BuildContext context) => const FriendsPostsApp();
+            break;
+          case "/settings":
+            builder = (BuildContext context) => const SettingsApp();
             break;
           case "/home":
           default:

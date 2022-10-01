@@ -45,6 +45,7 @@ class _TopHomePageState extends State<TopHomePage> {
     //   debugPrint(_scrollController.offset);
     // });
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (globalConfigInfo.getShowWelcome()==false) { return; }
       String lastLoginTimeStr = globalConfigInfo.getLastLoginTime();
       var ld = DateTime.tryParse(lastLoginTimeStr);
       var curDT = DateTime.now();
