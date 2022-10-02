@@ -193,6 +193,12 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
         continue;
       }
       var text = tryGetNormalSpaceString(cdom.text);
+      if (text != null) {
+        // https://stackoverflow.com/questions/18760943/character-code-of-unknown-character-character-e-g-square-or-question-mark-romb
+        // flutter bug? if unknown character appears first, others will be unknown too.
+        text = text.replaceAll("\uD83E\uDD79", "\uFFFD");
+        text = text.replaceAll("\uD83E\uDDCC", "\uFFFD");
+      }
       res.add(TextSpan(text: text));
     } else if (cdom.nodeType == hdom.Node.ELEMENT_NODE) {
       var ele = cdom as hdom.Element;
