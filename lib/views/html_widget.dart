@@ -17,7 +17,8 @@ import '../pages/detail_image.dart';
 
 class WrapImageNetwork extends StatefulWidget {
   final String imgLink;
-  const WrapImageNetwork({Key? key, required this.imgLink}) : super(key: key);
+  final String? imgAlt;
+  const WrapImageNetwork({Key? key, required this.imgLink, this.imgAlt}) : super(key: key);
 
   @override
   State<WrapImageNetwork> createState() => _WrapImageNetworkState();
@@ -76,7 +77,14 @@ class _WrapImageNetworkState extends State<WrapImageNetwork> {
           case LoadState.completed:
             return null;
           case LoadState.failed:
-            return const Icon(Icons.broken_image);
+            return widget.imgAlt == null
+            ? const Icon(Icons.broken_image)
+            : Text.rich(TextSpan(
+              children: [
+                const WidgetSpan(child: Icon(Icons.broken_image)),
+                TextSpan(text: widget.imgAlt),
+              ]
+            ));
           default:
             return null;
         }
@@ -249,6 +257,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
         }
       } else if (ele.localName == "img") {
         var src = ele.attributes['src'];
+        var alt = ele.attributes['alt'];
         if (src == null) {
           res.add(const WidgetSpan(child: Text("图片"),));
         } else {
@@ -286,7 +295,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
                 child: Container(
                   constraints: const BoxConstraints(maxHeight: 150),
                   // alignment: Alignment.centerLeft,
-                  child: WrapImageNetwork(imgLink: absImgSrc(src),),
+                  child: WrapImageNetwork(imgLink: absImgSrc(src), imgAlt: alt),
                   // child: Image.network(
                   //   src,
                   //   errorBuilder: (context, error, stackTrace) {
