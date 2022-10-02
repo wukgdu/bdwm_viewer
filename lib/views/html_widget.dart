@@ -77,14 +77,19 @@ class _WrapImageNetworkState extends State<WrapImageNetwork> {
           case LoadState.completed:
             return null;
           case LoadState.failed:
-            return widget.imgAlt == null
-            ? const Icon(Icons.broken_image)
-            : Text.rich(TextSpan(
-              children: [
-                const WidgetSpan(child: Icon(Icons.broken_image)),
-                TextSpan(text: widget.imgAlt),
-              ]
-            ));
+            return GestureDetector(
+              onDoubleTap: () {
+                state.reLoadImage();
+              },
+              child: widget.imgAlt == null
+              ? const Icon(Icons.broken_image)
+              : Text.rich(TextSpan(
+                children: [
+                  const WidgetSpan(child: Icon(Icons.broken_image)),
+                  TextSpan(text: widget.imgAlt),
+                ]
+              )),
+            );
           default:
             return null;
         }
