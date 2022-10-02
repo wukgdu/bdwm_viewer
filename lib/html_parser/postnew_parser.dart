@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as hdom;
-import 'package:html_unescape/html_unescape_small.dart';
 
 import './utils.dart';
 
@@ -100,8 +99,7 @@ PostNewInfo parsePostNew(String htmlStr) {
     var attachStr = uploadDom.attributes['data-file-list'] ?? "";
     if (attachStr.isNotEmpty) {
       // attachStr = attachStr.replaceAll("&quot;", '');
-      var unescape = HtmlUnescape();
-      attachStr = unescape.convert(attachStr);
+      attachStr = unescapeHtmlStr(attachStr);
       var jsonContent = jsonDecode(attachStr);
       for (var jstr in jsonContent) {
         attachFiles.add(jstr);

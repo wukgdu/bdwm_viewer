@@ -1,5 +1,12 @@
 import '../globalvars.dart';
+
 import 'package:html/dom.dart' show Text, Document;
+import 'package:html_unescape/html_unescape_small.dart';
+
+var _unescapeInstance = HtmlUnescape();
+String unescapeHtmlStr(String htmlStr) {
+  return _unescapeInstance.convert(htmlStr);
+}
 
 String? checkError(Document document) {
   if (document.querySelector("#page-error") != null) {

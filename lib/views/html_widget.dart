@@ -192,7 +192,8 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
       if (cdom.text == "\n") {
         continue;
       }
-      res.add(TextSpan(text: tryGetNormalSpaceString(cdom.text)));
+      var text = tryGetNormalSpaceString(cdom.text);
+      res.add(TextSpan(text: text));
     } else if (cdom.nodeType == hdom.Node.ELEMENT_NODE) {
       var ele = cdom as hdom.Element;
       if (ele.localName == "font") {
