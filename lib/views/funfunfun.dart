@@ -1,4 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:extended_image/extended_image.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 import 'package:async/async.dart';
 
 import '../bdwm/req.dart';
@@ -138,6 +143,80 @@ class _BigTenComponentState extends State<BigTenComponent> {
   }
 }
 
+int computeMemoryImageCache() {
+  var imageCache = getMemoryImageCache();
+  if (imageCache == null) { return 0; }
+  return imageCache.currentSizeBytes;
+}
+
+Future<int> computeDiskImageCache() async {
+  final Directory cacheImagesDirectory = Directory(
+    path.join((await getTemporaryDirectory()).path, cacheImageFolderName));
+  if (!cacheImagesDirectory.existsSync()) {
+    return 0;
+  }
+  var files = cacheImagesDirectory.listSync();
+  int res = 0;
+  for (var f in files) {
+    res += (f.statSync()).size;
+  }
+  return res;
+}
+
+class ImageCacheComponent extends StatefulWidget {
+  const ImageCacheComponent({super.key});
+
+  @override
+  State<ImageCacheComponent> createState() => _ImageCacheComponentState();
+}
+
+class _ImageCacheComponentState extends State<ImageCacheComponent> {
+  int cacheSizeBytes = 0;
+  @override
+  void initState() {
+    super.initState();
+    cacheSizeBytes = computeMemoryImageCache();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: () {
+        clearAllExtendedImageCache(really: true);
+        setState(() {
+          cacheSizeBytes = computeMemoryImageCache();
+        });
+      },
+      isThreeLine: false,
+      title: const Text("图片缓存"),
+      subtitle: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(text: "内存：${(cacheSizeBytes.toDouble()/(1024*1024)).toStringAsFixed(3)} MB"),
+            const TextSpan(text: "；"),
+            WidgetSpan(
+              child: FutureBuilder(
+                future: computeDiskImageCache(),
+                builder:(context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.done) {
+                    return const Text("磁盘：计算中");
+                  }
+                  if (snapshot.hasError || !snapshot.hasData) {
+                    return const Text("磁盘：计算失败");
+                  }
+                  int diskSize = snapshot.data as int;
+                  return Text("磁盘：${diskSize==0?"":"~"}${(diskSize.toDouble()/(1024*1024)).toStringAsFixed(3)} MB");
+                },
+              ),
+            ),
+          ]
+        ),
+      ),
+      trailing: const Icon(Icons.cleaning_services, color: null,),
+    );
+  }
+}
+
 class FunFunFunPage extends StatefulWidget {
   const FunFunFunPage({super.key});
 
@@ -197,6 +276,9 @@ class _FunFunFunPageState extends State<FunFunFunPage> {
             title: const Text("朋友动态"),
             trailing: const Icon(Icons.arrow_right),
           )
+        ),
+        const Card(
+          child: ImageCacheComponent(),
         ),
         Card(
           child: ListTile(

@@ -39,14 +39,16 @@ void quickNotify(String title, String content) async {
   );
 }
 
-void clearAllExtendedImageCache() {
+void clearAllExtendedImageCache({bool? really=false}) {
+  if (really==false) { return; }
   // print("clear all");
   clearMemoryImageCache();
   // Future.delayed(Duration.zero, () => clearDiskCachedImages());
   scheduleMicrotask(clearDiskCachedImages);
 }
 
-void clearOneExtendedImageCache(String src, {bool? memory=true, bool? local=true}) async {
+void clearOneExtendedImageCache(String src, {bool? memory=true, bool? local=true, bool? really=false}) async {
+  if (really==false) { return; }
   if (memory == true) {
     clearMemoryImageCache(src);
   }
