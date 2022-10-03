@@ -48,8 +48,19 @@ class _SettingsAppState extends State<SettingsApp> {
             activeColor: bdwmPrimaryColor,
             value: globalConfigInfo.showWelcome,
             onChanged: (value) {
-              globalConfigInfo.setLastLoginTime("");
+              globalConfigInfo.lastLoginTime = "";
               globalConfigInfo.showWelcome = value;
+              setState(() { });
+            },
+          ),
+          const Divider(),
+          SwitchListTile(
+            title: const Text("自动清理图片缓存"),
+            subtitle: const Text("主题帖页面重载或退出时清理"),
+            activeColor: bdwmPrimaryColor,
+            value: globalConfigInfo.autoClearImageCache,
+            onChanged: (value) {
+              globalConfigInfo.autoClearImageCache = value;
               setState(() { });
             },
           ),

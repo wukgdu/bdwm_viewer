@@ -751,7 +751,7 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
   @override
   void dispose() {
     // _scrollController.dispose();
-    clearAllExtendedImageCache();
+    clearAllExtendedImageCache(really: globalConfigInfo.getAutoClearImageCache());
     super.dispose();
   }
 

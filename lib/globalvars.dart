@@ -285,6 +285,7 @@ class BDWMConfig {
   String lastLoginTime = "";
   bool showWelcome = true;
   bool useImgInMessage = true;
+  bool autoClearImageCache = false;
   Set<String> seeNoThem = {};
   String storage = "bdwmconfig.json";
 
@@ -302,11 +303,13 @@ class BDWMConfig {
       "lastLoginTime": lastLoginTime,
       "lastCheckTime": lastCheckTime,
       "seeNoThem": seeNoThem.toList(),
+      "autoClearImageCache": autoClearImageCache,
     };
   }
   void fromJson(Map<String, dynamic> jsonContent) {
     showWelcome = jsonContent['showWelcome'] ?? true;
     useImgInMessage = jsonContent['useImgInMessage'] ?? true;
+    autoClearImageCache = jsonContent['autoClearImageCache'] ?? false;
     lastLoginTime = jsonContent['lastLoginTime'] ?? "";
     lastCheckTime = jsonContent['lastCheckTime'] ?? "";
     List seeNoHimHerList = jsonContent['seeNoThem'] ?? <String>[];
@@ -314,6 +317,17 @@ class BDWMConfig {
   }
   String gist() {
     return jsonEncode(toJson());
+  }
+
+  bool getAutoClearImageCache() {
+    return autoClearImageCache;
+  }
+
+  Future<bool> setAutoClearImageCache(bool newValue) async {
+    return await lock.synchronized(() async {
+      autoClearImageCache = newValue;
+      return await update();
+    });
   }
 
   bool getUseImgInMessage() {
