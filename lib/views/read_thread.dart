@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:extended_image/extended_image.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../bdwm/vote.dart';
 import '../bdwm/posts.dart';
@@ -717,8 +718,9 @@ class ReadThreadPage extends StatefulWidget {
 
 class _ReadThreadPageState extends State<ReadThreadPage> {
   final _titleFont = const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
-  final _scrollController = ScrollController();
-  var itemKeys = <GlobalKey>[];
+  // final _scrollController = ScrollController();
+  final ItemScrollController itemScrollController = ItemScrollController();
+  final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
   String? postid;
 
   @override
@@ -729,23 +731,18 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
     //     threadPageInfo = value;
     //   });
     // });
-    for (var _ in widget.threadPageInfo.posts) {
-      itemKeys.add(GlobalKey());
-    }
     WidgetsBinding.instance.addPostFrameCallback((_){
       if (widget.postid != null) {
-        BuildContext? c;
         var i = 0;
         while (i<widget.threadPageInfo.posts.length) {
           var p = widget.threadPageInfo.posts[i];
           if (p.postID == widget.postid) {
-            c = itemKeys[i].currentContext;
             break;
           }
           i+=1;
         }
-        if (c!=null) {
-          Scrollable.ensureVisible(c, duration: const Duration(milliseconds: 1500));
+        if (i<widget.threadPageInfo.posts.length) {
+          itemScrollController.scrollTo(index: i, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
         }
       }
     });
@@ -753,12 +750,12 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    // _scrollController.dispose();
     clearAllExtendedImageCache();
     super.dispose();
   }
 
-  Widget _onepost(OnePostInfo item, int idx, {int? subIdx}) {
+  Widget _onepost(OnePostInfo item, {int? subIdx}) {
     var userName = item.authorInfo.userName;
     Set<String> seeNoHimHer = globalConfigInfo.getSeeNoThem();
     var hideIt = false;
@@ -766,7 +763,7 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
       hideIt = true;
     }
     return OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack,
-      boardName: widget.threadPageInfo.board.text, key: itemKeys[idx], threadid: widget.threadid,
+      boardName: widget.threadPageInfo.board.text, threadid: widget.threadid,
       subIdx: subIdx, hideIt: hideIt,
     );
   }
@@ -852,10 +849,10 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
         GestureDetector(
           onDoubleTap: () {
             // Scrollable.ensureVisible(itemKeys[0].currentContext!, duration: const Duration(milliseconds: 1500));
-            _scrollController.animateTo(0, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
+            itemScrollController.scrollTo(index: 0, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
           },
           onLongPress: () {
-            _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
+            itemScrollController.scrollTo(index: widget.threadPageInfo.posts.length-1, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
           },
           child: Container(
             padding: const EdgeInsets.all(10.0),
@@ -868,39 +865,20 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
           ),
         ),
         Expanded(
-          // child: widget.postid != null
-          child: true
-          ? SingleChildScrollView(
-            controller: _scrollController,
-            // padding: const EdgeInsets.all(8),
-            child: widget.tiebaForm
-            ? Column(
-              children: newOrder.map((e) {
-                return _onepost(widget.threadPageInfo.posts[e.oriIdx], e.oriIdx, subIdx: e.subIdx > 5 ? 5 : e.subIdx);
-              }).toList(),
-            )
-            : Column(
-              children: widget.threadPageInfo.posts.asMap().entries.map((pair) {
-                return _onepost(pair.value, pair.key);
-              }).toList(),
-            ),
-          )
-          : ListView.builder(
-            controller: _scrollController,
-            padding: const EdgeInsets.all(8),
+          child: ScrollablePositionedList.builder(
             itemCount: widget.threadPageInfo.posts.length,
             itemBuilder: (context, index) {
-              return _onepost(widget.threadPageInfo.posts[index], index);
+              if (widget.tiebaForm) {
+                var oriIdx = newOrder[index].oriIdx;
+                var subIdx = newOrder[index].subIdx;
+                return _onepost(widget.threadPageInfo.posts[oriIdx], subIdx: subIdx > 5 ? 5 : subIdx);
+              }
+              return _onepost(widget.threadPageInfo.posts[index]);
             },
+            itemScrollController: itemScrollController,
+            itemPositionsListener: itemPositionsListener,
           ),
-          // child: ListView(
-          //   controller: ScrollController(),
-          //   padding: const EdgeInsets.all(8),
-          //   children: widget.threadPageInfo.posts.asMap().entries.map((pair) {
-          //     return _onepost(pair.value, pair.key);
-          //   }).toList(),
-          // ),
-        )
+        ),
       ]
     );
   }

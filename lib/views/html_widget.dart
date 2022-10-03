@@ -51,7 +51,7 @@ class _WrapImageNetworkState extends State<WrapImageNetwork> {
       fit: BoxFit.contain,
       cache: true,
       enableMemoryCache: true,
-      clearMemoryCacheWhenDispose: true,
+      clearMemoryCacheWhenDispose: false,
       clearMemoryCacheIfFailed: true,
       handleLoadingProgress: true,
       filterQuality: FilterQuality.low,
