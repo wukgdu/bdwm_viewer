@@ -143,6 +143,20 @@ class _BigTenComponentState extends State<BigTenComponent> {
   }
 }
 
+String formatSize(int bytes) {
+  List<String> units = <String>["B", "KB", "MB", "GB"];
+  double res = bytes.toDouble();
+  int i = 0;
+  for (; i<units.length-1; i+=1) {
+    double res1 = res / 1024;
+    if (res1 < 1.0) {
+      break;
+    }
+    res = res1;
+  }
+  return "${res.toStringAsFixed(3)} ${units[i]}";
+}
+
 int computeMemoryImageCache() {
   var imageCache = getMemoryImageCache();
   if (imageCache == null) { return 0; }
@@ -192,7 +206,7 @@ class _ImageCacheComponentState extends State<ImageCacheComponent> {
       subtitle: Text.rich(
         TextSpan(
           children: [
-            TextSpan(text: "内存：${(cacheSizeBytes.toDouble()/(1024*1024)).toStringAsFixed(3)} MB"),
+            TextSpan(text: "内存：${formatSize(cacheSizeBytes)}"),
             const TextSpan(text: "；"),
             WidgetSpan(
               child: FutureBuilder(
@@ -205,7 +219,7 @@ class _ImageCacheComponentState extends State<ImageCacheComponent> {
                     return const Text("磁盘：计算失败");
                   }
                   int diskSize = snapshot.data as int;
-                  return Text("磁盘：${diskSize==0?"":"~"}${(diskSize.toDouble()/(1024*1024)).toStringAsFixed(3)} MB");
+                  return Text("磁盘：${diskSize==0?"":">"}${formatSize(diskSize)}");
                 },
               ),
             ),
