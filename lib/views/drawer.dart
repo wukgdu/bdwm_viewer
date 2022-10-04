@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 
 import '../globalvars.dart' show globalUInfo;
 import './constants.dart' show bdwmPrimaryColor;
+import '../router.dart' show nv2Replace;
 
 class MyDrawer extends StatelessWidget {
   final int selectedIdx;
   const MyDrawer({Key? key, required this.selectedIdx}) : super(key: key);
 
   _gotoPage(String route, BuildContext context) {
-    Navigator.of(context).pushReplacementNamed(route);
+    nv2Replace(context, route);
   }
 
   Widget _oneItem(context, target, {Icon? icon, Text? text, required int idx}) {

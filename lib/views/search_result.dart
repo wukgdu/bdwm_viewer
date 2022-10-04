@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../html_parser/search_parser.dart';
 import './constants.dart';
 import '../pages/read_thread.dart';
+import '../router.dart' show nv2Push;
 
 class SimpleResultPage extends StatefulWidget {
   final SimpleSearchRes ssRes;
@@ -22,10 +23,10 @@ class _SimpleResultPageState extends State<SimpleResultPage> {
         onTap: () {
           if (widget.mode=="user") {
             if (ssri.id.isEmpty) { return; }
-            Navigator.of(context).pushNamed('/user', arguments: ssri.id);
+            nv2Push(context, '/user', arguments: ssri.id);
           } else if (widget.mode=="board") {
             if (ssri.id.isEmpty) { return; }
-            Navigator.of(context).pushNamed('/board', arguments: {
+            nv2Push(context, '/board', arguments: {
               'boardName': ssri.name,
               'bid': ssri.id,
             },);
@@ -58,7 +59,7 @@ class _ComplexResultPageState extends State<ComplexResultPage> {
   final _ts3 = const TextStyle(fontSize: 12);
 
   void gotoThread(ComplexSearchResItem csri) {
-    Navigator.of(context).pushNamed('/thread', arguments: {
+    nv2Push(context, '/thread', arguments: {
       'bid': csri.bid,
       'threadid': csri.threadid,
       'boardName': csri.boardName,
@@ -79,7 +80,7 @@ class _ComplexResultPageState extends State<ComplexResultPage> {
             children: [
               GestureDetector(
                 onTap: () {
-                  Navigator.of(context).pushNamed('/board', arguments: {
+                  nv2Push(context, '/board', arguments: {
                     'boardName': csri.boardName,
                     'bid': csri.bid,
                   },);

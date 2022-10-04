@@ -7,6 +7,7 @@ import '../bdwm/req.dart';
 import '../bdwm/star_board.dart';
 import '../globalvars.dart';
 import './utils.dart';
+import '../router.dart' show nv2Push;
 
 class StarBoard extends StatefulWidget {
   final int starCount;
@@ -176,7 +177,7 @@ class OneThreadInBoard extends StatelessWidget {
                         ),
                       );
                     }
-                    Navigator.of(context).pushNamed('/thread', arguments: {
+                    nv2Push(context, '/thread', arguments: {
                       'bid': nBid,
                       'threadid': threadid,
                       'boardName': boardName,
@@ -188,7 +189,7 @@ class OneThreadInBoard extends StatelessWidget {
                 var p1Tid = link.indexOf("threadid=");
                 var p2Tid = link.indexOf("&", p1Tid);
                 var nTid = p2Tid == -1 ? link.substring(p1Tid+9) : link.substring(p1Tid+9, p2Tid);
-                Navigator.of(context).pushNamed('/thread', arguments: {
+                nv2Push(context, '/thread', arguments: {
                   'bid': nBid,
                   'threadid': nTid,
                   'boardName': boardName,
@@ -196,7 +197,7 @@ class OneThreadInBoard extends StatelessWidget {
                 });
               }
             } else {
-              Navigator.of(context).pushNamed('/thread', arguments: {
+              nv2Push(context, '/thread', arguments: {
                 'bid': bid,
                 'threadid': boardPostInfo.threadID,
                 'boardName': boardName,
@@ -259,7 +260,7 @@ class _BoardPageState extends State<BoardPage> {
                 GestureDetector(
                   onTap: () {
                     if (boardInfo.collectionLink.isEmpty) { return; }
-                    Navigator.of(context).pushNamed('/collection', arguments: {
+                    nv2Push(context, '/collection', arguments: {
                       'link': boardInfo.collectionLink,
                       'title': boardInfo.boardName,
                     });
@@ -330,7 +331,7 @@ class _BoardPageState extends State<BoardPage> {
                     GestureDetector(
                       child: Text(admin.userName, style: textLinkStyle),
                       onTap: () {
-                        Navigator.of(context).pushNamed('/user', arguments: admin.uid);
+                        nv2Push(context, '/user', arguments: admin.uid);
                       },
                     ),
                     const SizedBox(width: 5,),

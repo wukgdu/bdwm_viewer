@@ -7,6 +7,7 @@ import '../views/board.dart';
 import '../globalvars.dart';
 import '../views/utils.dart';
 // import '../views/constants.dart';
+import '../router.dart' show nv2Push;
 
 class BoardApp extends StatefulWidget {
   final String boardName;
@@ -123,19 +124,9 @@ class _BoardAppState extends State<BoardApp> {
                     tooltip: '发帖',
                     icon: const Icon(Icons.add),
                     onPressed: () {
-                      Navigator.of(context).pushNamed('/post', arguments: {
+                      nv2Push(context, '/post', arguments: {
                         'bid': widget.bid,
                         'boardName': boardInfo.boardName,
-                      }).then((value) {
-                        if (value != null && value == true) {
-                          if (!mounted) { return; }
-                          setState(() {
-                            page = page;
-                            getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
-                              debugPrint("cancel it");
-                            },);
-                          });
-                        }
                       });
                     },
                   ),

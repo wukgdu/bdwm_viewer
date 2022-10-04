@@ -6,6 +6,7 @@ import '../views/mail.dart';
 import '../html_parser/mail_parser.dart';
 import '../globalvars.dart';
 import '../views/utils.dart';
+import '../router.dart' show nv2Push;
 
 class MailListApp extends StatefulWidget {
   const MailListApp({super.key});
@@ -131,7 +132,7 @@ class _MailListAppState extends State<MailListApp> {
               IconButton(
                 icon: const Icon(Icons.add),
                 onPressed: () {
-                  Navigator.of(context).pushNamed('/mailNew');
+                  nv2Push(context, '/mailNew');
                 },
               ),
               PopupMenuButton(

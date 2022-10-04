@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import './constants.dart';
 import '../html_parser/zone_parser.dart';
+import '../router.dart' show nv2Push;
 
 class ZonePage extends StatefulWidget {
   final ZoneInfo zoneInfo;
@@ -24,7 +25,7 @@ class _ZonePageState extends State<ZonePage> {
           children: [
             GestureDetector(
               onTap: () {
-                Navigator.of(context).pushNamed('/block', arguments: {
+                nv2Push(context, '/block', arguments: {
                   'bid': ziInfo.bid,
                   'title': ziInfo.name,
                 },);
@@ -50,7 +51,7 @@ class _ZonePageState extends State<ZonePage> {
                       if (e.link == null || e.link!.isEmpty) {
                         return;
                       }
-                      Navigator.of(context).pushNamed('/user', arguments: e.link);
+                      nv2Push(context, '/user', arguments: e.link);
                     },
                     style: ButtonStyle(textStyle: MaterialStateProperty.all(const TextStyle(fontWeight: FontWeight.normal))),
                     child: Text(e.text, style: textLinkStyle),
@@ -68,7 +69,7 @@ class _ZonePageState extends State<ZonePage> {
                 return GestureDetector(
                   onTap: () {
                     var boardName = e.text.substring(1, e.text.length-1); // [name]
-                    Navigator.of(context).pushNamed('/board', arguments: {
+                    nv2Push(context, '/board', arguments: {
                       'boardName': boardName,
                       'bid': e.link,
                     },);

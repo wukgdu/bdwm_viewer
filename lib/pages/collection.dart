@@ -6,6 +6,7 @@ import '../views/collection.dart';
 import '../globalvars.dart';
 import '../views/utils.dart';
 import '../html_parser/collection_parser.dart';
+import '../router.dart' show nv2Push;
 
 class CollectionApp extends StatefulWidget {
   final String link;
@@ -111,7 +112,7 @@ class _CollectionAppState extends State<CollectionApp> {
                     p1 = Uri.parse(widget.link).query.lastIndexOf("/");
                   }
                   var newLink = p1 == -1 ? "$v2Host/collection.php" : widget.link.substring(0, p1);
-                  Navigator.of(context).pushNamed('/collection', arguments: {
+                  nv2Push(context, '/collection', arguments: {
                     'link': newLink,
                     'title': "获取父目录中",
                   });
@@ -300,7 +301,7 @@ class _CollectionArticleAppState extends State<CollectionArticleApp> {
                   }
                   var newLink = widget.link.substring(0, p1);
                   newLink = newLink.replaceFirst("collection-read.php", "collection.php");
-                  Navigator.of(context).pushNamed('/collection', arguments: {
+                  nv2Push(context, '/collection', arguments: {
                     'link': newLink,
                     'title': "获取父目录中",
                   });

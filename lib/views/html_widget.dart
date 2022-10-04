@@ -14,6 +14,7 @@ import '../html_parser/utils.dart';
 import '../globalvars.dart' show genHeaders2;
 import '../html_parser/board_parser.dart' show directToThread;
 import '../pages/detail_image.dart';
+import '../router.dart' show nv2Push;
 
 class WrapImageNetwork extends StatefulWidget {
   final String imgLink;
@@ -368,18 +369,18 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
                   bid = link.substring(bidP1+4, bidP2);
                 }
                 if (bid.isNotEmpty) {
-                  Navigator.of(context).pushNamed('/thread', arguments: {
+                  nv2Push(context, '/thread', arguments: {
                     'bid': bid,
                     'boardName': "跳转",
                   });
                 }
               } else if (link.startsWith("https://bbs.pku.edu.cn/v2/collection.php")) {
-                Navigator.of(context).pushNamed('/collection', arguments: {
+                nv2Push(context, '/collection', arguments: {
                   'link': link,
                   'title': "目录",
                 });
               } else if (link.startsWith("https://bbs.pku.edu.cn/v2/collection-read.php")) {
-                Navigator.of(context).pushNamed('/collectionArticle', arguments: {
+                nv2Push(context, '/collectionArticle', arguments: {
                   'link': link,
                   'title': "文章",
                 });
@@ -392,12 +393,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
                     if (link2.isEmpty) { return; }
                     int? link2Int = int.tryParse(link2);
                     if (link2Int == null && link2.startsWith("post-read.php")==false) {
-                      showAlertDialog(context, "跳转失败", Text(link2),
-                        actions1: TextButton(
-                          onPressed: () { Navigator.of(context).pop(); },
-                          child: const Text("知道了"),
-                        ),
-                      );
+                      showInformDialog(context, "跳转失败", link2);
                     }
                     naviGotoThreadByLink(context, link2, "", pageDefault: "a");
                   }

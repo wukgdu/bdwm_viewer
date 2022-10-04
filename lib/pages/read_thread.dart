@@ -7,6 +7,7 @@ import '../html_parser/read_thread_parser.dart';
 import '../bdwm/req.dart';
 import '../globalvars.dart';
 import '../utils.dart' show clearAllExtendedImageCache;
+import '../router.dart' show nv2Push;
 
 class ThreadApp extends StatefulWidget {
   final String bid;
@@ -176,7 +177,7 @@ class _ThreadAppState extends State<ThreadApp> {
                       tooltip: '返回本版',
                       icon: const Icon(Icons.list),
                       onPressed: () {
-                        Navigator.of(context).pushNamed('/board', arguments: {
+                        nv2Push(context, '/board', arguments: {
                           'boardName': threadPageInfo.board.text.split('(').first,
                           'bid': threadPageInfo.boardid,
                         },);
@@ -241,6 +242,13 @@ class _ThreadAppState extends State<ThreadApp> {
 // WidgetBuilder? gotoThread(RouteSettings settings) {
 WidgetBuilder? gotoThread(Object? arguments) {
   WidgetBuilder builder;
+  var page = gotoThreadPage(arguments);
+  if (page == null) { return null; }
+  builder = (BuildContext context) => page;
+  return builder;
+}
+
+Widget? gotoThreadPage(Object? arguments) {
   String bid = "";
   String threadid = "";
   String boardName = "";
@@ -258,12 +266,11 @@ WidgetBuilder? gotoThread(Object? arguments) {
   } else {
     return null;
   }
-  builder = (BuildContext context) => ThreadApp(boardName: boardName, bid: bid, threadid: threadid, page: page, needToBoard: needToBoard, postid: postid);
-  return builder;
+  return ThreadApp(boardName: boardName, bid: bid, threadid: threadid, page: page, needToBoard: needToBoard, postid: postid);
 }
 
 void naviGotoThread(context, String bid, String threadid, String page, String boardName, {bool? needToBoard}) {
-  Navigator.of(context).pushNamed('/thread', arguments: {
+  nv2Push(context, '/thread', arguments: {
     'bid': bid,
     'threadid': threadid,
     'page': page,
@@ -307,7 +314,7 @@ void naviGotoThreadByLink(context, String link, String boardName, {bool? needToB
   }
   var pt2 = link.indexOf('&', pt1);
   var threadid = link.substring(pt1+9, pt2 == -1 ? null : pt2);
-  Navigator.of(context).pushNamed('/thread', arguments: {
+  nv2Push(context, '/thread', arguments: {
     'bid': bid,
     'threadid': threadid,
     'page': page,

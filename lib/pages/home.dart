@@ -7,6 +7,7 @@ import '../views/top100.dart';
 import '../views/top10.dart';
 import '../views/favorite.dart';
 import '../views/drawer.dart';
+import '../router.dart' show nv2Push, nv2PushAndRemoveAll;
 
 class StackIcon extends StatelessWidget {
   final int count;
@@ -92,7 +93,7 @@ class _HomeAppState extends State<HomeApp> with SingleTickerProviderStateMixin {
                 icon: const Icon(Icons.mail),
                 callBack: () {
                   // quickNotify("OBViewer", "mail");
-                  Navigator.of(context).pushNamed('/mail');
+                  nv2Push(context, '/mail');
                 },
               );
             },
@@ -105,7 +106,7 @@ class _HomeAppState extends State<HomeApp> with SingleTickerProviderStateMixin {
                 icon: const Icon(Icons.message),
                 callBack: () {
                   // quickNotify("OBViewer", "message");
-                  Navigator.of(context).pushNamed('/message');
+                  nv2Push(context, '/message');
                 },
               );
             },
@@ -113,16 +114,16 @@ class _HomeAppState extends State<HomeApp> with SingleTickerProviderStateMixin {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              Navigator.of(context).pushNamed('/search');
+              nv2Push(context, '/search');
             },
           ),
           IconButton(
             icon: const Icon(Icons.account_circle),
             onPressed: () {
               if (globalUInfo.login) {
-                Navigator.of(context).pushNamed('/user', arguments: globalUInfo.uid);
+                nv2Push(context, '/user', arguments: globalUInfo.uid);
               } else {
-                Navigator.of(context).pushNamedAndRemoveUntil('/me', (Route a) => false);
+                nv2PushAndRemoveAll(context, '/login');
               }
             },
           ),

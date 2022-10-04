@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../views/drawer.dart';
 import '../views/funfunfun.dart';
 import '../views/constants.dart';
+import '../router.dart' show nv2PushAndRemoveAll;
 
 class FunFunFunApp extends StatelessWidget {
   const FunFunFunApp({super.key});
@@ -19,7 +20,7 @@ class FunFunFunApp extends StatelessWidget {
       floatingActionButton: IconButton(
         icon: const Icon(Icons.home, color: bdwmPrimaryColor),
         onPressed: () {
-          Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+          nv2PushAndRemoveAll(context, '/home');
         },
       ),
     );

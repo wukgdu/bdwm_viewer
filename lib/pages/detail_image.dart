@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bdwm_viewer/router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 // import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -10,9 +11,11 @@ import '../utils.dart';
 import '../views/utils.dart' show SaveRes, genDownloadPath;
 
 void gotoDetailImage({required BuildContext context, required String link, String? name, Uint8List? imgData}) {
-  Navigator.of(context).push(MaterialPageRoute(
-    builder: (context) => DetailImage(imgLink: link, imgName: name, imgData: imgData,),
-  ));
+  nv2Push(context, '/detailImage', arguments: {
+    'link': link,
+    'name': name,
+    'imgData': imgData,
+  });
 }
 
 class DetailImage extends StatefulWidget {

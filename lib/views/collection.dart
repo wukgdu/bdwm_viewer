@@ -10,6 +10,7 @@ import './constants.dart';
 import './utils.dart' show showConfirmDialog, showInformDialog, showAlertDialog;
 import './read_thread.dart' show AttachmentComponent;
 import './html_widget.dart';
+import '../router.dart' show nv2Push;
 
 class CollectionPage extends StatefulWidget {
   final CollectionList collectionList;
@@ -34,22 +35,22 @@ class _CollectionPageState extends State<CollectionPage> {
       child: ListTile(
         onTap: () {
           if (item.type == "dir") {
-            Navigator.of(context).pushNamed('/collection', arguments: {
+            nv2Push(context, '/collection', arguments: {
               'link': item.link,
               'title': widget.title,
             });
           } else if (item.type == "file") {
-            Navigator.of(context).pushNamed('/collectionArticle', arguments: {
+            nv2Push(context, '/collectionArticle', arguments: {
               'link': item.link,
               'title': widget.title,
             });
           } else if (item.type == "link_dir") {
-            Navigator.of(context).pushNamed('/collection', arguments: {
+            nv2Push(context, '/collection', arguments: {
               'link': item.link,
               'title': widget.title,
             });
           } else if (item.type == "link_file") {
-            Navigator.of(context).pushNamed('/collectionArticle', arguments: {
+            nv2Push(context, '/collectionArticle', arguments: {
               'link': item.link,
               'title': widget.title,
             });
@@ -106,7 +107,7 @@ class _CollectionArticlePageState extends State<CollectionArticlePage> {
                 if (widget.collectionArticle.uid.isEmpty) {
                   return;
                 }
-                Navigator.of(context).pushNamed('/user', arguments: widget.collectionArticle.uid);
+                nv2Push(context, '/user', arguments: widget.collectionArticle.uid);
               },
             ),
             title: SelectableText(widget.collectionArticle.title),

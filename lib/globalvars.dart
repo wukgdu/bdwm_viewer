@@ -286,6 +286,7 @@ class BDWMConfig {
   bool showWelcome = true;
   bool useImgInMessage = true;
   bool autoClearImageCache = false;
+  String maxPageNum = "5";
   Set<String> seeNoThem = {};
   String storage = "bdwmconfig.json";
 
@@ -304,6 +305,7 @@ class BDWMConfig {
       "lastCheckTime": lastCheckTime,
       "seeNoThem": seeNoThem.toList(),
       "autoClearImageCache": autoClearImageCache,
+      "maxPageNum": maxPageNum,
     };
   }
   void fromJson(Map<String, dynamic> jsonContent) {
@@ -312,6 +314,7 @@ class BDWMConfig {
     autoClearImageCache = jsonContent['autoClearImageCache'] ?? false;
     lastLoginTime = jsonContent['lastLoginTime'] ?? "";
     lastCheckTime = jsonContent['lastCheckTime'] ?? "";
+    maxPageNum = jsonContent['maxPageNum'] ?? "5";
     List seeNoHimHerList = jsonContent['seeNoThem'] ?? <String>[];
     seeNoThem = Set<String>.from(seeNoHimHerList.map((e) => e as String));
   }
@@ -348,6 +351,17 @@ class BDWMConfig {
   Future<bool> setShowWelcome(bool newValue) async {
     return await lock.synchronized(() async {
       showWelcome = newValue;
+      return await update();
+    });
+  }
+
+  String getMaxPageNum() {
+    return maxPageNum;
+  }
+
+  Future<bool> setMaxPageNum(String newTime) async {
+    return await lock.synchronized(() async {
+      maxPageNum = newTime;
       return await update();
     });
   }

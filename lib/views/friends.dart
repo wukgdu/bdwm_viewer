@@ -6,6 +6,7 @@ import '../globalvars.dart';
 import './constants.dart';
 import '../html_parser/friends_parser.dart';
 import './user.dart' show UserOperationComponent;
+import '../router.dart' show nv2Push;
 
 class FriendPage extends StatefulWidget {
   final String mode;
@@ -84,7 +85,7 @@ class _FriendPageState extends State<FriendPage> {
                     if (e.uid.isEmpty) {
                       return;
                     }
-                    Navigator.of(context).pushNamed('/user', arguments: e.uid);
+                    nv2Push(context, '/user', arguments: e.uid);
                   },
                 ),
                 title: Text.rich(

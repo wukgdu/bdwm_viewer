@@ -16,6 +16,7 @@ import './html_widget.dart';
 import './quill_utils.dart';
 import './upload.dart';
 import './utils.dart';
+import '../router.dart' show nv2Pop;
 
 class PostNewPage extends StatefulWidget {
   final String bid;
@@ -192,7 +193,7 @@ class _PostNewPageState extends State<PostNewPage> {
                           child: const Text("知道了"),
                         )
                       ).then((value) {
-                        Navigator.of(context).pop(true);
+                        nv2Pop(context);
                       });
                     } else {
                       var errorMessage = "发送失败，请稍后重试";

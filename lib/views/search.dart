@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../pages/read_thread.dart';
 import './constants.dart';
 import './utils.dart';
+import '../router.dart' show nv2Push;
 class PostSearchSettings {
   String keyWord = "";
   String owner = "";
@@ -106,7 +107,7 @@ class _ComplexSearchComponentState extends State<ComplexSearchComponent> {
                       pss.owner = userController.text;
                       pss.board = boardController.text;
                       pss.days = days.toString();
-                      Navigator.of(context).pushNamed("/complexSearchResult", arguments: {
+                      nv2Push(context, "/complexSearchResult", arguments: {
                         "settings": pss,
                       });
                     }
@@ -252,7 +253,7 @@ class _SimpleSearchComponentState extends State<SimpleSearchComponent> {
 
   void startSearch() {
     if (textController.text.isEmpty) { return; }
-    Navigator.of(context).pushNamed("/simpleSearchResult", arguments: {
+    nv2Push(context, "/simpleSearchResult", arguments: {
       "mode": widget.mode,
       "keyWord": textController.text,
     });

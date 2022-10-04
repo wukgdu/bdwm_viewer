@@ -4,6 +4,7 @@ import '../views/drawer.dart';
 import '../views/html_widget.dart';
 import '../views/constants.dart' show bdwmPrimaryColor;
 import '../check_update.dart' show innerLinkForBBS, curVersionForBBS;
+import '../router.dart' show nv2Push;
 
 class AboutApp extends StatelessWidget {
   const AboutApp({Key? key}) : super(key: key);
@@ -20,7 +21,7 @@ class AboutApp extends StatelessWidget {
             Text("开发", style: _titleStyle,),
             GestureDetector(
               onTap: () {
-                Navigator.of(context).pushNamed('/user', arguments: "22776");
+                nv2Push(context, '/user', arguments: "22776");
               },
               child: Text("onepiece@bdwm", style: _contentStyle.merge(const TextStyle(color: bdwmPrimaryColor))),
             )

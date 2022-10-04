@@ -10,6 +10,7 @@ import "./utils.dart";
 import "./constants.dart";
 import "../pages/detail_image.dart";
 import './html_widget.dart';
+import '../router.dart' show nv2Push, nv2PushAndRemoveAll;
 
 class UserOperationComponent extends StatefulWidget {
   final String uid;
@@ -65,14 +66,7 @@ class _UserOperationComponentState extends State<UserOperationComponent> {
               content = "失败啦，请稍候再试";
             }
           }
-          showAlertDialog(context, title, Text(content),
-            actions1: TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text("知道了"),
-            ),
-          ).then((dialogValue) {
+          showInformDialog(context, title, content).then((dialogValue) {
             setState(() {
               useradd = !useradd;
             });
@@ -155,7 +149,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                 return TextButton(
                   child: Text(boardName, style: textLinkStyle,),
                   onPressed: () {
-                    Navigator.of(context).pushNamed('/board', arguments: {
+                    nv2Push(context, '/board', arguments: {
                       'boardName': boardName.split('(').first,
                       'bid': bid,
                     });
@@ -277,7 +271,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                     WidgetSpan(
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.of(context).pushNamed('/collection', arguments: {
+                          nv2Push(context, '/collection', arguments: {
                             'link': user.personalCollection.link,
                             'title': user.bbsID,
                           });
@@ -310,7 +304,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                       if (value == false) {
                         showNetWorkDialog(context);
                       }
-                      Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+                      nv2PushAndRemoveAll(context, '/login');
                     });
                   },
                 ),
@@ -362,7 +356,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
             children: [
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed('/messagePerson', arguments: user.bbsID);
+                  nv2Push(context, '/messagePerson', arguments: user.bbsID);
                 },
                 child: Row(
                   children: const [
@@ -373,7 +367,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed("/mailNew", arguments: {
+                  nv2Push(context, "/mailNew", arguments: {
                     'receiver': user.bbsID,
                   });
                 },

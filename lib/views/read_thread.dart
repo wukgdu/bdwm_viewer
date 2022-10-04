@@ -14,6 +14,7 @@ import '../html_parser/read_thread_parser.dart';
 import '../globalvars.dart' show globalConfigInfo;
 import '../pages/detail_image.dart';
 import './html_widget.dart';
+import '../router.dart' show nv2Push;
 
 class OperateComponent extends StatefulWidget {
   final String bid;
@@ -75,17 +76,13 @@ class _OperateComponentState extends State<OperateComponent> {
               style: textButtonStyle,
               onPressed: !canReply ? null
                 : () {
-                  Navigator.of(context).pushNamed('/post', arguments: {
+                  nv2Push(context, '/post', arguments: {
                     'bid': widget.bid,
                     'boardName': "回帖",
                     'parentid': widget.postid,
                     // Anonymous's nickname
                     'nickName': widget.onePostInfo.authorInfo.userName == "Anonymous"
                       ? widget.onePostInfo.authorInfo.nickName : null,
-                  }).then((value) {
-                    if (value == true) {
-                      widget.refreshCallBack();
-                    }
                   });
                 },
               child: Text("回帖", style: TextStyle(color: !canReply ? Colors.grey : null),),
@@ -161,14 +158,10 @@ class _OperateComponentState extends State<OperateComponent> {
           sizedTextButton(
             style: textButtonStyle,
             onPressed: () {
-              Navigator.of(context).pushNamed('/post', arguments: {
+              nv2Push(context, '/post', arguments: {
                 'bid': widget.bid,
                 'boardName': "修改",
                 'postid': widget.postid,
-              }).then((value) {
-                if (value == true) {
-                  widget.refreshCallBack();
-                }
               });
             },
             child: const Text("修改"),
@@ -591,7 +584,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                       if (item.authorInfo.uid.isEmpty) {
                         return;
                       }
-                      Navigator.of(context).pushNamed('/user', arguments: item.authorInfo.uid);
+                      nv2Push(context, '/user', arguments: item.authorInfo.uid);
                     },
                   ),
                   if (item.postOwner)

@@ -1,3 +1,4 @@
+import 'package:bdwm_viewer/router.dart';
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 
@@ -159,7 +160,7 @@ class FavoritePageState extends State<FavoritePage> {
             ],
           ),
           onTap: () {
-            Navigator.of(context).pushNamed("/board", arguments: {
+            nv2Push(context, "/board", arguments: {
               'boardName': item.boardName,
               'bid': item.boardLink.split("=").last,
           });

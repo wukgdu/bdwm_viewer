@@ -5,31 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // import 'package:flutter/rendering.dart';
 
+import './router.dart';
 import './globalvars.dart';
-import './pages/home.dart';
-import './pages/board.dart';
-import './pages/login.dart';
-import './pages/user.dart';
-import './pages/about.dart';
-import './pages/read_thread.dart';
-import './pages/post_new.dart';
-import './pages/collection.dart';
-import './pages/block.dart';
-import './pages/zone.dart';
-import './pages/favorite.dart';
-import './pages/search.dart';
-import './pages/search_result.dart';
-import './pages/message.dart';
-import './pages/friends.dart';
-import './pages/mail.dart';
-import './pages/mail_new.dart';
-import './pages/funfunfun.dart';
-import './pages/see_no_them.dart';
-import './pages/friends_posts.dart';
-import './pages/settings.dart';
-import './views/search.dart' show PostSearchSettings;
 import './views/constants.dart' show bdwmPrimaryColor, bdwmSurfaceColor;
-// import './pages/detail_image.dart';
 import './services.dart';
 import './services_instance.dart';
 import './bdwm/mail.dart';
@@ -64,6 +42,7 @@ class _MainPageState extends State<MainPage> {
   ValueNotifier<int> messageCount = ValueNotifier<int>(0);
   ValueNotifier<int> mailCount = ValueNotifier<int>(0);
   MessageBriefNotifier messageBrief = MessageBriefNotifier([]);
+  late final MainRouterDelegate mainRouterDelegate;
 
   void updateUnreadMessageData() {
     unreadMessage.updateValue((NotifyMessageInfo info) {
@@ -85,6 +64,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+    mainRouterDelegate = MainRouterDelegate.init(messageCount: messageCount, mailCount: mailCount, messageBrief: messageBrief,);
 
     updateUnreadMessageData();
     updateUnreadMailData();
@@ -119,7 +99,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     debugPrint("** main rebuild");
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'OBViewer',
       theme: ThemeData(
         // #e97c62
@@ -132,199 +112,8 @@ class _MainPageState extends State<MainPage> {
         brightness: Brightness.dark,
         useMaterial3: false,
       ),
-      home: HomeApp(messageCount: messageCount, mailCount: mailCount,),
-      // home: const MailNewApp(),
-      // home: const ThreadApp(bid: "338", threadid: "18367551", page: "a", boardName: "ID文化", postid: "26066045",),
-      // home: const SimpleSearchResultApp(mode: "user", keyWord: "onepiecexx",),
-      // home: const ZoneApp(),
-      // home: const BlockApp(bid: "678", title: "休闲娱乐",),
-      // home: CollectionArticleApp(link: "", title: "测试",),
-      // home: const PostNewApp(boardName: "测试", bid: "7"),
-      // home: BoardApp(bid: "103", boardName: "未名湖",),
-      // home: const DetailImage(imgLink: "https://bbs.pku.edu.cn/v2/uploads/index_MKoueo.jpg", imgName: "招新.jpg",),
-      // home: ThreadApp(bid: "33", threadid: "18262167", page: "2", boardName: "历史",),
-      // initialRoute: "/home",
-      onGenerateRoute: (settings) {
-        WidgetBuilder builder;
-        switch (settings.name) {
-          case "/board":
-            String? boardName;
-            String? bid;
-            if (settings.arguments != null) {
-              var settingsMap = settings.arguments as Map;
-              bid = settingsMap['bid'] as String;
-              boardName = settingsMap['boardName'] as String;
-            } else {
-              return null;
-            }
-            builder = (BuildContext context) => BoardApp(boardName: boardName ?? "版面", bid: bid ?? "");
-            break;
-          case "/thread":
-            var res = gotoThread(settings.arguments);
-            if (res == null) {
-              return null;
-            }
-            builder = res;
-            break;
-          case "/post":
-            String? boardName;
-            String? bid;
-            String? postid;
-            String? parentid;
-            String? nickName;
-            if (settings.arguments != null) {
-              var settingsMap = settings.arguments as Map;
-              bid = settingsMap['bid'] as String;
-              boardName = settingsMap['boardName'] as String;
-              postid = settingsMap['postid'] as String?;
-              parentid = settingsMap['parentid'] as String?;
-              nickName = settingsMap['nickName'] as String?;
-            } else {
-              return null;
-            }
-            builder = (BuildContext context) => PostNewApp(boardName: boardName ?? "版面", bid: bid ?? "", postid: postid, parentid: parentid, nickName: nickName);
-            break;
-          case "/zone":
-            builder = (BuildContext context) => const ZoneApp();
-            break;
-          case "/favorite":
-            builder = (BuildContext context) => const FavoriteApp();
-            break;
-          case "/block":
-            String? bid;
-            String? title;
-            if (settings.arguments != null) {
-              var settingsMap = settings.arguments as Map;
-              bid = settingsMap['bid'] as String;
-              title = settingsMap['title'] as String;
-            } else {
-              return null;
-            }
-            builder = (BuildContext context) => BlockApp(bid: bid!, title: title!,);
-            break;
-          case "/collection":
-            String? link;
-            String? title;
-            if (settings.arguments != null) {
-              var settingsMap = settings.arguments as Map;
-              link = settingsMap['link'] as String;
-              title = settingsMap['title'] as String;
-            } else {
-              return null;
-            }
-            builder = (BuildContext context) => CollectionApp(link: link!, title: title!,);
-            break;
-          case "/collectionArticle":
-            String? link;
-            String? title;
-            if (settings.arguments != null) {
-              var settingsMap = settings.arguments as Map;
-              link = settingsMap['link'] as String;
-              title = settingsMap['title'] as String;
-            } else {
-              return null;
-            }
-            builder = (BuildContext context) => CollectionArticleApp(link: link!, title: title!,);
-            break;
-          case "/login":
-            bool needBack = false;
-            if (settings.arguments != null) {
-              needBack = (settings.arguments as Map)['needBack'] ?? false;
-            }
-            builder = (BuildContext context) => LoginApp(needBack: needBack);
-            break;
-          case "/about":
-            builder = (BuildContext context) => const AboutApp();
-            break;
-          case "/mail":
-            builder = (BuildContext context) => const MailListApp();
-            break;
-          case "/mailDetail":
-            String? postid;
-            String? mailType;
-            if (settings.arguments != null) {
-              var settingsMap = settings.arguments as Map;
-              postid = settingsMap['postid'] as String;
-              mailType = settingsMap['type'] as String;
-            } else {
-              return null;
-            }
-            builder = (BuildContext context) => MailDetailApp(postid: postid!, type: mailType!,);
-            break;
-          case "/mailNew":
-            String? parentid;
-            String? receiver;
-            if (settings.arguments != null) {
-              var settingsMap = settings.arguments as Map;
-              parentid = settingsMap['parentid'] as String?;
-              receiver = settingsMap['receiver'] as String?;
-            }
-            builder = (BuildContext context) => MailNewApp(parentid: parentid, receiver: receiver);
-            break;
-          case "/friend":
-            builder = (BuildContext context) => const FriendsApp();
-            break;
-          case "/search":
-            builder = (BuildContext context) => const SearchApp();
-            break;
-          case "/simpleSearchResult":
-            String? mode;
-            String? keyWord;
-            if (settings.arguments != null) {
-              var settingsMap = settings.arguments as Map;
-              mode = settingsMap['mode'] as String;
-              keyWord = settingsMap['keyWord'] as String;
-            } else {
-              return null;
-            }
-            builder = (BuildContext context) => SimpleSearchResultApp(mode: mode!, keyWord: keyWord!,);
-            break;
-          case "/complexSearchResult":
-            PostSearchSettings? pss;
-            if (settings.arguments != null) {
-              var settingsMap = settings.arguments as Map;
-              pss = settingsMap['settings'] as PostSearchSettings;
-            } else {
-              return null;
-            }
-            builder = (BuildContext context) => ComplexSearchResultApp(pss: pss!);
-            break;
-          case "/me":
-            if (globalUInfo.login) {
-              builder = (BuildContext context) => UserApp(uid: globalUInfo.uid);
-            } else {
-              builder = (BuildContext context) => const LoginApp();
-            }
-            break;
-          case "/user":
-            String userID = settings.arguments as String? ?? "15265";
-            builder = (BuildContext context) => UserApp(uid: userID, needBack: true,);
-            break;
-          case "/message":
-            builder = (BuildContext context) => MessagelistApp(brief: messageBrief);
-            break;
-          case "/messagePerson":
-            String userName = settings.arguments as String? ?? "deliver";
-            builder = (BuildContext context) => MessagePersonApp(userName: userName);
-            break;
-          case "/funfunfun":
-            builder = (BuildContext context) => const FunFunFunApp();
-            break;
-          case "/seeNoThem":
-            builder = (BuildContext context) => const SeeNoThemApp();
-            break;
-          case "/friendsPosts":
-            builder = (BuildContext context) => const FriendsPostsApp();
-            break;
-          case "/settings":
-            builder = (BuildContext context) => const SettingsApp();
-            break;
-          case "/home":
-          default:
-            builder = (BuildContext context) => HomeApp(messageCount: messageCount, mailCount: mailCount,);
-        }
-        return MaterialPageRoute(builder: builder, settings: settings);
-      },
+      routerDelegate: mainRouterDelegate,
+      // backButtonDispatcher: RootBackButtonDispatcher(),
     );
   }
 }

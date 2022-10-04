@@ -12,6 +12,7 @@ import '../utils.dart';
 import '../html_parser/read_thread_parser.dart';
 import '../globalvars.dart';
 import "./utils.dart";
+import '../router.dart' show nv2Push;
 
 class BigTenComponent extends StatefulWidget {
   const BigTenComponent({super.key});
@@ -276,7 +277,7 @@ class _FunFunFunPageState extends State<FunFunFunPage> {
         Card(
           child: ListTile(
             onTap: () {
-              Navigator.of(context).pushNamed('/seeNoThem');
+              nv2Push(context, '/seeNoThem');
             },
             title: const Text("不看ta"),
             trailing: const Icon(Icons.arrow_right),
@@ -285,7 +286,7 @@ class _FunFunFunPageState extends State<FunFunFunPage> {
         Card(
           child: ListTile(
             onTap: () {
-              Navigator.of(context).pushNamed('/friendsPosts');
+              nv2Push(context, '/friendsPosts');
             },
             title: const Text("朋友动态"),
             trailing: const Icon(Icons.arrow_right),
@@ -297,7 +298,7 @@ class _FunFunFunPageState extends State<FunFunFunPage> {
         Card(
           child: ListTile(
             onTap: () {
-              Navigator.of(context).pushNamed('/settings');
+              nv2Push(context, '/settings');
             },
             title: const Text("设置"),
             trailing: const Icon(Icons.arrow_right),

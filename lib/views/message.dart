@@ -13,6 +13,7 @@ import '../globalvars.dart';
 import '../utils.dart';
 import '../services_instance.dart';
 import '../services.dart' show MessageBriefNotifier;
+import '../router.dart' show nv2Push;
 
 class MessageListPage extends StatefulWidget {
   final MessageBriefNotifier users;
@@ -64,7 +65,7 @@ class _MessageListPageState extends State<MessageListPage> {
             return Card(
               child: ListTile(
                 onTap: () {
-                  Navigator.of(context).pushNamed('/messagePerson', arguments: e.text);
+                  nv2Push(context, '/messagePerson', arguments: e.text);
                 },
                 onLongPress: () {
                   if (e.text == "deliver") { return; }
@@ -225,7 +226,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
                         onTap: () {
                           if (link.startsWith("https://bbs.pku.edu.cn/v2/user.php")) {
                             var uid = link.split("=").last;
-                            Navigator.of(context).pushNamed("/user", arguments: uid);
+                            nv2Push(context, "/user", arguments: uid);
                           } else if (link.startsWith("https://bbs.pku.edu.cn/v2/post-read-single.php")) {
                             bdwmClient.get(link, headers: genHeaders2()).then((value) {
                               if (value == null) {

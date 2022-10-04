@@ -8,6 +8,7 @@ import '../bdwm/collection.dart';
 import '../bdwm/forward.dart';
 import './utils.dart';
 import '../bdwm/mail.dart' show bdwmOperateMail;
+import '../router.dart' show nv2Push;
 
 class MailListPage extends StatefulWidget {
   final MailListInfo mailListInfo;
@@ -28,7 +29,7 @@ class _MailListPageState extends State<MailListPage> {
         return Card(
           child: ListTile(
             onTap: () {
-              Navigator.of(context).pushNamed('/mailDetail', arguments: {
+              nv2Push(context, '/mailDetail', arguments: {
                 'postid': item.id,
                 'type': widget.type,
               });
@@ -47,7 +48,7 @@ class _MailListPageState extends State<MailListPage> {
                 if (item.uid.isEmpty) {
                   return;
                 }
-                Navigator.of(context).pushNamed('/user', arguments: item.uid);
+                nv2Push(context, '/user', arguments: item.uid);
               },
             ),
             title: Text.rich(
@@ -119,7 +120,7 @@ class _MailDetailPageState extends State<MailDetailPage> {
                 if (widget.mailDetailInfo.uid.isEmpty) {
                   return;
                 }
-                Navigator.of(context).pushNamed('/user', arguments: widget.mailDetailInfo.uid);
+                nv2Push(context, '/user', arguments: widget.mailDetailInfo.uid);
               },
             ),
             title: SelectableText(widget.mailDetailInfo.title),
@@ -153,7 +154,7 @@ class _MailDetailPageState extends State<MailDetailPage> {
               if (widget.type.isEmpty) // 收件箱
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pushNamed("/mailNew", arguments: {
+                    nv2Push(context, "/mailNew", arguments: {
                       'parentid': widget.postid,
                     });
                   },

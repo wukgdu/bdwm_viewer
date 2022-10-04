@@ -7,6 +7,7 @@ import '../html_parser/top10_parser.dart';
 import '../pages/read_thread.dart';
 import './utils.dart';
 import '../pages/detail_image.dart';
+import '../router.dart' show nv2Replace;
 
 class TopHomePage extends StatefulWidget {
   const TopHomePage({Key? key}) : super(key: key);
@@ -206,7 +207,7 @@ class _TopHomePageState extends State<TopHomePage> {
                           // isThreeLine: true,
                           trailing: IconButton(
                             icon: const Icon(Icons.login),
-                            onPressed: () { Navigator.pushReplacementNamed(context, '/login', arguments: {'needBack': false}); },
+                            onPressed: () { nv2Replace(context, '/login', arguments: {'needBack': false}); },
                           )
                         ),
                     ]

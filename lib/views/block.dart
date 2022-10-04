@@ -1,3 +1,4 @@
+import 'package:bdwm_viewer/router.dart';
 import 'package:flutter/material.dart';
 
 import './constants.dart';
@@ -25,10 +26,10 @@ class _BlockPageState extends State<BlockPage> {
             return Card(
               child: ListTile(
                 onTap: () {
-                  Navigator.of(context).pushNamed('/board', arguments: {
+                  nv2Push(context, '/board', arguments: {
                     'boardName': item.boardName,
                     'bid': item.bid,
-                  },);
+                  });
                 },
                 title: Text.rich(
                   TextSpan(

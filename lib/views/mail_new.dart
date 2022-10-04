@@ -17,6 +17,7 @@ import '../html_parser/utils.dart' show SignatureItem;
 import '../html_parser/mailnew_parser.dart';
 import './utils.dart';
 import './upload.dart';
+import '../router.dart' show nv2Pop;
 
 class MailNewPage extends StatefulWidget {
   final String? parentid;
@@ -235,7 +236,7 @@ class _MailNewPageState extends State<MailNewPage> {
                           child: const Text("知道了"),
                         ),
                       ).then((value) {
-                        Navigator.of(context).pop();
+                        nv2Pop(context);
                       },);
                     }
                   });
