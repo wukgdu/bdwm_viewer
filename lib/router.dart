@@ -361,13 +361,19 @@ class MainRouterDelegate extends RouterDelegate<MyRouteConfig>
 
   @override
   Future<bool> popRoute() async {
+    if (navigatorKey.currentContext == null) {
+      return Future.value(false);
+    }
+    var navigatorCanPop = Navigator.of(navigatorKey.currentContext!).canPop();
+    if (navigatorCanPop && (!onWaitExit)) {
+      // pop any dialog except exit dialog
+      Navigator.of(navigatorKey.currentContext!).pop();
+      return true;
+    }
     if (mainRoutes.length > 1) {
       mainRoutes.removeLast();
       notifyListeners();
       return Future.value(true);
-    }
-    if (navigatorKey.currentContext == null) {
-      return Future.value(false);
     }
     if (onWaitExit) { return false; }
     onWaitExit = true;
