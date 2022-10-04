@@ -1,8 +1,8 @@
-import 'package:bdwm_viewer/views/utils.dart';
 import 'package:flutter/material.dart';
 
 import '../globalvars.dart';
 import '../views/constants.dart';
+import '../views/utils.dart';
 
 class SettingsApp extends StatefulWidget {
   const SettingsApp({super.key});
@@ -63,6 +63,28 @@ class _SettingsAppState extends State<SettingsApp> {
               globalConfigInfo.autoClearImageCache = value;
               setState(() { });
             },
+          ),
+          const Divider(),
+          ListTile(
+            onTap: () async {
+              var vStr = await showTextDialog(context, "输入数字，否则无穷");
+              if (vStr==null) { return; }
+              var v = int.tryParse(vStr);
+              if (v==null) {
+                globalConfigInfo.maxPageNum = "无穷";
+              } else {
+                if (v < 2) {
+                  if (mounted) {
+                    showInformDialog(context, "请输入>=2的数字", "rt");
+                  }
+                } else {
+                  globalConfigInfo.maxPageNum = v.toString();
+                }
+              }
+              setState(() { });
+            },
+            title: const Text("只加载最新的页面"),
+            subtitle: Text("最新的 ${int.tryParse(globalConfigInfo.getMaxPageNum()) ?? '无穷'} 个"),
           ),
           const Divider(),
         ],
