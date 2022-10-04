@@ -318,7 +318,7 @@ class MainRouterDelegate extends RouterDelegate<MyRouteConfig>
       mainRoutes.add(MyRouteConfig.home());
     }
     int? maxPageNum = int.tryParse(globalConfigInfo.getMaxPageNum());
-    if (maxPageNum!=null && maxPageNum <= 0) { maxPageNum = null; }
+    if (maxPageNum!=null && (maxPageNum <= 0 || maxPageNum >= mainRoutes.length)) { maxPageNum = null; }
     var toIter = maxPageNum != null ? mainRoutes.reversed : mainRoutes;
     int sNum = 0;
     for (var s in toIter) {

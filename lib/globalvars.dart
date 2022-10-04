@@ -286,7 +286,7 @@ class BDWMConfig {
   bool showWelcome = true;
   bool useImgInMessage = true;
   bool autoClearImageCache = false;
-  String maxPageNum = "5";
+  String maxPageNum = "8";
   Set<String> seeNoThem = {};
   String storage = "bdwmconfig.json";
 
@@ -314,7 +314,7 @@ class BDWMConfig {
     autoClearImageCache = jsonContent['autoClearImageCache'] ?? false;
     lastLoginTime = jsonContent['lastLoginTime'] ?? "";
     lastCheckTime = jsonContent['lastCheckTime'] ?? "";
-    maxPageNum = jsonContent['maxPageNum'] ?? "5";
+    maxPageNum = jsonContent['maxPageNum'] ?? "8";
     List seeNoHimHerList = jsonContent['seeNoThem'] ?? <String>[];
     seeNoThem = Set<String>.from(seeNoHimHerList.map((e) => e as String));
   }
