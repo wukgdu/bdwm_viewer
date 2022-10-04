@@ -23,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   }
   TextEditingController usernameValue = TextEditingController();
   TextEditingController passwordValue = TextEditingController();
+  bool hidePassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -37,14 +38,26 @@ class _LoginPageState extends State<LoginPage> {
                 hintText: '用户名',
               ),
               controller: usernameValue,
+              autocorrect: false,
             ),
             TextFormField(
-              decoration: const InputDecoration(
-                icon: Icon(Icons.password_rounded),
+              decoration: InputDecoration(
+                icon: const Icon(Icons.password_rounded),
                 hintText: '密码',
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      hidePassword = !hidePassword;
+                    });
+                  },
+                  icon: hidePassword
+                  ? const Icon(Icons.remove_red_eye_outlined)
+                  : const Icon(Icons.lock),
+                ),
               ),
-              obscureText: true,
+              obscureText: hidePassword,
               controller: passwordValue,
+              autocorrect: false,
             ),
             const SizedBox(height: 24,),
             ElevatedButton(
