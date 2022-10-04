@@ -56,7 +56,7 @@ class _SettingsAppState extends State<SettingsApp> {
           const Divider(),
           SwitchListTile(
             title: const Text("自动清理图片缓存"),
-            subtitle: const Text("主题帖页面重载或退出时清理"),
+            subtitle: const Text("退出主题帖页面时清理"),
             activeColor: bdwmPrimaryColor,
             value: globalConfigInfo.autoClearImageCache,
             onChanged: (value) {

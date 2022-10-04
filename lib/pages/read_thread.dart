@@ -6,6 +6,7 @@ import '../views/utils.dart';
 import '../html_parser/read_thread_parser.dart';
 import '../bdwm/req.dart';
 import '../globalvars.dart';
+import '../utils.dart' show clearAllExtendedImageCache;
 
 class ThreadApp extends StatefulWidget {
   final String bid;
@@ -46,6 +47,7 @@ class _ThreadAppState extends State<ThreadApp> {
   @override
   void dispose() {
     Future.microtask(() => getDataCancelable.cancel(),);
+    clearAllExtendedImageCache(really: globalConfigInfo.getAutoClearImageCache());
     super.dispose();
   }
 

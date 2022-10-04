@@ -9,7 +9,6 @@ import '../bdwm/collection.dart';
 import '../bdwm/forward.dart';
 import './collection.dart';
 import './utils.dart';
-import '../utils.dart' show clearAllExtendedImageCache;
 import './constants.dart';
 import '../html_parser/read_thread_parser.dart';
 import '../globalvars.dart' show globalConfigInfo;
@@ -751,7 +750,6 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
   @override
   void dispose() {
     // _scrollController.dispose();
-    clearAllExtendedImageCache(really: globalConfigInfo.getAutoClearImageCache());
     super.dispose();
   }
 
