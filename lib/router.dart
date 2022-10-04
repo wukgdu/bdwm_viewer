@@ -299,6 +299,7 @@ class MainRouterDelegate extends RouterDelegate<MyRouteConfig>
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   List<MyRouteConfig> mainRoutes = [];
   late final MainPageBuilder mainPageBuilder;
+  bool onWaitExit = false;
 
   MainRouterDelegate() {
     mainPageBuilder = MainPageBuilder.empty();
@@ -368,8 +369,11 @@ class MainRouterDelegate extends RouterDelegate<MyRouteConfig>
     if (navigatorKey.currentContext == null) {
       return Future.value(false);
     }
+    if (onWaitExit) { return false; }
+    onWaitExit = true;
     var value = await showConfirmDialog(navigatorKey.currentContext!, "退出应用", "rt");
     if (value == null || value != "yes") {
+      onWaitExit = false;
       return true;
     }
     return false;
