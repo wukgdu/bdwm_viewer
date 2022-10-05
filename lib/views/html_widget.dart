@@ -238,7 +238,8 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
         );
       } else if (ele.localName == "p") {
         if (ele.classes.contains('quotehead') || ele.classes.contains('blockquote')) {
-          res.add(const WidgetSpan(child: Icon(Icons.format_quote, size: 14, color: Color(0xffA6DDE3))));
+          var contentSize = ts?.fontSize ?? 13;
+          res.add(WidgetSpan(child: Icon(Icons.format_quote, size: contentSize-1, color: const Color(0xffA6DDE3))));
           var addText = ele.text;
           if (ele.classes.contains('quotehead') && (nickName != null)) {
             int p1 = addText.indexOf('(');
@@ -249,7 +250,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
               }
             }
           }
-          res.add(TextSpan(text: addText, style: const TextStyle(color: Colors.grey, fontSize: 12)));
+          res.add(TextSpan(text: addText, style: TextStyle(color: Colors.grey, fontSize: contentSize-1)));
         } else if (ele.classes.contains("zz-info")) {
           res.add(TextSpan(
             children: travelHtml(ele, context: context, ts: ts),
