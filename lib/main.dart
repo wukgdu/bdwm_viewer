@@ -44,11 +44,22 @@ class _MainPageState extends State<MainPage> {
   MessageBriefNotifier messageBrief = MessageBriefNotifier([]);
   late final MainRouterDelegate mainRouterDelegate;
 
+  void changeBadgeStatus(int count) {
+    if (globalConfigInfo.showBadge == false) { return; }
+    if (count != 0) {
+      updateOBViewerBadgeCount(messageCount.value+mailCount.value);
+    } else {
+      removeOBViewerBadge();
+    }
+  }
+
   void updateUnreadMessageData() {
     unreadMessage.updateValue((NotifyMessageInfo info) {
       if (info.count != messageCount.value) {
         messageCount.value = info.count;
       }
+      var countSum = messageCount.value+mailCount.value;
+      changeBadgeStatus(countSum);
       messageBrief.newArray(info);
     });
   }
@@ -58,6 +69,8 @@ class _MainPageState extends State<MainPage> {
       if (info.count != mailCount.value) {
         mailCount.value = info.count;
       }
+      var countSum = messageCount.value+mailCount.value;
+      changeBadgeStatus(countSum);
     });
   }
 

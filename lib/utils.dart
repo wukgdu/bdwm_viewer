@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:quick_notify/quick_notify.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:extended_image/extended_image.dart';
@@ -26,6 +28,23 @@ Future<bool> checkAndRequestPermission(Permission p) async {
     }
   }
   return couldDoIt;
+}
+
+void updateOBViewerBadgeCount(int count) async {
+  // if (Platform.isAndroid || Platform.isMacOS || Platform.isIOS) {
+  if (Platform.isAndroid) {
+    if (await FlutterAppBadger.isAppBadgeSupported()) {
+      FlutterAppBadger.updateBadgeCount(count);
+    }
+  }
+}
+
+void removeOBViewerBadge() async {
+  if (Platform.isAndroid) {
+    if (await FlutterAppBadger.isAppBadgeSupported()) {
+      FlutterAppBadger.removeBadge();
+    }
+  }
 }
 
 void quickNotify(String title, String content) async {
