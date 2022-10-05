@@ -65,17 +65,6 @@ class _SettingsAppState extends State<SettingsApp> {
             },
           ),
           const Divider(),
-          SwitchListTile(
-            title: const Text("图标显示未读消息数量"),
-            subtitle: const Text("部分安卓设备支持"),
-            activeColor: bdwmPrimaryColor,
-            value: globalConfigInfo.showBadge,
-            onChanged: (value) {
-              globalConfigInfo.showBadge = value;
-              setState(() { });
-            },
-          ),
-          const Divider(),
           ListTile(
             onTap: () async {
               var vStr = await showTextDialog(context, "[8, 24]的数字", inputNumber: true);

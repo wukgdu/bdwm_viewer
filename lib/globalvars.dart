@@ -289,7 +289,6 @@ class BDWMConfig {
   bool extraThread = false;
   double contentFontSize = 16.0;
   String maxPageNum = "8";
-  bool showBadge = true;
   Set<String> seeNoThem = {};
   String storage = "bdwmconfig.json";
 
@@ -311,7 +310,6 @@ class BDWMConfig {
       "maxPageNum": maxPageNum,
       "extraThread": extraThread,
       "contentFontSize": contentFontSize,
-      "showBadge": showBadge,
     };
   }
   void fromJson(Map<String, dynamic> jsonContent) {
@@ -319,7 +317,6 @@ class BDWMConfig {
     useImgInMessage = jsonContent['useImgInMessage'] ?? true;
     autoClearImageCache = jsonContent['autoClearImageCache'] ?? false;
     extraThread = jsonContent['extraThread'] ?? false;
-    showBadge = jsonContent['showBadge'] ?? true;
     lastLoginTime = jsonContent['lastLoginTime'] ?? "";
     lastCheckTime = jsonContent['lastCheckTime'] ?? "";
     maxPageNum = jsonContent['maxPageNum'] ?? "8";
@@ -338,17 +335,6 @@ class BDWMConfig {
   Future<bool> setContentFontSize(double newValue) async {
     return await lock.synchronized(() async {
       contentFontSize = newValue;
-      return await update();
-    });
-  }
-
-  bool getShowBadge() {
-    return showBadge;
-  }
-
-  Future<bool> setShowBadge(bool newValue) async {
-    return await lock.synchronized(() async {
-      showBadge = newValue;
       return await update();
     });
   }
