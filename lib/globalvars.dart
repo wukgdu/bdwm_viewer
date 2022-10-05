@@ -285,7 +285,7 @@ class BDWMConfig {
   String lastLoginTime = "";
   bool showWelcome = true;
   bool useImgInMessage = true;
-  bool autoClearImageCache = false;
+  bool autoClearImageCache = true;
   bool extraThread = false;
   double contentFontSize = 16.0;
   String maxPageNum = "8";
@@ -315,7 +315,7 @@ class BDWMConfig {
   void fromJson(Map<String, dynamic> jsonContent) {
     showWelcome = jsonContent['showWelcome'] ?? true;
     useImgInMessage = jsonContent['useImgInMessage'] ?? true;
-    autoClearImageCache = jsonContent['autoClearImageCache'] ?? false;
+    autoClearImageCache = jsonContent['autoClearImageCache'] ?? true;
     extraThread = jsonContent['extraThread'] ?? false;
     lastLoginTime = jsonContent['lastLoginTime'] ?? "";
     lastCheckTime = jsonContent['lastCheckTime'] ?? "";

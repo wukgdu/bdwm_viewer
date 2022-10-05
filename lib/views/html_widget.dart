@@ -16,6 +16,8 @@ import '../html_parser/board_parser.dart' show directToThread;
 import '../pages/detail_image.dart';
 import '../router.dart' show nv2Push;
 
+const int _cacheHeight = 150;
+
 class WrapImageNetwork extends StatefulWidget {
   final String imgLink;
   final String? imgAlt;
@@ -57,6 +59,7 @@ class _WrapImageNetworkState extends State<WrapImageNetwork> {
       handleLoadingProgress: true,
       filterQuality: FilterQuality.low,
       cancelToken: cancelIt,
+      cacheHeight: _cacheHeight,
       timeLimit: const Duration(seconds: 30),
       loadStateChanged: (ExtendedImageState state) {
         switch (state.extendedImageLoadState) {
@@ -290,9 +293,9 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
             res.add(WidgetSpan(
               child: GestureDetector(
                 child: Container(
-                  constraints: const BoxConstraints(maxHeight: 150),
+                  constraints: BoxConstraints(maxHeight: _cacheHeight.toDouble()),
                   // alignment: Alignment.centerLeft,
-                  child: Image.memory(data,)
+                  child: Image.memory(data, cacheHeight: _cacheHeight,)
                 ),
                 onTap: () {
                   if (context != null) {
@@ -307,7 +310,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
             res.add(WidgetSpan(
               child: GestureDetector(
                 child: Container(
-                  constraints: const BoxConstraints(maxHeight: 150),
+                  constraints: BoxConstraints(maxHeight: _cacheHeight.toDouble()),
                   // alignment: Alignment.centerLeft,
                   child: WrapImageNetwork(imgLink: absImgSrc(src), imgAlt: alt),
                   // child: Image.network(
