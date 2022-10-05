@@ -47,7 +47,7 @@ class _MainPageState extends State<MainPage> {
   void changeBadgeStatus(int count) {
     if (globalConfigInfo.showBadge == false) { return; }
     if (count != 0) {
-      updateOBViewerBadgeCount(messageCount.value+mailCount.value);
+      updateOBViewerBadgeCount(count);
     } else {
       removeOBViewerBadge();
     }
