@@ -286,6 +286,7 @@ class BDWMConfig {
   bool showWelcome = true;
   bool useImgInMessage = true;
   bool autoClearImageCache = false;
+  bool extraThread = false;
   String maxPageNum = "8";
   Set<String> seeNoThem = {};
   String storage = "bdwmconfig.json";
@@ -306,12 +307,14 @@ class BDWMConfig {
       "seeNoThem": seeNoThem.toList(),
       "autoClearImageCache": autoClearImageCache,
       "maxPageNum": maxPageNum,
+      "extraThread": extraThread,
     };
   }
   void fromJson(Map<String, dynamic> jsonContent) {
     showWelcome = jsonContent['showWelcome'] ?? true;
     useImgInMessage = jsonContent['useImgInMessage'] ?? true;
     autoClearImageCache = jsonContent['autoClearImageCache'] ?? false;
+    extraThread = jsonContent['extraThread'] ?? false;
     lastLoginTime = jsonContent['lastLoginTime'] ?? "";
     lastCheckTime = jsonContent['lastCheckTime'] ?? "";
     maxPageNum = jsonContent['maxPageNum'] ?? "8";
@@ -320,6 +323,17 @@ class BDWMConfig {
   }
   String gist() {
     return jsonEncode(toJson());
+  }
+
+  bool getExtraThread() {
+    return extraThread;
+  }
+
+  Future<bool> setExtraThread(bool newValue) async {
+    return await lock.synchronized(() async {
+      extraThread = newValue;
+      return await update();
+    });
   }
 
   bool getAutoClearImageCache() {

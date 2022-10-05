@@ -371,8 +371,7 @@ class MainRouterDelegate extends RouterDelegate<MyRouteConfig>
       return true;
     }
     if (mainRoutes.length > 1) {
-      mainRoutes.removeLast();
-      notifyListeners();
+      pop();
       return Future.value(true);
     }
     if (onWaitExit) { return false; }

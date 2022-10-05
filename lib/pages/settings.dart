@@ -87,6 +87,17 @@ class _SettingsAppState extends State<SettingsApp> {
             subtitle: Text("最新的 ${int.tryParse(globalConfigInfo.getMaxPageNum()) ?? '无穷'} 个"),
           ),
           const Divider(),
+          SwitchListTile(
+            title: const Text("使用额外线程查询未读消息"),
+            subtitle: const Text("可能会更流畅。保存后重启生效"),
+            activeColor: bdwmPrimaryColor,
+            value: globalConfigInfo.extraThread,
+            onChanged: (value) {
+              globalConfigInfo.extraThread = value;
+              setState(() { });
+            },
+          ),
+          const Divider(),
         ],
       )
     );

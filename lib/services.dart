@@ -25,6 +25,7 @@ class NotifyMessage {
   late Isolate worker;
   late StreamQueue<dynamic> events;
   Future<void> reInitWorker() async {
+    if (globalConfigInfo.getExtraThread() == false) { return; }
     // should call after initWork
     await disposeWorker();
     pToWorker = null;
@@ -37,6 +38,7 @@ class NotifyMessage {
     pToWorker = await events.next;
   }
   Future<void> initWorker() async {
+    if (globalConfigInfo.getExtraThread() == false) { return; }
     pFromWorker = ReceivePort();
     worker = await Isolate.spawn(
       (List<dynamic> argv) { messageWorkerWork(argv[0], argv[1]); },
@@ -102,11 +104,18 @@ class NotifyMessage {
     lastUnreadInfo.clear();
   }
 
+  Future<List<UnreadMessageInfo>?> getData() async {
+    if (globalConfigInfo.getExtraThread() == false) {
+      return bdwmGetUnreadMessageCount();
+    }
+    return updateByWorker();
+  }
+
   void updateValue(Function callBack) {
     // return;
     if (globalUInfo.login == false) { return; }
     // bdwmGetUnreadMessageCount().then((value) {
-    updateByWorker().then((value) {
+    getData().then((value) {
       if (value == null) {
         return;
       }
@@ -148,6 +157,7 @@ class NotifyMail {
   late Isolate worker;
   late StreamQueue<dynamic> events;
   Future<void> reInitWorker() async {
+    if (globalConfigInfo.getExtraThread() == false) { return; }
     // should call after initWork
     await disposeWorker();
     pToWorker = null;
@@ -160,6 +170,7 @@ class NotifyMail {
     pToWorker = await events.next;
   }
   Future<void> initWorker() async {
+    if (globalConfigInfo.getExtraThread() == false) { return; }
     pFromWorker = ReceivePort();
     worker = await Isolate.spawn(
       (List<dynamic> argv) { mailWorkerWork(argv[0], argv[1]); },
@@ -205,11 +216,18 @@ class NotifyMail {
     return notifyIt;
   }
 
+  Future<UnreadMailInfo?> getData() {
+    if (globalConfigInfo.getExtraThread() == false) {
+      return bdwmGetUnreadMailCount();
+    }
+    return updateByWorker();
+  }
+
   void updateValue(Function callBack) {
     // return;
     if (globalUInfo.login == false) { return; }
     // bdwmGetUnreadMailCount().then((value) {
-    updateByWorker().then((value) {
+    getData().then((value) {
       if (value == null) {
         return;
       }
