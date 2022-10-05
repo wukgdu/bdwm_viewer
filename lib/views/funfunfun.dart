@@ -214,13 +214,13 @@ class _ImageCacheComponentState extends State<ImageCacheComponent> {
                 future: computeDiskImageCache(),
                 builder:(context, snapshot) {
                   if (snapshot.connectionState != ConnectionState.done) {
-                    return const Text("磁盘：计算中");
+                    return const Text("硬盘：计算中");
                   }
                   if (snapshot.hasError || !snapshot.hasData) {
-                    return const Text("磁盘：计算失败");
+                    return const Text("硬盘：计算失败");
                   }
                   int diskSize = snapshot.data as int;
-                  return Text("磁盘：${diskSize==0?"":">"}${formatSize(diskSize)}");
+                  return Text("硬盘：${diskSize==0?"":">"}${formatSize(diskSize)}");
                 },
               ),
             ),
