@@ -29,13 +29,7 @@ class NotifyMessage {
     // should call after initWork
     await disposeWorker();
     pToWorker = null;
-    pFromWorker = ReceivePort();
-    worker = await Isolate.spawn(
-      (List<dynamic> argv) { messageWorkerWork(argv[0], argv[1]); },
-      [pFromWorker.sendPort, globalUInfo],
-    );
-    events = StreamQueue<dynamic>(pFromWorker);
-    pToWorker = await events.next;
+    await initWorker();
   }
   Future<void> initWorker() async {
     if (globalConfigInfo.getExtraThread() == false) { return; }
@@ -161,13 +155,7 @@ class NotifyMail {
     // should call after initWork
     await disposeWorker();
     pToWorker = null;
-    pFromWorker = ReceivePort();
-    worker = await Isolate.spawn(
-      (List<dynamic> argv) { mailWorkerWork(argv[0], argv[1]); },
-      [pFromWorker.sendPort, globalUInfo],
-    );
-    events = StreamQueue<dynamic>(pFromWorker);
-    pToWorker = await events.next;
+    await initWorker();
   }
   Future<void> initWorker() async {
     if (globalConfigInfo.getExtraThread() == false) { return; }
