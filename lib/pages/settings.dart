@@ -67,6 +67,23 @@ class _SettingsAppState extends State<SettingsApp> {
           const Divider(),
           ListTile(
             onTap: () async {
+              var vStr = await showTextDialog(context, "[8, 24]的数字", inputNumber: true);
+              if (vStr==null) { return; }
+              var v = double.tryParse(vStr);
+              if (v==null) { return; }
+              if (8.0 <= v  && v <= 24.0) {
+                globalConfigInfo.contentFontSize = v;
+              } else {
+                return;
+              }
+              setState(() { });
+            },
+            title: const Text("正文字体大小"),
+            subtitle: Text("主题帖和文集的正文字体大小：${globalConfigInfo.contentFontSize}"),
+          ),
+          const Divider(),
+          ListTile(
+            onTap: () async {
               var vStr = await showTextDialog(context, "输入数字，否则无穷");
               if (vStr==null) { return; }
               var v = int.tryParse(vStr);

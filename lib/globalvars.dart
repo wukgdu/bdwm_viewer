@@ -287,6 +287,7 @@ class BDWMConfig {
   bool useImgInMessage = true;
   bool autoClearImageCache = false;
   bool extraThread = false;
+  double contentFontSize = 16.0;
   String maxPageNum = "8";
   Set<String> seeNoThem = {};
   String storage = "bdwmconfig.json";
@@ -308,6 +309,7 @@ class BDWMConfig {
       "autoClearImageCache": autoClearImageCache,
       "maxPageNum": maxPageNum,
       "extraThread": extraThread,
+      "contentFontSize": contentFontSize,
     };
   }
   void fromJson(Map<String, dynamic> jsonContent) {
@@ -318,11 +320,23 @@ class BDWMConfig {
     lastLoginTime = jsonContent['lastLoginTime'] ?? "";
     lastCheckTime = jsonContent['lastCheckTime'] ?? "";
     maxPageNum = jsonContent['maxPageNum'] ?? "8";
+    contentFontSize = jsonContent['contentFontSize'] ?? 16.0;
     List seeNoHimHerList = jsonContent['seeNoThem'] ?? <String>[];
     seeNoThem = Set<String>.from(seeNoHimHerList.map((e) => e as String));
   }
   String gist() {
     return jsonEncode(toJson());
+  }
+
+  double getContentFontSize() {
+    return contentFontSize;
+  }
+
+  Future<bool> setContentFontSize(double newValue) async {
+    return await lock.synchronized(() async {
+      contentFontSize = newValue;
+      return await update();
+    });
   }
 
   bool getExtraThread() {

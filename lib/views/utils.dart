@@ -111,7 +111,7 @@ Future<String?> showPageDialog(BuildContext context, int curPage, int maxPage) {
   );
 }
 
-Future<String?> showTextDialog(BuildContext context, String title) {
+Future<String?> showTextDialog(BuildContext context, String title, {bool inputNumber=false}) {
   TextEditingController textValue = TextEditingController();
   Widget content() {
     return Row(
@@ -121,9 +121,7 @@ Future<String?> showTextDialog(BuildContext context, String title) {
         Expanded(
           child: TextField(
             controller: textValue,
-            // decoration: InputDecoration(
-            // ),
-            // keyboardType: const TextInputType.numberWithOptions(),
+            keyboardType: inputNumber == true ? const TextInputType.numberWithOptions() : null,
           ),
         ),
       ],

@@ -7,6 +7,7 @@ import 'package:flutter_treeview/flutter_treeview.dart';
 import '../bdwm/collection.dart';
 import '../html_parser/collection_parser.dart';
 import './constants.dart';
+import '../globalvars.dart' show globalConfigInfo;
 import './utils.dart' show showConfirmDialog, showInformDialog, showAlertDialog;
 import './read_thread.dart' show AttachmentComponent;
 import './html_widget.dart';
@@ -92,6 +93,7 @@ class CollectionArticlePage extends StatefulWidget {
 }
 
 class _CollectionArticlePageState extends State<CollectionArticlePage> {
+  final _contentFont = TextStyle(fontSize: globalConfigInfo.contentFontSize, fontWeight: FontWeight.normal);
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -118,7 +120,7 @@ class _CollectionArticlePageState extends State<CollectionArticlePage> {
         Card(
           child: Container(
             padding: const EdgeInsets.all(10.0),
-            child: HtmlComponent(widget.collectionArticle.content),
+            child: HtmlComponent(widget.collectionArticle.content, ts: _contentFont,),
           ),
         ),
         if (widget.collectionArticle.attachmentInfo.isNotEmpty)

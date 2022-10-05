@@ -532,7 +532,7 @@ class OnePostComponent extends StatefulWidget {
 
 class _OnePostComponentState extends State<OnePostComponent> {
   bool get simpleAttachment => false;
-  final _contentFont = const TextStyle(fontSize: 16, fontWeight: FontWeight.normal);
+  final _contentFont = TextStyle(fontSize: globalConfigInfo.contentFontSize, fontWeight: FontWeight.normal);
   late bool hideIt;
   @override
   void initState() {
