@@ -80,6 +80,12 @@ class _SettingsAppState extends State<SettingsApp> {
             },
             title: const Text("正文字体大小"),
             subtitle: Text("主题帖和文集的正文字体大小：${globalConfigInfo.contentFontSize}"),
+            trailing: Container(
+              margin: const EdgeInsets.only(right: 10),
+              alignment: Alignment.center,
+              width: 40,
+              child: Text("字", style: TextStyle(fontSize: globalConfigInfo.contentFontSize)),
+            ),
           ),
           const Divider(),
           ListTile(
