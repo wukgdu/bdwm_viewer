@@ -484,3 +484,117 @@ class BDWMConfig {
 }
 
 var globalConfigInfo = BDWMConfig.empty();
+
+class RecentThreadItemInfo {
+  String link = "";
+  String title = "";
+  String userName = "";
+  String boardName = "";
+
+  RecentThreadItemInfo({
+    required this.link,
+    required this.title,
+    required this.userName,
+    required this.boardName,
+  });
+  RecentThreadItemInfo.fromJson(Map jsonObject) {
+    fromJson(jsonObject);
+  }
+  Map toJson() {
+    return {
+      'link': link,
+      'title': title,
+      'userName': userName,
+      'boardName': boardName,
+    };
+  }
+  void fromJson(Map jsonObject) {
+    link = jsonObject['link'] ?? "";
+    title = jsonObject['title'] ?? "";
+    userName = jsonObject['userName'] ?? "";
+    boardName = jsonObject['boardName'] ?? "";
+  }
+}
+
+class RecentThreadInfo {
+  static const maxCount = 100;
+  List<RecentThreadItemInfo> items = [];
+  int get count => items.length;
+  static const String storage = "bdwmhistory.json";
+
+  RecentThreadInfo({required this.items});
+  RecentThreadInfo.empty();
+  RecentThreadInfo.initFromFile() {
+    init();
+  }
+
+  List toJson() {
+    return items;
+  }
+
+  void fromJson(List jsonList) {
+    items.clear();
+    for (var jo in jsonList) {
+      var jm = jo as Map;
+      items.add(RecentThreadItemInfo.fromJson(jm));
+    }
+  }
+
+  Future<bool> addOne({required String link, required String title, required String userName, required String boardName}) async {
+    items.removeWhere((element) => element.link == link);
+    if (count >= maxCount) {
+      items.removeAt(0);
+    }
+    items.add(RecentThreadItemInfo(link: link, title: title, userName: userName, boardName: boardName));
+    await update();
+    return true;
+  }
+
+  Future<bool> removeOne(String link) async {
+    items.removeWhere((element) => element.link == link);
+    await update();
+    return true;
+  }
+
+  Future<bool> removeAll() async {
+    items.clear();
+    await update();
+    return true;
+  }
+
+  Future<bool> init() async {
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    String filename = "$dir/$storage";
+    // debugPrint(filename);
+    Future<void> writeInit() async {
+      var file = File(filename).openWrite();
+      file.write(jsonEncode(toJson()));
+      await file.flush();
+      await file.close();
+    }
+    if (File(filename).existsSync()) {
+      var content = File(filename).readAsStringSync();
+      if (content.isEmpty) {
+        await writeInit();
+      } else {
+        List jsonContent = jsonDecode(content);
+        fromJson(jsonContent);
+      }
+    } else {
+      await writeInit();
+    }
+    return true;
+  }
+
+  Future<bool> update() async {
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    String filename = "$dir/$storage";
+    var file = File(filename).openWrite();
+    file.write(jsonEncode(toJson()));
+    await file.flush();
+    await file.close();
+    return true;
+  }
+}
+
+var globalThreadHistory = RecentThreadInfo.empty();

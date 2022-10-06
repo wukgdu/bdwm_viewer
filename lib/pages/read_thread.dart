@@ -29,6 +29,7 @@ class _ThreadAppState extends State<ThreadApp> {
   late CancelableOperation getDataCancelable;
   String? postid;
   bool tiebaForm = false;
+  bool firstTime = true;
   // Future<ThreadPageInfo>? _future;
   @override
   void initState() {
@@ -43,6 +44,13 @@ class _ThreadAppState extends State<ThreadApp> {
     getDataCancelable = CancelableOperation.fromFuture(getData(firstTime: true), onCancel: () {
       debugPrint("cancel it");
     },);
+  }
+
+  void addHistory({required String bid, required String threadid, required String title, required String userName, required String boardName}) {
+    if (!firstTime) { return; }
+    firstTime = true;
+    String link = "$v2Host/post-read.php?bid=$bid&threadid=$threadid";
+    globalThreadHistory.addOne(link: link, title: title, userName: userName, boardName: boardName);
   }
 
   @override
@@ -128,6 +136,12 @@ class _ThreadAppState extends State<ThreadApp> {
         if (threadPageInfo.page != page) {
           page = threadPageInfo.page;
         }
+        String userName = "未知";
+        if (threadPageInfo.posts.isNotEmpty) {
+          userName = threadPageInfo.posts.first.authorInfo.userName;
+        }
+        addHistory(bid: widget.bid, threadid: widget.threadid,
+          title: threadPageInfo.title, userName: userName, boardName: threadPageInfo.board.text);
         return Scaffold(
           appBar: AppBar(
             title: Text(threadPageInfo.board.text.split('(').first),

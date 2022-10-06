@@ -25,6 +25,7 @@ import './pages/see_no_them.dart';
 import './pages/friends_posts.dart';
 import './pages/settings.dart';
 import './pages/detail_image.dart';
+import './pages/recent_thread.dart';
 import './views/search.dart' show PostSearchSettings;
 import './services.dart';
 import './globalvars.dart';
@@ -221,6 +222,8 @@ class MainPageBuilder {
         return MessagePersonApp(userName: userName);
       case "/funfunfun":
         return const FunFunFunApp();
+      case "/recentThread":
+        return const RecentThreadApp();
       case "/seeNoThem":
         return const SeeNoThemApp();
       case "/friendsPosts":
