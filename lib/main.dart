@@ -23,6 +23,7 @@ void main() async {
   await globalUInfo.init();
   await globalContactInfo.init();
   await globalConfigInfo.init();
+  await globalThreadHistory.init();
   checkUpdateByTime();
   await unreadMessage.initWorker();
   await unreadMail.initWorker();
