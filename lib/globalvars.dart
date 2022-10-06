@@ -287,6 +287,7 @@ class BDWMConfig {
   bool useImgInMessage = true;
   bool autoClearImageCache = true;
   bool extraThread = false;
+  bool highQualityPreview = false;
   double contentFontSize = 16.0;
   String maxPageNum = "8";
   Set<String> seeNoThem = {};
@@ -310,6 +311,7 @@ class BDWMConfig {
       "maxPageNum": maxPageNum,
       "extraThread": extraThread,
       "contentFontSize": contentFontSize,
+      "highQualityPreview": highQualityPreview,
     };
   }
   void fromJson(Map<String, dynamic> jsonContent) {
@@ -317,6 +319,7 @@ class BDWMConfig {
     useImgInMessage = jsonContent['useImgInMessage'] ?? true;
     autoClearImageCache = jsonContent['autoClearImageCache'] ?? true;
     extraThread = jsonContent['extraThread'] ?? false;
+    highQualityPreview = jsonContent['highQualityPreview'] ?? false;
     lastLoginTime = jsonContent['lastLoginTime'] ?? "";
     lastCheckTime = jsonContent['lastCheckTime'] ?? "";
     maxPageNum = jsonContent['maxPageNum'] ?? "8";
@@ -335,6 +338,17 @@ class BDWMConfig {
   Future<bool> setContentFontSize(double newValue) async {
     return await lock.synchronized(() async {
       contentFontSize = newValue;
+      return await update();
+    });
+  }
+
+  bool getHighQualityPreview() {
+    return highQualityPreview;
+  }
+
+  Future<bool> setHighQualityPreview(bool newValue) async {
+    return await lock.synchronized(() async {
+      highQualityPreview = newValue;
       return await update();
     });
   }

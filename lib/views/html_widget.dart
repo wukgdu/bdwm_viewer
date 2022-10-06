@@ -11,7 +11,7 @@ import './constants.dart';
 import '../bdwm/req.dart';
 import '../pages/read_thread.dart';
 import '../html_parser/utils.dart';
-import '../globalvars.dart' show genHeaders2;
+import '../globalvars.dart' show genHeaders2, globalConfigInfo;
 import '../html_parser/board_parser.dart' show directToThread;
 import '../pages/detail_image.dart';
 import '../router.dart' show nv2Push;
@@ -54,12 +54,12 @@ class _WrapImageNetworkState extends State<WrapImageNetwork> {
       fit: BoxFit.contain,
       cache: true,
       enableMemoryCache: true,
-      clearMemoryCacheWhenDispose: false,
+      clearMemoryCacheWhenDispose: globalConfigInfo.getHighQualityPreview(),
       clearMemoryCacheIfFailed: true,
       handleLoadingProgress: true,
-      filterQuality: FilterQuality.low,
+      filterQuality: globalConfigInfo.getHighQualityPreview() ? FilterQuality.high : FilterQuality.low,
       cancelToken: cancelIt,
-      cacheHeight: _cacheHeight,
+      cacheHeight: globalConfigInfo.getHighQualityPreview() ? null : _cacheHeight,
       timeLimit: const Duration(seconds: 30),
       loadStateChanged: (ExtendedImageState state) {
         switch (state.extendedImageLoadState) {
@@ -295,7 +295,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
                 child: Container(
                   constraints: BoxConstraints(maxHeight: _cacheHeight.toDouble()),
                   // alignment: Alignment.centerLeft,
-                  child: Image.memory(data, cacheHeight: _cacheHeight,)
+                  child: Image.memory(data, cacheHeight: globalConfigInfo.getHighQualityPreview() ? null : _cacheHeight,)
                 ),
                 onTap: () {
                   if (context != null) {

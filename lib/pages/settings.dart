@@ -55,6 +55,17 @@ class _SettingsAppState extends State<SettingsApp> {
           ),
           const Divider(),
           SwitchListTile(
+            title: const Text("预览图片质量"),
+            subtitle: const Text("高（仅限正文和签名档中嵌入的预览图片）"),
+            activeColor: bdwmPrimaryColor,
+            value: globalConfigInfo.highQualityPreview,
+            onChanged: (value) {
+              globalConfigInfo.highQualityPreview = value;
+              setState(() { });
+            },
+          ),
+          const Divider(),
+          SwitchListTile(
             title: const Text("自动清理图片缓存"),
             subtitle: const Text("退出主题帖页面时清理"),
             activeColor: bdwmPrimaryColor,
