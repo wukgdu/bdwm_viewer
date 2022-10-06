@@ -713,7 +713,41 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
   // final _scrollController = ScrollController();
   final ItemScrollController itemScrollController = ItemScrollController();
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
+  var newOrder = <TiebaFormItemInfo>[];
   String? postid;
+
+  void computeNewOrder() {
+    newOrder = computeTiebaIndex();
+    List<List<int>> ancestorLists = [];
+    for (var ele in newOrder) {
+      var aPList = <int>[];
+      var sIdx = ele.oriIdx;
+      while (true) {
+        aPList.add(sIdx);
+        var nIdx = newOrder[sIdx].parentIdx;
+        if (nIdx == sIdx) {
+          break;
+        }
+        sIdx = nIdx;
+      }
+      ancestorLists.add(aPList.reversed.toList());
+    }
+    newOrder.sort((a, b) {
+      var aPList = ancestorLists[a.oriIdx];
+      var bPList = ancestorLists[b.oriIdx];
+      int i=0;
+      for (;i < aPList.length && i < bPList.length; i+=1) {
+        if (aPList[i] == bPList[i]) {
+          continue;
+        }
+        return aPList[i] - bPList[i];
+      }
+      if (i < aPList.length) {
+        return 1;
+      }
+      return -1;
+    },);
+  }
 
   @override
   void initState() {
@@ -723,6 +757,9 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
     //     threadPageInfo = value;
     //   });
     // });
+    if (widget.tiebaForm) {
+      computeNewOrder();
+    }
     WidgetsBinding.instance.addPostFrameCallback((_){
       if (widget.postid != null) {
         var i = 0;
@@ -738,6 +775,16 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
         }
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant ReadThreadPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.tiebaForm) {
+      computeNewOrder();
+    } else {
+      newOrder.clear();
+    }
   }
 
   @override
@@ -802,39 +849,6 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
 
   @override
   Widget build(BuildContext context) {
-    var newOrder = <TiebaFormItemInfo>[];
-    if (widget.tiebaForm) {
-      newOrder = computeTiebaIndex();
-      List<List<int>> ancestorLists = [];
-      for (var ele in newOrder) {
-        var aPList = <int>[];
-        var sIdx = ele.oriIdx;
-        while (true) {
-          aPList.add(sIdx);
-          var nIdx = newOrder[sIdx].parentIdx;
-          if (nIdx == sIdx) {
-            break;
-          }
-          sIdx = nIdx;
-        }
-        ancestorLists.add(aPList.reversed.toList());
-      }
-      newOrder.sort((a, b) {
-        var aPList = ancestorLists[a.oriIdx];
-        var bPList = ancestorLists[b.oriIdx];
-        int i=0;
-        for (;i < aPList.length && i < bPList.length; i+=1) {
-          if (aPList[i] == bPList[i]) {
-            continue;
-          }
-          return aPList[i] - bPList[i];
-        }
-        if (i < aPList.length) {
-          return 1;
-        }
-        return -1;
-      },);
-    }
     return Column(
       children: [
         GestureDetector(
