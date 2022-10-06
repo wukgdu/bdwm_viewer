@@ -47,8 +47,8 @@ class _ThreadAppState extends State<ThreadApp> {
   }
 
   void addHistory({required String bid, required String threadid, required String title, required String userName, required String boardName}) {
-    if (!firstTime) { return; }
-    firstTime = true;
+    if (firstTime == false) { return; }
+    firstTime = false;
     String link = "$v2Host/post-read.php?bid=$bid&threadid=$threadid";
     globalThreadHistory.addOne(link: link, title: title, userName: userName, boardName: boardName);
   }
