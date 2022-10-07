@@ -108,7 +108,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
     user = widget.user;
   }
 
-  Widget _oneLineItem(String label, String value, {Icon? icon}) {
+  Widget _oneLineItem(String label, String value, {Icon? icon, bool selectable=false}) {
     return Card(
       child: Container(
         height: 40,
@@ -119,7 +119,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
               ...[icon],
             Text(label),
             const Text("："),
-            Text(value),
+            selectable ? SelectableText(value) : Text(value),
           ],
         ),
       ),
@@ -326,6 +326,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
           child: ListView(
             controller: _scrollController,
             children: [
+              _oneLineItem("UID", widget.uid, selectable: true),
               _oneLineItem("性别", user.gender, icon: genderIcon),
               _oneLineItem("星座", user.constellation),
               _oneLineItem("生命力", user.value),
