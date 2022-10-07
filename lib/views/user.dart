@@ -420,16 +420,16 @@ class _UserInfoPageState extends State<UserInfoPage> {
               _oneLineItem("最近上站时间", user.recentLogin),
               _oneLineItem("最近离站时间", user.recentLogout),
               if (user.timeReg != null)
-                ...[_oneLineItem("注册时间", user.timeReg!)],
+                _oneLineItem("注册时间", user.timeReg!),
               if (user.timeOnline != null)
-                ...[_oneLineItem("在线总时长", user.timeOnline!)],
+                _oneLineItem("在线总时长", user.timeOnline!),
               Card(child: ShowIpComponent(userName: user.bbsID),),
               // _multiLineItem("个人说明", user.signature, icon: const Icon(Icons.description)),
               // _multiHtmlLineItem("个人说明", Html(data: user.signature), icon: const Icon(Icons.description)),
               _multiHtmlLineItem("个人说明", HtmlComponent(user.signatureHtml), icon: const Icon(Icons.description)),
-              if (user.duty != null && user.dutyBoards != null)
-                // ...[_multiLineItem("担任版务", user.dutyBoards!.join("\n"))],
-                ...[_multiLineItemForAdmin("担任版务", user.dutyBoards, user.dutyBoardLinks,)],
+              if (user.duty != null && user.dutyBoards != null) ...[
+                _multiLineItemForAdmin("担任版务", user.dutyBoards, user.dutyBoardLinks,)
+              ],
             ],
           )
         ),
