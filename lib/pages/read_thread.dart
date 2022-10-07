@@ -50,7 +50,8 @@ class _ThreadAppState extends State<ThreadApp> {
     if (firstTime == false) { return; }
     firstTime = false;
     String link = "$v2Host/post-read.php?bid=$bid&threadid=$threadid";
-    globalThreadHistory.addOne(link: link, title: title, userName: userName, boardName: boardName);
+    int timestamp = DateTime.now().millisecondsSinceEpoch;
+    globalThreadHistory.addOne(link: link, title: title, userName: userName, boardName: boardName, timestamp: timestamp);
   }
 
   @override

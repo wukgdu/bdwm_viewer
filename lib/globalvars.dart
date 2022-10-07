@@ -490,12 +490,14 @@ class RecentThreadItemInfo {
   String title = "";
   String userName = "";
   String boardName = "";
+  int timestamp = 0;
 
   RecentThreadItemInfo({
     required this.link,
     required this.title,
     required this.userName,
     required this.boardName,
+    required this.timestamp,
   });
   RecentThreadItemInfo.fromJson(Map jsonObject) {
     fromJson(jsonObject);
@@ -506,6 +508,7 @@ class RecentThreadItemInfo {
       'title': title,
       'userName': userName,
       'boardName': boardName,
+      'timestamp': timestamp,
     };
   }
   void fromJson(Map jsonObject) {
@@ -513,6 +516,7 @@ class RecentThreadItemInfo {
     title = jsonObject['title'] ?? "";
     userName = jsonObject['userName'] ?? "";
     boardName = jsonObject['boardName'] ?? "";
+    timestamp = jsonObject['timestamp'] ?? 0;
   }
 }
 
@@ -540,12 +544,12 @@ class RecentThreadInfo {
     }
   }
 
-  Future<bool> addOne({required String link, required String title, required String userName, required String boardName}) async {
+  Future<bool> addOne({required String link, required String title, required String userName, required String boardName, required int timestamp}) async {
     items.removeWhere((element) => element.link == link);
     if (count >= maxCount) {
       items.removeAt(0);
     }
-    items.add(RecentThreadItemInfo(link: link, title: title, userName: userName, boardName: boardName));
+    items.add(RecentThreadItemInfo(link: link, title: title, userName: userName, boardName: boardName, timestamp: timestamp));
     await update();
     return true;
   }

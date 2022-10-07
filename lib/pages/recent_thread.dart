@@ -34,6 +34,12 @@ class _RecentThreadAppState extends State<RecentThreadApp> {
       body: ListView.builder(
         itemCount: itemCount,
         itemBuilder: (context, index) {
+          var timestamp = items[index].timestamp;
+          var timeStr = "未知";
+          if (timestamp != 0) {
+            timeStr = DateTime.fromMillisecondsSinceEpoch(timestamp).toLocal().toString();
+            timeStr = timeStr.split(".").first;
+          }
           return Card(
             child: ListTile(
               onTap: () {
@@ -43,10 +49,17 @@ class _RecentThreadAppState extends State<RecentThreadApp> {
                 items[index].title,
                 overflow: TextOverflow.ellipsis,
               ),
-              subtitle: Text(
-                "${items[index].userName} @${items[index].boardName}",
-                overflow: TextOverflow.ellipsis,
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "${items[index].userName} @${items[index].boardName}",
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text("时间：$timeStr"),
+                ]
               ),
+              isThreeLine: true,
               trailing: IconButton(
                 onPressed: () async {
                   var value = await showConfirmDialog(context, "删除", "rt");
