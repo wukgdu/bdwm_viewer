@@ -173,9 +173,18 @@ class FavoritePageState extends State<FavoritePage> {
   @override
   Widget build(BuildContext context) {
     if (favoriteBoardInfo.errorMessage != null) {
-      return Center(
-        child: Text(favoriteBoardInfo.errorMessage!),
-      );
+      // for RefreshIndicator
+      return LayoutBuilder(builder: (context, constraints) {
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Center(
+              child: Text(favoriteBoardInfo.errorMessage!),
+            ),
+          )
+        );
+      },);
     }
     return Column(
       children: [

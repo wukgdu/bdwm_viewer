@@ -110,9 +110,17 @@ class _Top100PageState extends State<Top100Page> {
           }
           Top100Info top100Info = snapshot.data as Top100Info;
           if (top100Info.errorMessage != null) {
-            return Center(
-              child: Text(top100Info.errorMessage!),
-            );
+            return LayoutBuilder(builder: (context, constraints) {
+              return SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Center(
+                    child: Text(top100Info.errorMessage!),
+                  ),
+                )
+              );
+            },);
           }
           return ListView(
             controller: _scrollController,

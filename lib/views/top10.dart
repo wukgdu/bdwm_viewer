@@ -179,9 +179,17 @@ class _TopHomePageState extends State<TopHomePage> {
           }
           HomeInfo homeInfo = snapshot.data as HomeInfo;
           if (homeInfo.errorMessage != null) {
-            return Center(
-              child: Text(homeInfo.errorMessage!),
-            );
+            return LayoutBuilder(builder: (context, constraints) {
+              return SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Center(
+                    child: Text(homeInfo.errorMessage!),
+                  ),
+                )
+              );
+            },);
           }
           return ListView.builder(
             controller: _scrollController,
