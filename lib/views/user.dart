@@ -137,7 +137,11 @@ class _ShowIpComponentState extends State<ShowIpComponent> {
                   int ip2 = int.parse("0x${ipHexStr.substring(2, 4)}");
                   int ip3 = int.parse("0x${ipHexStr.substring(4, 6)}");
                   int ip4 = int.parse("0x${ipHexStr.substring(6, 8)}");
-                  ipStr = "$ip4.$ip3.$ip2.$ip1";
+                  if (globalUInfo.uid == "22776" && globalUInfo.login == true && globalUInfo.username.toLowerCase() == "onepiece") {
+                    ipStr = "$ip4.$ip3.$ip2.$ip1";
+                  } else {
+                    ipStr = "$ip4.$ip3.$ip2.*";
+                  }
                 } catch (_) {
                   ipStr = "查询失败";
                 }
