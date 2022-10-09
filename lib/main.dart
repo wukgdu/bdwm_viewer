@@ -24,6 +24,7 @@ void main() async {
   await globalContactInfo.init();
   await globalConfigInfo.init();
   await globalThreadHistory.init();
+  await globalMarkedThread.init();
   checkUpdateByTime();
   await unreadMessage.initWorker();
   await unreadMail.initWorker();

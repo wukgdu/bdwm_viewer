@@ -30,6 +30,8 @@ class _ThreadAppState extends State<ThreadApp> {
   String? postid;
   bool tiebaForm = false;
   bool firstTime = true;
+  ValueNotifier<bool> marked = ValueNotifier<bool>(false);
+  String threadLink = "";
   // Future<ThreadPageInfo>? _future;
   @override
   void initState() {
@@ -41,21 +43,29 @@ class _ThreadAppState extends State<ThreadApp> {
         : int.parse(widget.page);
     // _future = getData();
     postid = widget.postid;
+    threadLink = "$v2Host/post-read.php?bid=${widget.bid}&threadid=${widget.threadid}";
+    marked.value = globalMarkedThread.contains(threadLink);
     getDataCancelable = CancelableOperation.fromFuture(getData(firstTime: true), onCancel: () {
       debugPrint("cancel it");
     },);
   }
 
-  void addHistory({required String bid, required String threadid, required String title, required String userName, required String boardName}) {
+  Future<bool> addMarked({required String link, required String title, required String userName, required String boardName}) async {
+    int timestamp = DateTime.now().millisecondsSinceEpoch;
+    await globalMarkedThread.addOne(link: link, title: title, userName: userName, boardName: boardName, timestamp: timestamp);
+    return true;
+  }
+
+  void addHistory({required String link, required String title, required String userName, required String boardName}) {
     if (firstTime == false) { return; }
     firstTime = false;
-    String link = "$v2Host/post-read.php?bid=$bid&threadid=$threadid";
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     globalThreadHistory.addOne(link: link, title: title, userName: userName, boardName: boardName, timestamp: timestamp);
   }
 
   @override
   void dispose() {
+    marked.dispose();
     Future.microtask(() => getDataCancelable.cancel(),);
     clearAllExtendedImageCache(really: globalConfigInfo.getAutoClearImageCache());
     super.dispose();
@@ -141,12 +151,28 @@ class _ThreadAppState extends State<ThreadApp> {
         if (threadPageInfo.posts.isNotEmpty) {
           userName = threadPageInfo.posts.first.authorInfo.userName;
         }
-        addHistory(bid: widget.bid, threadid: widget.threadid,
-          title: threadPageInfo.title, userName: userName, boardName: threadPageInfo.board.text);
+        addHistory(link: threadLink, title: threadPageInfo.title, userName: userName, boardName: threadPageInfo.board.text);
         return Scaffold(
           appBar: AppBar(
             title: Text(threadPageInfo.board.text.split('(').first),
             actions: [
+              ValueListenableBuilder(
+                valueListenable: marked,
+                builder: (context, value, child) {
+                  bool markedValue = value as bool;
+                  return IconButton(
+                    onPressed: () async {
+                      if (markedValue) {
+                        globalMarkedThread.removeOne(threadLink);
+                      } else {
+                        await addMarked(link: threadLink, title: threadPageInfo.title, userName: userName, boardName: threadPageInfo.board.text);
+                      }
+                      marked.value = !markedValue;
+                    },
+                    icon: Icon(markedValue ? Icons.star : Icons.star_outline),
+                  );
+                },
+              ),
               IconButton(
                 onPressed: () {
                   setState(() {

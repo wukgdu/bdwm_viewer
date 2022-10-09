@@ -298,7 +298,17 @@ class _FunFunFunPageState extends State<FunFunFunPage> {
               nv2Push(context, '/recentThread');
             },
             title: const Text("最近浏览"),
-            subtitle: Text("${globalThreadHistory.count}/${RecentThreadInfo.maxCount}"),
+            subtitle: Text("${globalThreadHistory.count}/${globalThreadHistory.maxCount}"),
+            trailing: const Icon(Icons.arrow_right),
+          )
+        ),
+        Card(
+          child: ListTile(
+            onTap: () {
+              nv2Push(context, '/markedThread');
+            },
+            title: const Text("已收藏"),
+            subtitle: Text("${globalMarkedThread.count}/${globalMarkedThread.maxCount}"),
             trailing: const Icon(Icons.arrow_right),
           )
         ),

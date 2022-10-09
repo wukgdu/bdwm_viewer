@@ -521,10 +521,10 @@ class RecentThreadItemInfo {
 }
 
 class RecentThreadInfo {
-  static const maxCount = 100;
+  int get maxCount => 100;
   List<RecentThreadItemInfo> items = [];
   int get count => items.length;
-  static const String storage = "bdwmhistory.json";
+  String get storage => "bdwmhistory.json";
 
   RecentThreadInfo({required this.items});
   RecentThreadInfo.empty();
@@ -569,7 +569,6 @@ class RecentThreadInfo {
   Future<bool> init() async {
     String dir = (await getApplicationDocumentsDirectory()).path;
     String filename = "$dir/$storage";
-    // debugPrint(filename);
     Future<void> writeInit() async {
       var file = File(filename).openWrite();
       file.write(jsonEncode(toJson()));
@@ -602,3 +601,23 @@ class RecentThreadInfo {
 }
 
 var globalThreadHistory = RecentThreadInfo.empty();
+
+class MarkedThreadInfo extends RecentThreadInfo {
+  @override
+  int get maxCount => 100;
+  @override
+  String get storage => "bdwmmarked.json";
+  MarkedThreadInfo({required super.items});
+  MarkedThreadInfo.empty() : super.empty();
+
+  bool contains(String link) {
+    for (var i in items) {
+      if (i.link == link) {
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
+var globalMarkedThread = MarkedThreadInfo.empty();
