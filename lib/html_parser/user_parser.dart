@@ -33,7 +33,7 @@ class UserProfile {
   List<String>? dutyBoardLinks;
   String? errorMessage;
   bool useradd = false;
-  bool? userreject;
+  bool userreject = false;
   int vipIdentity = -1;
 
   UserProfile();
@@ -66,7 +66,7 @@ class UserProfile {
     this.dutyBoardLinks,
     this.errorMessage,
     required this.useradd,
-    this.userreject,
+    required this.userreject,
     required this.vipIdentity,
   });
 
@@ -185,6 +185,7 @@ UserProfile parseUser(String htmlStr) {
   }
 
   var useradd = false;
+  var userreject = false;
   var operationDom = document.querySelector(".operations-button");
   if (operationDom != null) {
     var txt = getTrimmedString(operationDom.querySelector("span"));
@@ -199,6 +200,7 @@ UserProfile parseUser(String htmlStr) {
     countLogin: countLogin, countPost: countPost, value: value, score: score, rankName: rankName, avatarFrameLink: avatarFrameLink,
     rating: rating, recentLogin: recentLogin, recentLogout: recentLogout, signature: signature, signatureHtml: signatureHtml,
     timeReg: timeReg, timeOnline: timeOnline, duty: duty, dutyBoards: dutyBoards, dutyBoardLinks: dutyBoardLinks, vipIdentity: vipIdentity,
+    userreject: userreject,
   );
 }
 

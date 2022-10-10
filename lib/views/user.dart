@@ -15,38 +15,101 @@ import "../pages/detail_image.dart";
 import './html_widget.dart';
 import '../router.dart' show nv2Push, nv2PushAndRemoveAll;
 
+class UserOperationCombinedComponent extends StatefulWidget {
+  final UserProfile user;
+  final String uid;
+  const UserOperationCombinedComponent({required this.user, required this.uid, super.key});
+
+  @override
+  State<UserOperationCombinedComponent> createState() => _UserOperationCombinedComponentState();
+}
+
+class _UserOperationCombinedComponentState extends State<UserOperationCombinedComponent> {
+  bool useradd = false;
+  bool userreject = false;
+
+  @override
+  void initState() {
+    super.initState();
+    useradd = widget.user.useradd;
+    userreject = widget.user.userreject;
+  }
+
+  @override
+  void didUpdateWidget(covariant UserOperationCombinedComponent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    useradd = widget.user.useradd;
+    userreject = widget.user.userreject;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      width: 40,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          UserOperationComponent(exist: useradd, uid: widget.uid, userName: widget.user.bbsID, mode: "add",
+            callBack: () {
+              setState(() {
+                useradd = !useradd;
+              });
+            },
+          ),
+          UserOperationComponent(exist: userreject, uid: widget.uid, userName: widget.user.bbsID, mode: "reject",
+            callBack: () {
+              if (userreject == false) {
+                setState(() {
+                  userreject = true;
+                  useradd = false;
+                });
+              } else {
+                setState(() {
+                  userreject = false;
+                });
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class UserOperationComponent extends StatefulWidget {
   final String uid;
   final bool exist;
   final String userName;
   final String mode;
-  const UserOperationComponent({super.key, required this.exist, required this.uid, required this.userName, required this.mode});
+  final Function? callBack;
+  const UserOperationComponent({super.key, required this.exist, required this.uid, required this.userName, required this.mode, this.callBack});
 
   @override
   State<UserOperationComponent> createState() => _UserOperationComponentState();
 }
 
 class _UserOperationComponentState extends State<UserOperationComponent> {
-  bool useradd = false;
+  bool userexist = false;
 
   @override
   void initState() {
     super.initState();
-    useradd = widget.exist;
+    userexist = widget.exist;
   }
 
   @override
   void didUpdateWidget(covariant UserOperationComponent oldWidget) {
     super.didUpdateWidget(oldWidget);
-    useradd = widget.exist;
+    userexist = widget.exist;
   }
 
   @override
   Widget build(BuildContext context) {
     String actionText = widget.mode == "reject" ? "拉黑" : "关注";
     String shortText = widget.mode == "reject"
-      ? useradd ? "变白" : "拉黑"
-      : useradd ? "取关" : "关注";
+      ? userexist ? "变白" : "拉黑"
+      : userexist ? "取关" : "关注";
     return GestureDetector(
       child: Text(shortText, style: const TextStyle(color: bdwmPrimaryColor),),
       onTap: () {
@@ -54,7 +117,7 @@ class _UserOperationComponentState extends State<UserOperationComponent> {
         var username = widget.userName;
         if (username.isEmpty) { return; }
         var action = "add";
-        if (useradd) {
+        if (userexist) {
           action = "delete";
         }
         String? mode = widget.mode == "reject" ? "reject" : null;
@@ -62,7 +125,7 @@ class _UserOperationComponentState extends State<UserOperationComponent> {
         bdwmUsers(uid, action, desc, mode: mode).then((value) {
           var title = "";
           var content = "成功$actionText";
-          if (useradd) {
+          if (userexist) {
             content = "成功取消$actionText";
           }
           if (!value.success) {
@@ -73,9 +136,14 @@ class _UserOperationComponentState extends State<UserOperationComponent> {
             }
           }
           showInformDialog(context, title, content).then((dialogValue) {
-            setState(() {
-              useradd = !useradd;
-            });
+            if (!value.success) { return; }
+            if (widget.callBack != null) {
+              widget.callBack!();
+            } else {
+              setState(() {
+                userexist = !userexist;
+              });
+            }
           });
         });
       },
@@ -395,17 +463,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                   },
                 ),
               )
-              : Container(
-                alignment: Alignment.center,
-                width: 40,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    UserOperationComponent(exist: user.useradd, uid: widget.uid, userName: user.bbsID, mode: "add",),
-                    UserOperationComponent(exist: false, uid: widget.uid, userName: user.bbsID, mode: "reject",),
-                  ],
-                ),
-              ),
+              : UserOperationCombinedComponent(user: user, uid: widget.uid),
             ),
           ),
         Expanded(
