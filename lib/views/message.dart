@@ -8,12 +8,126 @@ import '../html_parser/board_parser.dart';
 import '../pages/read_thread.dart';
 import '../views/utils.dart';
 import '../bdwm/message.dart';
+import "../bdwm/search.dart";
 import '../bdwm/req.dart';
 import '../globalvars.dart';
 import '../utils.dart';
 import '../services_instance.dart';
 import '../services.dart' show MessageBriefNotifier;
 import '../router.dart' show nv2Push;
+
+class UserJumpByNameComponent extends StatefulWidget {
+  final String userName;
+  final Map<String, String>? uName2ID;
+  const UserJumpByNameComponent({super.key, required this.userName, this.uName2ID});
+
+  @override
+  State<UserJumpByNameComponent> createState() => _UserJumpByNameComponentState();
+}
+
+class _UserJumpByNameComponentState extends State<UserJumpByNameComponent> {
+  late CancelableOperation getDataCancelable;
+
+  @override
+  void initState() {
+    super.initState();
+    getDataCancelable = CancelableOperation.fromFuture(bdwmUserInfoSearch([widget.userName]));
+  }
+
+  @override
+  void dispose() {
+    getDataCancelable.cancel();
+    super.dispose();
+  }
+
+  AlertDialog genDialog(Widget content) {
+    return AlertDialog(
+      title: const Text("查询用户中"),
+      content: content,
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text("取消"),
+        ),
+        TextButton(
+          onPressed: () {
+            setState(() {
+              getDataCancelable.cancel();
+              getDataCancelable = CancelableOperation.fromFuture(bdwmUserInfoSearch([widget.userName]));
+            });
+          },
+          child: const Text("刷新"),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: getDataCancelable.value,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          // return const Center(child: CircularProgressIndicator());
+          return genDialog(
+            const LinearProgressIndicator(),
+          );
+        }
+        if (snapshot.hasError) {
+          return genDialog(
+            Text("错误：${snapshot.error}"),
+          );
+        }
+        if (!snapshot.hasData || snapshot.data == null) {
+          return genDialog(
+            const Text("错误：未获取数据"),
+          );
+        }
+        UserInfoRes userInfoRes = snapshot.data as UserInfoRes;
+        if (userInfoRes.desc != null) {
+          return genDialog(
+            Text(userInfoRes.desc!),
+          );
+        }
+        if (userInfoRes.success == false) {
+          return genDialog(
+            const Text("错误：获取用户数据失败"),
+          );
+        }
+        if (userInfoRes.users.isEmpty || userInfoRes.users.first is bool) {
+          return genDialog(
+            const Text("错误：未获取数据"),
+          );
+        }
+        var ian = userInfoRes.users.first as IDandName;
+        if (widget.uName2ID != null) {
+          widget.uName2ID![widget.userName] = ian.id;
+        }
+        return AlertDialog(
+          title: const Text("查询完成"),
+          content: Text("${ian.name}：${ian.id}"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("取消"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                nv2Push(context, '/user', arguments: ian.id);
+              },
+              child: const Text("前往"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
 
 class MessageListPage extends StatefulWidget {
   final MessageBriefNotifier users;
@@ -25,10 +139,12 @@ class MessageListPage extends StatefulWidget {
 
 class _MessageListPageState extends State<MessageListPage> {
   final _controller = ScrollController();
+  Map<String, String> uName2ID = {};
 
   @override
   void dispose() {
     _controller.dispose();
+    uName2ID.clear();
     super.dispose();
   }
 
@@ -77,7 +193,19 @@ class _MessageListPageState extends State<MessageListPage> {
                     }
                   },);
                 },
-                leading: const Icon(Icons.person, color: bdwmPrimaryColor,),
+                leading: GestureDetector(
+                  onTap: () {
+                    if (e.text == 'deliver') { return; }
+                    if (uName2ID.containsKey(e.text)) {
+                      nv2Push(context, '/user', arguments: uName2ID[e.text]);
+                    } else {
+                      showAlertDialog2(context, UserJumpByNameComponent(userName: e.text, uName2ID: uName2ID,));
+                    }
+                  },
+                  child: e.text == 'deliver'
+                  ? const Icon(Icons.person, color: bdwmPrimaryColor,)
+                  : const Icon(Icons.person_search, color: bdwmPrimaryColor,),
+                ),
                 title: Text(e.text),
                 trailing: e.link!=null && e.link!="0"
                   ? Container(
