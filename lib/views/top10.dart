@@ -3,11 +3,140 @@ import 'package:async/async.dart';
 
 import '../bdwm/req.dart';
 import '../globalvars.dart';
+import './html_widget.dart' show WrapImageNetwork;
 import '../html_parser/top10_parser.dart';
 import '../pages/read_thread.dart';
 import './utils.dart';
 import '../pages/detail_image.dart';
 import '../router.dart' show nv2Replace;
+
+class EntryHomeComponent extends StatefulWidget {
+  const EntryHomeComponent({super.key});
+
+  @override
+  State<EntryHomeComponent> createState() => _EntryHomeComponentState();
+}
+
+class _EntryHomeComponentState extends State<EntryHomeComponent> {
+  late CancelableOperation getDataCancelable;
+
+  Future<WelcomeInfo> getWelcomeData() async {
+    var resp = await bdwmClient.get("$v2Host/home.php", headers: genHeaders());
+    if (resp == null) {
+      return WelcomeInfo.error(errorMessage: networkErrorText);
+    }
+    return parseWelcomeFromHtml(resp.body);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getDataCancelable = CancelableOperation.fromFuture(getWelcomeData());
+  }
+
+  @override
+  void dispose() {
+    getDataCancelable.cancel();
+    super.dispose();
+  }
+
+  AlertDialog genDialog(Widget content) {
+    return AlertDialog(
+      title: const Text("今日进站"),
+      content: content,
+      actions: [
+        TextButton(
+          onPressed: () {
+            setState(() {
+              getDataCancelable.cancel();
+              getDataCancelable = CancelableOperation.fromFuture(getWelcomeData());
+            });
+          },
+          child: const Text("刷新"),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text("进入未名BBS"),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: getDataCancelable.value,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          // return const Center(child: CircularProgressIndicator());
+          return genDialog(
+            const LinearProgressIndicator(),
+          );
+        }
+        if (snapshot.hasError) {
+          return genDialog(
+            Text("错误：${snapshot.error}"),
+          );
+        }
+        if (!snapshot.hasData || snapshot.data == null) {
+          return genDialog(
+            const Text("错误：未获取数据"),
+          );
+        }
+        WelcomeInfo welcomeInfo = snapshot.data as WelcomeInfo;
+        if (welcomeInfo.errorMessage != null) {
+          return genDialog(
+            Text(welcomeInfo.errorMessage!),
+          );
+        }
+        if (welcomeInfo.imgLink.isEmpty) {
+          return genDialog(
+            const Text("错误：未获取图片链接"),
+          );
+        }
+        return AlertDialog(
+          title: const Text("今日进站"),
+          content: GestureDetector(
+            onTap: () {
+              gotoDetailImage(context: context, link: welcomeInfo.imgLink);
+            },
+            child: WrapImageNetwork(imgLink: welcomeInfo.imgLink, useLinearProgress: true, mustClear: true, highQuality: true,),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  getDataCancelable.cancel();
+                  getDataCancelable = CancelableOperation.fromFuture(getWelcomeData());
+                });
+              },
+              child: const Text("刷新"),
+            ),
+            if (welcomeInfo.actionLink.isNotEmpty)
+              TextButton(
+                onPressed: () async {
+                  var value = await showConfirmDialog(context, "打开", welcomeInfo.actionLink);
+                  if (value == null || value != "yes") { return; }
+                  if (!mounted) { return; }
+                  Navigator.of(context).pop();
+                  naviGotoThreadByLink(context, welcomeInfo.actionLink, "", needToBoard: true);
+                },
+                child: const Text("进入主题帖"),
+              ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("进入未名BBS"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
 
 class TopHomePage extends StatefulWidget {
   const TopHomePage({Key? key}) : super(key: key);
@@ -20,14 +149,6 @@ class _TopHomePageState extends State<TopHomePage> {
   final _titleFont = const TextStyle(fontSize: 20, fontWeight: FontWeight.normal);
   final _scrollController = ScrollController();
   late CancelableOperation getDataCancelable;
-
-  Future<WelcomeInfo> getWelcomeData() async {
-    var resp = await bdwmClient.get("$v2Host/home.php", headers: genHeaders());
-    if (resp == null) {
-      return WelcomeInfo.error(errorMessage: networkErrorText);
-    }
-    return parseWelcomeFromHtml(resp.body);
-  }
 
   Future<HomeInfo> getData() async {
     var resp = await bdwmClient.get("$v2Host/mobile/home.php", headers: genHeaders());
@@ -53,35 +174,8 @@ class _TopHomePageState extends State<TopHomePage> {
       // ld = null;
       if (ld==null || "${curDT.year}-${curDT.month}-${curDT.day}" != "${ld.year}-${ld.month}-${ld.day}") {
         if (!mounted) { return; }
-        var welcomeInfo = await getWelcomeData();
-        if (welcomeInfo.errorMessage != null) { return; }
-        if (welcomeInfo.imgLink.isEmpty) { return; }
-        if (!mounted) { return; }
         var saveUpdate = globalConfigInfo.setLastLoginTime(curDT.toIso8601String());
-        showAlertDialog(context, "今日进站",
-          GestureDetector(
-            onTap: () {
-              gotoDetailImage(context: context, link: welcomeInfo.imgLink);
-            },
-            child: Image.network(welcomeInfo.imgLink),
-          ),
-          actions1: welcomeInfo.actionLink.isNotEmpty ? TextButton(
-            onPressed: () async {
-              var value = await showConfirmDialog(context, "打开", welcomeInfo.actionLink);
-              if (value == null || value != "yes") { return; }
-              if (!mounted) { return; }
-              Navigator.of(context).pop();
-              naviGotoThreadByLink(context, welcomeInfo.actionLink, "", needToBoard: true);
-            },
-            child: const Text("进入主题帖"),
-          ) : null,
-          actions2: TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text("进入未名BBS"),
-          ),
-        );
+        showAlertDialog2(context, const EntryHomeComponent(),);
         await saveUpdate;
       }
     });

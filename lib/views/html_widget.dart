@@ -21,7 +21,10 @@ const int _cacheHeight = 150;
 class WrapImageNetwork extends StatefulWidget {
   final String imgLink;
   final String? imgAlt;
-  const WrapImageNetwork({Key? key, required this.imgLink, this.imgAlt}) : super(key: key);
+  final bool? useLinearProgress;
+  final bool? mustClear;
+  final bool? highQuality;
+  const WrapImageNetwork({Key? key, required this.imgLink, this.imgAlt, this.useLinearProgress, this.mustClear, this.highQuality}) : super(key: key);
 
   @override
   State<WrapImageNetwork> createState() => _WrapImageNetworkState();
@@ -54,17 +57,19 @@ class _WrapImageNetworkState extends State<WrapImageNetwork> {
       fit: BoxFit.contain,
       cache: true,
       enableMemoryCache: true,
-      clearMemoryCacheWhenDispose: globalConfigInfo.getHighQualityPreview(),
+      clearMemoryCacheWhenDispose: widget.mustClear ?? globalConfigInfo.getHighQualityPreview(),
       clearMemoryCacheIfFailed: true,
       handleLoadingProgress: true,
-      filterQuality: globalConfigInfo.getHighQualityPreview() ? FilterQuality.high : FilterQuality.low,
+      filterQuality: (widget.highQuality ?? globalConfigInfo.getHighQualityPreview()) ? FilterQuality.high : FilterQuality.low,
       cancelToken: cancelIt,
-      cacheHeight: globalConfigInfo.getHighQualityPreview() ? null : _cacheHeight,
+      cacheHeight: (widget.highQuality ?? globalConfigInfo.getHighQualityPreview()) ? null : _cacheHeight,
       timeLimit: const Duration(seconds: 30),
       loadStateChanged: (ExtendedImageState state) {
         switch (state.extendedImageLoadState) {
           case LoadState.loading:
-            if (state.loadingProgress == null) { return null; }
+            if (state.loadingProgress == null) {
+              return const Text("加载中");
+            }
             var curByte = state.loadingProgress?.cumulativeBytesLoaded ?? 0;
             var sumByte = state.loadingProgress?.expectedTotalBytes ?? -1;
             if (sumByte == -1) {
@@ -72,6 +77,14 @@ class _WrapImageNetworkState extends State<WrapImageNetwork> {
             }
             var text = "${(curByte * 100 / sumByte).toStringAsFixed(0)}%";
             // return Text(text);
+            if (widget.useLinearProgress != null && widget.useLinearProgress == true) {
+              return LinearProgressIndicator(
+                value: curByte / sumByte,
+                semanticsLabel: '加载中',
+                semanticsValue: text,
+                backgroundColor: Colors.amberAccent,
+              );
+            }
             return CircularProgressIndicator(
               value: curByte / sumByte,
               semanticsLabel: '加载中',

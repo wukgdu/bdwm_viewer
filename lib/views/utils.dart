@@ -33,6 +33,16 @@ Future<String?> showAlertDialog(BuildContext context, String title, Widget conte
   );
 }
 
+Future<String?> showAlertDialog2(BuildContext context, Widget alert, {bool? barrierDismissible=true}) {
+  return showDialog<String>(
+    context: context,
+    barrierDismissible: (barrierDismissible!=null&&barrierDismissible==false)?false:true,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}
+
 Future<String?> showNetWorkDialog(BuildContext context) {
   return showAlertDialog(context, "网络错误", const Text(networkErrorText),
     actions1: TextButton(
