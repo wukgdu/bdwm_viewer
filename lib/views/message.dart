@@ -18,8 +18,8 @@ import '../router.dart' show nv2Push;
 
 class UserJumpByNameComponent extends StatefulWidget {
   final String userName;
-  final Map<String, String>? uName2ID;
-  const UserJumpByNameComponent({super.key, required this.userName, this.uName2ID});
+  final void Function(String uid)? callBack;
+  const UserJumpByNameComponent({super.key, required this.userName, this.callBack});
 
   @override
   State<UserJumpByNameComponent> createState() => _UserJumpByNameComponentState();
@@ -102,8 +102,8 @@ class _UserJumpByNameComponentState extends State<UserJumpByNameComponent> {
           );
         }
         var ian = userInfoRes.users.first as IDandName;
-        if (widget.uName2ID != null) {
-          widget.uName2ID![widget.userName] = ian.id;
+        if (widget.callBack != null) {
+          widget.callBack!(ian.id);
         }
         return AlertDialog(
           title: const Text("查询完成"),
@@ -199,7 +199,9 @@ class _MessageListPageState extends State<MessageListPage> {
                     if (uName2ID.containsKey(e.text)) {
                       nv2Push(context, '/user', arguments: uName2ID[e.text]);
                     } else {
-                      showAlertDialog2(context, UserJumpByNameComponent(userName: e.text, uName2ID: uName2ID,));
+                      showAlertDialog2(context, UserJumpByNameComponent(userName: e.text, callBack: (String uid) {
+                        uName2ID[e.text] = uid;
+                      },));
                     }
                   },
                   child: e.text == 'deliver'
