@@ -323,7 +323,11 @@ class _CollectionImportDialogBodyState extends State<CollectionImportDialogBody>
                       if (c.isdir == false) {
                         continue;
                       }
-                      _treeViewController = _treeViewController.withAddNode(key, Node(key: "$key/${c.path}", label: c.title, parent: true, expanded: false));
+                      var newKey = "$key/${c.path}";
+                      if (c.islink) {
+                        newKey = c.path;
+                      }
+                      _treeViewController = _treeViewController.withAddNode(key, Node(key: newKey, label: c.title, parent: true, expanded: false));
                     }
                     visited.add(key);
                     setState(() {
