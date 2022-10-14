@@ -426,10 +426,10 @@ class _PostNewPageState extends State<PostNewPage> {
                   ),
                   ...widget.postNewInfo.signatureInfo.map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
                     return DropdownMenuItem<SignatureItem>(
-                        value: item,
-                        child: Text(item.key),
-                      );
-                    }).toList(),
+                      value: item,
+                      child: Text(item.key),
+                    );
+                  }).toList(),
                 ],
                 onChanged: (SignatureItem? value) {
                   setState(() {

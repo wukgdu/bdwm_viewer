@@ -201,9 +201,9 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
     return null;
   }
   var res = <InlineSpan>[];
-  document.querySelectorAll("br").forEach((element) {
-    element.remove();
-  });
+  // document.querySelectorAll("br").forEach((element) {
+  //   element.remove();
+  // });
   for (var cdom in document.nodes) {
     if (cdom.nodeType == hdom.Node.TEXT_NODE) {
       if (cdom.text == "\n") {
@@ -447,6 +447,10 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
           ),
         );
         res.add(tspan);
+      } else if (ele.localName == "br") {
+        if (cdom != document.nodes.last) {
+          res.add(const TextSpan(text: "\n"));
+        }
       } else {
         res.add(TextSpan(text: cdom.text));
       }
@@ -606,9 +610,9 @@ void travelHtmlBack(hdom.Element? document, BDWMtext config, List<BDWMtext> res)
   if (document == null) {
     return;
   }
-  document.querySelectorAll("br").forEach((element) {
-    element.remove();
-  });
+  // document.querySelectorAll("br").forEach((element) {
+  //   element.remove();
+  // });
   for (var cdom in document.nodes) {
     if (cdom.nodeType == hdom.Node.TEXT_NODE) {
       BDWMAnsiText bdwmText = (config as BDWMAnsiText).copy();
@@ -699,6 +703,10 @@ void travelHtmlBack(hdom.Element? document, BDWMtext config, List<BDWMtext> res)
         // var href = ele.attributes['href'];
         // var link = absThreadLink(href ?? "");
         res.add(BDWMAnsiText.raw(ele.text));
+      } else if (ele.localName == "br") {
+        if (cdom != document.nodes.last) {
+          res.add(BDWMAnsiText.raw("\n"));
+        }
       } else {
         res.add(BDWMAnsiText.raw(cdom.text));
       }

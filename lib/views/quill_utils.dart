@@ -54,9 +54,9 @@ void travelHtml2Quill(hdom.Element? document, Map<String, dynamic>? attributes, 
   if (document == null) {
     return;
   }
-  document.querySelectorAll("br").forEach((element) {
-    element.remove();
-  });
+  // document.querySelectorAll("br").forEach((element) {
+  //   element.remove();
+  // });
   for (var cdom in document.nodes) {
     if (cdom.nodeType == hdom.Node.TEXT_NODE) {
       if (cdom.text == "\n") {
@@ -144,6 +144,10 @@ void travelHtml2Quill(hdom.Element? document, Map<String, dynamic>? attributes, 
         }
         hereColor = "#$hereColor";
         res.add(QuillText(insert: getTrimmedString(ele), attributes: {'link': link, 'color': hereColor}));
+      } else if (ele.localName == "br") {
+        if (cdom != document.nodes.last) {
+          res.add(QuillText(insert: "\n"));
+        }
       } else {
         res.add(QuillText(insert: getTrimmedString(ele)));
       }
