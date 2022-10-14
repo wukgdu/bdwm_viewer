@@ -57,7 +57,7 @@ class _CollectionPageState extends State<CollectionPage> {
             });
           }
         },
-        leading: item.type == "dir" ? const Icon(Icons.folder) : const Icon(Icons.article),
+        leading: item.type.contains("dir") ? const Icon(Icons.folder) : const Icon(Icons.article),
         title: Text(item.name),
         subtitle: Text.rich(
           TextSpan(
