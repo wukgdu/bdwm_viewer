@@ -205,15 +205,15 @@ class _MessageListPageState extends State<MessageListPage> {
                     }
                   },
                   child: e.text == 'deliver'
-                  ? const Icon(Icons.person, color: bdwmPrimaryColor,)
-                  : const Icon(Icons.person_search, color: bdwmPrimaryColor,),
+                  ? Icon(Icons.person, color: bdwmPrimaryColor,)
+                  : Icon(Icons.person_search, color: bdwmPrimaryColor,),
                 ),
                 title: Text(e.text),
                 trailing: e.link!=null && e.link!="0"
                   ? Container(
                     alignment: Alignment.center,
                     width: 20,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: bdwmPrimaryColor,
                     ),
@@ -380,7 +380,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
                             });
                           }
                         },
-                        child: const Text("[点击查看]", style: TextStyle(color: bdwmPrimaryColor)),
+                        child: Text("[点击查看]", style: TextStyle(color: bdwmPrimaryColor)),
                       ),
                     ),
                 ]
@@ -441,7 +441,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
                 onPressed: () {
                   update();
                 },
-                icon: const Icon(Icons.refresh, color: bdwmPrimaryColor,),
+                icon: Icon(Icons.refresh, color: bdwmPrimaryColor,),
               ),
               Expanded(
                 child: TextField(

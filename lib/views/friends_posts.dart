@@ -156,7 +156,7 @@ class _FriendsPostsPageState extends State<FriendsPostsPage> {
         },
         child: Container(
           padding: const EdgeInsets.all(5.0),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             border: Border(top: BorderSide(color: bdwmPrimaryColor, width: 1.0)),
           ),
           child: Column(

@@ -211,7 +211,7 @@ class _PostNewPageState extends State<PostNewPage> {
                     }
                   });
                 },
-                child: const Text("发布", style: TextStyle(color: bdwmPrimaryColor)),
+                child: Text("发布", style: TextStyle(color: bdwmPrimaryColor)),
               ),
             ],
           ),

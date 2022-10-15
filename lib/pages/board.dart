@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 
 import '../html_parser/board_parser.dart';
+import '../views/constants.dart' show bdwmPrimaryColor;
 import '../bdwm/req.dart';
 import '../views/board.dart';
 import '../globalvars.dart';
@@ -106,6 +107,7 @@ class _BoardAppState extends State<BoardApp> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   IconButton(
+                    color: bdwmPrimaryColor,
                     disabledColor: Colors.grey,
                     tooltip: '刷新',
                     icon: const Icon(Icons.refresh),
@@ -120,6 +122,7 @@ class _BoardAppState extends State<BoardApp> {
                     },
                   ),
                   IconButton(
+                    color: bdwmPrimaryColor,
                     disabledColor: Colors.grey,
                     tooltip: '发帖',
                     icon: const Icon(Icons.add),
@@ -131,6 +134,7 @@ class _BoardAppState extends State<BoardApp> {
                     },
                   ),
                   IconButton(
+                    color: bdwmPrimaryColor,
                     disabledColor: Colors.grey,
                     tooltip: '上一页',
                     icon: const Icon(Icons.arrow_back),
@@ -160,6 +164,7 @@ class _BoardAppState extends State<BoardApp> {
                     },
                   ),
                   IconButton(
+                    color: bdwmPrimaryColor,
                     disabledColor: Colors.grey,
                     tooltip: '下一页',
                     icon: const Icon(Icons.arrow_forward),

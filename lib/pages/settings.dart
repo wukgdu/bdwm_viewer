@@ -1,8 +1,99 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 import '../globalvars.dart';
 import '../views/constants.dart';
 import '../views/utils.dart';
+
+class ColorPickerComponent extends StatefulWidget {
+  final Color primaryColor;
+  const ColorPickerComponent({super.key, required this.primaryColor});
+
+  @override
+  State<ColorPickerComponent> createState() => _ColorPickerComponentState();
+}
+
+class _ColorPickerComponentState extends State<ColorPickerComponent> {
+  late Color pickColor;
+  @override
+  void initState() {
+    super.initState();
+    pickColor = widget.primaryColor;
+  }
+  @override
+  void didUpdateWidget(covariant ColorPickerComponent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    pickColor = widget.primaryColor;
+  }
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text("选择主题颜色"),
+      content: SingleChildScrollView(
+        child: ColorPicker(
+          pickerColor: pickColor,
+          onColorChanged: (newColor) {
+            setState(() {
+              pickColor = newColor;
+            });
+          },
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text("取消"),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(pickColor);
+          },
+          child: const Text("确认"),
+        ),
+      ],
+    );
+  }
+}
+
+class PrimaryColorComponent extends StatefulWidget {
+  const PrimaryColorComponent({super.key});
+
+  @override
+  State<PrimaryColorComponent> createState() => _PrimaryColorComponentState();
+}
+
+class _PrimaryColorComponentState extends State<PrimaryColorComponent> {
+  void setNewColor(Color newColor) {
+    bdwmPrimaryColor = newColor;
+    globalConfigInfo.primaryColorString = newColor.value.toString();
+    setState(() { });
+  }
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: () async {
+        var newColor = await showDialog<Color>(context: context, builder:(context) {
+          return ColorPickerComponent(primaryColor: bdwmPrimaryColor,);
+        },);
+        if (newColor != null) {
+          setNewColor(newColor);
+        }
+      },
+      onLongPress: () {
+        setNewColor(bdwmSurfaceColor);
+      },
+      title: const Text("主题颜色"),
+      subtitle: const Text("选择主题颜色，保存后重启生效。长按恢复默认颜色"),
+      trailing: Container(
+        color: bdwmPrimaryColor,
+        margin: const EdgeInsets.only(right: 10),
+        width: 40,
+      ),
+    );
+  }
+}
 
 class SettingsApp extends StatefulWidget {
   const SettingsApp({super.key});
@@ -98,6 +189,8 @@ class _SettingsAppState extends State<SettingsApp> {
               child: Text("字", style: TextStyle(fontSize: globalConfigInfo.contentFontSize)),
             ),
           ),
+          const Divider(),
+          const PrimaryColorComponent(),
           const Divider(),
           ListTile(
             onTap: () async {

@@ -18,7 +18,7 @@ class FunFunFunApp extends StatelessWidget {
       ),
       body: const FunFunFunPage(),
       floatingActionButton: IconButton(
-        icon: const Icon(Icons.home, color: bdwmPrimaryColor),
+        icon: Icon(Icons.home, color: bdwmPrimaryColor),
         onPressed: () {
           nv2PushAndRemoveAll(context, '/home');
         },

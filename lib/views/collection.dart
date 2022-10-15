@@ -232,7 +232,7 @@ class _CollectionImportDialogBodyState extends State<CollectionImportDialogBody>
   @override
   Widget build(BuildContext context) {
     final TreeViewTheme treeViewTheme = TreeViewTheme(
-      expanderTheme: const ExpanderThemeData(
+      expanderTheme: ExpanderThemeData(
         type: ExpanderType.plusMinus,
         // modifier: ExpanderModifier.circleFilled,
         // position: ExpanderPosition.end,

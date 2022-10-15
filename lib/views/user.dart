@@ -111,7 +111,7 @@ class _UserOperationComponentState extends State<UserOperationComponent> {
       ? userexist ? "变白" : "拉黑"
       : userexist ? "取关" : "关注";
     return GestureDetector(
-      child: Text(shortText, style: const TextStyle(color: bdwmPrimaryColor),),
+      child: Text(shortText, style: TextStyle(color: bdwmPrimaryColor),),
       onTap: () {
         var uid = widget.uid;
         var username = widget.userName;

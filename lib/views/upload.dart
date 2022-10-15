@@ -141,8 +141,8 @@ class _UploadDialogBodyState extends State<UploadDialogBody> {
                         });
                       } : null,
                       icon: e.status == 'ok'
-                        ? const Icon(Icons.delete, color: bdwmPrimaryColor,)
-                        : const Icon(Icons.circle_outlined, color: bdwmPrimaryColor,),
+                        ? Icon(Icons.delete, color: bdwmPrimaryColor,)
+                        : Icon(Icons.circle_outlined, color: bdwmPrimaryColor,),
                     ),
                   ],
                 );

@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 
 import './router.dart';
 import './globalvars.dart';
-import './views/constants.dart' show bdwmPrimaryColor, bdwmSurfaceColor;
+import './views/constants.dart' show bdwmPrimaryColor;
 import './services.dart';
 import './services_instance.dart';
 import './bdwm/mail.dart';
@@ -25,10 +25,18 @@ void main() async {
   await globalConfigInfo.init();
   await globalThreadHistory.init();
   await globalMarkedThread.init();
+  initPrimaryColor();
   checkUpdateByTime();
   await unreadMessage.initWorker();
   await unreadMail.initWorker();
   runApp(const MainPage());
+}
+
+void initPrimaryColor() {
+  var colorValue = int.tryParse(globalConfigInfo.getPrimaryColorString());
+  if (colorValue != null) {
+    bdwmPrimaryColor = Color(colorValue);
+  }
 }
 
 class MainPage extends StatefulWidget {
@@ -105,14 +113,16 @@ class _MainPageState extends State<MainPage> {
       title: 'OBViewer',
       theme: ThemeData(
         // #e97c62
-        colorScheme: const ColorScheme.light().copyWith(primary: bdwmSurfaceColor),
+        colorScheme: const ColorScheme.light().copyWith(primary: bdwmPrimaryColor),
         brightness: Brightness.light,
+        // iconTheme: IconThemeData(color: bdwmPrimaryColor),
       ),
       darkTheme: ThemeData(
         colorScheme: const ColorScheme.dark().copyWith(primary: bdwmPrimaryColor, surface: Colors.grey[800]),
         // brightness: Brightness.dark,
         brightness: Brightness.dark,
         useMaterial3: false,
+        // iconTheme: IconThemeData(color: bdwmPrimaryColor),
       ),
       routerDelegate: mainRouterDelegate,
       // backButtonDispatcher: RootBackButtonDispatcher(),

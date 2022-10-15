@@ -169,7 +169,7 @@ class _OperateComponentState extends State<OperateComponent> {
         // if (globalUInfo.uid == widget.uid && globalUInfo.login == true)
         // const Spacer(),
         PopupMenuButton<String>(
-          child: const SizedBox(
+          child: SizedBox(
             width: 30,
             height: 30,
             child: Icon(Icons.more_horiz, color: bdwmPrimaryColor,),
@@ -588,7 +588,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                     },
                   ),
                   if (item.postOwner)
-                    const Text("楼主", style: TextStyle(fontSize: 12, color: bdwmPrimaryColor)),
+                    Text("楼主", style: TextStyle(fontSize: 12, color: bdwmPrimaryColor)),
                   Text(item.postNumber, style: TextStyle(fontSize: 12, color: item.postNumber.contains("高亮") ? highlightReplyColor : Colors.grey)),
                   if (item.isBaoLiu) genThreadLabel("保留"),
                   if (item.isWenZhai) genThreadLabel("文摘"),

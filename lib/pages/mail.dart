@@ -7,6 +7,7 @@ import '../html_parser/mail_parser.dart';
 import '../globalvars.dart';
 import '../views/utils.dart';
 import '../router.dart' show nv2Push;
+import '../views/constants.dart' show bdwmPrimaryColor;
 
 class MailListApp extends StatefulWidget {
   const MailListApp({super.key});
@@ -174,6 +175,7 @@ class _MailListAppState extends State<MailListApp> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   IconButton(
+                    color: bdwmPrimaryColor,
                     disabledColor: Colors.grey,
                     tooltip: '刷新',
                     icon: const Icon(Icons.refresh),
@@ -182,6 +184,7 @@ class _MailListAppState extends State<MailListApp> {
                     },
                   ),
                   IconButton(
+                    color: bdwmPrimaryColor,
                     disabledColor: Colors.grey,
                     tooltip: '上一页',
                     icon: const Icon(Icons.arrow_back),
@@ -210,6 +213,7 @@ class _MailListAppState extends State<MailListApp> {
                     },
                   ),
                   IconButton(
+                    color: bdwmPrimaryColor,
                     disabledColor: Colors.grey,
                     tooltip: '下一页',
                     icon: const Icon(Icons.arrow_forward),

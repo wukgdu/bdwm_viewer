@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../views/drawer.dart';
 import '../views/html_widget.dart';
-import '../views/constants.dart' show bdwmPrimaryColor;
+import '../views/constants.dart' show textLinkStyle;
 import '../check_update.dart' show innerLinkForBBS, curVersionForBBS;
 import '../router.dart' show nv2Push;
 
@@ -23,7 +23,7 @@ class AboutApp extends StatelessWidget {
               onTap: () {
                 nv2Push(context, '/user', arguments: "22776");
               },
-              child: Text("onepiece@bdwm", style: _contentStyle.merge(const TextStyle(color: bdwmPrimaryColor))),
+              child: Text("onepiece@bdwm", style: _contentStyle.merge(textLinkStyle)),
             )
           ],
         ),

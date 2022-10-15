@@ -288,6 +288,7 @@ class BDWMConfig {
   bool autoClearImageCache = true;
   bool extraThread = false;
   bool highQualityPreview = false;
+  String primaryColorString = "";
   double contentFontSize = 16.0;
   String maxPageNum = "8";
   Set<String> seeNoThem = {};
@@ -312,6 +313,7 @@ class BDWMConfig {
       "extraThread": extraThread,
       "contentFontSize": contentFontSize,
       "highQualityPreview": highQualityPreview,
+      "primaryColorString": primaryColorString,
     };
   }
   void fromJson(Map<String, dynamic> jsonContent) {
@@ -324,11 +326,23 @@ class BDWMConfig {
     lastCheckTime = jsonContent['lastCheckTime'] ?? "";
     maxPageNum = jsonContent['maxPageNum'] ?? "8";
     contentFontSize = jsonContent['contentFontSize'] ?? 16.0;
+    primaryColorString = jsonContent['primaryColorString'] ?? "";
     List seeNoHimHerList = jsonContent['seeNoThem'] ?? <String>[];
     seeNoThem = Set<String>.from(seeNoHimHerList.map((e) => e as String));
   }
   String gist() {
     return jsonEncode(toJson());
+  }
+
+  String getPrimaryColorString() {
+    return primaryColorString;
+  }
+
+  Future<bool> setPrimaryColorString(String newValue) async {
+    return await lock.synchronized(() async {
+      primaryColorString = newValue;
+      return await update();
+    });
   }
 
   double getContentFontSize() {

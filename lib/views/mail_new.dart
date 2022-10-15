@@ -241,7 +241,7 @@ class _MailNewPageState extends State<MailNewPage> {
                     }
                   });
                 },
-                child: const Text("发送", style: TextStyle(color: bdwmPrimaryColor)),
+                child: Text("发送", style: TextStyle(color: bdwmPrimaryColor)),
               ),
             ],
           ),

@@ -270,7 +270,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
         } else if (ele.classes.contains("zz-info")) {
           res.add(TextSpan(
             children: travelHtml(ele, context: context, ts: ts),
-            style: const TextStyle(color: bdwmPrimaryColor, backgroundColor: null),
+            style: TextStyle(color: bdwmPrimaryColor, backgroundColor: null),
           ));
         } else {
           res.add(TextSpan(

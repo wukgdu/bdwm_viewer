@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
-const bdwmPrimaryColor = Color(0xffea6242);
+// const bdwmPrimaryColor = Color(0xffea6242);
 const bdwmSurfaceColor = Color(0xffe97c62);
+Color bdwmPrimaryColor = bdwmSurfaceColor;
 const textLinkStyle = TextStyle(
-  color: bdwmPrimaryColor,
+  color: bdwmSurfaceColor,
 );
 const Color highlightReplyColor = Color(0xfff8cea8);
 const Color highlightColor = Color(0xffea6242);

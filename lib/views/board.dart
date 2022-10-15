@@ -35,7 +35,7 @@ class _StarBoardState extends State<StarBoard> {
     return Row(
       children: [
         IconButton(
-          icon: likeIt ? const Icon(Icons.star, color: bdwmPrimaryColor,) : const Icon(Icons.star_outline),
+          icon: likeIt ? Icon(Icons.star, color: bdwmPrimaryColor,) : const Icon(Icons.star_outline),
           onPressed: () {
             var action = likeIt ? "delete" : "add";
             bdwmStarBoard(widget.bid, action).then((value) {
@@ -96,11 +96,11 @@ class OneThreadInBoard extends StatelessWidget {
             TextSpan(
               children: <InlineSpan>[
                 if (pinned)
-                  const WidgetSpan(child: Icon(Icons.pin_drop, color: bdwmPrimaryColor, size: 16), alignment: PlaceholderAlignment.middle)
+                  WidgetSpan(child: Icon(Icons.pin_drop, color: bdwmPrimaryColor, size: 16), alignment: PlaceholderAlignment.middle)
                 else if (ad)
                   TextSpan(text: boardPostInfo.bpID, style: const TextStyle(backgroundColor: Colors.amber, color: Colors.white))
                 else if (boardPostInfo.isNew)
-                  const WidgetSpan(
+                  WidgetSpan(
                     child: Icon(Icons.circle, color: bdwmPrimaryColor, size: 7),
                     alignment: PlaceholderAlignment.middle,
                   ),
@@ -109,9 +109,9 @@ class OneThreadInBoard extends StatelessWidget {
                   style: boardPostInfo.isGaoLiang ? const TextStyle(color: highlightColor) : null,
                 ),
                 if (boardPostInfo.hasAttachment)
-                  const WidgetSpan(child: Icon(Icons.attachment, color: bdwmPrimaryColor, size: 16), alignment: PlaceholderAlignment.middle),
+                  WidgetSpan(child: Icon(Icons.attachment, color: bdwmPrimaryColor, size: 16), alignment: PlaceholderAlignment.middle),
                 if (boardPostInfo.lock)
-                  const WidgetSpan(child: Icon(Icons.lock, color: bdwmPrimaryColor, size: 16), alignment: PlaceholderAlignment.middle),
+                  WidgetSpan(child: Icon(Icons.lock, color: bdwmPrimaryColor, size: 16), alignment: PlaceholderAlignment.middle),
                 if (boardPostInfo.isZhiDing)
                   WidgetSpan(child: genThreadLabel("置顶"), alignment: PlaceholderAlignment.middle),
                 if (boardPostInfo.isBaoLiu)
@@ -315,7 +315,7 @@ class _BoardPageState extends State<BoardPage> {
                       }
                     });
                   },
-                  child: const Text("清除未读", style: TextStyle(color: bdwmPrimaryColor),),
+                  child: Text("清除未读", style: TextStyle(color: bdwmPrimaryColor),),
                 ),
               ],
             ),

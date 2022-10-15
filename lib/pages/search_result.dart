@@ -5,6 +5,7 @@ import '../bdwm/req.dart';
 import '../bdwm/search.dart';
 import '../globalvars.dart';
 import '../views/utils.dart';
+import '../views/constants.dart' show bdwmPrimaryColor;
 import '../views/search.dart';
 import '../html_parser/search_parser.dart';
 import '../views/search_result.dart';
@@ -111,6 +112,7 @@ class _SimpleSearchResultAppState extends State<SimpleSearchResultApp> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   IconButton(
+                    color: bdwmPrimaryColor,
                     disabledColor: Colors.grey,
                     tooltip: '上一页',
                     icon: const Icon(Icons.arrow_back),
@@ -139,6 +141,7 @@ class _SimpleSearchResultAppState extends State<SimpleSearchResultApp> {
                     },
                   ),
                   IconButton(
+                    color: bdwmPrimaryColor,
                     disabledColor: Colors.grey,
                     tooltip: '下一页',
                     icon: const Icon(Icons.arrow_forward),
@@ -283,6 +286,7 @@ class _ComplexSearchResultAppState extends State<ComplexSearchResultApp> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   IconButton(
+                    color: bdwmPrimaryColor,
                     disabledColor: Colors.grey,
                     tooltip: '上一页',
                     icon: const Icon(Icons.arrow_back),
@@ -311,6 +315,7 @@ class _ComplexSearchResultAppState extends State<ComplexSearchResultApp> {
                     },
                   ),
                   IconButton(
+                    color: bdwmPrimaryColor,
                     disabledColor: Colors.grey,
                     tooltip: '下一页',
                     icon: const Icon(Icons.arrow_forward),

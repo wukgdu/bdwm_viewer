@@ -5,6 +5,7 @@ import '../views/read_thread.dart';
 import '../views/utils.dart';
 import '../html_parser/read_thread_parser.dart';
 import '../bdwm/req.dart';
+import '../views/constants.dart' show bdwmPrimaryColor;
 import '../globalvars.dart';
 import '../utils.dart' show clearAllExtendedImageCache;
 import '../router.dart' show nv2Push;
@@ -205,6 +206,7 @@ class _ThreadAppState extends State<ThreadApp> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   IconButton(
+                    color: bdwmPrimaryColor,
                     disabledColor: Colors.grey,
                     tooltip: '刷新',
                     icon: const Icon(Icons.refresh),
@@ -214,6 +216,7 @@ class _ThreadAppState extends State<ThreadApp> {
                   ),
                   if (widget.needToBoard != null && widget.needToBoard == true)
                     IconButton(
+                      color: bdwmPrimaryColor,
                       disabledColor: Colors.grey,
                       tooltip: '返回本版',
                       icon: const Icon(Icons.list),
@@ -225,6 +228,7 @@ class _ThreadAppState extends State<ThreadApp> {
                       },
                     ),
                   IconButton(
+                    color: bdwmPrimaryColor,
                     disabledColor: Colors.grey,
                     tooltip: '上一页',
                     icon: const Icon(Icons.arrow_back),
@@ -254,6 +258,7 @@ class _ThreadAppState extends State<ThreadApp> {
                     },
                   ),
                   IconButton(
+                    color: bdwmPrimaryColor,
                     disabledColor: Colors.grey,
                     tooltip: '下一页',
                     icon: const Icon(Icons.arrow_forward),
