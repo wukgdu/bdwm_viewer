@@ -4,6 +4,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import '../globalvars.dart';
 import '../views/constants.dart';
 import '../views/utils.dart';
+import '../main.dart' show MainPage;
 
 class ColorPickerComponent extends StatefulWidget {
   final Color primaryColor;
@@ -58,7 +59,9 @@ class _ColorPickerComponentState extends State<ColorPickerComponent> {
 }
 
 class PrimaryColorComponent extends StatefulWidget {
-  const PrimaryColorComponent({super.key});
+  // Settings is const, so refresh
+  final Function? parentRefresh;
+  const PrimaryColorComponent({super.key, this.parentRefresh});
 
   @override
   State<PrimaryColorComponent> createState() => _PrimaryColorComponentState();
@@ -68,7 +71,21 @@ class _PrimaryColorComponentState extends State<PrimaryColorComponent> {
   void setNewColor(Color newColor) {
     bdwmPrimaryColor = newColor;
     globalConfigInfo.primaryColorString = newColor.value.toString();
-    setState(() { });
+    var mainState = MainPage.maybeOf(context);
+    if (mainState == null) {
+      if (widget.parentRefresh != null) {
+        widget.parentRefresh!();
+      } else {
+        setState(() { });
+      }
+    } else {
+      mainState.refresh();
+      if (widget.parentRefresh != null) {
+        widget.parentRefresh!();
+      } else {
+        setState(() { });
+      }
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -85,7 +102,7 @@ class _PrimaryColorComponentState extends State<PrimaryColorComponent> {
         setNewColor(bdwmSurfaceColor);
       },
       title: const Text("主题颜色"),
-      subtitle: const Text("选择主题颜色，保存后重启生效。长按恢复默认颜色"),
+      subtitle: const Text("选择主题颜色。长按恢复默认颜色"),
       trailing: Container(
         color: bdwmPrimaryColor,
         margin: const EdgeInsets.only(right: 10),
@@ -103,6 +120,9 @@ class SettingsApp extends StatefulWidget {
 }
 
 class _SettingsAppState extends State<SettingsApp> {
+  void refresh() {
+    setState(() { });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -129,7 +149,7 @@ class _SettingsAppState extends State<SettingsApp> {
             value: globalConfigInfo.useImgInMessage,
             onChanged: (value) {
               globalConfigInfo.useImgInMessage = value;
-              setState(() { });
+              refresh();
             },
           ),
           const Divider(),
@@ -141,7 +161,7 @@ class _SettingsAppState extends State<SettingsApp> {
             onChanged: (value) {
               globalConfigInfo.lastLoginTime = "";
               globalConfigInfo.showWelcome = value;
-              setState(() { });
+              refresh();
             },
           ),
           const Divider(),
@@ -152,7 +172,7 @@ class _SettingsAppState extends State<SettingsApp> {
             value: globalConfigInfo.highQualityPreview,
             onChanged: (value) {
               globalConfigInfo.highQualityPreview = value;
-              setState(() { });
+              refresh();
             },
           ),
           const Divider(),
@@ -163,7 +183,7 @@ class _SettingsAppState extends State<SettingsApp> {
             value: globalConfigInfo.autoClearImageCache,
             onChanged: (value) {
               globalConfigInfo.autoClearImageCache = value;
-              setState(() { });
+              refresh();
             },
           ),
           const Divider(),
@@ -178,7 +198,7 @@ class _SettingsAppState extends State<SettingsApp> {
               } else {
                 return;
               }
-              setState(() { });
+              refresh();
             },
             title: const Text("正文字体大小"),
             subtitle: Text("主题帖和文集的正文字体大小：${globalConfigInfo.contentFontSize}"),
@@ -190,7 +210,7 @@ class _SettingsAppState extends State<SettingsApp> {
             ),
           ),
           const Divider(),
-          const PrimaryColorComponent(),
+          PrimaryColorComponent(parentRefresh: () { refresh(); },),
           const Divider(),
           ListTile(
             onTap: () async {
@@ -208,7 +228,7 @@ class _SettingsAppState extends State<SettingsApp> {
                   globalConfigInfo.maxPageNum = v.toString();
                 }
               }
-              setState(() { });
+              refresh();
             },
             title: const Text("只加载最新的页面"),
             subtitle: Text("最新的 ${int.tryParse(globalConfigInfo.getMaxPageNum()) ?? '无穷'} 个"),
@@ -221,7 +241,7 @@ class _SettingsAppState extends State<SettingsApp> {
             value: globalConfigInfo.extraThread,
             onChanged: (value) {
               globalConfigInfo.extraThread = value;
-              setState(() { });
+              refresh();
             },
           ),
           const Divider(),

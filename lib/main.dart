@@ -43,10 +43,15 @@ class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<MainPage> createState() => MainPageState();
+
+  static MainPageState? maybeOf(BuildContext context) {
+    final mainPageState = context.findAncestorStateOfType<MainPageState>();
+    return mainPageState;
+  }
 }
 
-class _MainPageState extends State<MainPage> {
+class MainPageState extends State<MainPage> {
   Timer? timerMessage;
   Timer? timerMail;
   ValueNotifier<int> messageCount = ValueNotifier<int>(0);
@@ -104,6 +109,10 @@ class _MainPageState extends State<MainPage> {
     clearAllExtendedImageCache(really: true);
     debugPrint("main dispose");
     super.dispose();
+  }
+
+  void refresh() {
+    setState(() { });
   }
 
   @override
