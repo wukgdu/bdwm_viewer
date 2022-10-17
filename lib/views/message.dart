@@ -380,7 +380,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
                             });
                           }
                         },
-                        child: Text("[点击查看]", style: TextStyle(color: bdwmPrimaryColor)),
+                        child: const Text("[点击查看]", style: textLinkStyle),
                       ),
                     ),
                 ]

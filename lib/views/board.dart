@@ -1,8 +1,8 @@
-import 'package:bdwm_viewer/bdwm/set_read.dart';
 import 'package:flutter/material.dart';
 
 import '../html_parser/board_parser.dart';
 import './constants.dart';
+import '../bdwm/set_read.dart';
 import '../bdwm/req.dart';
 import '../bdwm/star_board.dart';
 import '../globalvars.dart';

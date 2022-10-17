@@ -1,7 +1,7 @@
-import 'package:bdwm_viewer/router.dart';
 import 'package:flutter/material.dart';
 
 import './constants.dart';
+import '../router.dart';
 import '../html_parser/block_parser.dart';
 
 class BlockPage extends StatefulWidget {

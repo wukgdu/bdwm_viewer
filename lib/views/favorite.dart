@@ -1,10 +1,11 @@
-import 'package:bdwm_viewer/router.dart';
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 
 import '../bdwm/req.dart';
 import '../bdwm/set_read.dart';
 import '../globalvars.dart';
+import '../router.dart';
+import './constants.dart' show bdwmPrimaryColor;
 import '../html_parser/favorite_parser.dart';
 
 class FavoriteFuturePage extends StatefulWidget {
@@ -138,7 +139,7 @@ class FavoritePageState extends State<FavoritePage> {
             children: [
               // const Spacer(flex: 1),
               const SizedBox(width: 10,),
-              Icon(Icons.circle, size: 10, color: item.unread ? Colors.red : const Color.fromRGBO(255, 255, 255, 0),),
+              Icon(Icons.circle, size: 10, color: item.unread ? bdwmPrimaryColor : const Color.fromRGBO(255, 255, 255, 0),),
               const SizedBox(width: 10,),
               // const Spacer(flex: 1),
               Text.rich(

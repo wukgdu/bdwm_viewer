@@ -1,7 +1,7 @@
-import 'package:bdwm_viewer/router.dart';
 import 'package:flutter/material.dart';
 
 import '../bdwm/login.dart';
+import '../router.dart';
 import '../globalvars.dart';
 import '../services_instance.dart';
 import './utils.dart';

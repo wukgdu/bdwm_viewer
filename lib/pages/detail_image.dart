@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:bdwm_viewer/router.dart';
+import '../router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 // import 'package:image_gallery_saver/image_gallery_saver.dart';
