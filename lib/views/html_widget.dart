@@ -429,15 +429,10 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
                   }
                   if (value == "yes") {
                     var parsedUrl = Uri.parse(link);
-                    if (true || !await canLaunchUrl(parsedUrl)) {
-                      if (!await launchUrl(parsedUrl, mode: LaunchMode.externalApplication)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("打开链接失败"), duration: Duration(milliseconds: 600),),
-                        );
-                      }
-                    } else {
+                    // await canLaunchUrl(parsedUrl)
+                    if (!await launchUrl(parsedUrl, mode: LaunchMode.externalApplication)) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("未能打开链接"),),
+                        const SnackBar(content: Text("打开链接失败"), duration: Duration(milliseconds: 600),),
                       );
                     }
                   }

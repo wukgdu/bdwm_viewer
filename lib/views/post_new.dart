@@ -186,7 +186,7 @@ class _PostNewPageState extends State<PostNewPage> {
                     signature: nSignature, config: config, modify: widget.postid!=null, postid: widget.postid, attachpath: nAttachPath)
                   .then((value) {
                     if (value.success) {
-                      // TODO: handle forward
+                      // TODO: handle forward (no plan)
                       showAlertDialog(context, "发送成功", const Text("rt"),
                         actions1: TextButton(
                           onPressed: () { Navigator.of(context).pop(); },

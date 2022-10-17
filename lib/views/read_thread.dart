@@ -475,15 +475,9 @@ class AttachmentComponent extends StatelessWidget {
                   // },
                   onTap: () async {
                     var parsedUrl = Uri.parse(e.link);
-                    if (true || !await canLaunchUrl(parsedUrl)) {
-                      if (!await launchUrl(parsedUrl, mode: LaunchMode.externalApplication)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("打开链接失败"), duration: Duration(milliseconds: 600),),
-                        );
-                      }
-                    } else {
+                    if (!await launchUrl(parsedUrl, mode: LaunchMode.externalApplication)) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("未能打开链接"),),
+                        const SnackBar(content: Text("打开链接失败"), duration: Duration(milliseconds: 600),),
                       );
                     }
                     // gotoDetailImage(context: context, link: e.link, name: e.text);
