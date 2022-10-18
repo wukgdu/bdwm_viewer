@@ -22,6 +22,49 @@ class BigTenComponent extends StatefulWidget {
 }
 
 class _BigTenComponentState extends State<BigTenComponent> {
+  bool showBigTen = false;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ListTile(
+          onTap: () {
+            if (showBigTen == true) {
+              setState(() {
+                showBigTen = false;
+              });
+              return;
+            }
+            showConfirmDialog(context, "十大拍照", "将要读取当前十大每个帖子的首页").then((value) {
+              if (value == null) { return; }
+              if (value == "yes") {
+                if (!mounted) { return; }
+                setState(() {
+                  showBigTen = true;
+                });
+              }
+            });
+          },
+          title: const Text("十大拍照（term）"),
+          trailing: const Icon(Icons.arrow_drop_down),
+        ),
+        if (showBigTen) ...[
+          const Divider(),
+          const BigTenDetailComponent(),
+        ],
+      ],
+    );
+  }
+}
+
+class BigTenDetailComponent extends StatefulWidget {
+  const BigTenDetailComponent({super.key});
+
+  @override
+  State<BigTenDetailComponent> createState() => _BigTenDetailComponentState();
+}
+
+class _BigTenDetailComponentState extends State<BigTenDetailComponent> {
   late CancelableOperation getDataCancelable;
   static const monthTrans = {
     "01": "Jan", "02": "Feb", "03": "Mar", "04": "Apr", "05": "May", "06": "Jun",
@@ -232,48 +275,16 @@ class _ImageCacheComponentState extends State<ImageCacheComponent> {
   }
 }
 
-class FunFunFunPage extends StatefulWidget {
+class FunFunFunPage extends StatelessWidget {
   const FunFunFunPage({super.key});
-
-  @override
-  State<FunFunFunPage> createState() => _FunFunFunPageState();
-}
-
-class _FunFunFunPageState extends State<FunFunFunPage> {
-  bool showBigTen = false;
-  Widget? bigTenWidget;
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        Card(
-          child: ListTile(
-            onTap: () {
-              if (showBigTen == true) {
-                setState(() {
-                  showBigTen = false;
-                  bigTenWidget = null;
-                });
-                return;
-              }
-              showConfirmDialog(context, "十大拍照", "将要读取当前十大每个帖子的首页").then((value) {
-                if (value == null) { return; }
-                if (value == "yes") {
-                  if (!mounted) { return; }
-                  setState(() {
-                    showBigTen = true;
-                    bigTenWidget = const BigTenComponent();
-                  });
-                }
-              });
-            },
-            title: const Text("十大拍照（term）"),
-            trailing: const Icon(Icons.arrow_drop_down),
-          ),
+        const Card(
+          child: BigTenComponent(),
         ),
-        if (showBigTen)
-          Card(child: bigTenWidget ?? const Center(child: Text("生成十大拍照失败"))),
         Card(
           child: ListTile(
             onTap: () {
