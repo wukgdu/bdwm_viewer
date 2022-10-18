@@ -27,6 +27,7 @@ import './pages/settings.dart';
 import './pages/detail_image.dart';
 import './pages/recent_thread.dart';
 import './pages/marked_thread.dart';
+import './pages/user_stat.dart';
 import './views/search.dart' show PostSearchSettings;
 import './services.dart';
 import './globalvars.dart';
@@ -233,6 +234,8 @@ class MainPageBuilder {
         return const FriendsPostsApp();
       case "/settings":
         return const SettingsApp();
+      case "/userStat":
+        return const UserStatApp();
       case "/detailImage":
         String? imgLink;
         String? imgName;

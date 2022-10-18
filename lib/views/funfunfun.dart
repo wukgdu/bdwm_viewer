@@ -295,6 +295,15 @@ class _FunFunFunPageState extends State<FunFunFunPage> {
         Card(
           child: ListTile(
             onTap: () {
+              nv2Push(context, '/userStat');
+            },
+            title: const Text("个人统计数据"),
+            trailing: const Icon(Icons.arrow_right),
+          )
+        ),
+        Card(
+          child: ListTile(
+            onTap: () {
               nv2Push(context, '/recentThread');
             },
             title: const Text("最近浏览"),

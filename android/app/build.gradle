@@ -80,7 +80,7 @@ android {
             // signingConfig signingConfigs.debug
             signingConfig signingConfigs.release
             minifyEnabled true
-            shrinkResources false
+            shrinkResources true
         }
     }
 
