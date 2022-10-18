@@ -19,6 +19,9 @@ class EntryHomeComponent extends StatefulWidget {
 
 class _EntryHomeComponentState extends State<EntryHomeComponent> {
   late CancelableOperation getDataCancelable;
+  final textButtonStyle = TextButton.styleFrom(
+    minimumSize: const Size(20, 36),
+  );
 
   Future<WelcomeInfo> getWelcomeData() async {
     var resp = await bdwmClient.get("$v2Host/home.php", headers: genHeaders());
@@ -52,12 +55,14 @@ class _EntryHomeComponentState extends State<EntryHomeComponent> {
               getDataCancelable = CancelableOperation.fromFuture(getWelcomeData());
             });
           },
+          style: textButtonStyle,
           child: const Text("刷新"),
         ),
         TextButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
+          style: textButtonStyle,
           child: const Text("进入未名BBS"),
         ),
       ],
@@ -112,6 +117,7 @@ class _EntryHomeComponentState extends State<EntryHomeComponent> {
                   getDataCancelable = CancelableOperation.fromFuture(getWelcomeData());
                 });
               },
+              style: textButtonStyle,
               child: const Text("刷新"),
             ),
             if (welcomeInfo.actionLink.isNotEmpty)
@@ -123,12 +129,14 @@ class _EntryHomeComponentState extends State<EntryHomeComponent> {
                   Navigator.of(context).pop();
                   naviGotoThreadByLink(context, welcomeInfo.actionLink, "", needToBoard: true);
                 },
+                style: textButtonStyle,
                 child: const Text("进入主题帖"),
               ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
+              style: textButtonStyle,
               child: const Text("进入未名BBS"),
             ),
           ],
