@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../views/user_stat.dart';
+import '../views/utils.dart' show showInformDialog;
 
 class UserStatApp extends StatelessWidget {
   const UserStatApp({super.key});
@@ -11,6 +12,14 @@ class UserStatApp extends StatelessWidget {
       // needBack should always be false/null
       appBar: AppBar(
         title: const Text("统计数据"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              showInformDialog(context, "数据来源", "https://bbs.pku.edu.cn/v2/userstat.php");
+            },
+            icon: const Icon(Icons.info),
+          ),
+        ],
       ),
       body: const UserStatFuturePage(),
     );

@@ -55,7 +55,7 @@ Future<String?> showNetWorkDialog(BuildContext context) {
 }
 
 Future<String?> showInformDialog(BuildContext context, String title, String content) {
-  return showAlertDialog(context, title, Text(content),
+  return showAlertDialog(context, title, SelectableText(content),
     actions1: TextButton(
       onPressed: () {
         Navigator.of(context).pop();
