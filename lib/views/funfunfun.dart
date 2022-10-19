@@ -230,10 +230,19 @@ class ImageCacheComponent extends StatefulWidget {
 
 class _ImageCacheComponentState extends State<ImageCacheComponent> {
   int cacheSizeBytes = 0;
+  late CancelableOperation futureDiskSize;
+
   @override
   void initState() {
     super.initState();
     cacheSizeBytes = computeMemoryImageCache();
+    futureDiskSize = CancelableOperation.fromFuture(computeDiskImageCache(), onCancel: () { });
+  }
+
+  @override
+  void dispose() {
+    futureDiskSize.cancel();
+    super.dispose();
   }
 
   @override
@@ -241,6 +250,15 @@ class _ImageCacheComponentState extends State<ImageCacheComponent> {
     return ListTile(
       onTap: () {
         clearAllExtendedImageCache(really: true);
+        setState(() {
+          cacheSizeBytes = computeMemoryImageCache();
+          futureDiskSize.cancel().then((_) {
+            futureDiskSize = CancelableOperation.fromFuture(computeDiskImageCache(), onCancel: () { });
+          });
+        });
+      },
+      onLongPress: () {
+        clearMemoryImageCache();
         setState(() {
           cacheSizeBytes = computeMemoryImageCache();
         });
@@ -254,7 +272,7 @@ class _ImageCacheComponentState extends State<ImageCacheComponent> {
             const TextSpan(text: "；"),
             WidgetSpan(
               child: FutureBuilder(
-                future: computeDiskImageCache(),
+                future: futureDiskSize.value,
                 builder:(context, snapshot) {
                   if (snapshot.connectionState != ConnectionState.done) {
                     return const Text("硬盘：计算中");
