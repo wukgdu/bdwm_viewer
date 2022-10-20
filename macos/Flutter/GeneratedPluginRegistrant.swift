@@ -9,7 +9,7 @@ import device_info_plus_macos
 import pasteboard
 import path_provider_macos
 import quick_notify
-import share_plus_macos
+import share_plus
 import url_launcher_macos
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
