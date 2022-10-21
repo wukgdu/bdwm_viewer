@@ -6,16 +6,21 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' show basename;
 // import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../utils.dart';
 import '../views/utils.dart' show SaveRes, genDownloadPath;
 
-void gotoDetailImage({required BuildContext context, required String link, String? name, Uint8List? imgData}) {
+void gotoDetailImage({
+  required BuildContext context, required String link, String? name, Uint8List? imgData,
+  List<String>? imgLinks, List<String>? imgNames, int? curIdx,
+}) {
   nv2Push(context, '/detailImage', arguments: {
     'link': link,
     'name': name,
     'imgData': imgData,
+    'imgLinks': imgLinks,
+    'imgNames': imgNames,
+    'curIdx': curIdx,
   });
 }
 
@@ -23,7 +28,10 @@ class DetailImage extends StatefulWidget {
   final String imgLink;
   final String? imgName;
   final Uint8List? imgData;
-  const DetailImage({Key? key, required this.imgLink, this.imgName, this.imgData}) : super(key: key);
+  final List<String>? imgLinks;
+  final List<String>? imgNames;
+  final int? curIdx;
+  const DetailImage({Key? key, required this.imgLink, this.imgName, this.imgData, this.imgLinks, this.imgNames, this.curIdx}) : super(key: key);
 
   @override
   State<DetailImage> createState() => _DetailImageState();
@@ -34,6 +42,7 @@ class _DetailImageState extends State<DetailImage> {
   String? imgName;
   Uint8List? imgData;
   CancellationToken cancelIt = CancellationToken();
+  int currentIdx = 0;
 
   @override
   initState() {
@@ -41,6 +50,7 @@ class _DetailImageState extends State<DetailImage> {
     imgLink = widget.imgLink;
     imgName = widget.imgName;
     imgData = widget.imgData;
+    currentIdx = widget.curIdx ?? -1;
   }
 
   @override
@@ -54,11 +64,7 @@ class _DetailImageState extends State<DetailImage> {
     super.dispose();
   }
 
-  Future<SaveRes> saveImage(Uint8List? data) async {
-    var couldStore = await checkAndRequestPermission(Permission.storage);
-    if (couldStore == false) {
-      return SaveRes(false, "没有保存文件权限");
-    }
+  Future<SaveRes> saveImage({Uint8List? data, String imgLink="", String? imgName}) async {
     var fname = imgName ?? (imgLink.isNotEmpty ? basename(imgLink) : null);
     var saveRes = await genDownloadPath(name: fname);
     if (saveRes.success == false) {
@@ -94,16 +100,74 @@ class _DetailImageState extends State<DetailImage> {
     return SaveRes(true, downloadPath);
   }
 
+  ExtendedImage genNetworkImage(String imgLink, {bool inPageView=false}) {
+    return ExtendedImage.network(
+      imgLink,
+      fit: BoxFit.contain,
+      cache: true,
+      enableMemoryCache: true,
+      clearMemoryCacheWhenDispose: true,
+      clearMemoryCacheIfFailed: true,
+      handleLoadingProgress: true,
+      filterQuality: FilterQuality.high,
+      cancelToken: currentIdx >= 0 ? null : cancelIt,
+      // timeLimit: const Duration(seconds: 60),
+      loadStateChanged: (ExtendedImageState state) {
+        switch (state.extendedImageLoadState) {
+          case LoadState.loading:
+            var curByte = state.loadingProgress?.cumulativeBytesLoaded ?? 0;
+            var sumByte = state.loadingProgress?.expectedTotalBytes ?? -1;
+            if (sumByte == -1) {
+              return const Text("加载中");
+            }
+            var text = "${(curByte * 100 / sumByte).toStringAsFixed(0)}%";
+            // return Text(text);
+            return CircularProgressIndicator(
+              value: curByte / sumByte,
+              semanticsLabel: '加载中',
+              semanticsValue: text,
+              backgroundColor: Colors.amberAccent,
+            );
+          case LoadState.completed:
+            return null;
+          case LoadState.failed:
+            return Center(child: SelectableText("加载失败：$imgLink"));
+          default:
+            return null;
+        }
+      },
+      mode: ExtendedImageMode.gesture,
+      initGestureConfigHandler: (state) {
+        return GestureConfig(
+          minScale: 1.0,
+          animationMinScale: 0.7,
+          maxScale: 3.0,
+          animationMaxScale: 3.5,
+          speed: 1.0,
+          inertialSpeed: 100.0,
+          initialScale: 1.0,
+          inPageView: inPageView,
+          initialAlignment: InitialAlignment.center,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("图片"),
+        title: widget.imgLinks == null
+        ? const Text("图片")
+        : Text("图片：↤${currentIdx+1}/${widget.imgLinks!.length}↦"),
         actions: [
           IconButton(
             icon: const Icon(Icons.download),
             onPressed: () {
-              saveImage(imgData).then((res) {
+              saveImage(data: imgData,
+                imgLink: currentIdx >= 0 ? widget.imgLinks![currentIdx] : imgLink,
+                imgName: currentIdx >= 0 ? widget.imgNames![currentIdx] : imgName,
+              ).then((res) {
                 var text = "保存成功：${res.reason}";
                 if (!res.success) {
                   text = "保存失败：${res.reason}";
@@ -116,59 +180,26 @@ class _DetailImageState extends State<DetailImage> {
           ),
         ],
       ),
-      body: Center(
+      body: widget.imgLinks != null
+      ? ExtendedImageGesturePageView.builder(
+        itemCount: widget.imgLinks!.length,
+        scrollDirection: Axis.horizontal,
+        controller: ExtendedPageController(initialPage: currentIdx),
+        itemBuilder:(context, index) {
+          return Center(
+            child: genNetworkImage(widget.imgLinks![index], inPageView: true),
+          );
+        },
+        onPageChanged: (int newIndex) {
+          setState(() {
+            currentIdx = newIndex;
+          });
+        },
+      )
+      : Center(
         // child: Image.network(imgLink),
         child: imgData == null
-        ? ExtendedImage.network(
-          imgLink,
-          fit: BoxFit.contain,
-          cache: true,
-          enableMemoryCache: true,
-          clearMemoryCacheWhenDispose: true,
-          clearMemoryCacheIfFailed: true,
-          handleLoadingProgress: true,
-          filterQuality: FilterQuality.high,
-          cancelToken: cancelIt,
-          // timeLimit: const Duration(seconds: 60),
-          loadStateChanged: (ExtendedImageState state) {
-            switch (state.extendedImageLoadState) {
-              case LoadState.loading:
-                var curByte = state.loadingProgress?.cumulativeBytesLoaded ?? 0;
-                var sumByte = state.loadingProgress?.expectedTotalBytes ?? -1;
-                if (sumByte == -1) {
-                  return const Text("加载中");
-                }
-                var text = "${(curByte * 100 / sumByte).toStringAsFixed(0)}%";
-                // return Text(text);
-                return CircularProgressIndicator(
-                  value: curByte / sumByte,
-                  semanticsLabel: '加载中',
-                  semanticsValue: text,
-                  backgroundColor: Colors.amberAccent,
-                );
-              case LoadState.completed:
-                return null;
-              case LoadState.failed:
-                return Center(child: SelectableText("加载失败：$imgLink"));
-              default:
-                return null;
-            }
-          },
-          mode: ExtendedImageMode.gesture,
-          initGestureConfigHandler: (state) {
-            return GestureConfig(
-              minScale: 1.0,
-              animationMinScale: 0.7,
-              maxScale: 3.0,
-              animationMaxScale: 3.5,
-              speed: 1.0,
-              inertialSpeed: 100.0,
-              initialScale: 1.0,
-              inPageView: false,
-              initialAlignment: InitialAlignment.center,
-            );
-          },
-        )
+        ? genNetworkImage(imgLink)
         : ExtendedImage.memory(
           imgData!,
           fit: BoxFit.contain,

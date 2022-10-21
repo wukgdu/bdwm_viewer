@@ -240,15 +240,24 @@ class MainPageBuilder {
         String? imgLink;
         String? imgName;
         Uint8List? imgData;
+        List<String>? imgLinks;
+        List<String>? imgNames;
+        int? curIdx;
         if (settings.arguments != null) {
           var settingsMap = settings.arguments as Map;
           imgLink = settingsMap['link'] as String?;
           imgName = settingsMap['name'] as String?;
           imgData = settingsMap['imgData'] as Uint8List?;
+          imgLinks = settingsMap['imgLinks'] as List<String>?;
+          imgNames = settingsMap['imgNames'] as List<String>?;
+          curIdx = settingsMap['curIdx'] as int?;
         } else {
           return null;
         }
-        return DetailImage(imgLink: imgLink ?? "", imgName: imgName, imgData: imgData,);
+        return DetailImage(
+          imgLink: imgLink ?? "", imgName: imgName, imgData: imgData,
+          imgLinks: imgLinks, imgNames: imgNames, curIdx: curIdx,
+        );
       case "/home":
         if (messageCount == null || mailCount == null) { return null; }
         return HomeApp(messageCount: messageCount!, mailCount: mailCount!,);

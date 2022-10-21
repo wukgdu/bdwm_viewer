@@ -6,11 +6,12 @@ import 'package:path/path.dart' as path;
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
+import 'package:permission_handler/permission_handler.dart' show Permission;
 // import 'package:fwfh_selectable_text/fwfh_selectable_text.dart';
 
 import '../globalvars.dart' show networkErrorText;
 import './constants.dart';
-import '../utils.dart' show quickNotify;
+import '../utils.dart' show quickNotify, checkAndRequestPermission;
 
 Future<String?> showAlertDialog(BuildContext context, String title, Widget content, {Widget? actions1, Widget? actions2, Widget? actions3, List<Widget>? actions, bool? barrierDismissible=true}) {
   AlertDialog alert = AlertDialog(
@@ -196,12 +197,15 @@ Future<bool?> showLinkMenu(BuildContext context, String link, {String? downloadP
               onPressed: () async {
                 Navigator.of(context).pop();
                 const seconds = 60;
-                var fn = filename ?? path.basename(link);
-                var saveRes = await genDownloadPath(name: fn);
-                if (saveRes.success == false) {
-                  return;
+                var down = downloadPath ?? "";
+                if (down.isEmpty) {
+                  var fn = filename ?? path.basename(link);
+                  var saveRes = await genDownloadPath(name: fn);
+                  if (saveRes.success == false) {
+                    return;
+                  }
+                  down = saveRes.reason;
                 }
-                var down = downloadPath ?? saveRes.reason;
                 var timeout = false;
                 var resp = await http.get(Uri.parse(link)).timeout(const Duration(seconds: seconds), onTimeout: () {
                   timeout = true;
@@ -240,6 +244,10 @@ class SaveRes {
 }
 
 Future<SaveRes> genDownloadPath({String? name}) async {
+  var couldStore = await checkAndRequestPermission(Permission.storage);
+  if (couldStore == false) {
+    return SaveRes(false, "没有保存文件权限");
+  }
   Directory? downloadDir;
   String? downloadPath;
   switch (defaultTargetPlatform) {

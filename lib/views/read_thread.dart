@@ -468,7 +468,7 @@ class AttachmentComponent extends StatelessWidget {
                     ),
                   ),
                   onLongPress: () {
-                    showLinkMenu(context, e.link);
+                    showLinkMenu(context, e.link, filename: e.text);
                   },
                   // onSecondaryTap: () {
                   //   showLinkMenu(context, e.link);
@@ -498,7 +498,25 @@ class AttachmentComponent extends StatelessWidget {
               ),
             ),
             onTap: () {
-              gotoDetailImage(context: context, link: e.link, name: e.text);
+              // gotoDetailImage(context: context, link: e.link, name: e.text);
+              var imgLinks = <String>[], imgNames = <String>[];
+              int curIdx = 0;
+              int tmpIdx = 0;
+              for (var element in attachments) {
+                if (element.type == AttachmentType.showThumbnail) {
+                  imgLinks.add(element.link);
+                  imgNames.add(element.text);
+                  if (element.link == e.link) {
+                    curIdx = tmpIdx;
+                  }
+                  tmpIdx += 1;
+                }
+              }
+              gotoDetailImage(context: context, link: "",
+                imgLinks: imgLinks,
+                imgNames: imgNames,
+                curIdx: curIdx,
+              );
             },
           );
         }
