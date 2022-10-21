@@ -213,7 +213,7 @@ class _ShowIpComponentState extends State<ShowIpComponent> {
                 } catch (_) {
                   ipStr = "查询失败";
                 }
-                return Text(ipStr);
+                return SelectableText(ipStr);
               },
             ),
           ],

@@ -3,6 +3,7 @@ import 'dart:io';
 import '../router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' show basename;
 // import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -58,7 +59,8 @@ class _DetailImageState extends State<DetailImage> {
     if (couldStore == false) {
       return SaveRes(false, "没有保存文件权限");
     }
-    var saveRes = await genDownloadPath(name: imgName);
+    var fname = imgName ?? (imgLink.isNotEmpty ? basename(imgLink) : null);
+    var saveRes = await genDownloadPath(name: fname);
     if (saveRes.success == false) {
       return saveRes;
     }

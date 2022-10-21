@@ -335,7 +335,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
                 ),
                 onTap: () {
                   if (context != null) {
-                    gotoDetailImage(context: context, link: absImgSrc(src), imgData: null, name: "image.jpg");
+                    gotoDetailImage(context: context, link: absImgSrc(src), imgData: null, name: null);
                   }
                 }),
             ));

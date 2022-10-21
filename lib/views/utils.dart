@@ -263,7 +263,7 @@ Future<SaveRes> genDownloadPath({String? name}) async {
     case TargetPlatform.macOS:
       String? outputFile = await FilePicker.platform.saveFile(
         dialogTitle: "选择保存路径",
-        fileName: (name == null || name.isEmpty) ? "image.png" : name,
+        fileName: (name == null || name.isEmpty) ? "image.jpg" : name,
       );
       if (outputFile == null) {
         return SaveRes(false, "未设置保存路径");
