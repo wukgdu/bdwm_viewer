@@ -374,7 +374,8 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
                 return;
               }
               if (href == null) { return; }
-              if (link.startsWith("https://bbs.pku.edu.cn/v2/post-read.php")) {
+              if (link.startsWith("https://bbs.pku.edu.cn/v2/post-read.php")
+                || link.startsWith("https://bbs.pku.edu.cn/v2/mobile/post-read.php")) {
                 naviGotoThreadByLink(context, link, "跳转");
               } else if (link.startsWith("https://bbs.pku.edu.cn/v2/thread.php")) {
                 var bidP1 = link.indexOf("bid=");
@@ -401,7 +402,8 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
                   'link': link,
                   'title': "文章",
                 });
-              } else if (link.startsWith("https://bbs.pku.edu.cn/v2/post-read-single.php")) {
+              } else if (link.startsWith("https://bbs.pku.edu.cn/v2/post-read-single.php")
+                || link.startsWith("https://bbs.pku.edu.cn/v2/mobile/post-read-single.php")) {
                 bdwmClient.get(link, headers: genHeaders2()).then((value) {
                   if (value == null) {
                     showNetWorkDialog(context);
