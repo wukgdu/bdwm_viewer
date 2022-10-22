@@ -91,42 +91,14 @@ packages:
       name: device_info_plus
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "4.1.3"
-  device_info_plus_linux:
-    dependency: transitive
-    description:
-      name: device_info_plus_linux
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "3.0.0"
-  device_info_plus_macos:
-    dependency: transitive
-    description:
-      name: device_info_plus_macos
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "3.0.0"
+    version: "7.0.1"
   device_info_plus_platform_interface:
     dependency: transitive
     description:
       name: device_info_plus_platform_interface
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "3.0.0"
-  device_info_plus_web:
-    dependency: transitive
-    description:
-      name: device_info_plus_web
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "3.0.0"
-  device_info_plus_windows:
-    dependency: transitive
-    description:
-      name: device_info_plus_windows
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "4.1.0"
+    version: "6.0.1"
   diff_match_patch:
     dependency: transitive
     description:
@@ -182,7 +154,7 @@ packages:
       name: file_picker
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "5.2.1"
+    version: "5.2.2"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -276,7 +248,7 @@ packages:
       name: flutter_quill
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "6.0.8+1"
+    version: "6.0.10"
   flutter_quill_extensions:
     dependency: "direct main"
     description:
@@ -433,7 +405,7 @@ packages:
       name: lints
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.0.0"
+    version: "2.0.1"
   matcher:
     dependency: transitive
     description:
