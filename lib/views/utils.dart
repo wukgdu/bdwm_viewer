@@ -237,6 +237,31 @@ Future<bool?> showLinkMenu(BuildContext context, String link, {String? downloadP
   );
 }
 
+Future<String?> showDownloadMenu(BuildContext context, String link) async {
+  return showModalBottomSheet<String>(
+    context: context,
+    builder: (BuildContext context) {
+      return Container(
+        margin: const EdgeInsets.all(10.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Center(child: SelectableText(link),),
+            const Divider(),
+            ElevatedButton(
+              child: const Text('下载'),
+              onPressed: () async {
+                Navigator.of(context).pop("yes");
+              }
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
 class SaveRes {
   bool success = false;
   String reason = "";

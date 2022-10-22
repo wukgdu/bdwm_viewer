@@ -8,7 +8,7 @@ import 'package:path/path.dart' show basename;
 import 'package:extended_image/extended_image.dart';
 
 import '../utils.dart';
-import '../views/utils.dart' show SaveRes, genDownloadPath;
+import '../views/utils.dart' show SaveRes, genDownloadPath, showDownloadMenu;
 
 void gotoDetailImage({
   required BuildContext context, required String link, String? name, Uint8List? imgData,
@@ -187,7 +187,22 @@ class _DetailImageState extends State<DetailImage> {
         controller: ExtendedPageController(initialPage: currentIdx),
         itemBuilder:(context, index) {
           return Center(
-            child: genNetworkImage(widget.imgLinks![index], inPageView: true),
+            child: GestureDetector(
+              onLongPress: () async {
+                var doIt = await showDownloadMenu(context, widget.imgLinks![index]);
+                if (doIt == null || doIt != "yes") { return; }
+                saveImage(imgLink: widget.imgLinks![currentIdx], imgName: widget.imgNames![currentIdx],).then((res) {
+                  var text = "保存成功：${res.reason}";
+                  if (!res.success) {
+                    text = "保存失败：${res.reason}";
+                  }
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(text), duration: const Duration(milliseconds: 2000),),
+                  );
+                });
+              },
+              child: genNetworkImage(widget.imgLinks![index], inPageView: true),
+            ),
           );
         },
         onPageChanged: (int newIndex) {
