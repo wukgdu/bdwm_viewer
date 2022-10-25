@@ -66,6 +66,16 @@ class _DetailImageState extends State<DetailImage> {
 
   Future<SaveRes> saveImage({Uint8List? data, String imgLink="", String? imgName}) async {
     var fname = imgName ?? (imgLink.isNotEmpty ? basename(imgLink) : null);
+    if (imgLink.contains('src=http')) {
+      // link by image search
+      // https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201808%2F05%2F20180805210613_vfkly.thumb.400_0.jpg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1669211472&t=c52b46d44ccfb31377fe526bfb29019a
+      var src = getQueryValue(imgLink, 'src');
+      if (src == null) {
+        fname = null;
+      } else {
+        fname = basename(Uri.decodeFull(src));
+      }
+    }
     var saveRes = await genDownloadPath(name: fname);
     if (saveRes.success == false) {
       return saveRes;
