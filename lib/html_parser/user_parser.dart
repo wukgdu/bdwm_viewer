@@ -35,6 +35,7 @@ class UserProfile {
   bool useradd = false;
   bool userreject = false;
   int vipIdentity = -1;
+  String uid = "";
 
   UserProfile();
   UserProfile.error({required this.errorMessage});
@@ -68,6 +69,7 @@ class UserProfile {
     required this.useradd,
     required this.userreject,
     required this.vipIdentity,
+    required this.uid,
   });
 
   @override
@@ -194,13 +196,20 @@ UserProfile parseUser(String htmlStr) {
     }
   }
 
+  String uid = "";
+  var tabUserLinkDom = document.querySelector("#tab-user a");
+  if (tabUserLinkDom != null) {
+    var href = tabUserLinkDom.attributes['href'] ?? "";
+    uid = getQueryValue(href, "uid") ?? "";
+  }
+
   return UserProfile.init(
     bbsID: bbsID, nickName: nickName, status: status, avatarLink: avatarLink, nickNameHtml: nickNameHtml, useradd: useradd,
     personalCollection: TextAndLink(personalCollection, personalCollectionLink), gender: gender, constellation: constellation,
     countLogin: countLogin, countPost: countPost, value: value, score: score, rankName: rankName, avatarFrameLink: avatarFrameLink,
     rating: rating, recentLogin: recentLogin, recentLogout: recentLogout, signature: signature, signatureHtml: signatureHtml,
     timeReg: timeReg, timeOnline: timeOnline, duty: duty, dutyBoards: dutyBoards, dutyBoardLinks: dutyBoardLinks, vipIdentity: vipIdentity,
-    userreject: userreject,
+    userreject: userreject, uid: uid,
   );
 }
 

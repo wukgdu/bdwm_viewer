@@ -79,6 +79,9 @@ class _ComplexSearchComponentState extends State<ComplexSearchComponent> {
                 Expanded(
                   child: TextField(
                     controller: titleController,
+                    decoration: const InputDecoration(
+                      hintText: "搜索内容",
+                    ),
                   ),
                 ),
                 TextButton(
@@ -243,7 +246,8 @@ class _ComplexSearchComponentState extends State<ComplexSearchComponent> {
 
 class SimpleSearchComponent extends StatefulWidget {
   final String mode;
-  const SimpleSearchComponent({super.key, required this.mode});
+  final String? hintText;
+  const SimpleSearchComponent({super.key, required this.mode, this.hintText});
 
   @override
   State<SimpleSearchComponent> createState() => _SimpleSearchComponentState();
@@ -253,10 +257,15 @@ class _SimpleSearchComponentState extends State<SimpleSearchComponent> {
   TextEditingController textController = TextEditingController();
 
   void startSearch() {
-    if (textController.text.isEmpty) { return; }
+    var txt = textController.text.trim();
+    if (txt.isEmpty) { return; }
+    if (widget.mode=="user" && (int.tryParse(txt)!=null)) {
+      nv2Push(context, '/user', arguments: txt);
+      return;
+    }
     nv2Push(context, "/simpleSearchResult", arguments: {
       "mode": widget.mode,
-      "keyWord": textController.text,
+      "keyWord": txt,
     });
   }
 
@@ -279,6 +288,9 @@ class _SimpleSearchComponentState extends State<SimpleSearchComponent> {
                 onEditingComplete: () {
                   startSearch();
                 },
+                decoration: InputDecoration(
+                  hintText: widget.hintText,
+                ),
               ),
             ),
             TextButton(
@@ -359,9 +371,9 @@ class _SearchPageState extends State<SearchPage> {
     return ListView(
       children: const [
         Center(child: Text("搜索版面")),
-        SimpleSearchComponent(mode: "board"),
+        SimpleSearchComponent(mode: "board", hintText: "中文或英文模糊名称",),
         Center(child: Text("搜索用户")),
-        SimpleSearchComponent(mode: "user",),
+        SimpleSearchComponent(mode: "user", hintText: "模糊ID或精确UID",),
         Center(child: Text("跳转帖子")),
         JumpThreadSearch(),
         Center(child: Text("搜索帖子")),

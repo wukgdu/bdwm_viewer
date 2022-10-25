@@ -11,9 +11,10 @@ import './constants.dart';
 import '../bdwm/req.dart';
 import '../pages/read_thread.dart';
 import '../html_parser/utils.dart';
-import '../globalvars.dart' show genHeaders2, globalConfigInfo;
+import '../globalvars.dart' show genHeaders2, globalConfigInfo, v2Host;
 import '../html_parser/board_parser.dart' show directToThread;
 import '../pages/detail_image.dart';
+import '../utils.dart' show getQueryValue;
 import '../router.dart' show nv2Push;
 
 const int _cacheHeight = 150;
@@ -402,6 +403,11 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
                   'link': link,
                   'title': "文章",
                 });
+              } else if (link.startsWith("$v2Host/user.php")
+                || link.startsWith("$v2Host/mobile/user.php")) {
+                String uid = getQueryValue(link, 'uid') ?? "";
+                if (uid.isEmpty) { return; }
+                nv2Push(context, '/user', arguments: uid);
               } else if (link.startsWith("https://bbs.pku.edu.cn/v2/post-read-single.php")
                 || link.startsWith("https://bbs.pku.edu.cn/v2/mobile/post-read-single.php")) {
                 bdwmClient.get(link, headers: genHeaders2()).then((value) {
