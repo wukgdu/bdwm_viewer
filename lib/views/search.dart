@@ -4,6 +4,7 @@ import '../pages/read_thread.dart';
 import './constants.dart';
 import './utils.dart';
 import '../router.dart' show nv2Push;
+
 class PostSearchSettings {
   String keyWord = "";
   String owner = "";

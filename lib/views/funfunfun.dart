@@ -12,6 +12,7 @@ import '../utils.dart';
 import '../html_parser/read_thread_parser.dart';
 import '../globalvars.dart';
 import "./utils.dart";
+import "./search.dart" show PostSearchSettings;
 import '../router.dart' show nv2Push;
 
 class BigTenComponent extends StatefulWidget {
@@ -329,6 +330,21 @@ class FunFunFunPage extends StatelessWidget {
             title: const Text("个人统计数据"),
             trailing: const Icon(Icons.arrow_right),
           )
+        ),
+        Card(
+          child: ListTile(
+            title: const Text("我的发帖"),
+            subtitle: const Text("使用高级搜索"),
+            trailing: const Icon(Icons.arrow_right),
+            onTap: () {
+              PostSearchSettings pss = PostSearchSettings.empty();
+              pss.days = "99999";
+              pss.owner = globalUInfo.username;
+              nv2Push(context, "/complexSearchResult", arguments: {
+                "settings": pss,
+              });
+            }
+          ),
         ),
         Card(
           child: ListTile(
