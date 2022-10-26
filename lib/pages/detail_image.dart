@@ -3,7 +3,7 @@ import 'dart:io';
 import '../router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' show basename;
+import 'package:path/path.dart' as path;
 // import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:extended_image/extended_image.dart';
 
@@ -65,7 +65,7 @@ class _DetailImageState extends State<DetailImage> {
   }
 
   Future<SaveRes> saveImage({Uint8List? data, String imgLink="", String? imgName}) async {
-    var fname = imgName ?? (imgLink.isNotEmpty ? basename(imgLink) : null);
+    var fname = imgName ?? (imgLink.isNotEmpty ? path.basename(imgLink) : null);
     if (imgLink.contains('src=http')) {
       // link by image search
       // https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201808%2F05%2F20180805210613_vfkly.thumb.400_0.jpg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1669211472&t=c52b46d44ccfb31377fe526bfb29019a
@@ -73,7 +73,7 @@ class _DetailImageState extends State<DetailImage> {
       if (src == null) {
         fname = null;
       } else {
-        fname = basename(Uri.decodeFull(src));
+        fname = path.basename(Uri.decodeFull(src));
       }
     }
     var saveRes = await genDownloadPath(name: fname);
@@ -94,13 +94,21 @@ class _DetailImageState extends State<DetailImage> {
       case TargetPlatform.windows:
       case TargetPlatform.linux:
       case TargetPlatform.macOS:
-        File(downloadPath).writeAsBytesSync(imgData);
-        break;
       case TargetPlatform.android:
       case TargetPlatform.iOS:
       case TargetPlatform.fuchsia:
       default:
-        File(downloadPath).writeAsBytesSync(imgData);
+        try {
+          File(downloadPath).writeAsBytesSync(imgData);
+        } on FileSystemException catch (_) {
+          var curTime = DateTime.now().toIso8601String().replaceAll(":", "_");
+          curTime = curTime.split(".").first;
+          var newName = "OBViewer-$curTime.jpg";
+          downloadPath = path.join(path.dirname(downloadPath), newName);
+          File(downloadPath).writeAsBytesSync(imgData);
+        } catch (e) {
+          return SaveRes(false, e.toString());
+        }
         // await ImageGallerySaver.saveImage(
         //   imgData,
         //   quality: 100,
