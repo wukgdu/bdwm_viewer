@@ -294,6 +294,9 @@ Future<SaveRes> genDownloadPath({String? name}) async {
     case TargetPlatform.windows:
     case TargetPlatform.linux:
     case TargetPlatform.macOS:
+      if (name!=null) {
+        name = name.replaceAll(RegExp(r'[<>:\/\\|?*"]'), "_");
+      }
       String? outputFile = await FilePicker.platform.saveFile(
         dialogTitle: "选择保存路径",
         fileName: (name == null || name.isEmpty) ? "image.jpg" : name,

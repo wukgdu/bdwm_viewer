@@ -379,16 +379,9 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
                 || link.startsWith("https://bbs.pku.edu.cn/v2/mobile/post-read.php")) {
                 naviGotoThreadByLink(context, link, "跳转");
               } else if (link.startsWith("https://bbs.pku.edu.cn/v2/thread.php")) {
-                var bidP1 = link.indexOf("bid=");
-                var bidP2 = link.indexOf("&", bidP1);
-                var bid = "";
-                if (bidP2 == -1) {
-                  bid = link.substring(bidP1+4);
-                } else {
-                  bid = link.substring(bidP1+4, bidP2);
-                }
+                var bid = getQueryValue(link, 'bid') ?? "";
                 if (bid.isNotEmpty) {
-                  nv2Push(context, '/thread', arguments: {
+                  nv2Push(context, '/board', arguments: {
                     'bid': bid,
                     'boardName': "跳转",
                   });
