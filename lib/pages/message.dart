@@ -75,10 +75,6 @@ class _MessagelistAppState extends State<MessagelistApp> {
                 }
               }
               if (userNew == null) { return; }
-              var tmpContact = await globalContactInfo.getData();
-              if (tmpContact.contains(userNew)) {
-                return;
-              }
               // widget.callBack(userNew);
               globalContactInfo.addOne(userNew).then((value) {
                 setState(() { });

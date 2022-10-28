@@ -143,6 +143,7 @@ class _MessageListPageState extends State<MessageListPage> {
 
   @override
   void dispose() {
+    globalContactInfo.update(order: false);
     _controller.dispose();
     uName2ID.clear();
     super.dispose();
@@ -153,7 +154,12 @@ class _MessageListPageState extends State<MessageListPage> {
     return ValueListenableBuilder(
       valueListenable: widget.users,
       builder: (context, value, child) {
+        var clist = globalContactInfo.contact.toList(growable: false);
         var users = (value as List<TextAndLink>).map((e) => TextAndLink(e.text, e.link)).toList();
+        if (users.isNotEmpty) {
+          globalContactInfo.memInsertMany(users.map((e) => e.text).toList());
+          globalContactInfo.update(order: false);
+        }
         bool deliver = false;
         for (var u in users) {
           if (u.text == "deliver") {
@@ -165,15 +171,11 @@ class _MessageListPageState extends State<MessageListPage> {
           users.insert(0, TextAndLink("deliver", "0"));
         }
         Set<String> usersSet = Set.from(users.map((e) => e.text));
-        var clist = globalContactInfo.contact.toList(growable: false);
-        clist.sort();
+        // clist.sort();
         for (var u in clist) {
           if (!usersSet.contains(u)) {
             users.add(TextAndLink(u, "0"));
           }
-        }
-        if (usersSet.isNotEmpty) {
-          globalContactInfo.addAll(usersSet);
         }
         return ListView(
           controller: _controller,
@@ -181,6 +183,8 @@ class _MessageListPageState extends State<MessageListPage> {
             return Card(
               child: ListTile(
                 onTap: () {
+                  globalContactInfo.memInsertOne(e.text);
+                  setState(() { });
                   nv2Push(context, '/messagePerson', arguments: e.text);
                 },
                 onLongPress: () {

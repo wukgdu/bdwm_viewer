@@ -207,6 +207,17 @@ class TmpContactInfo {
     return contact.join(",");
   }
 
+  void memInsertOne(String userName) {
+    var clist = globalContactInfo.contact.toList();
+    clist.insert(0, userName);
+    globalContactInfo.contact = clist.toSet();
+  }
+
+  void memInsertMany(List<String> userNames) {
+    var clist = globalContactInfo.contact.toList();
+    globalContactInfo.contact = (userNames + clist).toSet();
+  }
+
   Future<Set<String>> getData() async {
     return await lock.synchronized(() async {
       return contact;
@@ -215,7 +226,7 @@ class TmpContactInfo {
 
   Future<bool> addOne(String userName) async {
     return await lock.synchronized(() async {
-      contact.add(userName);
+      memInsertOne(userName);
       return await update();
     });
   }
@@ -265,12 +276,14 @@ class TmpContactInfo {
     return true;
   }
 
-  Future<bool> update() async {
+  Future<bool> update({bool order=true}) async {
     String dir = (await getApplicationDocumentsDirectory()).path;
     String filename = "$dir/$storage";
     var file = File(filename).openWrite();
     var contactList = contact.toList();
-    contactList.sort();
+    if (order) {
+      contactList.sort();
+    }
     file.write(jsonEncode(contactList));
     await file.flush();
     await file.close();
