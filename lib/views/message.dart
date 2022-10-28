@@ -131,7 +131,8 @@ class _UserJumpByNameComponentState extends State<UserJumpByNameComponent> {
 
 class MessageListPage extends StatefulWidget {
   final MessageBriefNotifier users;
-  const MessageListPage({super.key, required this.users});
+  final String filterName;
+  const MessageListPage({super.key, required this.users, required this.filterName});
 
   @override
   State<MessageListPage> createState() => _MessageListPageState();
@@ -176,6 +177,9 @@ class _MessageListPageState extends State<MessageListPage> {
           if (!usersSet.contains(u)) {
             users.add(TextAndLink(u, "0"));
           }
+        }
+        if (widget.filterName.isNotEmpty) {
+          users.removeWhere((element) => !element.text.toLowerCase().contains(widget.filterName));
         }
         return ListView(
           controller: _controller,

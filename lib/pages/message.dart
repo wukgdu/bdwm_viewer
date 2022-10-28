@@ -5,6 +5,7 @@ import '../services.dart' show MessageBriefNotifier;
 import '../views/utils.dart';
 import '../bdwm/search.dart';
 import '../services_instance.dart';
+import '../views/constants.dart' show bdwmPrimaryColor;
 import '../globalvars.dart' show globalContactInfo, globalUInfo;
 
 class MessagelistApp extends StatefulWidget {
@@ -16,11 +17,19 @@ class MessagelistApp extends StatefulWidget {
 }
 
 class _MessagelistAppState extends State<MessagelistApp> {
+  TextEditingController contentController = TextEditingController();
+  String filterName = "";
   // Set<String> extraUsers = {};
   @override
   void initState() {
     super.initState();
     // extraUsers = globalContactInfo.contact;
+    filterName = "";
+  }
+  @override
+  void dispose() {
+    contentController.dispose();
+    super.dispose();
   }
   @override
   Widget build(BuildContext context) {
@@ -84,7 +93,46 @@ class _MessagelistAppState extends State<MessagelistApp> {
           ),
         ],
       ),
-      body: MessageListPage(users: widget.brief),
+      body: Column(
+        children: [
+          Container(
+            margin: const EdgeInsets.all(5.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: contentController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.all(5.0),
+                      hintText: "筛选对话",
+                    ),
+                    onChanged: (value) {
+                      var newName = value.trim().toLowerCase();
+                      if (newName == filterName) {
+                        return;
+                      }
+                      filterName = newName;
+                      setState(() { });
+                    },
+                  ),
+                ),
+                IconButton(
+                  color: bdwmPrimaryColor,
+                  onPressed: () {
+                    contentController.clear();
+                    if (filterName.isEmpty) { return; }
+                    filterName = "";
+                    setState(() { });
+                  },
+                  icon: const Icon(Icons.clear),
+                ),
+              ],
+            )
+          ),
+          Expanded(child: MessageListPage(users: widget.brief, filterName: filterName),),
+        ],
+      )
     );
   }
 }
