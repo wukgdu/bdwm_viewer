@@ -120,6 +120,7 @@ class _MessagelistAppState extends State<MessagelistApp> {
                 IconButton(
                   color: bdwmPrimaryColor,
                   onPressed: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
                     contentController.clear();
                     if (filterName.isEmpty) { return; }
                     filterName = "";
@@ -130,7 +131,14 @@ class _MessagelistAppState extends State<MessagelistApp> {
               ],
             )
           ),
-          Expanded(child: MessageListPage(users: widget.brief, filterName: filterName),),
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+              child: MessageListPage(users: widget.brief, filterName: filterName),
+            ),
+          ),
         ],
       )
     );
