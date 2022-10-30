@@ -176,14 +176,16 @@ class MainPageBuilder {
         }
         return MailDetailApp(postid: postid!, type: mailType!,);
       case "/mailNew":
+        String? bid;
         String? parentid;
         String? receiver;
         if (settings.arguments != null) {
           var settingsMap = settings.arguments as Map;
+          bid = settingsMap['bid'] as String?;
           parentid = settingsMap['parentid'] as String?;
           receiver = settingsMap['receiver'] as String?;
         }
-        return MailNewApp(parentid: parentid, receiver: receiver);
+        return MailNewApp(bid: bid, parentid: parentid, receiver: receiver);
       case "/friend":
         return const FriendsApp();
       case "/search":

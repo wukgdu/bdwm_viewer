@@ -9,6 +9,7 @@ import 'package:flutter_quill_extensions/embeds/builders.dart' show ImageEmbedBu
 import '../bdwm/search.dart';
 import '../bdwm/mail.dart';
 import '../bdwm/req.dart';
+import '../bdwm/posts.dart' show bdwmGetPostQuote;
 import './constants.dart';
 import '../globalvars.dart';
 import './html_widget.dart';
@@ -20,6 +21,7 @@ import './upload.dart';
 import '../router.dart' show nv2Pop;
 
 class MailNewPage extends StatefulWidget {
+  final String? bid;
   final String? parentid;
   final String? content;
   final String? quote;
@@ -27,7 +29,7 @@ class MailNewPage extends StatefulWidget {
   final String? title;
   final String? receivers;
   final FutureOrFunction<String> updateQuote;
-  const MailNewPage({super.key, this.parentid, this.content, this.quote, required this.mailNewInfo, this.title, this.receivers, required this.updateQuote});
+  const MailNewPage({super.key, this.bid, this.parentid, this.content, this.quote, required this.mailNewInfo, this.title, this.receivers, required this.updateQuote});
 
   @override
   State<MailNewPage> createState() => _MailNewPageState();
@@ -202,7 +204,7 @@ class _MailNewPageState extends State<MailNewPage> {
                   var nAttachPath = attachCount > 0 ? widget.mailNewInfo.attachpath : "";
                   bdwmCreateMail(
                     rcvuids: rcvuids, title: titleValue.text, content: mailContent, parentid: widget.parentid,
-                    signature: nSignature, attachpath: nAttachPath)
+                    signature: nSignature, attachpath: nAttachPath, bid: widget.bid)
                   .then((value) {
                     if (value.success == false) {
                       var errReason = "发送失败，请稍后重试";
@@ -413,9 +415,10 @@ class _MailNewPageState extends State<MailNewPage> {
 }
 
 class MailNewFuturePage extends StatefulWidget {
+  final String? bid;
   final String? parentid;
   final String? receiver;
-  const MailNewFuturePage({super.key, this.parentid, this.receiver});
+  const MailNewFuturePage({super.key, this.bid, this.parentid, this.receiver});
 
   @override
   State<MailNewFuturePage> createState() => _MailNewFuturePageState();
@@ -426,7 +429,9 @@ class _MailNewFuturePageState extends State<MailNewFuturePage> {
 
   Future<MailNewInfo> getData() async {
     var url = "$v2Host/mail-new.php";
-    if (widget.parentid != null) {
+    if (widget.bid != null) {
+      url += "?frombid=${widget.bid}&frompostid=${widget.parentid}";
+    } else if (widget.parentid != null) {
       url += "?parentid=${widget.parentid}";
     }
     var resp = await bdwmClient.get(url, headers: genHeaders2());
@@ -434,6 +439,17 @@ class _MailNewFuturePageState extends State<MailNewFuturePage> {
       return MailNewInfo.error(errorMessage: networkErrorText);
     }
     return parseMailNew(resp.body);
+  }
+
+  Future<String?> getQuote({String mode="full"}) async {
+    if (widget.bid == null) {
+      return await getMailQuote(mode: mode);
+    }
+    var resp = await bdwmGetPostQuote(bid: widget.bid!, postid: widget.parentid!, mode: mode);
+    if (!resp.success) {
+      return networkErrorText;
+    }
+    return resp.result!;
   }
 
   Future<String?> getMailQuote({String mode="full"}) async {
@@ -451,7 +467,7 @@ class _MailNewFuturePageState extends State<MailNewFuturePage> {
       getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
       },);
     } else {
-      getDataCancelable = CancelableOperation.fromFuture(Future.wait([getData(), getMailQuote()]), onCancel: () {
+      getDataCancelable = CancelableOperation.fromFuture(Future.wait([getData(), getQuote()]), onCancel: () {
       },);
     }
   }
@@ -493,8 +509,8 @@ class _MailNewFuturePageState extends State<MailNewFuturePage> {
         return MailNewPage(
           mailNewInfo: mailNewInfo, parentid: widget.parentid,
           title: mailNewInfo.title, receivers: widget.receiver ?? mailNewInfo.receivers,
-          content: null, quote: quoteText,
-          updateQuote: (String mode) { return getMailQuote(mode: mode); },
+          content: null, quote: quoteText, bid: widget.bid,
+          updateQuote: (String mode) { return getQuote(mode: mode); },
         );
       }
     );

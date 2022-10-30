@@ -170,7 +170,7 @@ class _OperateComponentState extends State<OperateComponent> {
         // const Spacer(),
         PopupMenuButton<String>(
           child: SizedBox(
-            width: 30,
+            width: 36,
             height: 30,
             child: Icon(Icons.more_horiz, color: bdwmPrimaryColor,),
           ),
@@ -251,6 +251,12 @@ class _OperateComponentState extends State<OperateComponent> {
                   });
                 });
               });
+            } else if (value == "回站内信") {
+              nv2Push(context, "/mailNew", arguments: {
+                'bid': widget.bid,
+                'parentid': widget.postid,
+                'receiver': widget.onePostInfo.authorInfo.userName,
+              });
             }
           },
           itemBuilder: (context) {
@@ -268,6 +274,11 @@ class _OperateComponentState extends State<OperateComponent> {
               const PopupMenuItem(
                 value: "收入文集",
                 child: Text("收入文集"),
+              ),
+              PopupMenuItem(
+                value: "回站内信",
+                enabled: widget.onePostInfo.authorInfo.userName != "Anonymous",
+                child: const Text("回站内信"),
               ),
             ];
           },

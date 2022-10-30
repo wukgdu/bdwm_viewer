@@ -118,7 +118,7 @@ class MailSendRes {
   });
 }
 
-Future<MailSendRes> bdwmCreateMail({required String title, required String content, required String signature, String? parentid, String? attachpath, required List<int> rcvuids}) async {
+Future<MailSendRes> bdwmCreateMail({required String title, required String content, required String signature, String? bid, String? parentid, String? attachpath, required List<int> rcvuids}) async {
   var actionUrl = "$v2Host/ajax/create_mail.php";
   var data = {
     'rcvuids': jsonEncode(rcvuids),
@@ -128,10 +128,11 @@ Future<MailSendRes> bdwmCreateMail({required String title, required String conte
     "attachpath": attachpath ?? "",
     "signature": signature,
   };
-  if (parentid != null) {
+  if (parentid != null && bid == null) {
     (data['postinfo'] as Map)['parentid'] = int.parse(parentid);
   }
   data['postinfo'] = jsonEncode(data['postinfo']);
+  // print(data['postinfo']);
   var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
   if (resp == null) {
     return MailSendRes.error(success: false, error: -1, result: networkErrorText);
