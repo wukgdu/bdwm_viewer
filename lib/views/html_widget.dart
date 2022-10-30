@@ -378,7 +378,8 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
               if (link.startsWith("https://bbs.pku.edu.cn/v2/post-read.php")
                 || link.startsWith("https://bbs.pku.edu.cn/v2/mobile/post-read.php")) {
                 naviGotoThreadByLink(context, link, "跳转");
-              } else if (link.startsWith("https://bbs.pku.edu.cn/v2/thread.php")) {
+              } else if (link.startsWith("https://bbs.pku.edu.cn/v2/thread.php")
+                || link.startsWith("$v2Host/mobile/thread.php")) {
                 var bid = getQueryValue(link, 'bid') ?? "";
                 if (bid.isNotEmpty) {
                   nv2Push(context, '/board', arguments: {
@@ -386,14 +387,16 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
                     'boardName': "跳转",
                   });
                 }
-              } else if (link.startsWith("https://bbs.pku.edu.cn/v2/collection.php")) {
+              } else if (link.startsWith("https://bbs.pku.edu.cn/v2/collection.php")
+                || link.startsWith("$v2Host/mobile/collection.php")) {
                 nv2Push(context, '/collection', arguments: {
-                  'link': link,
+                  'link': link.replaceFirst("$v2Host/mobile/", "$v2Host/"),
                   'title': "目录",
                 });
-              } else if (link.startsWith("https://bbs.pku.edu.cn/v2/collection-read.php")) {
+              } else if (link.startsWith("https://bbs.pku.edu.cn/v2/collection-read.php")
+                || link.startsWith("$v2Host/mobile/collection-read.php")) {
                 nv2Push(context, '/collectionArticle', arguments: {
-                  'link': link,
+                  'link': link.replaceFirst("$v2Host/mobile/", "$v2Host/"),
                   'title': "文章",
                 });
               } else if (link.startsWith("$v2Host/user.php")
@@ -403,7 +406,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
                 nv2Push(context, '/user', arguments: uid);
               } else if (link.startsWith("https://bbs.pku.edu.cn/v2/post-read-single.php")
                 || link.startsWith("https://bbs.pku.edu.cn/v2/mobile/post-read-single.php")) {
-                bdwmClient.get(link, headers: genHeaders2()).then((value) {
+                bdwmClient.get(link.replaceFirst("$v2Host/mobile/", "$v2Host/"), headers: genHeaders2()).then((value) {
                   if (value == null) {
                     showNetWorkDialog(context);
                   } else {
