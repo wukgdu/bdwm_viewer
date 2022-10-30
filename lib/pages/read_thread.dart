@@ -256,6 +256,21 @@ class _ThreadAppState extends State<ThreadApp> {
                         },);
                       });
                     },
+                    onLongPress: () {
+                      var newPage = page;
+                      if (page == threadPageInfo.pageNum) {
+                        newPage = 1;
+                      } else {
+                        newPage = threadPageInfo.pageNum;
+                      }
+                      if (newPage == page) { return; }
+                      page = newPage;
+                      setState(() {
+                        getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+                          debugPrint("cancel it");
+                        },);
+                      });
+                    },
                   ),
                   IconButton(
                     color: bdwmPrimaryColor,
