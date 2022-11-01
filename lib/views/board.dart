@@ -265,8 +265,8 @@ class _BoardPageState extends State<BoardPage> {
                       'title': boardInfo.boardName,
                     });
                   },
-                  child: const Text.rich(
-                    TextSpan(text: "精华区", style: textLinkStyle),
+                  child: Text.rich(
+                    TextSpan(text: "精华区", style: TextStyle(color: bdwmPrimaryColor)),
                   ),
                 ),
               ],

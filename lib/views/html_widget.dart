@@ -317,7 +317,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
           if (validUserMention(m.start, m.end, text!)) {
             res.add(TextSpan(
               text: mStr.toString(),
-              style: TextStyle(color: bdwmPrimaryColor).merge(ts),
+              style: textLinkStyle.merge(ts),
               recognizer: TapGestureRecognizer()..onTap = () async {
                 if (context == null) { return; }
                 bdwmUserInfoSearch([mStr.substring(1)]).then((res) {
