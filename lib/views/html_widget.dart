@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as hdom;
@@ -9,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import "./utils.dart";
 import './constants.dart';
 import '../bdwm/req.dart';
+import '../bdwm/search.dart' show bdwmUserInfoSearch, IDandName;
 import '../pages/read_thread.dart';
 import '../html_parser/utils.dart';
 import '../globalvars.dart' show genHeaders2, globalConfigInfo, v2Host;
@@ -197,6 +199,27 @@ TextSpan html2TextSpan(String htmlStr, {TextStyle? ts}) {
   return tspan;
 }
 
+bool validUserMention(int p1, int p2, String sourceStr) {
+  bool leftOK = false, rightOK = false;
+  if (p1 == 0) {
+    leftOK = true;
+  } else {
+    var p1Char = sourceStr[p1-1];
+    if ((p1Char == " ") | (p1Char == "\n")) {
+      leftOK = true;
+    }
+  }
+  if (p2 >= sourceStr.length) {
+    rightOK = true;
+  } else {
+    var p2Char = sourceStr[p2];
+    if ((p2Char == " ") | (p2Char == "\n")) {
+      rightOK = true;
+    }
+  }
+  return leftOK & rightOK;
+}
+
 List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, BuildContext? context, String? nickName}) {
   if (document == null) {
     return null;
@@ -211,13 +234,53 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
         continue;
       }
       var text = tryGetNormalSpaceString(cdom.text);
-      if (text != null) {
-        // https://stackoverflow.com/questions/18760943/character-code-of-unknown-character-character-e-g-square-or-question-mark-romb
-        // flutter bug? if unknown character appears first, others will be unknown too.
-        text = text.replaceAll("\uD83E\uDD79", "\uFFFD");
-        text = text.replaceAll("\uD83E\uDDCC", "\uFFFD");
-      }
-      res.add(TextSpan(text: text));
+      if (text == null) { continue; }
+      // https://stackoverflow.com/questions/18760943/character-code-of-unknown-character-character-e-g-square-or-question-mark-romb
+      // flutter bug? if unknown character appears first, others will be unknown too.
+      text = text.replaceAll("\uD83E\uDD79", "\uFFFD");
+      text = text.replaceAll("\uD83E\uDDCC", "\uFFFD");
+
+      var userExp = RegExp(r"@\w+");
+      text.splitMapJoin(userExp,
+        onMatch: (m) {
+          var mStr = m[0].toString();
+          if (validUserMention(m.start, m.end, text!)) {
+            res.add(TextSpan(
+              text: mStr.toString(),
+              style: TextStyle(color: bdwmPrimaryColor).merge(ts),
+              recognizer: TapGestureRecognizer()..onTap = () async {
+                if (context == null) { return; }
+                bdwmUserInfoSearch([mStr.substring(1)]).then((res) {
+                  var success = res.success;
+                  var informText = res.desc ?? "rt";
+                  if (res.success) {
+                    if (res.users.isEmpty) {
+                      success = false;
+                    } else if (res.users[0] is bool) {
+                      success = false;
+                      informText = "用户不存在";
+                    } else {
+                      success = true;
+                      var ian = res.users.first as IDandName;
+                      nv2Push(context, '/user', arguments: ian.id);
+                    }
+                  }
+                  if (!success) {
+                    showInformDialog(context, "查询用户失败", informText);
+                  }
+                },);
+              },
+            ));
+          } else {
+            res.add(TextSpan(text: mStr, style: ts));
+          }
+          return mStr;
+        },
+        onNonMatch: (m) {
+          res.add(TextSpan(text: m, style: ts));
+          return m;
+        },
+      );
     } else if (cdom.nodeType == hdom.Node.ELEMENT_NODE) {
       var ele = cdom as hdom.Element;
       if (ele.localName == "font") {
@@ -255,19 +318,19 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
         );
       } else if (ele.localName == "p") {
         if (ele.classes.contains('quotehead') || ele.classes.contains('blockquote')) {
-          var contentSize = ts?.fontSize ?? 13;
-          res.add(WidgetSpan(child: Icon(Icons.format_quote, size: contentSize-1, color: const Color(0xffA6DDE3))));
-          var addText = ele.text;
+          var contentSize = ts?.fontSize;
+          res.add(WidgetSpan(child: Icon(Icons.format_quote, size: contentSize, color: const Color(0xffA6DDE3))));
+          var quoteText = ele.text;
           if (ele.classes.contains('quotehead') && (nickName != null)) {
-            int p1 = addText.indexOf('(');
+            int p1 = quoteText.indexOf('(');
             if (p1!=-1) {
-              int p2 = addText.indexOf(')', p1);
+              int p2 = quoteText.indexOf(')', p1);
               if (p2!=-1 && p1+1!=p2) {
-                addText = addText.replaceRange(p1+1, p2, nickName);
+                quoteText = quoteText.replaceRange(p1+1, p2, nickName);
               }
             }
           }
-          res.add(TextSpan(text: addText, style: TextStyle(color: Colors.grey, fontSize: contentSize-1)));
+          res.add(TextSpan(text: quoteText, style: TextStyle(color: Colors.grey, fontSize: contentSize)));
         } else if (ele.classes.contains("zz-info")) {
           res.add(TextSpan(
             children: travelHtml(ele, context: context, ts: ts),
