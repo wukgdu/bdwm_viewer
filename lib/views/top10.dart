@@ -3,7 +3,7 @@ import 'package:async/async.dart';
 
 import '../bdwm/req.dart';
 import '../globalvars.dart';
-import './html_widget.dart' show WrapImageNetwork;
+import './html_widget.dart' show WrapImageNetwork, innerLinkJump;
 import '../html_parser/top10_parser.dart';
 import '../pages/read_thread.dart';
 import './utils.dart';
@@ -127,10 +127,10 @@ class _EntryHomeComponentState extends State<EntryHomeComponent> {
                   if (value == null || value != "yes") { return; }
                   if (!mounted) { return; }
                   Navigator.of(context).pop();
-                  naviGotoThreadByLink(context, welcomeInfo.actionLink, "", needToBoard: true);
+                  innerLinkJump(welcomeInfo.actionLink, context);
                 },
                 style: textButtonStyle,
-                child: const Text("进入主题帖"),
+                child: const Text("详情"),
               ),
             TextButton(
               onPressed: () {
