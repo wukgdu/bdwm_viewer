@@ -415,98 +415,82 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
       } else if (ele.localName == "a") {
         var href = ele.attributes['href'];
         var link = absThreadLink(href ?? "");
-        var tspan = WidgetSpan(
-          child: GestureDetector(
-            child: Text.rich(
-              TextSpan(
-                children: travelHtml(ele, context: context, ts: ts),
-                style: textLinkStyle,
-              ),
-              style: ts,
-            ),
-            onLongPress: () {
-              if (context == null) { return; }
-              showLinkMenu(context, link);
-            },
-            // // secondary tap conflicts with copy
-            // onSecondaryTap: () {
-            //   if (context == null) { return; }
-            //   showLinkMenu(context, link);
-            // },
-            onTap: () {
-              if (context == null) {
-                return;
+        var tspan = TextSpan(
+          text: getTrimmedString(ele),
+          style: TextStyle(color: bdwmPrimaryColor),
+          recognizer: TapGestureRecognizer()..onTap = () {
+            if (context == null) {
+              return;
+            }
+            if (href == null) { return; }
+            if (link.startsWith("https://bbs.pku.edu.cn/v2/post-read.php")
+              || link.startsWith("https://bbs.pku.edu.cn/v2/mobile/post-read.php")) {
+              naviGotoThreadByLink(context, link, "跳转");
+            } else if (link.startsWith("https://bbs.pku.edu.cn/v2/thread.php")
+              || link.startsWith("$v2Host/mobile/thread.php")) {
+              var bid = getQueryValue(link, 'bid') ?? "";
+              if (bid.isNotEmpty) {
+                nv2Push(context, '/board', arguments: {
+                  'bid': bid,
+                  'boardName': "跳转",
+                });
               }
-              if (href == null) { return; }
-              if (link.startsWith("https://bbs.pku.edu.cn/v2/post-read.php")
-                || link.startsWith("https://bbs.pku.edu.cn/v2/mobile/post-read.php")) {
-                naviGotoThreadByLink(context, link, "跳转");
-              } else if (link.startsWith("https://bbs.pku.edu.cn/v2/thread.php")
-                || link.startsWith("$v2Host/mobile/thread.php")) {
-                var bid = getQueryValue(link, 'bid') ?? "";
-                if (bid.isNotEmpty) {
-                  nv2Push(context, '/board', arguments: {
-                    'bid': bid,
-                    'boardName': "跳转",
-                  });
-                }
-              } else if (link.startsWith("https://bbs.pku.edu.cn/v2/collection.php")
-                || link.startsWith("$v2Host/mobile/collection.php")) {
-                nv2Push(context, '/collection', arguments: {
-                  'link': link.replaceFirst("$v2Host/mobile/", "$v2Host/"),
-                  'title': "目录",
-                });
-              } else if (link.startsWith("https://bbs.pku.edu.cn/v2/collection-read.php")
-                || link.startsWith("$v2Host/mobile/collection-read.php")) {
-                nv2Push(context, '/collectionArticle', arguments: {
-                  'link': link.replaceFirst("$v2Host/mobile/", "$v2Host/"),
-                  'title': "文章",
-                });
-              } else if (link.startsWith("$v2Host/user.php")
-                || link.startsWith("$v2Host/mobile/user.php")) {
-                String uid = getQueryValue(link, 'uid') ?? "";
-                if (uid.isEmpty) { return; }
-                nv2Push(context, '/user', arguments: uid);
-              } else if (link.startsWith("https://bbs.pku.edu.cn/v2/post-read-single.php")
-                || link.startsWith("https://bbs.pku.edu.cn/v2/mobile/post-read-single.php")) {
-                bdwmClient.get(link.replaceFirst("$v2Host/mobile/", "$v2Host/"), headers: genHeaders2()).then((value) {
-                  if (value == null) {
-                    showNetWorkDialog(context);
-                  } else {
-                    var link2 = directToThread(value.body, needLink: true);
-                    if (link2.isEmpty) { return; }
-                    int? link2Int = int.tryParse(link2);
-                    if (link2Int == null && link2.startsWith("post-read.php")==false) {
-                      showInformDialog(context, "跳转失败", link2);
-                    }
-                    naviGotoThreadByLink(context, link2, "", pageDefault: "a");
+            } else if (link.startsWith("https://bbs.pku.edu.cn/v2/collection.php")
+              || link.startsWith("$v2Host/mobile/collection.php")) {
+              nv2Push(context, '/collection', arguments: {
+                'link': link.replaceFirst("$v2Host/mobile/", "$v2Host/"),
+                'title': "目录",
+              });
+            } else if (link.startsWith("https://bbs.pku.edu.cn/v2/collection-read.php")
+              || link.startsWith("$v2Host/mobile/collection-read.php")) {
+              nv2Push(context, '/collectionArticle', arguments: {
+                'link': link.replaceFirst("$v2Host/mobile/", "$v2Host/"),
+                'title': "文章",
+              });
+            } else if (link.startsWith("$v2Host/user.php")
+              || link.startsWith("$v2Host/mobile/user.php")) {
+              String uid = getQueryValue(link, 'uid') ?? "";
+              if (uid.isEmpty) { return; }
+              nv2Push(context, '/user', arguments: uid);
+            } else if (link.startsWith("https://bbs.pku.edu.cn/v2/post-read-single.php")
+              || link.startsWith("https://bbs.pku.edu.cn/v2/mobile/post-read-single.php")) {
+              bdwmClient.get(link.replaceFirst("$v2Host/mobile/", "$v2Host/"), headers: genHeaders2()).then((value) {
+                if (value == null) {
+                  showNetWorkDialog(context);
+                } else {
+                  var link2 = directToThread(value.body, needLink: true);
+                  if (link2.isEmpty) { return; }
+                  int? link2Int = int.tryParse(link2);
+                  if (link2Int == null && link2.startsWith("post-read.php")==false) {
+                    showInformDialog(context, "跳转失败", link2);
                   }
-                });
-              } else {
-                var hereLink = link;
-                if (link.startsWith("https://bbs.pku.edu.cn/v2/jump-to.php")) {
+                  naviGotoThreadByLink(context, link2, "", pageDefault: "a");
+                }
+              });
+            } else {
+              var hereLink = link;
+              if (link.startsWith("https://bbs.pku.edu.cn/v2/jump-to.php")) {
+                var parsedUrl = Uri.parse(link);
+                var rawLink = parsedUrl.queryParameters['url'] ?? "";
+                // hereLink += "\n$rawLink";
+                hereLink = rawLink;
+              }
+              showConfirmDialog(context, "使用默认浏览器打开链接?", hereLink).then((value) async {
+                if (value == null) {
+                  return;
+                }
+                if (value == "yes") {
                   var parsedUrl = Uri.parse(link);
-                  var rawLink = parsedUrl.queryParameters['url'] ?? "";
-                  // hereLink += "\n$rawLink";
-                  hereLink = rawLink;
+                  // await canLaunchUrl(parsedUrl)
+                  if (!await launchUrl(parsedUrl, mode: LaunchMode.externalApplication)) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("打开链接失败"), duration: Duration(milliseconds: 600),),
+                    );
+                  }
                 }
-                showConfirmDialog(context, "使用默认浏览器打开链接?", hereLink).then((value) async {
-                  if (value == null) {
-                    return;
-                  }
-                  if (value == "yes") {
-                    var parsedUrl = Uri.parse(link);
-                    // await canLaunchUrl(parsedUrl)
-                    if (!await launchUrl(parsedUrl, mode: LaunchMode.externalApplication)) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("打开链接失败"), duration: Duration(milliseconds: 600),),
-                      );
-                    }
-                  }
-                });
-              }
-            },
-          ),
+              });
+            }
+          },
         );
         res.add(tspan);
       } else if (ele.localName == "br") {
