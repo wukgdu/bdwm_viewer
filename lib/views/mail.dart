@@ -7,6 +7,7 @@ import './collection.dart' show showCollectionDialog;
 import '../bdwm/collection.dart';
 import '../bdwm/forward.dart';
 import './utils.dart';
+import '../globalvars.dart' show globalConfigInfo;
 import '../bdwm/mail.dart' show bdwmOperateMail;
 import '../router.dart' show nv2Push;
 
@@ -105,6 +106,7 @@ class MailDetailPage extends StatefulWidget {
 }
 
 class _MailDetailPageState extends State<MailDetailPage> {
+  final _contentFont = TextStyle(fontSize: globalConfigInfo.contentFontSize, fontWeight: FontWeight.normal);
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -131,7 +133,7 @@ class _MailDetailPageState extends State<MailDetailPage> {
         Card(
           child: Container(
             padding: const EdgeInsets.all(10.0),
-            child: HtmlComponent(widget.mailDetailInfo.content),
+            child: HtmlComponent(widget.mailDetailInfo.content, ts: _contentFont,),
           ),
         ),
         if (widget.mailDetailInfo.signatureHtml.isNotEmpty)
