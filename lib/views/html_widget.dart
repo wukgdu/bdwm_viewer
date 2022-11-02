@@ -317,7 +317,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
           if (validUserMention(m.start, m.end, text!)) {
             res.add(TextSpan(
               text: mStr.toString(),
-              style: textLinkStyle.merge(ts),
+              style: textLinkStyle,
               recognizer: TapGestureRecognizer()..onTap = () async {
                 if (context == null) { return; }
                 bdwmUserInfoSearch([mStr.substring(1)]).then((res) {
@@ -342,12 +342,12 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
               },
             ));
           } else {
-            res.add(TextSpan(text: mStr, style: ts));
+            res.add(TextSpan(text: mStr));
           }
           return mStr;
         },
         onNonMatch: (m) {
-          res.add(TextSpan(text: m, style: ts));
+          res.add(TextSpan(text: m));
           return m;
         },
       );
