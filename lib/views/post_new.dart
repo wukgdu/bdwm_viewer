@@ -178,9 +178,11 @@ class _PostNewPageState extends State<PostNewPage> {
 
         child: Material(
           elevation: 4,
+          color: Colors.white.withOpacity(1.0),
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(color: bdwmPrimaryColor, width: 1.0),
+              // color: Colors.white.withOpacity(0.5),
             ),
             constraints: const BoxConstraints(
               minHeight: 25,
@@ -204,12 +206,13 @@ class _PostNewPageState extends State<PostNewPage> {
                 var searchResp = snapshot.data as TopSearchRes;
                 if (!searchResp.success) {
                   duration = const Duration(milliseconds: 1000);
-                  return const Text("查询失败");
+                  return partUserName.length == 1 ? const Text("太短") : const Text("查询失败");
                 } else if (searchResp.users.isEmpty) {
                   duration = const Duration(milliseconds: 1000);
                   return const Text("查询失败");
                 }
                 return ListView(
+                  padding: const EdgeInsets.all(0.0),
                   itemExtent: 25,
                   shrinkWrap: true,
                   children: searchResp.users.map((e) {
