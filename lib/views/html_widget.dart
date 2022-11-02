@@ -388,8 +388,8 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
         );
       } else if (ele.localName == "p") {
         if (ele.classes.contains('quotehead') || ele.classes.contains('blockquote')) {
-          var contentSize = ts?.fontSize;
-          res.add(WidgetSpan(child: Icon(Icons.format_quote, size: contentSize, color: const Color(0xffA6DDE3))));
+          var contentSize = ts?.fontSize ?? 14;
+          res.add(WidgetSpan(child: Icon(Icons.format_quote, size: contentSize, color: const Color(0xffA6DDE3)), alignment: PlaceholderAlignment.top));
           var quoteText = ele.text;
           if (ele.classes.contains('quotehead') && (nickName != null)) {
             int p1 = quoteText.indexOf('(');
