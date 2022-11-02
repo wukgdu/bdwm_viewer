@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
 
@@ -7,6 +8,7 @@ import 'package:flutter_quill/flutter_quill.dart' as fquill;
 import 'package:flutter_quill_extensions/embeds/builders.dart' show ImageEmbedBuilder;
 
 import '../bdwm/posts.dart';
+import '../bdwm/search.dart';
 import '../bdwm/req.dart';
 import '../globalvars.dart';
 import '../html_parser/postnew_parser.dart';
@@ -35,6 +37,8 @@ class PostNewPage extends StatefulWidget {
 
 class _PostNewPageState extends State<PostNewPage> {
   late final fquill.QuillController _controller;
+  final ScrollController _scrollController = ScrollController();
+  final FocusNode _focusNode = FocusNode();
   TextEditingController titleValue = TextEditingController();
   bool needNoreply = false;
   bool needRemind = true;
@@ -48,8 +52,9 @@ class _PostNewPageState extends State<PostNewPage> {
   int attachCount = 0;
   List<String> attachFiles = [];
   String? quoteText;
-
-  late CancelableOperation getDataCancelable;
+  Timer? removeOverlayTimer;
+  OverlayEntry? suggestionTagoverlayEntry;
+  CancelableOperation? getUserSuggestionCancelable;
 
   bool useHtmlContent = true;
 
@@ -87,13 +92,159 @@ class _PostNewPageState extends State<PostNewPage> {
     }
 
     attachFiles = widget.postNewInfo.attachFiles;
+
+    _controller.onSelectionChanged = (textSelection) async {
+      var textEditingValue = _controller.plainTextEditingValue;
+      var rawText = textEditingValue.text;
+      var baseOffset = textSelection.baseOffset;
+      bool waitUserList = false;
+      String partUserName = "";
+      int selection1 = -1;
+      if (baseOffset > 1) {
+        if (baseOffset >= rawText.length || rawText[baseOffset]==" " || rawText[baseOffset]=="\n") {
+          int newOffset = baseOffset - 1;
+          while (newOffset >= 0) {
+            if (rawText[newOffset] == '@') {
+              if (newOffset == 0 || rawText[newOffset-1]==" " || rawText[newOffset-1]=="\n") {
+                partUserName = rawText.substring(newOffset+1, baseOffset);
+                if (isValidUserName(partUserName)) {
+                  waitUserList = true;
+                  selection1 = newOffset+1;
+                }
+                break;
+              }
+            }
+            newOffset -= 1;
+            if (baseOffset - newOffset > 12) {
+              break;
+            }
+          }
+        }
+      }
+      if (waitUserList == false) { return; }
+      debugPrint(partUserName);
+      showOverlaidTag(context, partUserName, selection1);
+    };
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _scrollController.dispose();
+    _focusNode.dispose();
     titleValue.dispose();
+    if (removeOverlayTimer != null) {
+      if (suggestionTagoverlayEntry != null && removeOverlayTimer!.isActive) {
+        removeOverlayTimer!.cancel();
+        suggestionTagoverlayEntry!.remove();
+      }
+    }
+    if (suggestionTagoverlayEntry != null) {
+      suggestionTagoverlayEntry!.dispose();
+    }
+    if (getUserSuggestionCancelable != null) {
+      getUserSuggestionCancelable!.cancel();
+    }
     super.dispose();
+  }
+
+  bool isValidUserName(String userName) {
+    var matchRes = RegExp(r"[a-zA-Z_]+").stringMatch(userName);
+    if (matchRes == null) { return false; }
+    return matchRes.length == userName.length;
+  }
+
+  showOverlaidTag(BuildContext context, String partUserName, int selection1) async {
+    if (removeOverlayTimer != null && removeOverlayTimer!.isActive) {
+      removeOverlayTimer!.cancel();
+      if (suggestionTagoverlayEntry != null) {
+        suggestionTagoverlayEntry!.remove();
+      }
+    }
+    if (getUserSuggestionCancelable != null) {
+      getUserSuggestionCancelable!.cancel();
+    }
+    if (!mounted) { return; }
+    OverlayState? overlayState = Overlay.of(context);
+    if (overlayState == null) { return; }
+    getUserSuggestionCancelable = CancelableOperation.fromFuture(
+      bdwmTopSearch(partUserName),
+    );
+    var duration = const Duration(milliseconds: 4000);
+    suggestionTagoverlayEntry = OverlayEntry(builder: (context) {
+      return Positioned(
+        top: _focusNode.offset.dy + 3,
+        left: _focusNode.offset.dx + 10,
+
+        child: Material(
+          elevation: 4,
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: bdwmPrimaryColor, width: 1.0),
+            ),
+            constraints: const BoxConstraints(
+              minHeight: 25,
+              maxHeight: 125,
+            ),
+            width: 100,
+            child: FutureBuilder(
+              future: getUserSuggestionCancelable!.value,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState != ConnectionState.done) {
+                  return const Text("查询中");
+                }
+                if (snapshot.hasError) {
+                  duration = const Duration(milliseconds: 1000);
+                  return const Text("查询失败");
+                }
+                if (!snapshot.hasData || snapshot.data == null) {
+                  duration = const Duration(milliseconds: 1000);
+                  return const Text("查询失败");
+                }
+                var searchResp = snapshot.data as TopSearchRes;
+                if (!searchResp.success) {
+                  duration = const Duration(milliseconds: 1000);
+                  return const Text("查询失败");
+                } else if (searchResp.users.isEmpty) {
+                  duration = const Duration(milliseconds: 1000);
+                  return const Text("查询失败");
+                }
+                return ListView(
+                  itemExtent: 25,
+                  shrinkWrap: true,
+                  children: searchResp.users.map((e) {
+                    return GestureDetector(
+                      onTap: () {
+                        String fullName = "${e.name} ";
+                        _controller.replaceText(selection1, partUserName.length, fullName, _controller.selection);
+                        _controller.updateSelection(_controller.selection.copyWith(
+                          baseOffset: selection1+fullName.length,
+                          extentOffset: selection1+fullName.length,
+                        ), fquill.ChangeSource.LOCAL);
+                        if (removeOverlayTimer != null && removeOverlayTimer!.isActive) {
+                          removeOverlayTimer!.cancel();
+                          if (suggestionTagoverlayEntry != null) {
+                            suggestionTagoverlayEntry!.remove();
+                          }
+                        }
+                      },
+                      child: Text(e.name, style: const TextStyle(fontSize: 18)),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+    });
+    overlayState.insert(suggestionTagoverlayEntry!);
+
+    removeOverlayTimer = Timer(duration, () {
+      if (suggestionTagoverlayEntry != null) {
+        suggestionTagoverlayEntry!.remove();
+      }
+    });
   }
 
   @override
@@ -223,11 +374,18 @@ class _PostNewPageState extends State<PostNewPage> {
           ),
           margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
           height: 200,
-          child: fquill.QuillEditor.basic(
+          child: fquill.QuillEditor(
             controller: _controller,
-            readOnly: false, // true for view only mode
-            embedBuilders: [ImageEmbedBuilder()],
+            scrollController: _scrollController,
+            scrollable: true,
+            focusNode: _focusNode,
+            autoFocus: true,
+            readOnly: false,
+            expands: false,
+            padding: const EdgeInsets.all(5.0),
+            keyboardAppearance: Theme.of(context).brightness,
             // locale: const Locale('zh', 'CN'),
+            embedBuilders: [ImageEmbedBuilder()],
           ),
         ),
         Container(

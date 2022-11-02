@@ -309,8 +309,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
       // flutter bug? if unknown character appears first, others will be unknown too.
       text = text.replaceAll("\uD83E\uDD79", "\uFFFD");
       text = text.replaceAll("\uD83E\uDDCC", "\uFFFD");
-
-      var userExp = RegExp(r"@\w+");
+      var userExp = RegExp(r"@[a-zA-Z_]+");
       text.splitMapJoin(userExp,
         onMatch: (m) {
           var mStr = m[0].toString();
