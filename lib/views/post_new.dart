@@ -94,6 +94,28 @@ class _PostNewPageState extends State<PostNewPage> {
 
     attachFiles = widget.postNewInfo.attachFiles;
 
+    if (globalConfigInfo.getSuggestUser()==true) {
+      addUserSuggest();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _scrollController.dispose();
+    _focusNode.dispose();
+    titleValue.dispose();
+    removeSuggestionNow();
+    if (suggestionTagoverlayEntry != null) {
+      suggestionTagoverlayEntry!.dispose();
+    }
+    if (getUserSuggestionCancelable != null) {
+      getUserSuggestionCancelable!.cancel();
+    }
+    super.dispose();
+  }
+
+  void addUserSuggest() {
     _controller.onSelectionChanged = (textSelection) async {
       var textEditingValue = _controller.plainTextEditingValue;
       var rawText = textEditingValue.text; // ends with one extra \n
@@ -135,22 +157,6 @@ class _PostNewPageState extends State<PostNewPage> {
     };
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    _scrollController.dispose();
-    _focusNode.dispose();
-    titleValue.dispose();
-    removeSuggestionNow();
-    if (suggestionTagoverlayEntry != null) {
-      suggestionTagoverlayEntry!.dispose();
-    }
-    if (getUserSuggestionCancelable != null) {
-      getUserSuggestionCancelable!.cancel();
-    }
-    super.dispose();
-  }
-
   bool isValidUserName(String userName) {
     var matchRes = RegExp(r"[a-zA-Z_]+").stringMatch(userName);
     if (matchRes == null) { return false; }
@@ -179,7 +185,7 @@ class _PostNewPageState extends State<PostNewPage> {
     );
 
     var duration = const Duration(milliseconds: 4000);
-    double overlayWidth = 100;
+    double overlayWidth = 150;
     var deviceSize = MediaQuery.of(context).size;
     suggestionTagoverlayEntry = OverlayEntry(builder: (context) {
       var tmpLeft = _focusNode.offset.dx + dx + 5;

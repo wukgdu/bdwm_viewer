@@ -212,6 +212,17 @@ class _SettingsAppState extends State<SettingsApp> {
           const Divider(),
           PrimaryColorComponent(parentRefresh: () { refresh(); },),
           const Divider(),
+          SwitchListTile(
+            title: const Text("发帖@ID自动提示"),
+            subtitle: const Text("联网查询"),
+            activeColor: bdwmPrimaryColor,
+            value: globalConfigInfo.suggestUser,
+            onChanged: (value) {
+              globalConfigInfo.suggestUser = value;
+              refresh();
+            },
+          ),
+          const Divider(),
           ListTile(
             onTap: () async {
               var vStr = await showTextDialog(context, "输入数字，否则无穷");
