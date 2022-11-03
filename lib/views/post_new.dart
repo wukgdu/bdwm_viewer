@@ -55,6 +55,7 @@ class _PostNewPageState extends State<PostNewPage> {
   Timer? removeOverlayTimer;
   OverlayEntry? suggestionTagoverlayEntry;
   CancelableOperation? getUserSuggestionCancelable;
+  final editorKey = GlobalKey<fquill.QuillEditorState>();
 
   bool useHtmlContent = true;
 
@@ -95,13 +96,13 @@ class _PostNewPageState extends State<PostNewPage> {
 
     _controller.onSelectionChanged = (textSelection) async {
       var textEditingValue = _controller.plainTextEditingValue;
-      var rawText = textEditingValue.text;
+      var rawText = textEditingValue.text; // ends with one extra \n
       var baseOffset = textSelection.baseOffset;
       bool waitUserList = false;
       String partUserName = "";
       int selection1 = -1;
       if (baseOffset > 1) {
-        if (baseOffset >= rawText.length || rawText[baseOffset]==" " || rawText[baseOffset]=="\n") {
+        if (baseOffset + 1 >= rawText.length || rawText[baseOffset]==" " || rawText[baseOffset]=="\n") {
           int newOffset = baseOffset - 1;
           while (newOffset >= 0) {
             if (rawText[newOffset] == '@') {
@@ -121,9 +122,16 @@ class _PostNewPageState extends State<PostNewPage> {
           }
         }
       }
-      if (waitUserList == false) { return; }
+      if (waitUserList == false) {
+        removeSuggestionNow();
+        return;
+      }
       debugPrint(partUserName);
-      showOverlaidTag(context, partUserName, selection1);
+
+      var quillEditorState = editorKey.currentState!;
+      var renderEditor = quillEditorState.editableTextKey.currentState!.renderEditor;
+      var cursorOffset = renderEditor.getEndpointsForSelection(textSelection.copyWith(baseOffset: textSelection.baseOffset-1, extentOffset: textSelection.extentOffset-1)).first.point;
+      showOverlaidTag(context, partUserName, selection1, cursorOffset.dx, cursorOffset.dy - (renderEditor.offset?.pixels ?? 0));
     };
   }
 
@@ -133,12 +141,7 @@ class _PostNewPageState extends State<PostNewPage> {
     _scrollController.dispose();
     _focusNode.dispose();
     titleValue.dispose();
-    if (removeOverlayTimer != null) {
-      if (suggestionTagoverlayEntry != null && removeOverlayTimer!.isActive) {
-        removeOverlayTimer!.cancel();
-        suggestionTagoverlayEntry!.remove();
-      }
-    }
+    removeSuggestionNow();
     if (suggestionTagoverlayEntry != null) {
       suggestionTagoverlayEntry!.dispose();
     }
@@ -154,13 +157,17 @@ class _PostNewPageState extends State<PostNewPage> {
     return matchRes.length == userName.length;
   }
 
-  showOverlaidTag(BuildContext context, String partUserName, int selection1) async {
+  void removeSuggestionNow() {
     if (removeOverlayTimer != null && removeOverlayTimer!.isActive) {
       removeOverlayTimer!.cancel();
       if (suggestionTagoverlayEntry != null) {
         suggestionTagoverlayEntry!.remove();
       }
     }
+  }
+
+  showOverlaidTag(BuildContext context, String partUserName, int selection1, double dx, double dy) async {
+    removeSuggestionNow();
     if (getUserSuggestionCancelable != null) {
       getUserSuggestionCancelable!.cancel();
     }
@@ -170,12 +177,16 @@ class _PostNewPageState extends State<PostNewPage> {
     getUserSuggestionCancelable = CancelableOperation.fromFuture(
       bdwmTopSearch(partUserName),
     );
-    var duration = const Duration(milliseconds: 4000);
-    suggestionTagoverlayEntry = OverlayEntry(builder: (context) {
-      return Positioned(
-        top: _focusNode.offset.dy + 3,
-        left: _focusNode.offset.dx + 10,
 
+    var duration = const Duration(milliseconds: 4000);
+    double overlayWidth = 100;
+    var deviceSize = MediaQuery.of(context).size;
+    suggestionTagoverlayEntry = OverlayEntry(builder: (context) {
+      var tmpLeft = _focusNode.offset.dx + dx + 5;
+      var tmpTop = _focusNode.offset.dy + dy + 5;
+      return Positioned(
+        top: math.min(tmpTop, _focusNode.rect.bottom),
+        left: tmpLeft + overlayWidth + 10 > deviceSize.width ? deviceSize.width - overlayWidth - 10 : tmpLeft,
         child: Material(
           elevation: 4,
           color: Colors.white.withOpacity(1.0),
@@ -188,7 +199,7 @@ class _PostNewPageState extends State<PostNewPage> {
               minHeight: 25,
               maxHeight: 125,
             ),
-            width: 100,
+            width: overlayWidth,
             child: FutureBuilder(
               future: getUserSuggestionCancelable!.value,
               builder: (context, snapshot) {
@@ -224,12 +235,7 @@ class _PostNewPageState extends State<PostNewPage> {
                           baseOffset: selection1+fullName.length,
                           extentOffset: selection1+fullName.length,
                         ), fquill.ChangeSource.LOCAL);
-                        if (removeOverlayTimer != null && removeOverlayTimer!.isActive) {
-                          removeOverlayTimer!.cancel();
-                          if (suggestionTagoverlayEntry != null) {
-                            suggestionTagoverlayEntry!.remove();
-                          }
-                        }
+                        removeSuggestionNow();
                       },
                       child: Text(e.name, style: const TextStyle(fontSize: 18)),
                     );
@@ -378,6 +384,7 @@ class _PostNewPageState extends State<PostNewPage> {
           margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
           height: 200,
           child: fquill.QuillEditor(
+            key: editorKey,
             controller: _controller,
             scrollController: _scrollController,
             scrollable: true,
