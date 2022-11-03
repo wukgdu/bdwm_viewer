@@ -118,13 +118,13 @@ class _PostNewPageState extends State<PostNewPage> {
   void addUserSuggest() {
     _controller.onSelectionChanged = (textSelection) async {
       var textEditingValue = _controller.plainTextEditingValue;
-      var rawText = textEditingValue.text; // ends with one extra \n
+      var rawText = textEditingValue.text;
       var baseOffset = textSelection.baseOffset;
       bool waitUserList = false;
       String partUserName = "";
       int selection1 = -1;
       if (baseOffset > 1) {
-        if (baseOffset + 1 >= rawText.length || rawText[baseOffset]==" " || rawText[baseOffset]=="\n") {
+        if (baseOffset >= rawText.length || rawText[baseOffset]==" " || rawText[baseOffset]=="\n") {
           int newOffset = baseOffset - 1;
           while (newOffset >= 0) {
             if (rawText[newOffset] == '@') {
@@ -184,7 +184,7 @@ class _PostNewPageState extends State<PostNewPage> {
       bdwmTopSearch(partUserName),
     );
 
-    var duration = const Duration(milliseconds: 4000);
+    var duration = const Duration(milliseconds: 5000);
     double overlayWidth = 150;
     var deviceSize = MediaQuery.of(context).size;
     suggestionTagoverlayEntry = OverlayEntry(builder: (context) {
@@ -228,11 +228,13 @@ class _PostNewPageState extends State<PostNewPage> {
                   duration = const Duration(milliseconds: 1000);
                   return const Text("查询失败");
                 }
-                return ListView(
+                return ListView.builder(
                   padding: const EdgeInsets.all(0.0),
                   itemExtent: 25,
                   shrinkWrap: true,
-                  children: searchResp.users.map((e) {
+                  itemCount: searchResp.users.length,
+                  itemBuilder: (context, index) {
+                    var e = searchResp.users[index];
                     return GestureDetector(
                       onTap: () {
                         String fullName = "${e.name} ";
@@ -245,7 +247,7 @@ class _PostNewPageState extends State<PostNewPage> {
                       },
                       child: Text(e.name, style: const TextStyle(fontSize: 18)),
                     );
-                  }).toList(),
+                  },
                 );
               },
             ),
