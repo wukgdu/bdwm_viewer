@@ -123,7 +123,7 @@ class _PostNewPageState extends State<PostNewPage> {
       bool waitUserList = false;
       String partUserName = "";
       int selection1 = -1;
-      if (baseOffset > 1) {
+      if (baseOffset > 0) {
         if (baseOffset >= rawText.length || rawText[baseOffset]==" " || rawText[baseOffset]=="\n") {
           int newOffset = baseOffset - 1;
           while (newOffset >= 0) {
@@ -156,12 +156,13 @@ class _PostNewPageState extends State<PostNewPage> {
       var quillEditorState = editorKey.currentState!;
       var renderEditor = quillEditorState.editableTextKey.currentState!.renderEditor;
       // var cursorOffset = renderEditor.getEndpointsForSelection(textSelection.copyWith(baseOffset: textSelection.baseOffset-1, extentOffset: textSelection.extentOffset-1)).first.point;
-      var cursorOffset = renderEditor.getEndpointsForSelection(textSelection.copyWith(baseOffset: selection1, extentOffset: selection1)).first.point;
+      var cursorOffset = renderEditor.getEndpointsForSelection(textSelection.copyWith(baseOffset: selection1-1, extentOffset: selection1-1)).first.point;
       showOverlaidTag(context, partUserName, selection1, cursorOffset.dx, cursorOffset.dy - (renderEditor.offset?.pixels ?? 0));
     };
   }
 
   bool isValidUserName(String userName) {
+    if (userName.isEmpty) { return true; }
     var matchRes = RegExp(r"[a-zA-Z_]+").stringMatch(userName);
     if (matchRes == null) { return false; }
     return matchRes.length == userName.length;
@@ -184,9 +185,15 @@ class _PostNewPageState extends State<PostNewPage> {
     if (!mounted) { return; }
     OverlayState? overlayState = Overlay.of(context);
     if (overlayState == null) { return; }
-    getUserSuggestionCancelable = CancelableOperation.fromFuture(
-      bdwmTopSearch(partUserName),
-    );
+    if (partUserName.isEmpty) {
+      getUserSuggestionCancelable = CancelableOperation.fromFuture(
+        bdwmGetFriends(),
+      );
+    } else {
+      getUserSuggestionCancelable = CancelableOperation.fromFuture(
+        bdwmTopSearch(partUserName),
+      );
+    }
 
     var duration = const Duration(milliseconds: 5000);
     double overlayWidth = 150;
@@ -224,11 +231,23 @@ class _PostNewPageState extends State<PostNewPage> {
                   duration = const Duration(milliseconds: 1000);
                   return const Text("查询失败");
                 }
-                var searchResp = snapshot.data as TopSearchRes;
-                if (!searchResp.success) {
+                bool success = false;
+                List<IDandName> users = [];
+                if (partUserName.isEmpty) {
+                  var searchResp = snapshot.data as UserInfoRes;
+                  success = searchResp.success;
+                  for (var u in searchResp.users) {
+                    users.add(u as IDandName);
+                  }
+                } else {
+                  var searchResp = snapshot.data as TopSearchRes;
+                  success = searchResp.success;
+                  users = searchResp.users;
+                }
+                if (!success) {
                   duration = const Duration(milliseconds: 1000);
                   return partUserName.length == 1 ? const Text("太短") : const Text("查询失败");
-                } else if (searchResp.users.isEmpty) {
+                } else if (users.isEmpty) {
                   duration = const Duration(milliseconds: 1000);
                   return const Text("查询失败");
                 }
@@ -236,9 +255,9 @@ class _PostNewPageState extends State<PostNewPage> {
                   padding: const EdgeInsets.all(0.0),
                   itemExtent: 25,
                   shrinkWrap: true,
-                  itemCount: searchResp.users.length,
+                  itemCount: users.length,
                   itemBuilder: (context, index) {
-                    var e = searchResp.users[index];
+                    var e = users[index];
                     return GestureDetector(
                       onTap: () {
                         String fullName = "${e.name} ";
