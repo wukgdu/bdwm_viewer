@@ -122,11 +122,13 @@ class _Top100PageState extends State<Top100Page> {
               );
             },);
           }
-          return ListView(
+          return ListView.builder(
             controller: _scrollController,
-            children: top100Info.items.map((Top100Item item) {
+            itemCount: top100Info.items.length,
+            itemBuilder: (context, index) {
+              var item = top100Info.items[index];
               return _onepost(item);
-            }).toList(),
+            },
           );
         }
       ),

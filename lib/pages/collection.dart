@@ -115,7 +115,7 @@ class _CollectionAppState extends State<CollectionApp> {
                   var newLink = p1 == -1 ? "$v2Host/collection.php" : widget.link.substring(0, p1);
                   nv2Push(context, '/collection', arguments: {
                     'link': newLink,
-                    'title': "获取父目录中",
+                    'title': "获取目录中",
                   });
                 } : null,
                 icon: const Icon(Icons.arrow_upward)
@@ -307,7 +307,7 @@ class _CollectionArticleAppState extends State<CollectionArticleApp> {
                   newLink = newLink.replaceFirst("collection-read.php", "collection.php");
                   nv2Push(context, '/collection', arguments: {
                     'link': newLink,
-                    'title': "获取父目录中",
+                    'title': "获取目录中",
                   });
                 },
                 icon: const Icon(Icons.arrow_upward)

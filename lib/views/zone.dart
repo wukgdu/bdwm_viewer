@@ -88,10 +88,12 @@ class _ZonePageState extends State<ZonePage> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: widget.zoneInfo.zoneItems.map((e) {
+    return ListView.builder(
+      itemCount: widget.zoneInfo.zoneItems.length,
+      itemBuilder: (context, index) {
+        var e = widget.zoneInfo.zoneItems[index];
         return oneItem(e);
-      }).toList(),
+      },
     );
   }
 }

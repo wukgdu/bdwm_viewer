@@ -120,8 +120,10 @@ class _UploadDialogBodyState extends State<UploadDialogBody> {
             child: const Text("选取文件"),
           ),
           Expanded(
-            child: ListView(
-              children: filenames.map((e) {
+            child: ListView.builder(
+              itemCount: filenames.length,
+              itemBuilder: (context, index) {
+                var e = filenames[index];
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -146,7 +148,7 @@ class _UploadDialogBodyState extends State<UploadDialogBody> {
                     ),
                   ],
                 );
-              }).toList(),
+              },
             ),
           ),
         ],

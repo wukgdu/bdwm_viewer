@@ -74,11 +74,13 @@ class _CollectionPageState extends State<CollectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return ListView.builder(
       controller: _controller,
-      children: widget.collectionList.collectionItems.map((e) {
+      itemCount: widget.collectionList.collectionItems.length,
+      itemBuilder: (context, index) {
+        var e = widget.collectionList.collectionItems[index];
         return oneItem(e);
-      }).toList(),
+      },
     );
   }
 }

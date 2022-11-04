@@ -181,9 +181,11 @@ class _MessageListPageState extends State<MessageListPage> {
         if (widget.filterName.isNotEmpty) {
           users.removeWhere((element) => !element.text.toLowerCase().contains(widget.filterName));
         }
-        return ListView(
+        return ListView.builder(
           controller: _controller,
-          children: users.map((e) {
+          itemCount: users.length,
+          itemBuilder: (context, index) {
+            var e = users[index];
             return Card(
               child: ListTile(
                 onTap: () {
@@ -230,7 +232,7 @@ class _MessageListPageState extends State<MessageListPage> {
                   : null,
               ),
             );
-          }).toList(),
+          },
         );
       }
     );
@@ -426,16 +428,13 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
                   return const Center(child: Text("出错啦"),);
                 }
               }
-              return ListView(
+              return ListView.builder(
                 reverse: true,
                 controller: _controller,
-                // itemCount: widget.count,
-                // itemBuilder: ((context, index) {
-                //   return oneItem(messageinfo.messages[index]);
-                // }),
-                children: messageinfo.messages.map((e) {
-                  return oneItem(e);
-                }).toList(),
+                itemCount: messageinfo.messages.length,
+                itemBuilder: ((context, index) {
+                  return oneItem(messageinfo.messages[index]);
+                }),
               );
             }
           )

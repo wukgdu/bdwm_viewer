@@ -190,11 +190,13 @@ class FavoritePageState extends State<FavoritePage> {
     return Column(
       children: [
         Expanded(
-          child: ListView(
+          child: ListView.builder(
             controller: _scrollController,
-            children: favoriteBoardInfo.favoriteBoards.map((FavoriteBoard item) {
+            itemCount: favoriteBoardInfo.favoriteBoards.length,
+            itemBuilder: (context, index) {
+              var item = favoriteBoardInfo.favoriteBoards[index];
               return _onepost(item);
-            }).toList(),
+            },
           ),
         ),
         Container(

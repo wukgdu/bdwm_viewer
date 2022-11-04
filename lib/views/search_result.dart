@@ -37,10 +37,12 @@ class _SimpleResultPageState extends State<SimpleResultPage> {
   }
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: widget.ssRes.res.map((e) {
+    return ListView.builder(
+      itemCount: widget.ssRes.res.length,
+      itemBuilder: (context, index) {
+        var e = widget.ssRes.res[index];
         return oneItem(e);
-      }).toList(),
+      },
     );
   }
 }
@@ -110,10 +112,12 @@ class _ComplexResultPageState extends State<ComplexResultPage> {
   }
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: widget.csRes.resItems.map((e) {
+    return ListView.builder(
+      itemCount: widget.csRes.resItems.length,
+      itemBuilder: (context, index) {
+        var e = widget.csRes.resItems[index];
         return oneItem(e);
-      }).toList(),
+      },
     );
   }
 }
