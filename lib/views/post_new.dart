@@ -196,7 +196,7 @@ class _PostNewPageState extends State<PostNewPage> {
     }
 
     var duration = const Duration(milliseconds: 5000);
-    double overlayWidth = 150;
+    double overlayWidth = 160;
     var deviceSize = MediaQuery.of(context).size;
     suggestionTagoverlayEntry = OverlayEntry(builder: (context) {
       var tmpLeft = _focusNode.offset.dx + dx;
@@ -268,7 +268,7 @@ class _PostNewPageState extends State<PostNewPage> {
                         ), fquill.ChangeSource.LOCAL);
                         removeSuggestionNow();
                       },
-                      child: Text(e.name, style: const TextStyle(fontSize: 18)),
+                      child: Text("@${e.name}", style: serifFont.copyWith(fontSize: 18)),
                     );
                   },
                 );
