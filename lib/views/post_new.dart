@@ -127,7 +127,8 @@ class _PostNewPageState extends State<PostNewPage> {
         if (baseOffset >= rawText.length || rawText[baseOffset]==" " || rawText[baseOffset]=="\n") {
           int newOffset = baseOffset - 1;
           while (newOffset >= 0) {
-            if (rawText[newOffset] == '@') {
+            var curChar = rawText[newOffset];
+            if (curChar == '@') {
               if (newOffset == 0 || rawText[newOffset-1]==" " || rawText[newOffset-1]=="\n") {
                 partUserName = rawText.substring(newOffset+1, baseOffset);
                 if (isValidUserName(partUserName)) {
@@ -136,11 +137,13 @@ class _PostNewPageState extends State<PostNewPage> {
                 }
                 break;
               }
+            } else if (curChar == ' ') {
+              break;
             }
-            newOffset -= 1;
             if (baseOffset - newOffset > 12) {
               break;
             }
+            newOffset -= 1;
           }
         }
       }
@@ -152,7 +155,8 @@ class _PostNewPageState extends State<PostNewPage> {
 
       var quillEditorState = editorKey.currentState!;
       var renderEditor = quillEditorState.editableTextKey.currentState!.renderEditor;
-      var cursorOffset = renderEditor.getEndpointsForSelection(textSelection.copyWith(baseOffset: textSelection.baseOffset-1, extentOffset: textSelection.extentOffset-1)).first.point;
+      // var cursorOffset = renderEditor.getEndpointsForSelection(textSelection.copyWith(baseOffset: textSelection.baseOffset-1, extentOffset: textSelection.extentOffset-1)).first.point;
+      var cursorOffset = renderEditor.getEndpointsForSelection(textSelection.copyWith(baseOffset: selection1, extentOffset: selection1)).first.point;
       showOverlaidTag(context, partUserName, selection1, cursorOffset.dx, cursorOffset.dy - (renderEditor.offset?.pixels ?? 0));
     };
   }
@@ -188,14 +192,14 @@ class _PostNewPageState extends State<PostNewPage> {
     double overlayWidth = 150;
     var deviceSize = MediaQuery.of(context).size;
     suggestionTagoverlayEntry = OverlayEntry(builder: (context) {
-      var tmpLeft = _focusNode.offset.dx + dx + 5;
+      var tmpLeft = _focusNode.offset.dx + dx;
       var tmpTop = _focusNode.offset.dy + dy + 5;
       return Positioned(
         top: math.min(tmpTop, _focusNode.rect.bottom),
         left: tmpLeft + overlayWidth + 10 > deviceSize.width ? deviceSize.width - overlayWidth - 10 : tmpLeft,
         child: Material(
           elevation: 4,
-          color: Colors.white.withOpacity(1.0),
+          // color: Colors.white.withOpacity(1.0),
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(color: bdwmPrimaryColor, width: 1.0),
@@ -238,7 +242,7 @@ class _PostNewPageState extends State<PostNewPage> {
                     return GestureDetector(
                       onTap: () {
                         String fullName = "${e.name} ";
-                        _controller.replaceText(selection1, partUserName.length, fullName, _controller.selection);
+                        _controller.replaceText(selection1, partUserName.length, fullName, null);
                         _controller.updateSelection(_controller.selection.copyWith(
                           baseOffset: selection1+fullName.length,
                           extentOffset: selection1+fullName.length,
