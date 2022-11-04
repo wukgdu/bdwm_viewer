@@ -153,11 +153,13 @@ class _PostNewPageState extends State<PostNewPage> {
       }
       debugPrint(partUserName);
 
-      var quillEditorState = editorKey.currentState!;
-      var renderEditor = quillEditorState.editableTextKey.currentState!.renderEditor;
-      // var cursorOffset = renderEditor.getEndpointsForSelection(textSelection.copyWith(baseOffset: textSelection.baseOffset-1, extentOffset: textSelection.extentOffset-1)).first.point;
-      var cursorOffset = renderEditor.getEndpointsForSelection(textSelection.copyWith(baseOffset: selection1-1, extentOffset: selection1-1)).first.point;
-      showOverlaidTag(context, partUserName, selection1, cursorOffset.dx, cursorOffset.dy - (renderEditor.offset?.pixels ?? 0));
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        var quillEditorState = editorKey.currentState!;
+        var renderEditor = quillEditorState.editableTextKey.currentState!.renderEditor;
+        // var cursorOffset = renderEditor.getEndpointsForSelection(textSelection.copyWith(baseOffset: textSelection.baseOffset-1, extentOffset: textSelection.extentOffset-1)).first.point;
+        var cursorOffset = renderEditor.getEndpointsForSelection(textSelection.copyWith(baseOffset: selection1-1, extentOffset: selection1-1)).first.point;
+        showOverlaidTag(context, partUserName, selection1, cursorOffset.dx, cursorOffset.dy - (renderEditor.offset?.pixels ?? 0));
+      });
     };
   }
 
