@@ -302,6 +302,7 @@ class BDWMConfig {
   bool extraThread = false;
   bool highQualityPreview = false;
   bool suggestUser = true;
+  bool showFAB = true;
   String primaryColorString = "";
   double contentFontSize = 16.0;
   String maxPageNum = "8";
@@ -329,6 +330,7 @@ class BDWMConfig {
       "highQualityPreview": highQualityPreview,
       "primaryColorString": primaryColorString,
       "suggestUser": suggestUser,
+      "showFAB": showFAB,
     };
   }
   void fromJson(Map<String, dynamic> jsonContent) {
@@ -338,6 +340,7 @@ class BDWMConfig {
     extraThread = jsonContent['extraThread'] ?? false;
     highQualityPreview = jsonContent['highQualityPreview'] ?? false;
     suggestUser = jsonContent['suggestUser'] ?? true;
+    showFAB = jsonContent['showFAB'] ?? true;
     lastLoginTime = jsonContent['lastLoginTime'] ?? "";
     lastCheckTime = jsonContent['lastCheckTime'] ?? "";
     maxPageNum = jsonContent['maxPageNum'] ?? "8";
@@ -368,6 +371,17 @@ class BDWMConfig {
   Future<bool> setContentFontSize(double newValue) async {
     return await lock.synchronized(() async {
       contentFontSize = newValue;
+      return await update();
+    });
+  }
+
+  bool getShowFAB() {
+    return showFAB;
+  }
+
+  Future<bool> setShowFAB(bool newValue) async {
+    return await lock.synchronized(() async {
+      showFAB = newValue;
       return await update();
     });
   }

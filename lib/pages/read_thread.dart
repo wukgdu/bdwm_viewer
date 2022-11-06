@@ -26,13 +26,12 @@ class _MyFloatingActionButtonMenuState extends State<MyFloatingActionButtonMenu>
   bool isOpen = false;
   bool showFAB = true;
 
-
   Widget genButton({required Icon icon, Function()? onTap, Function()? onLongPress}) {
     return GestureDetector(
       onTap: onTap,
       onLongPress: onLongPress,
       child: Container(
-        height: 58,
+        height: 53,
         width: 48,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
@@ -156,6 +155,7 @@ class _ThreadAppState extends State<ThreadApp> {
     getDataCancelable = CancelableOperation.fromFuture(getData(firstTime: true), onCancel: () {
       debugPrint("cancel it");
     },);
+    showFAB = globalConfigInfo.getShowFAB();
     if (showFAB) {
       threadStateKey = GlobalKey<ReadThreadPageState>();
     }

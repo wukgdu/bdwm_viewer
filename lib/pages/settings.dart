@@ -223,6 +223,16 @@ class _SettingsAppState extends State<SettingsApp> {
             },
           ),
           const Divider(),
+          SwitchListTile(
+            title: const Text("主题帖显示悬浮按钮"),
+            activeColor: bdwmPrimaryColor,
+            value: globalConfigInfo.showFAB,
+            onChanged: (value) {
+              globalConfigInfo.showFAB = value;
+              refresh();
+            },
+          ),
+          const Divider(),
           ListTile(
             onTap: () async {
               var vStr = await showTextDialog(context, "输入数字，否则无穷");
