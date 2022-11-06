@@ -821,7 +821,13 @@ class ReadThreadPageState extends State<ReadThreadPage> {
       itemScrollController.scrollTo(index: 0, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
       return;
     }
-    var firstPosition = itemPositionsListener.itemPositions.value.first;
+    var itemPositions = itemPositionsListener.itemPositions.value.toList();
+    var firstPosition = itemPositions.first;
+    for (var ips in itemPositions) {
+      if (firstPosition.index > ips.index) {
+        firstPosition = ips;
+      }
+    }
     var prevIndex = firstPosition.index-1;
     if (firstPosition.itemLeadingEdge < 0) {
       prevIndex = firstPosition.index;
@@ -837,7 +843,13 @@ class ReadThreadPageState extends State<ReadThreadPage> {
       itemScrollController.scrollTo(index: widget.threadPageInfo.posts.length-1, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
       return;
     }
-    var firstPosition = itemPositionsListener.itemPositions.value.first;
+    var itemPositions = itemPositionsListener.itemPositions.value.toList();
+    var firstPosition = itemPositions.first;
+    for (var ips in itemPositions) {
+      if (firstPosition.index > ips.index) {
+        firstPosition = ips;
+      }
+    }
     var nextIndex = firstPosition.index + 1;
     if (nextIndex > widget.threadPageInfo.posts.length-1) {
       return;
