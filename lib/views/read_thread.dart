@@ -728,10 +728,10 @@ class ReadThreadPage extends StatefulWidget {
   const ReadThreadPage({Key? key, required this.bid, required this.threadid, required this.page, required this.threadPageInfo, required this.refreshCallBack, this.postid, required this.tiebaForm}) : super(key: key);
 
   @override
-  State<ReadThreadPage> createState() => _ReadThreadPageState();
+  State<ReadThreadPage> createState() => ReadThreadPageState();
 }
 
-class _ReadThreadPageState extends State<ReadThreadPage> {
+class ReadThreadPageState extends State<ReadThreadPage> {
   final _titleFont = const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
   // final _scrollController = ScrollController();
   final ItemScrollController itemScrollController = ItemScrollController();
@@ -816,6 +816,35 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
     super.dispose();
   }
 
+  void gotoPreviousPost({bool far=false}) {
+    if (far) {
+      itemScrollController.scrollTo(index: 0, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
+      return;
+    }
+    var firstPosition = itemPositionsListener.itemPositions.value.first;
+    var prevIndex = firstPosition.index-1;
+    if (firstPosition.itemLeadingEdge < 0) {
+      prevIndex = firstPosition.index;
+    }
+    if (prevIndex < 0) {
+      prevIndex = 0;
+    }
+    itemScrollController.jumpTo(index: prevIndex);
+  }
+
+  void gotoNextPost({bool far=false}) {
+    if (far) {
+      itemScrollController.scrollTo(index: widget.threadPageInfo.posts.length-1, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
+      return;
+    }
+    var firstPosition = itemPositionsListener.itemPositions.value.first;
+    var nextIndex = firstPosition.index + 1;
+    if (nextIndex > widget.threadPageInfo.posts.length-1) {
+      return;
+    }
+    itemScrollController.jumpTo(index: nextIndex);
+  }
+
   Widget _onepost(OnePostInfo item, {int? subIdx}) {
     var userName = item.authorInfo.userName;
     Set<String> seeNoHimHer = globalConfigInfo.getSeeNoThem();
@@ -877,10 +906,10 @@ class _ReadThreadPageState extends State<ReadThreadPage> {
         GestureDetector(
           onDoubleTap: () {
             // Scrollable.ensureVisible(itemKeys[0].currentContext!, duration: const Duration(milliseconds: 1500));
-            itemScrollController.scrollTo(index: 0, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
+            gotoPreviousPost(far: true);
           },
           onLongPress: () {
-            itemScrollController.scrollTo(index: widget.threadPageInfo.posts.length-1, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
+            gotoNextPost(far: true);
           },
           child: Container(
             padding: const EdgeInsets.all(10.0),

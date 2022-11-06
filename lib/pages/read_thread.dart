@@ -10,6 +10,111 @@ import '../globalvars.dart';
 import '../utils.dart' show clearAllExtendedImageCache;
 import '../router.dart' show nv2Push;
 
+class MyFloatingActionButtonMenu extends StatefulWidget {
+  final GlobalKey<ReadThreadPageState>? threadStateKey;
+  final bool showFAB;
+  const MyFloatingActionButtonMenu({super.key, required this.threadStateKey, this.showFAB=true});
+
+  @override
+  State<MyFloatingActionButtonMenu> createState() => _MyFloatingActionButtonMenuState();
+}
+
+class _MyFloatingActionButtonMenuState extends State<MyFloatingActionButtonMenu> {
+  late final Widget nextButton;
+  late final Widget prevButton;
+  late final Widget removeButton;
+  bool isOpen = false;
+  bool showFAB = true;
+
+
+  Widget genButton({required Icon icon, Function()? onTap, Function()? onLongPress}) {
+    return GestureDetector(
+      onTap: onTap,
+      onLongPress: onLongPress,
+      child: Container(
+        height: 58,
+        width: 48,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+          border: Border.all(color: bdwmPrimaryColor, width: 1.0, style: BorderStyle.solid),
+        ),
+        child: icon,
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    showFAB = widget.showFAB;
+    nextButton = genButton(icon: Icon(Icons.arrow_downward, color: bdwmPrimaryColor,),
+      onTap: () {
+        if (widget.threadStateKey!.currentState == null) { return; }
+        widget.threadStateKey!.currentState!.gotoNextPost();
+      },
+      onLongPress: () {
+        if (widget.threadStateKey!.currentState == null) { return; }
+        widget.threadStateKey!.currentState!.gotoNextPost(far: true);
+      },
+    );
+    prevButton = genButton(icon: Icon(Icons.arrow_upward, color: bdwmPrimaryColor,),
+      onTap: () {
+        if (widget.threadStateKey!.currentState == null) { return; }
+        widget.threadStateKey!.currentState!.gotoPreviousPost();
+      },
+      onLongPress: () {
+        if (widget.threadStateKey!.currentState == null) { return; }
+        widget.threadStateKey!.currentState!.gotoPreviousPost(far: true);
+      },
+    );
+    removeButton = genButton(icon: Icon(Icons.remove, color: bdwmPrimaryColor,),
+      onTap: () {
+        setState(() {
+          showFAB = false;
+        });
+      },
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant MyFloatingActionButtonMenu oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    showFAB = widget.showFAB;
+    isOpen = false;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return !showFAB ? Container() : Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (isOpen) ...[
+          removeButton,
+          prevButton,
+          nextButton,
+        ],
+        FloatingActionButton(
+          isExtended: true,
+          heroTag: "MyFloatingActionButtonMenu",
+          onPressed: () {
+            setState(() {
+              isOpen = !isOpen;
+            });
+          },
+          backgroundColor: bdwmPrimaryColor,
+          child: Icon(!isOpen ? Icons.menu : Icons.close, color: Colors.white,),
+        ),
+      ],
+    );
+  }
+}
+
 class ThreadApp extends StatefulWidget {
   final String bid;
   final String threadid;
@@ -33,6 +138,8 @@ class _ThreadAppState extends State<ThreadApp> {
   bool firstTime = true;
   ValueNotifier<bool> marked = ValueNotifier<bool>(false);
   String threadLink = "";
+  bool showFAB = true;
+  GlobalKey<ReadThreadPageState>? threadStateKey;
   // Future<ThreadPageInfo>? _future;
   @override
   void initState() {
@@ -49,6 +156,9 @@ class _ThreadAppState extends State<ThreadApp> {
     getDataCancelable = CancelableOperation.fromFuture(getData(firstTime: true), onCancel: () {
       debugPrint("cancel it");
     },);
+    if (showFAB) {
+      threadStateKey = GlobalKey<ReadThreadPageState>();
+    }
   }
 
   Future<bool> addMarked({required String link, required String title, required String userName, required String boardName}) async {
@@ -193,6 +303,7 @@ class _ThreadAppState extends State<ThreadApp> {
           ),
           body: ReadThreadPage(bid: widget.bid, threadid: widget.threadid, page: page.toString(), threadPageInfo: threadPageInfo, postid: postid,
             tiebaForm: tiebaForm,
+            key: threadStateKey,
             refreshCallBack: () {
               refresh();
             },
@@ -294,6 +405,7 @@ class _ThreadAppState extends State<ThreadApp> {
               ),
             ),
           ),
+          floatingActionButton: !showFAB ? null : MyFloatingActionButtonMenu(threadStateKey: threadStateKey, showFAB: showFAB,),
         );
       },
     );
