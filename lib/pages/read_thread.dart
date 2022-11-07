@@ -25,13 +25,14 @@ class _MyFloatingActionButtonMenuState extends State<MyFloatingActionButtonMenu>
   late final Widget removeButton;
   bool isOpen = false;
   bool showFAB = true;
+  static const vSpace = SizedBox(height: 5,);
 
   Widget genButton({required Icon icon, Function()? onTap, Function()? onLongPress}) {
     return GestureDetector(
       onTap: onTap,
       onLongPress: onLongPress,
       child: Container(
-        height: 53,
+        height: 48,
         width: 48,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
@@ -95,8 +96,11 @@ class _MyFloatingActionButtonMenuState extends State<MyFloatingActionButtonMenu>
       children: [
         if (isOpen) ...[
           removeButton,
+          vSpace,
           prevButton,
+          vSpace,
           nextButton,
+          vSpace,
         ],
         FloatingActionButton(
           isExtended: true,
