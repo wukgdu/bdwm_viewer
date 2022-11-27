@@ -434,6 +434,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.1.7"
+  media_scanner:
+    dependency: "direct main"
+    description:
+      name: media_scanner
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.1.0"
   meta:
     dependency: transitive
     description:

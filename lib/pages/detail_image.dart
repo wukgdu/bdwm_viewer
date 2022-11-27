@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 // import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:media_scanner/media_scanner.dart';
 
 import '../utils.dart';
 import '../views/utils.dart' show SaveRes, genDownloadPath, showDownloadMenu;
@@ -114,6 +115,9 @@ class _DetailImageState extends State<DetailImage> {
         //   quality: 100,
         //   name: downloadPath,
         // );
+    }
+    if  (defaultTargetPlatform == TargetPlatform.android) {
+      MediaScanner.loadMedia(path: downloadPath);
     }
     return SaveRes(true, downloadPath);
   }

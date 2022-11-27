@@ -64,6 +64,7 @@ dependencies:
   flutter_colorpicker: ^1.0.3
   # flutter_speed_dial: ^6.2.0
   syncfusion_flutter_charts: ^20.3.50
+  media_scanner: ^2.1.0
 
 dev_dependencies:
   flutter_test:

@@ -205,6 +205,11 @@ Future<bool?> showLinkMenu(BuildContext context, String link, {String? downloadP
                     return;
                   }
                   down = saveRes.reason;
+                } else {
+                  var couldStore = await checkAndRequestPermission(Permission.storage);
+                  if (couldStore == false) {
+                    return;
+                  }
                 }
                 var timeout = false;
                 var resp = await http.get(Uri.parse(link)).timeout(const Duration(seconds: seconds), onTimeout: () {
