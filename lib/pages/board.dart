@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 
+import "../views/search.dart" show PostSearchSettings;
 import '../html_parser/board_parser.dart';
 import '../views/constants.dart' show bdwmPrimaryColor;
 import '../bdwm/req.dart';
@@ -9,6 +10,71 @@ import '../globalvars.dart';
 import '../views/utils.dart';
 // import '../views/constants.dart';
 import '../router.dart' show nv2Push;
+
+class BoardSearchAlert extends StatefulWidget {
+  final String boardEngName;
+  const BoardSearchAlert({super.key, required this.boardEngName});
+
+  @override
+  State<BoardSearchAlert> createState() => _BoardSearchAlertState();
+}
+
+class _BoardSearchAlertState extends State<BoardSearchAlert> {
+  TextEditingController textController = TextEditingController();
+
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text("版内搜索"),
+      content: TextField(
+        controller: textController,
+        keyboardType: const TextInputType.numberWithOptions(),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text("取消"),
+        ),
+        TextButton(
+          onPressed: () {
+            String txt = textController.text.trim();
+            if (txt.isEmpty) { return; }
+            PostSearchSettings pss = PostSearchSettings.empty();
+            pss.days = "24855";
+            pss.owner = txt;
+            pss.board = widget.boardEngName;
+            nv2Push(context, "/complexSearchResult", arguments: {
+              "settings": pss,
+            });
+          },
+          child: const Text("搜索用户")
+        ),
+        TextButton(
+          onPressed: () {
+            String txt = textController.text.trim();
+            if (txt.isEmpty) { return; }
+            PostSearchSettings pss = PostSearchSettings.empty();
+            pss.days = "24855";
+            pss.keyWord = txt;
+            pss.board = widget.boardEngName;
+            nv2Push(context, "/complexSearchResult", arguments: {
+              "settings": pss,
+            });
+          },
+          child: const Text("搜索内容")
+        ),
+      ],
+    );
+  }
+}
 
 class BoardApp extends StatefulWidget {
   final String boardName;
@@ -90,6 +156,14 @@ class _BoardAppState extends State<BoardApp> {
         return Scaffold(
           appBar: AppBar(
             title: Text(boardInfo.boardName),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  showAlertDialog2(context, BoardSearchAlert(boardEngName: boardInfo.engName,));
+                },
+                icon: const Icon(Icons.search),
+              ),
+            ],
           ),
           // floatingActionButton: IconButton(
           //   icon: const Icon(Icons.add_circle, color: bdwmPrimaryColor, size: 24,),
