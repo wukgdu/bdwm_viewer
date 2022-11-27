@@ -167,8 +167,7 @@ class _ThreadAppState extends State<ThreadApp> {
 
   Future<bool> addMarked({required String link, required String title, required String userName, required String boardName}) async {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
-    await globalMarkedThread.addOne(link: link, title: title, userName: userName, boardName: boardName, timestamp: timestamp);
-    return true;
+    return await globalMarkedThread.addOne(link: link, title: title, userName: userName, boardName: boardName, timestamp: timestamp);
   }
 
   void addHistory({required String link, required String title, required String userName, required String boardName}) {
@@ -280,7 +279,26 @@ class _ThreadAppState extends State<ThreadApp> {
                       if (markedValue) {
                         globalMarkedThread.removeOne(threadLink);
                       } else {
-                        await addMarked(link: threadLink, title: threadPageInfo.title, userName: userName, boardName: threadPageInfo.board.text);
+                        var notfull = await addMarked(link: threadLink, title: threadPageInfo.title, userName: userName, boardName: threadPageInfo.board.text);
+                        if (notfull == false) {
+                          if (!mounted) { return; }
+                          showAlertDialog(context, "收藏数量已达上限", const Text("rt"),
+                            actions1: TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("取消"),
+                            ),
+                            actions2: TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                nv2Push(context, '/markedThread');
+                              },
+                              child: const Text("清理"),
+                            ),
+                          );
+                          return;
+                        }
                       }
                       marked.value = !markedValue;
                     },

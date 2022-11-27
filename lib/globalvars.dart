@@ -659,7 +659,7 @@ var globalThreadHistory = RecentThreadInfo.empty();
 
 class MarkedThreadInfo extends RecentThreadInfo {
   @override
-  int get maxCount => 100;
+  int get maxCount => 200;
   @override
   String get storage => "bdwmmarked.json";
   MarkedThreadInfo({required super.items});
@@ -672,6 +672,16 @@ class MarkedThreadInfo extends RecentThreadInfo {
       }
     }
     return false;
+  }
+
+  @override
+  Future<bool> addOne({required String link, required String title, required String userName, required String boardName, required int timestamp}) async {
+    if (count >= maxCount) {
+      return false;
+    }
+    items.add(RecentThreadItemInfo(link: link, title: title, userName: userName, boardName: boardName, timestamp: timestamp));
+    await update();
+    return true;
   }
 }
 
