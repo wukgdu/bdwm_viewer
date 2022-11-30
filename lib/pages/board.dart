@@ -34,7 +34,7 @@ class _BoardSearchAlertState extends State<BoardSearchAlert> {
       title: const Text("版内搜索"),
       content: TextField(
         controller: textController,
-        keyboardType: const TextInputType.numberWithOptions(),
+        // keyboardType: const TextInputType.numberWithOptions(),
       ),
       actions: [
         TextButton(
