@@ -28,6 +28,7 @@ import './pages/detail_image.dart';
 import './pages/recent_thread.dart';
 import './pages/marked_thread.dart';
 import './pages/user_stat.dart';
+import './pages/board_note.dart';
 import './views/search.dart' show PostSearchSettings;
 import './services.dart';
 import './globalvars.dart';
@@ -109,6 +110,17 @@ class MainPageBuilder {
           return null;
         }
         return BoardSingleApp(boardName: boardName ?? "版面", bid: bid ?? "", stype: stype, smode: smode);
+      case "/boardNote":
+        String? boardName;
+        String? bid;
+        if (settings.arguments != null) {
+          var settingsMap = settings.arguments as Map;
+          bid = settingsMap['bid'] as String?;
+          boardName = settingsMap['boardName'] as String?;
+        } else {
+          return null;
+        }
+        return BoardNoteApp(boardName: boardName ?? "版面", bid: bid ?? "");
       case "/thread":
         var res = gotoThreadPage(settings.arguments);
         if (res == null) {

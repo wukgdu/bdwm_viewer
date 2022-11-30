@@ -128,7 +128,8 @@ class HtmlComponent extends StatefulWidget {
   final bool? needSelect;
   final TextStyle? ts;
   final String? nickName;
-  const HtmlComponent(this.htmlStr, {Key? key, this.needSelect, this.ts, this.nickName}) : super(key: key);
+  final bool? isBoardNote;
+  const HtmlComponent(this.htmlStr, {Key? key, this.needSelect, this.ts, this.nickName, this.isBoardNote}) : super(key: key);
 
   @override
   State<HtmlComponent> createState() => _HtmlComponentState();
@@ -162,7 +163,7 @@ class _HtmlComponentState extends State<HtmlComponent> {
   Widget build(BuildContext context) {
     // var htmlStr = '''<p>asd<span style="background-color: #40ff40;">fs<font color="#c00000">a<u>d<b>fa</b></u><b>s</b></font><b>d</b></span>fa<br></p>''';
     var document = parse(htmlStr);
-    var res = travelHtml(document.querySelector("body"), context: context, ts: ts, nickName: nickName);
+    var res = travelHtml(document.querySelector("body"), context: context, ts: ts, nickName: nickName, isBoardNote: widget.isBoardNote);
     var tspan = TextSpan(
       children: res,
       style: ts,
@@ -290,7 +291,7 @@ void innerLinkJump(String link, BuildContext context) {
   }
 }
 
-List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, BuildContext? context, String? nickName}) {
+List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, BuildContext? context, String? nickName, bool? isBoardNote}) {
   if (document == null) {
     return null;
   }
@@ -356,7 +357,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
         // for color
         var color = ele.attributes['color'];
         // var bColor = ele.attributes['background-color'];
-        res.add(TextSpan(children: travelHtml(ele, context: context, ts: ts),
+        res.add(TextSpan(children: travelHtml(ele, context: context, ts: ts, isBoardNote: isBoardNote),
           style: TextStyle(
             color: color!=null?Color(int.parse("0xff${color.substring(1)}")):null,
             // backgroundColor: bColor!=null?Color(int.parse("0xff${bColor.substring(1)}")) : null,
@@ -379,7 +380,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
           //   // color = spanStyle.substring(cp2, cp2+7);
           // }
         }
-        res.add(TextSpan(children: travelHtml(ele, context: context, ts: ts),
+        res.add(TextSpan(children: travelHtml(ele, context: context, ts: ts, isBoardNote: isBoardNote),
           style: TextStyle(
             // color: color!=null?Color(int.parse("0xff${color.substring(1)}")):null,
             backgroundColor: bColor!=null?Color(int.parse("0xff${bColor.substring(1)}")) : null,
@@ -402,12 +403,12 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
           res.add(TextSpan(text: quoteText, style: TextStyle(color: Colors.grey, fontSize: contentSize)));
         } else if (ele.classes.contains("zz-info")) {
           res.add(TextSpan(
-            children: travelHtml(ele, context: context, ts: ts),
+            children: travelHtml(ele, context: context, ts: ts, isBoardNote: isBoardNote),
             style: TextStyle(color: bdwmPrimaryColor, backgroundColor: null),
           ));
         } else {
           res.add(TextSpan(
-            children: travelHtml(ele, context: context, ts: ts),
+            children: travelHtml(ele, context: context, ts: ts, isBoardNote: isBoardNote),
           ));
         }
         if (cdom != document.nodes.last) {
@@ -478,9 +479,9 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
         //   res.add(const TextSpan(text: "\n"));
         // }
       } else if (ele.localName == "b") {
-        res.add(TextSpan(children: travelHtml(ele, context: context, ts: ts), style: const TextStyle(fontWeight: FontWeight.bold,)));
+        res.add(TextSpan(children: travelHtml(ele, context: context, ts: ts, isBoardNote: isBoardNote), style: TextStyle(fontWeight: (isBoardNote ?? false) ? FontWeight.w400 : FontWeight.bold,)));
       } else if (ele.localName == "u") {
-        res.add(TextSpan(children: travelHtml(ele, context: context, ts: ts), style: const TextStyle(decoration: TextDecoration.underline)));
+        res.add(TextSpan(children: travelHtml(ele, context: context, ts: ts, isBoardNote: isBoardNote), style: const TextStyle(decoration: TextDecoration.underline)));
       } else if (ele.localName == "a") {
         var href = ele.attributes['href'];
         var link = absThreadLink(href ?? "");
@@ -499,6 +500,9 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
       } else if (ele.localName == "br") {
         if (cdom != document.nodes.last) {
           res.add(const TextSpan(text: "\n"));
+        } else if (isBoardNote ?? false) {
+          // https://stackoverflow.com/questions/73378051/flutter-text-with-space-breaks-background-color
+          res.add(const TextSpan(text: "//", style: TextStyle(color: Colors.transparent),));
         }
       } else {
         res.add(TextSpan(text: cdom.text));

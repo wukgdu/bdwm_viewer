@@ -55,7 +55,10 @@ class _BoardExtraComponentState extends State<BoardExtraComponent> {
       children: [
         GestureDetector(
           onTap: () {
-
+            nv2Push(context, '/boardNote', arguments: {
+              'bid': widget.bid,
+              'boardName': widget.boardName,
+            });
           },
           child: Text("备忘录", style: TextStyle(color: bdwmPrimaryColor),),
         ),
