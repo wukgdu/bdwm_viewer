@@ -1,14 +1,14 @@
-import 'dart:io';
-
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
 
+import './board_parser.dart' show AdminInfo;
 import '../globalvars.dart';
 import './utils.dart';
 
-class BoardPostInfo {
+class BoardSinglePostInfo {
   String bpID = "";
   bool isNew = false;
+  bool isOrigin = false;
   String title = "";
   String link = "";
   String itemid = "";
@@ -16,9 +16,6 @@ class BoardPostInfo {
   String uid = "";
   String avatarLink = "";
   String pTime = "";
-  String commentCount = "";
-  String lastUser = "";
-  String lastTime = "";
   bool lock = false;
   bool hasAttachment = false;
   bool isBaoLiu = false;
@@ -28,8 +25,8 @@ class BoardPostInfo {
   bool isYuanChuang = false;
   bool isGaoLiang = false;
 
-  BoardPostInfo.empty();
-  BoardPostInfo({
+  BoardSinglePostInfo.empty();
+  BoardSinglePostInfo({
     required this.bpID,
     required this.isNew,
     required this.title,
@@ -39,9 +36,6 @@ class BoardPostInfo {
     required this.uid,
     required this.avatarLink,
     required this.pTime,
-    required this.commentCount,
-    required this.lastUser,
-    required this.lastTime,
     required this.lock,
     required this.hasAttachment,
     required this.isBaoLiu,
@@ -50,23 +44,11 @@ class BoardPostInfo {
     required this.isZhiDing,
     required this.isYuanChuang,
     required this.isGaoLiang,
+    required this.isOrigin,
   });
 }
 
-class AdminInfo {
-  String userName = "";
-  String uid = "";
-  String link = "";
-
-  AdminInfo.empyt();
-  AdminInfo({
-    required this.userName,
-    required this.uid,
-    required this.link,
-  });
-}
-
-class BoardInfo {
+class BoardSingleInfo {
   String bid = "";
   String boardName = "";
   String engName = "";
@@ -79,13 +61,13 @@ class BoardInfo {
   int pageNum = 0;
   bool iLike = false;
   List<AdminInfo> admins = <AdminInfo>[];
-  List<BoardPostInfo> boardPostInfo = <BoardPostInfo>[];
+  List<BoardSinglePostInfo> boardPostInfo = <BoardSinglePostInfo>[];
   String collectionLink = "";
   String? errorMessage;
 
-  BoardInfo.empty();
-  BoardInfo.error({this.errorMessage});
-  BoardInfo({
+  BoardSingleInfo.empty();
+  BoardSingleInfo.error({this.errorMessage});
+  BoardSingleInfo({
     required this.bid,
     required this.boardName,
     required this.engName,
@@ -104,14 +86,18 @@ class BoardInfo {
   });
 }
 
-List<BoardPostInfo> parseBoardPost(Element? docu) {
-  List<BoardPostInfo> boardPostInfo = <BoardPostInfo>[];
+List<BoardSinglePostInfo> parseBoardSinglePost(Element? docu) {
+  List<BoardSinglePostInfo> boardPostInfo = <BoardSinglePostInfo>[];
   if (docu==null) {
     return boardPostInfo;
   }
   var postsDom = docu.querySelectorAll(".list-item");
   for (var pdom in postsDom) {
     String bpID = getTrimmedString(pdom.querySelector(".id"));
+    bool isOrigin = false;
+    if (pdom.querySelector(".id.origin") != null) {
+      isOrigin = true;
+    }
     if (bpID == "-1") {
       continue;
     }
@@ -163,31 +149,21 @@ List<BoardPostInfo> parseBoardPost(Element? docu) {
     String avatarLink = absImgSrc(pdom.querySelector(".avatar img")?.attributes['src'] ?? defaultAvator);
     String uid = getTrimmedString(pdom.querySelector(".author a")?.attributes['href']?.split("=").last ?? "");
     String pTime = getTrimmedString(pdom.querySelector(".author .time"));
-    String commentCount = getTrimmedString(pdom.querySelector(".reply-num"));
-    var authorsDom = pdom.querySelectorAll(".author");
-    String lastUser = "";
-    String lastTime = "";
-    if (authorsDom.length > 1) {
-      var author2 = authorsDom[1];
-      lastUser = getTrimmedString(author2.querySelector(".author .name"));
-      lastTime = getTrimmedString(author2.querySelector(".author .time"));
-    }
-    boardPostInfo.add(BoardPostInfo(
+    boardPostInfo.add(BoardSinglePostInfo(
       bpID: bpID, isNew: isNew, title: title, link: link, itemid: itemid,
       userName: userName, avatarLink: avatarLink, pTime: pTime, uid: uid, hasAttachment: hasAttachment,
-      commentCount: commentCount, lastUser: lastUser, lastTime: lastTime, lock: lock,
-      isBaoLiu: isBaoLiu, isWenZhai: isWenZhai, isJingHua: isJingHua,
-      isZhiDing: isZhiDing, isYuanChuang: isYuanChuang, isGaoLiang: isGaoLiang,
+      lock: lock, isBaoLiu: isBaoLiu, isWenZhai: isWenZhai, isJingHua: isJingHua,
+      isZhiDing: isZhiDing, isYuanChuang: isYuanChuang, isGaoLiang: isGaoLiang, isOrigin: isOrigin,
     ));
   }
   return boardPostInfo;
 }
 
-BoardInfo parseBoardInfo(String htmlStr) {
+BoardSingleInfo parseBoardSingleInfo(String htmlStr) {
   var document = parse(htmlStr);
   var errorMessage = checkError(document);
   if (errorMessage != null) {
-    return BoardInfo.error(errorMessage: errorMessage);
+    return BoardSingleInfo.error(errorMessage: errorMessage);
   }
   var headDom = document.querySelector("#board-head");
   String bid = "";
@@ -275,33 +251,10 @@ BoardInfo parseBoardInfo(String htmlStr) {
   }
   String path = document.querySelector("#tab-button-collection a")?.attributes['href'] ?? "";
   String collectionLink = path.isEmpty ? "" : absThreadLink(path);
-  var boardPostInfo = parseBoardPost(document.querySelector('#list-body'));
-  return BoardInfo(
+  var boardPostInfo = parseBoardSinglePost(document.querySelector('#list-body'));
+  return BoardSingleInfo(
     bid: bid, boardName: boardName, engName: engName, onlineCount: onlineCount, pageNum: pageNum,
     todayCount: todayCount, topicCount: topicCount, postCount: postCount, iLike: iLike,
     likeCount: likeCount, intro: intro, admins: admins, boardPostInfo: boardPostInfo, collectionLink: collectionLink,
   );
-}
-
-BoardInfo getExampleBoard() {
-  const filename = '../board.html';
-  var htmlStr = File(filename).readAsStringSync();
-  final items = parseBoardInfo(htmlStr);
-  return items;
-}
-
-String directToThread(String htmlStr, {bool? needLink=false}) {
-  var document = parse(htmlStr);
-  var errorMessage = checkError(document);
-  if (errorMessage != null) {
-    return errorMessage;
-  }
-  var link = document.querySelector(".view-full-post")?.attributes['href'];
-  if (link == null) {
-    return "";
-  }
-  var p1 = link.indexOf("threadid=");
-  var p2 = link.indexOf("&", p1);
-  if (needLink==true) { return link; }
-  return link.substring(p1+9, p2);
 }

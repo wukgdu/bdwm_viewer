@@ -94,6 +94,21 @@ class MainPageBuilder {
           return null;
         }
         return BoardApp(boardName: boardName ?? "版面", bid: bid ?? "");
+      case "/boardSingle":
+        String? boardName;
+        String? bid;
+        String? stype;
+        String smode;
+        if (settings.arguments != null) {
+          var settingsMap = settings.arguments as Map;
+          bid = settingsMap['bid'] as String?;
+          boardName = settingsMap['boardName'] as String?;
+          stype = settingsMap['stype'] as String?;
+          smode = settingsMap['smode'] as String;
+        } else {
+          return null;
+        }
+        return BoardSingleApp(boardName: boardName ?? "版面", bid: bid ?? "", stype: stype, smode: smode);
       case "/thread":
         var res = gotoThreadPage(settings.arguments);
         if (res == null) {
