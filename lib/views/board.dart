@@ -53,16 +53,6 @@ class _BoardExtraComponentState extends State<BoardExtraComponent> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        GestureDetector(
-          onTap: () {
-            nv2Push(context, '/boardNote', arguments: {
-              'bid': widget.bid,
-              'boardName': widget.boardName,
-            });
-          },
-          child: Text("备忘录", style: TextStyle(color: bdwmPrimaryColor),),
-        ),
-        dBox,
         DropdownButton<SignatureItem>(
           hint: const Text("全部"),
           icon: const Icon(Icons.arrow_drop_down),
@@ -133,6 +123,16 @@ class _BoardExtraComponentState extends State<BoardExtraComponent> {
             },
           ),
         ],
+        const Spacer(),
+        GestureDetector(
+          onTap: () {
+            nv2Push(context, '/boardNote', arguments: {
+              'bid': widget.bid,
+              'boardName': widget.boardName,
+            });
+          },
+          child: Text("备忘录", style: TextStyle(color: bdwmPrimaryColor),),
+        ),
       ],
     );
   }

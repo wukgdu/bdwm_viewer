@@ -69,10 +69,10 @@ String? getQueryValue(String link, String name) {
   return link.substring(p1+name.length+1, p2==-1?null:p2);
 }
 
-int termStringLength(String str) {
+int termStringLength(String str, {int sp=255}) {
   int length = 0;
   for (var cu in str.codeUnits) {
-    length += cu > 255 ? 2 : 1;
+    length += cu > sp ? 2 : 1;
   }
   return length;
 }

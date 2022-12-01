@@ -89,7 +89,7 @@ class _BoardNoteAppState extends State<BoardNoteApp> {
             title: Text(widget.boardName),
           ),
           body: SingleChildScrollView(
-            child: HtmlComponent(boardNoteInfo.note, ts: const TextStyle(fontFamily: "monospace", fontFamilyFallback: ['SimSun', 'roboto', 'serif'], height: 1.0), isBoardNote: true, needSelect: false,),
+            child: HtmlComponent(boardNoteInfo.note, ts: const TextStyle(fontFamily: "SimSun", fontFamilyFallback: ['NotoSansMonoCJKsc', 'monospace', 'roboto', 'serif'], height: 1.0, fontSize: 14), isBoardNote: true, needSelect: false,),
           ),
         );
       },

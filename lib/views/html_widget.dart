@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'dart:convert';
 
 import 'package:flutter/gestures.dart';
@@ -342,12 +343,23 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
               },
             ));
           } else {
-            res.add(TextSpan(text: mStr));
+            var m = mStr;
+            if ((isBoardNote ?? false) && Platform.isAndroid) {
+              res.add(TextSpan(text: m));
+              // res.add(WidgetSpan(child: SizedBox(height: 15, width: termStringLength(m, sp: 127)*8.0, child: Text(m, style: ts),)));
+            } else {
+              res.add(TextSpan(text: m));
+            }
           }
           return mStr;
         },
         onNonMatch: (m) {
-          res.add(TextSpan(text: m));
+          if ((isBoardNote ?? false) && Platform.isAndroid) {
+            res.add(TextSpan(text: m));
+            // res.add(WidgetSpan(child: SizedBox(height: 15, width: termStringLength(m, sp: 127)*8.0, child: Text(m, style: ts),)));
+          } else {
+            res.add(TextSpan(text: m));
+          }
           return m;
         },
       );
@@ -357,11 +369,11 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
         // for color
         var color = ele.attributes['color'];
         // var bColor = ele.attributes['background-color'];
-        res.add(TextSpan(children: travelHtml(ele, context: context, ts: ts, isBoardNote: isBoardNote),
-          style: TextStyle(
-            color: color!=null?Color(int.parse("0xff${color.substring(1)}")):null,
-            // backgroundColor: bColor!=null?Color(int.parse("0xff${bColor.substring(1)}")) : null,
-          ),),
+        var newTS = TextStyle(
+          color: color!=null?Color(int.parse("0xff${color.substring(1)}")):null,
+        );
+        res.add(TextSpan(children: travelHtml(ele, context: context, ts: newTS.merge(ts), isBoardNote: isBoardNote),
+          style: newTS,),
         );
       } else if (ele.localName == "span") {
         // for background color
@@ -380,11 +392,11 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
           //   // color = spanStyle.substring(cp2, cp2+7);
           // }
         }
-        res.add(TextSpan(children: travelHtml(ele, context: context, ts: ts, isBoardNote: isBoardNote),
-          style: TextStyle(
-            // color: color!=null?Color(int.parse("0xff${color.substring(1)}")):null,
-            backgroundColor: bColor!=null?Color(int.parse("0xff${bColor.substring(1)}")) : null,
-          ),),
+        var newTS = TextStyle(
+          backgroundColor: bColor!=null?Color(int.parse("0xff${bColor.substring(1)}")) : null,
+        );
+        res.add(TextSpan(children: travelHtml(ele, context: context, ts: newTS.merge(ts), isBoardNote: isBoardNote),
+          style: newTS,),
         );
       } else if (ele.localName == "p") {
         if (ele.classes.contains('quotehead') || ele.classes.contains('blockquote')) {
