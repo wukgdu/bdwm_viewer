@@ -57,6 +57,7 @@ class _BoardExtraComponentState extends State<BoardExtraComponent> {
           hint: const Text("全部"),
           icon: const Icon(Icons.arrow_drop_down),
           style: Theme.of(context).textTheme.bodyText2,
+          isDense: true,
           value: curPostMode,
           items: [allPostMode, markPostMode, digestPostMode, attachPostMode].map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
             return DropdownMenuItem<SignatureItem>(
@@ -97,6 +98,7 @@ class _BoardExtraComponentState extends State<BoardExtraComponent> {
             hint: const Text("主题模式"),
             icon: const Icon(Icons.arrow_drop_down),
             style: Theme.of(context).textTheme.bodyText2,
+            isDense: true,
             value: curThreadMode,
             items: [threadMode, postMode].map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
               return DropdownMenuItem<SignatureItem>(
@@ -469,7 +471,7 @@ class _BoardPageState extends State<BoardPage> {
             ),
           ),
         Container(
-          margin: const EdgeInsets.only(top: 0, left: _padding2, right: _padding2, bottom: 0),
+          margin: const EdgeInsets.only(top: _padding1, left: _padding2, right: _padding2, bottom: 0),
           child: BoardExtraComponent(bid: widget.bid, boardName: widget.boardInfo.boardName, curThreadMode: "thread", curPostMode: "-1",),
         ),
         if (widget.page <= 1)
@@ -546,11 +548,6 @@ class OnePostInBoard extends StatelessWidget {
                       TextSpan(text: boardPostInfo.userName, style: serifFont),
                       TextSpan(text: " 发表于 ${boardPostInfo.pTime}"),
                     ],
-                  ),
-                  const TextSpan(text: "   "),
-                  const WidgetSpan(
-                    child: Icon(Icons.comment, size: 12),
-                    alignment: PlaceholderAlignment.middle,
                   ),
                   const TextSpan(text: "\n"),
                   TextSpan(text: boardPostInfo.bpID, style: boardPostInfo.isOrigin ? const TextStyle(fontWeight: FontWeight.bold) : null),
@@ -706,7 +703,7 @@ class _BoardSinglePageState extends State<BoardSinglePage> {
             ),
           ),
         Container(
-          margin: const EdgeInsets.only(top: 0, left: _padding2, right: _padding2, bottom: 0),
+          margin: const EdgeInsets.only(top: _padding1, left: _padding2, right: _padding2, bottom: 0),
           child: BoardExtraComponent(bid: widget.bid, boardName: widget.boardInfo.boardName, curThreadMode: widget.smode, curPostMode: widget.stype,),
         ),
         if (widget.page <= 1)
