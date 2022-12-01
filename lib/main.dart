@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:dynamic_fonts/dynamic_fonts.dart';
 // import 'package:flutter/rendering.dart';
 
 import './router.dart';
@@ -29,6 +30,7 @@ void main() async {
   checkUpdateByTime();
   await unreadMessage.initWorker();
   await unreadMail.initWorker();
+  registerDynamicFont();
   runApp(const MainPage());
 }
 
@@ -37,6 +39,25 @@ void initPrimaryColor() {
   if (colorValue != null) {
     bdwmPrimaryColor = Color(colorValue);
   }
+}
+class NotoSansMonoCJKscFile extends DynamicFontsFile {
+  NotoSansMonoCJKscFile(this.variant,  expectedFileHash, int expectedLength)
+      : super(expectedFileHash, expectedLength);
+
+  final DynamicFontsVariant variant;
+
+  @override
+  String get url => 'https://bbs.pku.edu.cn/attach/ec/04/ec04cc376b34887c/NotoSansMonoCJKsc-Regular.otf';
+}
+
+void registerDynamicFont() {
+  DynamicFonts.register('NotoSansMonoCJKsc', [
+    NotoSansMonoCJKscFile(
+      const DynamicFontsVariant(fontWeight: FontWeight.w400, fontStyle: FontStyle.normal),
+      "ec04cc376b34887cedbdf84074e2e226ed2761eeabdcb9173fc1dd7bfd153ef7",
+      16393784,
+    ),
+  ].fold<Map<DynamicFontsVariant, DynamicFontsFile>>({}, (previousValue, element) => previousValue..[element.variant]=element,));
 }
 
 class MainPage extends StatefulWidget {

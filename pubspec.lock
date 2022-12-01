@@ -106,6 +106,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.4.1"
+  dynamic_fonts:
+    dependency: "direct main"
+    description:
+      name: dynamic_fonts
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.0"
   equatable:
     dependency: transitive
     description:

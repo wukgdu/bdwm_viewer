@@ -65,6 +65,7 @@ dependencies:
   # flutter_speed_dial: ^6.2.0
   syncfusion_flutter_charts: ^20.3.50
   media_scanner: ^2.1.0
+  dynamic_fonts: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -107,10 +108,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  fonts:
-    - family: NotoSansMonoCJKsc
-      fonts:
-        - asset: assets/fonts/NotoSansMonoCJKsc-Regular.otf
+  # fonts:
+  #   - family: NotoSansMonoCJKsc
+  #     fonts:
+  #       - asset: assets/fonts/NotoSansMonoCJKsc-Regular.otf
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
