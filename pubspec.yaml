@@ -112,6 +112,9 @@ flutter:
   #   - family: NotoSansMonoCJKsc
   #     fonts:
   #       - asset: assets/fonts/NotoSansMonoCJKsc-Regular.otf
+  #   - family: ARPL
+  #     fonts:
+  #       - asset: assets/fonts/AR_PL_UMing.ttc
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf

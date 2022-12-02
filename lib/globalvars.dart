@@ -14,6 +14,10 @@ const v2Host = "https://bbs.pku.edu.cn/v2";
 const defaultAvator = "/v2/images/user/portrait-neu.png";
 const networkErrorText = "网络问题，请稍后重试";
 
+const simFont = "SimSun, monospace, roboto, serif";
+const notoSansMonoCJKscFont= "Noto Sans Mono CJK SC";
+const avaiFonts = [simFont, notoSansMonoCJKscFont];
+
 List<String> parseCookie(String cookie) {
   var pattern1 = "skey=";
   var pattern2 = "uid=";
@@ -303,6 +307,7 @@ class BDWMConfig {
   bool highQualityPreview = false;
   bool suggestUser = true;
   bool showFAB = true;
+  String boardNoteFont = "";
   String primaryColorString = "";
   double contentFontSize = 16.0;
   String maxPageNum = "8";
@@ -331,6 +336,7 @@ class BDWMConfig {
       "primaryColorString": primaryColorString,
       "suggestUser": suggestUser,
       "showFAB": showFAB,
+      "boardNoteFont": boardNoteFont,
     };
   }
   void fromJson(Map<String, dynamic> jsonContent) {
@@ -346,6 +352,7 @@ class BDWMConfig {
     maxPageNum = jsonContent['maxPageNum'] ?? "8";
     contentFontSize = jsonContent['contentFontSize'] ?? 16.0;
     primaryColorString = jsonContent['primaryColorString'] ?? "";
+    boardNoteFont = jsonContent['boardNoteFont'] ?? simFont;
     List seeNoHimHerList = jsonContent['seeNoThem'] ?? <String>[];
     seeNoThem = Set<String>.from(seeNoHimHerList.map((e) => e as String));
   }
@@ -360,6 +367,17 @@ class BDWMConfig {
   Future<bool> setPrimaryColorString(String newValue) async {
     return await lock.synchronized(() async {
       primaryColorString = newValue;
+      return await update();
+    });
+  }
+
+  String getBoardNoteFont() {
+    return boardNoteFont;
+  }
+
+  Future<bool> setBoardNoteFont(String newValue) async {
+    return await lock.synchronized(() async {
+      boardNoteFont = newValue;
       return await update();
     });
   }

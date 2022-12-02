@@ -5,6 +5,7 @@ import '../globalvars.dart';
 import '../views/constants.dart';
 import '../views/utils.dart';
 import '../main.dart' show MainPage;
+import './board_note.dart' show showFontDialog;
 
 class ColorPickerComponent extends StatefulWidget {
   final Color primaryColor;
@@ -211,6 +212,17 @@ class _SettingsAppState extends State<SettingsApp> {
           ),
           const Divider(),
           PrimaryColorComponent(parentRefresh: () { refresh(); },),
+          const Divider(),
+          ListTile(
+            onTap: () async {
+              var f = await showFontDialog(context, avaiFonts, defaultFont: globalConfigInfo.getBoardNoteFont());
+              if (f==null) { return; }
+              globalConfigInfo.boardNoteFont = f;
+              refresh();
+            },
+            title: const Text("备忘录字体"),
+            subtitle: Text(globalConfigInfo.boardNoteFont),
+          ),
           const Divider(),
           SwitchListTile(
             title: const Text("发帖@ID自动提示"),
