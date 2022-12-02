@@ -14,7 +14,7 @@ import '../bdwm/req.dart';
 import '../bdwm/search.dart' show bdwmUserInfoSearch, IDandName;
 import '../pages/read_thread.dart';
 import '../html_parser/utils.dart';
-import '../globalvars.dart' show genHeaders2, globalConfigInfo, v2Host;
+import '../globalvars.dart' show genHeaders2, globalConfigInfo, v2Host, notoSansMonoCJKscFont;
 import '../html_parser/board_parser.dart' show directToThread;
 import '../pages/detail_image.dart';
 import '../utils.dart' show getQueryValue;
@@ -311,6 +311,17 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
       // flutter bug? if unknown character appears first, others will be unknown too.
       text = text.replaceAll("\uD83E\uDD79", "\uFFFD");
       text = text.replaceAll("\uD83E\uDDCC", "\uFFFD");
+      if (isBoardNote ?? false) {
+        if (globalConfigInfo.getBoardNoteFont() == notoSansMonoCJKscFont) {
+          text = text.replaceAll("ο", "o ");
+          text = text.replaceAll("ˋ", " `");
+          text = text.replaceAll("′", "′ ");
+          text = text.replaceAll("ˊ", "ˊ ");
+          text = text.replaceAll("–", " -");
+          text = text.replaceAll("˙", "·");
+          text = text.replaceAll("—", "一");
+        }
+      }
       var userExp = RegExp(r"@[a-zA-Z_]+");
       text.splitMapJoin(userExp,
         onMatch: (m) {
