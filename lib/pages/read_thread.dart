@@ -8,7 +8,7 @@ import '../bdwm/req.dart';
 import '../views/constants.dart' show bdwmPrimaryColor;
 import '../globalvars.dart';
 import '../utils.dart' show clearAllExtendedImageCache;
-import '../router.dart' show nv2Push;
+import '../router.dart' show nv2Push, nv2Replace;
 
 class MyFloatingActionButtonMenu extends StatefulWidget {
   final GlobalKey<ReadThreadPageState>? threadStateKey;
@@ -474,7 +474,7 @@ void naviGotoThread(context, String bid, String threadid, String page, String bo
   });
 }
 
-void naviGotoThreadByLink(context, String link, String boardName, {bool? needToBoard, String? pageDefault}) {
+void naviGotoThreadByLink(context, String link, String boardName, {bool? needToBoard, String? pageDefault, bool replaceIt=false}) {
   var pb1 = link.indexOf('bid');
   if (pb1 == -1) {
     return;
@@ -509,7 +509,8 @@ void naviGotoThreadByLink(context, String link, String boardName, {bool? needToB
   }
   var pt2 = link.indexOf('&', pt1);
   var threadid = link.substring(pt1+9, pt2 == -1 ? null : pt2);
-  nv2Push(context, '/thread', arguments: {
+  var nv2Do = replaceIt ? nv2Replace : nv2Push;
+  nv2Do(context, '/thread', arguments: {
     'bid': bid,
     'threadid': threadid,
     'page': page,

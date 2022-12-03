@@ -29,6 +29,7 @@ import './pages/recent_thread.dart';
 import './pages/marked_thread.dart';
 import './pages/user_stat.dart';
 import './pages/board_note.dart';
+import './pages/read_post.dart';
 import './views/search.dart' show PostSearchSettings;
 import './services.dart';
 import './globalvars.dart';
@@ -127,6 +128,19 @@ class MainPageBuilder {
           return null;
         }
         return res;
+      case "/singlePost":
+        String? boardName;
+        String bid;
+        String postid;
+        if (settings.arguments != null) {
+          var settingsMap = settings.arguments as Map;
+          bid = settingsMap['bid'] as String;
+          postid = settingsMap['postid'] as String;
+          boardName = settingsMap['boardName'] as String?;
+        } else {
+          return null;
+        }
+        return SinglePostApp(bid: bid, postid: postid, boardName: boardName,);
       case "/post":
         String? boardName;
         String? bid;

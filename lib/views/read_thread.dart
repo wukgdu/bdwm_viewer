@@ -18,7 +18,7 @@ import '../router.dart' show nv2Push;
 
 class OperateComponent extends StatefulWidget {
   final String bid;
-  final String boardName;
+  final String? boardName;
   final String threadid;
   final String postid;
   final String uid;
@@ -27,7 +27,7 @@ class OperateComponent extends StatefulWidget {
   const OperateComponent({
     super.key,
     required this.bid, required this.threadid, required this.postid, required this.uid,
-    required this.refreshCallBack, required this.boardName, required this.onePostInfo,
+    required this.refreshCallBack, this.boardName, required this.onePostInfo,
   });
 
   @override
@@ -541,13 +541,13 @@ class OnePostComponent extends StatefulWidget {
   final OnePostInfo onePostInfo;
   final String bid;
   final String threadid;
-  final String boardName;
+  final String? boardName;
   final Function refreshCallBack;
   final int? subIdx;
   final bool? hideIt;
 
   const OnePostComponent({Key? key, required this.onePostInfo, required this.bid, required this.refreshCallBack,
-    required this.boardName, required this.threadid, this.subIdx, this.hideIt}) : super(key: key);
+    this.boardName, required this.threadid, this.subIdx, this.hideIt}) : super(key: key);
 
   @override
   State<OnePostComponent> createState() => _OnePostComponentState();
