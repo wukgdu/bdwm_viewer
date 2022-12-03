@@ -434,6 +434,10 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
             children: travelHtml(ele, context: context, ts: ts, isBoardNote: isBoardNote),
           ));
         }
+        if (isBoardNote ?? false) {
+          // https://stackoverflow.com/questions/73378051/flutter-text-with-space-breaks-background-color
+          res.add(const TextSpan(text: "/", style: TextStyle(color: Colors.transparent),));
+        }
         if (cdom != document.nodes.last) {
           res.add(const TextSpan(text: "\n"));
         }
@@ -523,9 +527,6 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
       } else if (ele.localName == "br") {
         if (cdom != document.nodes.last) {
           res.add(const TextSpan(text: "\n"));
-        } else if (isBoardNote ?? false) {
-          // https://stackoverflow.com/questions/73378051/flutter-text-with-space-breaks-background-color
-          res.add(const TextSpan(text: "//", style: TextStyle(color: Colors.transparent),));
         }
       } else {
         res.add(TextSpan(text: cdom.text));
