@@ -320,6 +320,9 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
           text = text.replaceAll("–", " -");
           text = text.replaceAll("˙", "·");
           text = text.replaceAll("—", "一");
+          text = text.replaceAll("°", "৹ ");
+          text = text.replaceAll("ˇ", "ˇ ");
+          text = text.replaceAll("", "  ");
         }
       }
       var userExp = RegExp(r"@[a-zA-Z_]+");
