@@ -470,12 +470,13 @@ class _BoardPageState extends State<BoardPage> {
               ],
             ),
           ),
-        Container(
-          margin: const EdgeInsets.only(top: _padding1, left: _padding2, right: _padding2, bottom: 0),
-          child: BoardExtraComponent(bid: widget.bid, boardName: widget.boardInfo.boardName, curThreadMode: "thread", curPostMode: "-1",),
-        ),
-        if (widget.page <= 1)
+        if (widget.page <= 1) ...[
+          Container(
+            margin: const EdgeInsets.only(top: _padding1, left: _padding2, right: _padding2, bottom: 0),
+            child: BoardExtraComponent(bid: widget.bid, boardName: widget.boardInfo.boardName, curThreadMode: "thread", curPostMode: "-1",),
+          ),
           const Divider(),
+        ],
         ListView.builder(
           primary: false,
           shrinkWrap: true,
@@ -702,12 +703,13 @@ class _BoardSinglePageState extends State<BoardSinglePage> {
               ],
             ),
           ),
-        Container(
-          margin: const EdgeInsets.only(top: _padding1, left: _padding2, right: _padding2, bottom: 0),
-          child: BoardExtraComponent(bid: widget.bid, boardName: widget.boardInfo.boardName, curThreadMode: widget.smode, curPostMode: widget.stype,),
-        ),
-        if (widget.page <= 1)
+        if (widget.page <= 1) ...[
+          Container(
+            margin: const EdgeInsets.only(top: _padding1, left: _padding2, right: _padding2, bottom: 0),
+            child: BoardExtraComponent(bid: widget.bid, boardName: widget.boardInfo.boardName, curThreadMode: widget.smode, curPostMode: widget.stype,),
+          ),
           const Divider(),
+        ],
         ListView.builder(
           primary: false,
           shrinkWrap: true,

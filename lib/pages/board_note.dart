@@ -152,7 +152,7 @@ class _BoardNoteAppState extends State<BoardNoteApp> {
               ),
               IconButton(
                 onPressed: () {
-                  showInformDialog(context, "关于字体", "应该用 SimSun，但是可能会有版权问题，因此用了 Noto Sans Mono CJK SC，凑合一下。点击“切换字体”下载。");
+                  showInformDialog(context, "关于字体", "应该用 SimSun，但是可能会有版权问题，因此用了 Noto Sans Mono CJK SC，凑合一下。\n点击“切换字体”下载。\n手机可以旋转横屏看。");
                 },
                 icon: const Icon(Icons.info),
               ),
