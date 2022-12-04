@@ -236,7 +236,7 @@ class _OperateComponentState extends State<OperateComponent> {
                 if (value.isEmpty) { return; }
                 if (value != "yes") { return; }
                 bdwmDeletePost(bid: widget.bid, postid: widget.postid).then((value) {
-                  var title = "";
+                  var title = "删除";
                   var content = "删除成功";
                   if (!value.success) {
                     content = "删除失败";

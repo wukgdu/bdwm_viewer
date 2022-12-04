@@ -385,7 +385,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
                                   );
                                 }
                                 if (!mounted) { return; }
-                                naviGotoThreadByLink(context, link2, "", pageDefault: "a");
+                                naviGotoThreadByLink(context, link2, "", pageDefault: "a", needToBoard: true);
                               }
                             });
                           }
