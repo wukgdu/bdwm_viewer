@@ -793,7 +793,7 @@ class ReadThreadPageState extends State<ReadThreadPage> {
           }
           i+=1;
         }
-        if (i<widget.threadPageInfo.posts.length) {
+        if ((i!=0) && (i<widget.threadPageInfo.posts.length)) {
           itemScrollController.scrollTo(index: i, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
         }
       }
