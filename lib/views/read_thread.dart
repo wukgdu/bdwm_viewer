@@ -295,6 +295,7 @@ class VoteComponent extends StatefulWidget {
   final bool iVoteDown;
   final int voteUpCount;
   final int voteDownCount;
+  final void Function(bool isVoteUp, int voteUpCount, bool isVoteDown, int voteDownCount)? callBack;
   const VoteComponent({
     Key? key,
     required this.iVoteUp,
@@ -303,6 +304,7 @@ class VoteComponent extends StatefulWidget {
     required this.voteDownCount,
     required this.bid,
     required this.postID,
+    this.callBack,
   }) : super(key: key);
 
   @override
@@ -337,20 +339,22 @@ class _VoteComponentState extends State<VoteComponent> {
     }
     bdwmVote(widget.bid, widget.postID, action).then((value) {
       if (value.success) {
-        setState(() {
-          if (action == "clear") {
-            iVoteUp = false;
-            iVoteDown = false;
-          } else if (action == "up") {
-            iVoteUp = true;
-            iVoteDown = false;
-          } else if (action == "down") {
-            iVoteUp = false;
-            iVoteDown = true;
-          }
-          voteUpCount = value.upCount;
-          voteDownCount = value.downCount;
-        });
+        if (action == "clear") {
+          iVoteUp = false;
+          iVoteDown = false;
+        } else if (action == "up") {
+          iVoteUp = true;
+          iVoteDown = false;
+        } else if (action == "down") {
+          iVoteUp = false;
+          iVoteDown = true;
+        }
+        voteUpCount = value.upCount;
+        voteDownCount = value.downCount;
+        if (widget.callBack != null) {
+          widget.callBack!(iVoteUp, voteUpCount, iVoteDown, voteDownCount);
+        }
+        setState(() { });
       } else {
         var text = "";
         switch (value.error) {
@@ -671,6 +675,12 @@ class _OnePostComponentState extends State<OnePostComponent> {
                           voteDownCount: widget.onePostInfo.downCount,
                           bid: widget.bid,
                           postID: widget.onePostInfo.postID,
+                          callBack: (isVoteUp, voteUpCount, isVoteDown, voteDownCount) {
+                            widget.onePostInfo.iVoteUp = isVoteUp;
+                            widget.onePostInfo.upCount = voteUpCount;
+                            widget.onePostInfo.iVoteDown = isVoteDown;
+                            widget.onePostInfo.downCount = voteDownCount;
+                          },
                         ),
                       ],
                     ),
