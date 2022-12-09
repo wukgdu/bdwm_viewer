@@ -25,6 +25,7 @@ class FriendInfo {
 class FriendsInfo {
   String? errorMessage;
   List<FriendInfo> friends = [];
+  int maxPage = 0;
   
   FriendsInfo.error({
     required this.errorMessage,
@@ -32,6 +33,7 @@ class FriendsInfo {
   FriendsInfo.empty();
   FriendsInfo({
     required this.friends,
+    required this.maxPage,
   });
 }
 
@@ -64,5 +66,15 @@ FriendsInfo parseFriends(String htmlStr) {
     var nickName = getTrimmedString(fc.querySelector(".nickname"));
     friends.add(FriendInfo(uid: uid, bidirection: bidirection, userName: userName, nickName: nickName, avatar: avatar, onlineStatus: onlineStatus));
   }
-  return FriendsInfo(friends: friends);
+
+  int maxPage = 0;
+  var pagingDivsDom = document.querySelectorAll(".paging div");
+  for (var pdd in pagingDivsDom) {
+    var txt = getTrimmedString(pdd);
+    if (txt.startsWith("/")) {
+      maxPage = int.parse(txt.substring(2)); // <div>/ 2</div>
+      break;
+    }
+  }
+  return FriendsInfo(friends: friends, maxPage: maxPage);
 }

@@ -213,7 +213,7 @@ class _BoardAppState extends State<BoardApp> {
                     disabledColor: Colors.grey,
                     tooltip: '上一页',
                     icon: const Icon(Icons.arrow_back),
-                    onPressed: page == 1 ? null : () {
+                    onPressed: page <= 1 ? null : () {
                       if (!mounted) { return; }
                       setState(() {
                         page = page - 1;
@@ -243,7 +243,7 @@ class _BoardAppState extends State<BoardApp> {
                     disabledColor: Colors.grey,
                     tooltip: '下一页',
                     icon: const Icon(Icons.arrow_forward),
-                    onPressed: page == boardInfo.pageNum ? null : () {
+                    onPressed: page >= boardInfo.pageNum ? null : () {
                       // if (page == threadPageInfo.pageNum) {
                       //   return;
                       // }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../views/drawer.dart';
 // import '../services.dart';
 import '../views/friends.dart';
+import '../router.dart' show nv2Push;
 
 class FriendsApp extends StatefulWidget {
   const FriendsApp({super.key});
@@ -29,6 +30,14 @@ class _FriendsAppState extends State<FriendsApp> {
               Tab(child: Text("黑名单"),),
             ],
           ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                nv2Push(context, '/search');
+              },
+            ),
+          ],
         ),
         body: const TabBarView(
           children: [
