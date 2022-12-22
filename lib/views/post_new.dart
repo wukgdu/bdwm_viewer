@@ -92,6 +92,18 @@ class _PostNewPageState extends State<PostNewPage> {
       }
     }
 
+    if (signature == null && widget.postid == null) {
+      for (var item in widget.postNewInfo.signatureInfo) {
+        if (item.value == globalConfigInfo.getQmd()) {
+          signature = item;
+          break;
+        }
+      }
+      if (signatureOB.value == globalConfigInfo.getQmd()) {
+        signature = signatureOB;
+      }
+    }
+
     attachFiles = widget.postNewInfo.attachFiles;
 
     if (globalConfigInfo.getSuggestUser()==true) {
@@ -335,7 +347,7 @@ class _PostNewPageState extends State<PostNewPage> {
                   var nSignature = signature?.value ?? "";
                   if (nSignature == "random") {
                     var moreCount = widget.postid == null ? 2 : 3;
-                    // moreCount -= 1; // skip OBViewer // dont need skip since it is not here
+                    // 无，随机，不修改
                     var maxS = widget.postNewInfo.signatureInfo.length - moreCount;
                     var randomI = math.Random().nextInt(maxS);
                     nSignature = randomI.toString();
@@ -632,9 +644,13 @@ class _PostNewPageState extends State<PostNewPage> {
                     );
                   }).toList(),
                 ],
-                onChanged: (SignatureItem? value) {
+                onChanged: (SignatureItem? value) async {
+                  if (value == null) { return; }
+                  if (widget.postid == null) {
+                    await globalConfigInfo.setQmd(value.value);
+                  }
                   setState(() {
-                    signature = value!;
+                    signature = value;
                   });
                 },
               ),

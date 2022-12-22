@@ -313,6 +313,7 @@ class BDWMConfig {
   String maxPageNum = "8";
   Set<String> seeNoThem = {};
   String storage = "bdwmconfig.json";
+  String qmd = "";
 
   Lock lock = Lock();
 
@@ -337,6 +338,7 @@ class BDWMConfig {
       "suggestUser": suggestUser,
       "showFAB": showFAB,
       "boardNoteFont": boardNoteFont,
+      "qmd": qmd,
     };
   }
   void fromJson(Map<String, dynamic> jsonContent) {
@@ -352,12 +354,24 @@ class BDWMConfig {
     maxPageNum = jsonContent['maxPageNum'] ?? "8";
     contentFontSize = jsonContent['contentFontSize'] ?? 16.0;
     primaryColorString = jsonContent['primaryColorString'] ?? "";
+    qmd = jsonContent['qmd'] ?? "";
     boardNoteFont = jsonContent['boardNoteFont'] ?? simFont;
     List seeNoHimHerList = jsonContent['seeNoThem'] ?? <String>[];
     seeNoThem = Set<String>.from(seeNoHimHerList.map((e) => e as String));
   }
   String gist() {
     return jsonEncode(toJson());
+  }
+
+  String getQmd() {
+    return qmd;
+  }
+
+  Future<bool> setQmd(String newValue) async {
+    return await lock.synchronized(() async {
+      qmd = newValue;
+      return await update();
+    });
   }
 
   String getPrimaryColorString() {

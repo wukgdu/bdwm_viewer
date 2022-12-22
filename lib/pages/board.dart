@@ -100,6 +100,12 @@ class _BoardAppState extends State<BoardApp> {
     },);
   }
 
+  @override
+  void dispose() {
+    getDataCancelable.cancel();
+    super.dispose();
+  }
+
   Future<BoardInfo> getData() async {
     var url = "$v2Host/thread.php?bid=${widget.bid}";
     if (! (page == 0 || page == 1)) {
@@ -289,6 +295,12 @@ class _BoardSingleAppState extends State<BoardSingleApp> {
     getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
       debugPrint("cancel it");
     },);
+  }
+
+  @override
+  void dispose() {
+    getDataCancelable.cancel();
+    super.dispose();
   }
 
   Future<BoardSingleInfo> getData() async {

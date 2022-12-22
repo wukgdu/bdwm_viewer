@@ -68,6 +68,18 @@ class _MailNewPageState extends State<MailNewPage> {
     if (widget.receivers != null && widget.receivers!.isNotEmpty) {
       receiveValue.text = widget.receivers!;
     }
+
+    if (signature == null) {
+      for (var item in widget.mailNewInfo.signatureInfo) {
+        if (item.value == globalConfigInfo.getQmd()) {
+          signature = item;
+          break;
+        }
+      }
+      if (signatureOB.value == globalConfigInfo.getQmd()) {
+        signature = signatureOB;
+      }
+    }
   }
 
   @override
@@ -400,9 +412,11 @@ class _MailNewPageState extends State<MailNewPage> {
                     );
                   }).toList(),
                 ],
-                onChanged: (SignatureItem? value) {
+                onChanged: (SignatureItem? value) async {
+                  if (value == null) { return; }
+                  await globalConfigInfo.setQmd(value.value);
                   setState(() {
-                    signature = value!;
+                    signature = value;
                   });
                 },
               ),
