@@ -4,6 +4,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dynamic_fonts/dynamic_fonts.dart';
+import 'package:quick_actions/quick_actions.dart';
 // import 'package:flutter/rendering.dart';
 
 import './router.dart';
@@ -112,6 +113,26 @@ class MainPageState extends State<MainPage> {
       updateUnreadMailData();
       timerMail = timer;
     });
+
+    if (Platform.isAndroid) {
+      const QuickActions quickActions = QuickActions();
+      quickActions.initialize((String shortcutType) {
+        switch (shortcutType) {
+          case '/me':
+          case '/favorite':
+            mainRouterDelegate.replace(shortcutType);
+            break;
+          default:
+            mainRouterDelegate.push(shortcutType);
+        }
+      });
+      quickActions.setShortcutItems(<ShortcutItem>[
+        const ShortcutItem(type: '/me', localizedTitle: '我', icon: 'ic_wei'),
+        const ShortcutItem(type: '/favorite', localizedTitle: '版面收藏', icon: 'ic_wei'),
+        const ShortcutItem(type: '/message', localizedTitle: '消息', icon: 'ic_wei'),
+        const ShortcutItem(type: '/mail', localizedTitle: '站内信', icon: 'ic_wei'),
+      ]);
+    }
   }
 
   @override
@@ -145,6 +166,7 @@ class MainPageState extends State<MainPage> {
         // #e97c62
         colorScheme: const ColorScheme.light().copyWith(primary: bdwmPrimaryColor),
         brightness: Brightness.light,
+        useMaterial3: false,
         // iconTheme: IconThemeData(color: bdwmPrimaryColor),
       ),
       darkTheme: ThemeData(

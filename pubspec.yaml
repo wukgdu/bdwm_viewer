@@ -66,6 +66,7 @@ dependencies:
   syncfusion_flutter_charts: ^20.3.50
   media_scanner: ^2.1.0
   dynamic_fonts: ^2.0.0
+  quick_actions: ^1.0.1
 
 dev_dependencies:
   flutter_test:
