@@ -127,10 +127,11 @@ class MainPageState extends State<MainPage> {
         }
       });
       quickActions.setShortcutItems(<ShortcutItem>[
-        const ShortcutItem(type: '/me', localizedTitle: '我', icon: 'ic_wei'),
-        const ShortcutItem(type: '/favorite', localizedTitle: '版面收藏', icon: 'ic_wei'),
         const ShortcutItem(type: '/message', localizedTitle: '消息', icon: 'ic_wei'),
         const ShortcutItem(type: '/mail', localizedTitle: '站内信', icon: 'ic_wei'),
+        const ShortcutItem(type: '/search', localizedTitle: '搜索', icon: 'ic_wei'),
+        const ShortcutItem(type: '/recentThread', localizedTitle: '最近浏览', icon: 'ic_wei'),
+        const ShortcutItem(type: '/markedThread', localizedTitle: '帖子收藏', icon: 'ic_wei'),
       ]);
     }
   }
