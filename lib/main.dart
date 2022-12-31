@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,7 +16,7 @@ import './utils.dart';
 import './check_update.dart' show checkUpdateByTime;
 
 void main() async {
-  if (Platform.isAndroid) {
+  if (isAndroid()) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   }
   WidgetsFlutterBinding.ensureInitialized();
@@ -114,7 +113,7 @@ class MainPageState extends State<MainPage> {
       timerMail = timer;
     });
 
-    if (Platform.isAndroid) {
+    if (isAndroid()) {
       const QuickActions quickActions = QuickActions();
       quickActions.initialize((String shortcutType) {
         switch (shortcutType) {

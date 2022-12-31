@@ -1,8 +1,13 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:quick_notify/quick_notify.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:extended_image/extended_image.dart';
+
+bool isAndroid() {
+  return Platform.isAndroid;
+}
 
 class TextAndLink {
   String text = "";

@@ -1,4 +1,3 @@
-import 'dart:io' show Platform;
 import 'dart:convert';
 
 import 'package:flutter/gestures.dart';
@@ -17,7 +16,7 @@ import '../html_parser/utils.dart';
 import '../globalvars.dart' show genHeaders2, globalConfigInfo, v2Host, notoSansMonoCJKscFont;
 import '../html_parser/board_parser.dart' show directToThread;
 import '../pages/detail_image.dart';
-import '../utils.dart' show getQueryValue;
+import '../utils.dart' show getQueryValue, isAndroid;
 import '../router.dart' show nv2Push;
 
 const int _cacheHeight = 150;
@@ -308,9 +307,14 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
       var text = tryGetNormalSpaceString(cdom.text);
       if (text == null) { continue; }
       // https://stackoverflow.com/questions/18760943/character-code-of-unknown-character-character-e-g-square-or-question-mark-romb
-      // flutter bug? if unknown character appears first, others will be unknown too.
+      // flutter bug? if unknown character appears first, other normal emoji will become unknown too.
       text = text.replaceAll("\uD83E\uDD79", "\uFFFD");
       text = text.replaceAll("\uD83E\uDDCC", "\uFFFD");
+      // 不知道和上面的是不是同一个bug，但是下面这个前面加了一个0就好了（只在Android有bug，Windows不能改）
+      // https://bbs.pku.edu.cn/v2/post-read.php?bid=7&threadid=18456591 上面的忘记链接了
+      if (isAndroid()) {
+        text = text.replaceAll(String.fromCharCode(1763), String.fromCharCodes([0, 1763]));
+      }
       if (isBoardNote ?? false) {
         if (globalConfigInfo.getBoardNoteFont() == notoSansMonoCJKscFont) {
           text = text.replaceAll("ο", "o ");
@@ -358,7 +362,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
             ));
           } else {
             var m = mStr;
-            if ((isBoardNote ?? false) && Platform.isAndroid) {
+            if ((isBoardNote ?? false) && isAndroid()) {
               res.add(TextSpan(text: m));
               // res.add(WidgetSpan(child: SizedBox(height: 15, width: termStringLength(m, sp: 127)*8.0, child: Text(m, style: ts),)));
             } else {
@@ -368,7 +372,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
           return mStr;
         },
         onNonMatch: (m) {
-          if ((isBoardNote ?? false) && Platform.isAndroid) {
+          if ((isBoardNote ?? false) && isAndroid()) {
             res.add(TextSpan(text: m));
             // res.add(WidgetSpan(child: SizedBox(height: 15, width: termStringLength(m, sp: 127)*8.0, child: Text(m, style: ts),)));
           } else {
