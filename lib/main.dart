@@ -118,6 +118,7 @@ class MainPageState extends State<MainPage> {
       const QuickActions quickActions = QuickActions();
       quickActions.initialize((String shortcutType) {
         switch (shortcutType) {
+          // 没用的case，保留switch为了以后可能的修改
           case '/me':
           case '/favorite':
             mainRouterDelegate.replace(shortcutType);
