@@ -76,7 +76,7 @@ String? getQueryValue(String link, String name) {
 
 int termStringLength(String str, {int sp=255}) {
   int length = 0;
-  for (var cu in str.codeUnits) {
+  for (var cu in str.runes) {
     length += cu > sp ? 2 : 1;
   }
   return length;
