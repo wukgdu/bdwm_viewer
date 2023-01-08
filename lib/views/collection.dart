@@ -7,11 +7,37 @@ import 'package:flutter_treeview/flutter_treeview.dart';
 import '../bdwm/collection.dart';
 import '../html_parser/collection_parser.dart';
 import './constants.dart';
+import '../utils.dart' show getQueryValue;
 import '../globalvars.dart' show globalConfigInfo;
 import './utils.dart' show showConfirmDialog, showInformDialog, showAlertDialog;
 import './read_thread.dart' show AttachmentComponent;
 import './html_widget.dart';
 import '../router.dart' show nv2Push;
+
+void deleteCollectionArticleWrap(String path, BuildContext context, Function refreshCallBack) {
+  showConfirmDialog(context, "文集", "确认删除？").then((value) {
+    if (value==null) { return; }
+    if (value.isEmpty) { return; }
+    if (value == "yes") {
+      bdwmOperateCollection(action: "delete", path: path)
+      .then((CollectionImportRes res) {
+        var title = "文集";
+        var content = "删除成功";
+        if (!res.success) {
+          content = "删除失败";
+          if (res.error == -1) {
+            content = res.desc!;
+          }
+        }
+        showInformDialog(context, title, content).then((value2) {
+          if (res.success) {
+            refreshCallBack();
+          }
+        });
+      });
+    }
+  });
+}
 
 class CollectionPage extends StatefulWidget {
   final CollectionList collectionList;
@@ -56,6 +82,47 @@ class _CollectionPageState extends State<CollectionPage> {
               'title': widget.title,
             });
           }
+        },
+        onLongPress: () {
+          showModalBottomSheet<void>(
+            context: context,
+            builder: (BuildContext context1) {
+              return Container(
+                margin: const EdgeInsets.all(10.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Center(child: SelectableText(item.name),),
+                    const Divider(),
+                    ElevatedButton(
+                      child: const Text('删除'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        var path = getQueryValue(item.path, 'path');
+                        if (path == null) {
+                          showInformDialog(context, "删除失败", "未找到路径");
+                          return;
+                        }
+                        path = path.replaceAll('%2F', '/');
+                        deleteCollectionArticleWrap(path, context, () {
+                          widget.collectionList.collectionItems.remove(item);
+                          setState(() { });
+                        });
+                      }
+                    ),
+                    const Divider(),
+                    ElevatedButton(
+                      child: const Text('取消'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      }
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
         },
         leading: item.type.contains("dir") ? const Icon(Icons.folder) : const Icon(Icons.article),
         title: Text(item.name),
@@ -137,28 +204,7 @@ class _CollectionArticlePageState extends State<CollectionArticlePage> {
             if (widget.collectionArticle.canDelete)
               TextButton(
                 onPressed: () {
-                  showConfirmDialog(context, "文集", "确认删除？").then((value) {
-                    if (value==null) { return; }
-                    if (value.isEmpty) { return; }
-                    if (value == "yes") {
-                      bdwmOperateCollection(action: "delete", path: widget.collectionArticle.path)
-                      .then((CollectionImportRes res) {
-                        var title = "文集";
-                        var content = "删除成功";
-                        if (!res.success) {
-                          content = "删除失败";
-                          if (res.error == -1) {
-                            content = res.desc!;
-                          }
-                        }
-                        showInformDialog(context, title, content).then((value2) {
-                          if (res.success) {
-                            widget.refreshCallBack();
-                          }
-                        });
-                      });
-                    }
-                  });
+                  deleteCollectionArticleWrap(widget.collectionArticle.path, context, widget.refreshCallBack);
                 },
                 child: const Text("删除"),
               ),
