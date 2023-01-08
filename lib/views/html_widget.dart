@@ -308,8 +308,8 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
       if (text == null) { continue; }
       // https://stackoverflow.com/questions/18760943/character-code-of-unknown-character-character-e-g-square-or-question-mark-romb
       // flutter bug? if unknown character appears first, other normal emoji will become unknown too.
-      text = text.replaceAll("\uD83E\uDD79", "\uFFFD");
-      text = text.replaceAll("\uD83E\uDDCC", "\uFFFD");
+      // text = text.replaceAll("\uD83E\uDD79", "\uFFFD");
+      // text = text.replaceAll("\uD83E\uDDCC", "\uFFFD");
       // 不知道和上面的是不是同一个bug，但是下面这个前面加了一个0就好了（只在Android有bug，Windows不能改）
       // https://bbs.pku.edu.cn/v2/post-read.php?bid=7&threadid=18456591 上面的忘记链接了
       if (isAndroid()) {
