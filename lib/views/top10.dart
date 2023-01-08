@@ -7,8 +7,9 @@ import './html_widget.dart' show WrapImageNetwork, innerLinkJump;
 import '../html_parser/top10_parser.dart';
 import '../pages/read_thread.dart';
 import './utils.dart';
+import '../utils.dart' show getQueryValue;
 import '../pages/detail_image.dart';
-import '../router.dart' show nv2Replace;
+import '../router.dart' show nv2Replace, nv2Push;
 
 class EntryHomeComponent extends StatefulWidget {
   const EntryHomeComponent({super.key});
@@ -329,7 +330,23 @@ class _TopHomePageState extends State<TopHomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(blockOne.blockName, style: _titleFont),
+                      GestureDetector(
+                        onTap: () {
+                          var bid = getQueryValue(blockOne.blockLink, 'bid');
+                          if (bid == null) { return; };
+                          nv2Push(context, '/block', arguments: {
+                            'bid': bid,
+                            'title': blockOne.blockName,
+                          },);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(blockOne.blockName, style: _titleFont),
+                            const Icon(Icons.arrow_right),
+                          ],
+                        ),
+                      ),
                       const Divider(),
                       if (blockOne.blockItems.isNotEmpty)
                         ...blockOne.blockItems.map((item) {
