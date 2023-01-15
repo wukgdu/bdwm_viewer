@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 import 'package:syncfusion_flutter_charts/charts.dart' show SfCartesianChart, LineSeries, DateTimeAxis, ChartSeries, TooltipBehavior;
+import 'package:intl/intl.dart' show DateFormat;
 
 import '../globalvars.dart' show v2Host, networkErrorText, genHeaders2;
 import "../bdwm/req.dart";
@@ -96,7 +97,7 @@ class _UserStatTableComponentState extends State<UserStatTableComponent> {
           if (showTable) ...[
             SfCartesianChart(
               tooltipBehavior: tooltipBehavior,
-              primaryXAxis: DateTimeAxis(),
+              primaryXAxis: DateTimeAxis(dateFormat: DateFormat.yM()),
               series: <ChartSeries>[
                 LineSeries<TVPair, DateTime>(
                   dataSource: widget.tableOneInfo.value,
