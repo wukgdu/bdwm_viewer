@@ -43,10 +43,12 @@ class _BlockPageState extends State<BlockPage> {
                       TextSpan(text: item.boardName, style: TextStyle(color: item.readOnly ? Colors.grey : null)),
                       const TextSpan(text: "  "),
                       TextSpan(text: item.engName, style: TextStyle(color: item.readOnly ? Colors.grey : null)),
-                      WidgetSpan(
-                        alignment: PlaceholderAlignment.middle,
-                        child: Icon(Icons.person, size: 20, color: item.thereIsAdmin ? bdwmPrimaryColor : const Color(0x00ffffff)),
-                      ),
+                      if (item.thereIsAdmin) ...[
+                        WidgetSpan(
+                          alignment: PlaceholderAlignment.middle,
+                          child: Icon(Icons.person, size: 20, color: bdwmPrimaryColor),
+                        ),
+                      ]
                     ],
                   ),
                 ),
