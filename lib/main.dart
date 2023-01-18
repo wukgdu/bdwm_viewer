@@ -24,6 +24,7 @@ void main() async {
   await globalUInfo.init();
   await globalContactInfo.init();
   await globalConfigInfo.init();
+  await globalNotConfigInfo.init();
   await globalThreadHistory.init();
   await globalMarkedThread.init();
   initPrimaryColor();

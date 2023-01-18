@@ -297,9 +297,92 @@ class TmpContactInfo {
 
 var globalContactInfo = TmpContactInfo.empty();
 
-class BDWMConfig {
+class BDWMNotConfig {
   String lastCheckTime = "";
   String lastLoginTime = "";
+
+  Lock lock = Lock();
+  String storage = "bdwmnotconfig.json";
+
+  BDWMNotConfig.empty();
+  BDWMNotConfig.initFromFile() {
+    init();
+  }
+
+  Map toJson() {
+    return {
+      "lastLoginTime": lastLoginTime,
+      "lastCheckTime": lastCheckTime,
+    };
+  }
+  void fromJson(Map<String, dynamic> jsonContent) {
+    lastLoginTime = jsonContent['lastLoginTime'] ?? "";
+    lastCheckTime = jsonContent['lastCheckTime'] ?? "";
+  }
+  String gist() {
+    return jsonEncode(toJson());
+  }
+
+  String getLastCheckTime() {
+    return lastCheckTime;
+  }
+
+  Future<bool> setLastCheckTime(String newTime) async {
+    return await lock.synchronized(() async {
+      lastCheckTime = newTime;
+      return await update();
+    });
+  }
+
+  String getLastLoginTime() {
+    return lastLoginTime;
+  }
+
+  Future<bool> setLastLoginTime(String newTime) async {
+    return await lock.synchronized(() async {
+      lastLoginTime = newTime;
+      return await update();
+    });
+  }
+
+  Future<bool> init() async {
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    String filename = "$dir/$storage";
+    // debugPrint(filename);
+    Future<void> writeInit() async {
+      var file = File(filename).openWrite();
+      file.write(jsonEncode(toJson()));
+      await file.flush();
+      await file.close();
+    }
+    if (File(filename).existsSync()) {
+      var content = File(filename).readAsStringSync();
+      if (content.isEmpty) {
+        await writeInit();
+      } else {
+        Map<String, dynamic> jsonContent = jsonDecode(content);
+        fromJson(jsonContent);
+      }
+    } else {
+      await writeInit();
+    }
+    return true;
+  }
+
+  Future<bool> update() async {
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    String filename = "$dir/$storage";
+    var file = File(filename).openWrite();
+    file.write(jsonEncode(toJson()));
+    await file.flush();
+    await file.close();
+    return true;
+  }
+}
+
+var globalNotConfigInfo = BDWMNotConfig.empty();
+
+class BDWMConfig {
   bool showWelcome = true;
   bool useImgInMessage = true;
   bool autoClearImageCache = true;
@@ -312,10 +395,10 @@ class BDWMConfig {
   double contentFontSize = 16.0;
   String maxPageNum = "8";
   Set<String> seeNoThem = {};
-  String storage = "bdwmconfig.json";
   String qmd = "";
 
   Lock lock = Lock();
+  String storage = "bdwmconfig.json";
 
   BDWMConfig.empty();
   BDWMConfig.initFromFile() {
@@ -326,8 +409,6 @@ class BDWMConfig {
     return {
       "showWelcome": showWelcome,
       "useImgInMessage": useImgInMessage,
-      "lastLoginTime": lastLoginTime,
-      "lastCheckTime": lastCheckTime,
       "seeNoThem": seeNoThem.toList(),
       "autoClearImageCache": autoClearImageCache,
       "maxPageNum": maxPageNum,
@@ -349,8 +430,6 @@ class BDWMConfig {
     highQualityPreview = jsonContent['highQualityPreview'] ?? false;
     suggestUser = jsonContent['suggestUser'] ?? true;
     showFAB = jsonContent['showFAB'] ?? true;
-    lastLoginTime = jsonContent['lastLoginTime'] ?? "";
-    lastCheckTime = jsonContent['lastCheckTime'] ?? "";
     maxPageNum = jsonContent['maxPageNum'] ?? "8";
     contentFontSize = jsonContent['contentFontSize'] ?? 16.0;
     primaryColorString = jsonContent['primaryColorString'] ?? "";
@@ -491,28 +570,6 @@ class BDWMConfig {
   Future<bool> setMaxPageNum(String newTime) async {
     return await lock.synchronized(() async {
       maxPageNum = newTime;
-      return await update();
-    });
-  }
-
-  String getLastCheckTime() {
-    return lastCheckTime;
-  }
-
-  Future<bool> setLastCheckTime(String newTime) async {
-    return await lock.synchronized(() async {
-      lastCheckTime = newTime;
-      return await update();
-    });
-  }
-
-  String getLastLoginTime() {
-    return lastLoginTime;
-  }
-
-  Future<bool> setLastLoginTime(String newTime) async {
-    return await lock.synchronized(() async {
-      lastLoginTime = newTime;
       return await update();
     });
   }

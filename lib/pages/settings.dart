@@ -160,9 +160,11 @@ class _SettingsAppState extends State<SettingsApp> {
             activeColor: bdwmPrimaryColor,
             value: globalConfigInfo.showWelcome,
             onChanged: (value) {
-              globalConfigInfo.lastLoginTime = "";
-              globalConfigInfo.showWelcome = value;
-              refresh();
+              globalNotConfigInfo.setLastLoginTime("").then((saved) {
+                if (saved == false) { return; }
+                globalConfigInfo.showWelcome = value;
+                refresh();
+              });
             },
           ),
           const Divider(),

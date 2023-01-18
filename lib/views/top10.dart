@@ -177,13 +177,13 @@ class _TopHomePageState extends State<TopHomePage> {
     // });
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (globalConfigInfo.getShowWelcome()==false) { return; }
-      String lastLoginTimeStr = globalConfigInfo.getLastLoginTime();
+      String lastLoginTimeStr = globalNotConfigInfo.getLastLoginTime();
       var ld = DateTime.tryParse(lastLoginTimeStr);
       var curDT = DateTime.now();
       // ld = null;
       if (ld==null || "${curDT.year}-${curDT.month}-${curDT.day}" != "${ld.year}-${ld.month}-${ld.day}") {
         if (!mounted) { return; }
-        var saveUpdate = globalConfigInfo.setLastLoginTime(curDT.toIso8601String());
+        var saveUpdate = globalNotConfigInfo.setLastLoginTime(curDT.toIso8601String());
         showAlertDialog2(context, const EntryHomeComponent(),);
         await saveUpdate;
       }
@@ -333,7 +333,7 @@ class _TopHomePageState extends State<TopHomePage> {
                       GestureDetector(
                         onTap: () {
                           var bid = getQueryValue(blockOne.blockLink, 'bid');
-                          if (bid == null) { return; };
+                          if (bid == null) { return; }
                           nv2Push(context, '/block', arguments: {
                             'bid': bid,
                             'title': blockOne.blockName,
