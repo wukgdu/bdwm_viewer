@@ -9,6 +9,7 @@ import '../bdwm/req.dart';
 import '../bdwm/star_board.dart';
 import '../globalvars.dart';
 import './utils.dart';
+import '../pages/read_thread.dart' show naviGotoThreadByLink;
 import '../router.dart' show nv2Replace, nv2Push;
 import '../html_parser/utils.dart' show SignatureItem;
 
@@ -297,7 +298,8 @@ class OneThreadInBoard extends StatelessWidget {
                   if (value == null) {
                     showNetWorkDialog(context);
                   } else {
-                    var threadid = directToThread(value.body);
+                    var threadLink = directToThread(value.body, needLink: true);
+                    var threadid = getQueryValue(threadLink, 'threadid') ?? "";
                     if (threadid.isEmpty) { return; }
                     int? link2Int = int.tryParse(threadid);
                     if (link2Int == null) {
@@ -308,12 +310,7 @@ class OneThreadInBoard extends StatelessWidget {
                         ),
                       );
                     }
-                    nv2Push(context, '/thread', arguments: {
-                      'bid': nBid,
-                      'threadid': threadid,
-                      'boardName': boardName,
-                      'page': '1',
-                    });
+                    naviGotoThreadByLink(context, threadLink, boardName, needToBoard: false);
                   }
                 });
               } else {
