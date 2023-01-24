@@ -261,6 +261,24 @@ class _TopHomePageState extends State<TopHomePage> {
     );
   }
 
+  bool gotTop10(List<Top10Item>? top10Info) {
+    return top10Info != null && top10Info.isNotEmpty;
+  }
+
+  bool isTop10Valid(List<Top10Item> top10Info) {
+    if (top10Info.length > 1) {
+      return true;
+    }
+    if (top10Info.length == 1) {
+      if (top10Info[0].id == -1) {
+        return false;
+      }
+      return true;
+    }
+    // wont reach here after gotTop10
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     debugPrint("** top10 rebuild");
@@ -307,11 +325,11 @@ class _TopHomePageState extends State<TopHomePage> {
                     children: [
                       Text("全站十大", style: _titleFont),
                       const Divider(),
-                      if (!(homeInfo.top10Info == null) && homeInfo.top10Info!.length > 1)
+                      if (gotTop10(homeInfo.top10Info) && isTop10Valid(homeInfo.top10Info!))
                         ...homeInfo.top10Info!.map((item) {
                           return _oneTen(item);
                         }).toList()
-                      else if (!(homeInfo.top10Info == null) && homeInfo.top10Info!.length == 1)
+                      else if (gotTop10(homeInfo.top10Info) && !isTop10Valid(homeInfo.top10Info!)) ...[
                         ListTile(
                           // title: Text("全站十大", style: _titleFont),
                           title: Text(homeInfo.top10Info![0].title),
@@ -321,6 +339,7 @@ class _TopHomePageState extends State<TopHomePage> {
                             onPressed: () { nv2Replace(context, '/login', arguments: {'needBack': false}); },
                           )
                         ),
+                      ],
                     ]
                   ),
                 );

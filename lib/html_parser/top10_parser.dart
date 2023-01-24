@@ -89,9 +89,11 @@ List<Top10Item>? parseTop10(Document document) {
     return top10Items;
   }
   if (topList.length == 1) {
-    top10Items.add(Top10Item(id: -1, title: "校外游客暂不能访问十大热门话题，请您登录", board: "", link: "", countComments: ""));
-    // return null;
-    return top10Items;
+    var oneItem = topList[0];
+    if (oneItem.querySelector(".post-title")==null) {
+      top10Items.add(Top10Item(id: -1, title: "校外游客暂不能访问十大热门话题，请您登录", board: "", link: "", countComments: ""));
+      return top10Items;
+    }
   }
   for (var item in topList) {
     // debugPrint(item.innerHtml);
