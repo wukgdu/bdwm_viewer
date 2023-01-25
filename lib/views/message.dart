@@ -474,6 +474,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
                       return;
                     }
                     if (!mounted) { return; }
+                    contentController.clear();
                     update();
                   },);
                 },
