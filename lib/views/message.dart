@@ -98,7 +98,7 @@ class _UserJumpByNameComponentState extends State<UserJumpByNameComponent> {
         }
         if (userInfoRes.users.isEmpty || userInfoRes.users.first is bool) {
           return genDialog(
-            const Text("错误：未获取数据"),
+            const Text("错误：用户不存在"),
           );
         }
         var ian = userInfoRes.users.first as IDandName;
