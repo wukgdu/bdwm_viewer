@@ -195,7 +195,7 @@ class _MessageListPageState extends State<MessageListPage> {
                 },
                 onLongPress: () {
                   if (e.text == "deliver") { return; }
-                  showConfirmDialog(context, "", "删除此对话？",).then((value) {
+                  showConfirmDialog(context, "删除此对话？", e.text,).then((value) {
                     if (value!=null && value=="yes") {
                       globalContactInfo.removeOne(e.text).then((value) {
                         setState(() { });
