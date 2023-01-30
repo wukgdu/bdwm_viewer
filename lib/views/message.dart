@@ -312,7 +312,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
         if (e.startsWith(tmpK2)) {
           var arr = e.split('-');
           String emojiIdx = arr[1];
-          return WidgetSpan(child: Image.network("$v2Host/images/emoji/Expression_$emojiIdx.png", height: Theme.of(context).textTheme.bodyText2?.fontSize ?? 16,));
+          return WidgetSpan(child: Image.network("$v2Host/images/emoji/Expression_$emojiIdx.png", height: Theme.of(context).textTheme.bodyMedium?.fontSize ?? 16,));
         }
         return TextSpan(text: e);
       },).toList(),

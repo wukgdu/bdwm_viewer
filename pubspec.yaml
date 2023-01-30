@@ -42,7 +42,7 @@ dependencies:
   # flutter_widget_from_html_core: ^0.8.5+3
   # fwfh_selectable_text: ^0.8.3+1
   quick_notify: ^0.2.1
-  extended_image: ^6.2.1
+  extended_image: ^7.0.0
   permission_handler: ^10.0.0
   file_picker: ^5.0.1
   # image_picker_saver: ^0.3.0

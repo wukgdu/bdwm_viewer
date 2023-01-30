@@ -274,18 +274,19 @@ void innerLinkJump(String link, BuildContext context) {
       // hereLink += "\n$rawLink";
       hereLink = rawLink;
     }
-    showConfirmDialog(context, "使用默认浏览器打开链接?", hereLink).then((value) async {
+    showConfirmDialog(context, "使用默认浏览器打开链接?", hereLink).then((value) {
       if (value == null) {
         return;
       }
       if (value == "yes") {
         var parsedUrl = Uri.parse(link);
         // await canLaunchUrl(parsedUrl)
-        if (!await launchUrl(parsedUrl, mode: LaunchMode.externalApplication)) {
+        launchUrl(parsedUrl, mode: LaunchMode.externalApplication).then((result) {
+          if (result == true) { return; }
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("打开链接失败"), duration: Duration(milliseconds: 600),),
           );
-        }
+        });
       }
     });
   }

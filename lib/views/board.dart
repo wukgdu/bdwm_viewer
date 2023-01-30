@@ -57,7 +57,7 @@ class _BoardExtraComponentState extends State<BoardExtraComponent> {
         DropdownButton<SignatureItem>(
           hint: const Text("全部"),
           icon: const Icon(Icons.arrow_drop_down),
-          style: Theme.of(context).textTheme.bodyText2,
+          style: Theme.of(context).textTheme.bodyMedium,
           isDense: true,
           value: curPostMode,
           items: [allPostMode, markPostMode, digestPostMode, attachPostMode].map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
@@ -98,7 +98,7 @@ class _BoardExtraComponentState extends State<BoardExtraComponent> {
           DropdownButton<SignatureItem>(
             hint: const Text("主题模式"),
             icon: const Icon(Icons.arrow_drop_down),
-            style: Theme.of(context).textTheme.bodyText2,
+            style: Theme.of(context).textTheme.bodyMedium,
             isDense: true,
             value: curThreadMode,
             items: [threadMode, postMode].map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {

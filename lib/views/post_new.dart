@@ -197,8 +197,7 @@ class _PostNewPageState extends State<PostNewPage> {
       getUserSuggestionCancelable!.cancel();
     }
     if (!mounted) { return; }
-    OverlayState? overlayState = Overlay.of(context);
-    if (overlayState == null) { return; }
+    OverlayState overlayState = Overlay.of(context);
     if (partUserName.isEmpty) {
       getUserSuggestionCancelable = CancelableOperation.fromFuture(
         bdwmGetFriends(),
