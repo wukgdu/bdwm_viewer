@@ -284,10 +284,10 @@ class _CollectionImportDialogBodyState extends State<CollectionImportDialogBody>
         type: ExpanderType.plusMinus,
         // modifier: ExpanderModifier.circleFilled,
         // position: ExpanderPosition.end,
-        // color: Colors.grey.shade800,
         size: 20,
         animated: false,
-        color: bdwmPrimaryColor,
+        // color: bdwmPrimaryColor,
+        color: Colors.grey.shade800,
       ),
       labelStyle: const TextStyle(
         fontSize: 16,
