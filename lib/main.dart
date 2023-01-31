@@ -165,9 +165,9 @@ class MainPageState extends State<MainPage> {
     return MaterialApp.router(
       title: 'OBViewer',
       theme: ThemeData(
-        // colorScheme: const ColorScheme.light().copyWith(primary: bdwmPrimaryColor),
         // colorScheme: ColorScheme.fromSeed(seedColor: bdwmPrimaryColor),
-        colorScheme: ColorScheme(brightness: Brightness.light,
+        colorScheme: !globalConfigInfo.useMD3 ? const ColorScheme.light().copyWith(primary: bdwmPrimaryColor)
+        : ColorScheme(brightness: Brightness.light,
           primary: bdwmPrimaryColor, onPrimary: Colors.white,
           secondary: const Color(0xff03dac6), onSecondary: Colors.black,
           error: const Color(0xffb00020), onError: Colors.white,
@@ -176,12 +176,12 @@ class MainPageState extends State<MainPage> {
         ),
         cardTheme: CardTheme(color: Colors.white, surfaceTintColor: Colors.white, shadowColor: bdwmPrimaryColor),
         brightness: Brightness.light,
-        useMaterial3: true,
+        useMaterial3: globalConfigInfo.useMD3,
         // iconTheme: IconThemeData(color: bdwmPrimaryColor),
       ),
       darkTheme: ThemeData(
-        // colorScheme: const ColorScheme.dark().copyWith(primary: bdwmPrimaryColor, surface: Colors.grey[800]),
-        colorScheme: ColorScheme(brightness: Brightness.dark,
+        colorScheme: !globalConfigInfo.useMD3 ? const ColorScheme.dark().copyWith(primary: bdwmPrimaryColor, surface: Colors.grey[800])
+        : ColorScheme(brightness: Brightness.dark,
           primary: bdwmPrimaryColor, onPrimary: Colors.black,
           secondary: const Color(0xff03dac6), onSecondary: Colors.black,
           error: const Color(0xffcf6679), onError: Colors.black,
@@ -189,7 +189,7 @@ class MainPageState extends State<MainPage> {
           background: const Color(0xff121212), onBackground: Colors.white,
         ),
         brightness: Brightness.dark,
-        useMaterial3: true,
+        useMaterial3: globalConfigInfo.useMD3,
         // iconTheme: IconThemeData(color: bdwmPrimaryColor),
       ),
       routerDelegate: mainRouterDelegate,

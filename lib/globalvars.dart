@@ -390,6 +390,7 @@ class BDWMConfig {
   bool highQualityPreview = false;
   bool suggestUser = true;
   bool showFAB = true;
+  bool useMD3 = false;
   String boardNoteFont = "";
   String primaryColorString = "";
   double contentFontSize = 16.0;
@@ -420,6 +421,7 @@ class BDWMConfig {
       "showFAB": showFAB,
       "boardNoteFont": boardNoteFont,
       "qmd": qmd,
+      "useMD3": useMD3,
     };
   }
   void fromJson(Map<String, dynamic> jsonContent) {
@@ -434,12 +436,24 @@ class BDWMConfig {
     contentFontSize = jsonContent['contentFontSize'] ?? 16.0;
     primaryColorString = jsonContent['primaryColorString'] ?? "";
     qmd = jsonContent['qmd'] ?? "";
+    useMD3 = jsonContent['useMD3'] ?? false;
     boardNoteFont = jsonContent['boardNoteFont'] ?? simFont;
     List seeNoHimHerList = jsonContent['seeNoThem'] ?? <String>[];
     seeNoThem = Set<String>.from(seeNoHimHerList.map((e) => e as String));
   }
   String gist() {
     return jsonEncode(toJson());
+  }
+
+  bool getUseMD3() {
+    return useMD3;
+  }
+
+  Future<bool> setUseMD3(bool newValue) async {
+    return await lock.synchronized(() async {
+      useMD3 = newValue;
+      return await update();
+    });
   }
 
   String getQmd() {

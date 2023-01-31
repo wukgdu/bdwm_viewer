@@ -59,6 +59,34 @@ class _ColorPickerComponentState extends State<ColorPickerComponent> {
   }
 }
 
+class UseMD3Component extends StatefulWidget {
+  const UseMD3Component({super.key});
+
+  @override
+  State<UseMD3Component> createState() => _UseMD3ComponentState();
+}
+
+class _UseMD3ComponentState extends State<UseMD3Component> {
+  void setMD(bool useMD3) {
+    globalConfigInfo.useMD3 = useMD3;
+    var mainState = MainPage.maybeOf(context);
+    mainState?.refresh();
+    setState(() { });
+  }
+  @override
+  Widget build(BuildContext context) {
+    return SwitchListTile(
+      title: const Text("使用 Material Design 3"),
+      subtitle: const Text("否则使用 Material Design 2"),
+      activeColor: bdwmPrimaryColor,
+      value: globalConfigInfo.useMD3,
+      onChanged: (value) {
+        setMD(value);
+      },
+    );
+  }
+}
+
 class PrimaryColorComponent extends StatefulWidget {
   // Settings is const, so refresh
   final Function? parentRefresh;
@@ -142,6 +170,8 @@ class _SettingsAppState extends State<SettingsApp> {
       ),
       body: ListView(
         children: [
+          const Divider(),
+          const UseMD3Component(),
           const Divider(),
           SwitchListTile(
             title: const Text("消息中使用 BBS 的图片表情"),
