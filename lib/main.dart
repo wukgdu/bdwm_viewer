@@ -167,6 +167,14 @@ class MainPageState extends State<MainPage> {
       theme: ThemeData(
         // #e97c62
         colorScheme: const ColorScheme.light().copyWith(primary: bdwmPrimaryColor),
+        // colorScheme: ColorScheme.fromSeed(seedColor: bdwmPrimaryColor),
+        // colorScheme: ColorScheme(brightness: Brightness.light,
+        //   primary: bdwmPrimaryColor, onPrimary: Colors.white,
+        //   secondary: const Color(0xff03dac6), onSecondary: Colors.black,
+        //   error: const Color(0xffb00020), onError: Colors.white,
+        //   surface: Colors.white, onSurface: Colors.black,
+        //   background: Colors.white, onBackground: Colors.black,
+        // ),
         brightness: Brightness.light,
         useMaterial3: false,
         // iconTheme: IconThemeData(color: bdwmPrimaryColor),
