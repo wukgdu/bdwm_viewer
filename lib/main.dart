@@ -173,6 +173,7 @@ class MainPageState extends State<MainPage> {
           error: const Color(0xffb00020), onError: Colors.white,
           surface: Colors.white, onSurface: Colors.black,
           background: Colors.white, onBackground: Colors.black,
+          outlineVariant: const Color(0xffcac4cf),
         ),
         cardTheme: CardTheme(color: Colors.white, surfaceTintColor: Colors.white, shadowColor: bdwmPrimaryColor),
         brightness: Brightness.light,
