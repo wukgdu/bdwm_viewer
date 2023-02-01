@@ -391,6 +391,7 @@ class BDWMConfig {
   bool suggestUser = true;
   bool showFAB = true;
   bool useMD3 = false;
+  bool useDynamicColor = false;
   String boardNoteFont = "";
   String primaryColorString = "";
   double contentFontSize = 16.0;
@@ -422,6 +423,7 @@ class BDWMConfig {
       "boardNoteFont": boardNoteFont,
       "qmd": qmd,
       "useMD3": useMD3,
+      "useDynamicColor": useDynamicColor,
     };
   }
   void fromJson(Map<String, dynamic> jsonContent) {
@@ -437,12 +439,24 @@ class BDWMConfig {
     primaryColorString = jsonContent['primaryColorString'] ?? "";
     qmd = jsonContent['qmd'] ?? "";
     useMD3 = jsonContent['useMD3'] ?? false;
+    useDynamicColor = jsonContent['useDynamicColor'] ?? false;
     boardNoteFont = jsonContent['boardNoteFont'] ?? simFont;
     List seeNoHimHerList = jsonContent['seeNoThem'] ?? <String>[];
     seeNoThem = Set<String>.from(seeNoHimHerList.map((e) => e as String));
   }
   String gist() {
     return jsonEncode(toJson());
+  }
+
+  bool getUseDynamicColor() {
+    return useDynamicColor;
+  }
+
+  Future<bool> setUseDynamicColor(bool newValue) async {
+    return await lock.synchronized(() async {
+      useDynamicColor = newValue;
+      return await update();
+    });
   }
 
   bool getUseMD3() {

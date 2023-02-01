@@ -42,6 +42,7 @@ void initPrimaryColor() {
     bdwmPrimaryColor = Color(colorValue);
   }
 }
+
 class NotoSansMonoCJKscFile extends DynamicFontsFile {
   NotoSansMonoCJKscFile(this.variant,  expectedFileHash, int expectedLength)
       : super(expectedFileHash, expectedLength);
@@ -195,11 +196,12 @@ class MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     debugPrint("** main rebuild");
-    bool useDynamicColor = true;
+    bool useDynamicColor = globalConfigInfo.useDynamicColor;
     CustomColors lightCustomColors = CustomColors(danger: bdwmPrimaryColor);
     CustomColors darkCustomColors = CustomColors(danger: bdwmPrimaryColor);
 
     // https://github.com/material-foundation/material-dynamic-color-flutter/blob/main/example/lib/complete_example.dart
+    // https://m3.material.io/styles/color/dynamic-color/user-generated-color
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         ColorScheme lightColorScheme;
@@ -212,7 +214,9 @@ class MainPageState extends State<MainPage> {
           // (Optional) Customize the scheme as desired. For example, one might
           // want to use a brand color to override the dynamic [ColorScheme.secondary].
           lightColorScheme = lightColorScheme.copyWith(secondary: _brandBlue);
-          bdwmPrimaryColor = lightColorScheme.primary;
+          if (useDynamicColor) {
+            bdwmPrimaryColor = lightColorScheme.primary;
+          }
           // (Optional) If applicable, harmonize custom colors.
           lightCustomColors = lightCustomColors.harmonized(lightColorScheme);
 

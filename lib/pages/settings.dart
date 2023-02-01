@@ -4,7 +4,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import '../globalvars.dart';
 import '../views/constants.dart';
 import '../views/utils.dart';
-import '../main.dart' show MainPage;
+import '../main.dart' show MainPage, initPrimaryColor;
 import './board_note.dart' show showFontDialog;
 
 class ColorPickerComponent extends StatefulWidget {
@@ -87,6 +87,50 @@ class _UseMD3ComponentState extends State<UseMD3Component> {
   }
 }
 
+class DynamicColorComponent extends StatefulWidget {
+  final Function? parentRefresh;
+  const DynamicColorComponent({super.key, this.parentRefresh});
+
+  @override
+  State<DynamicColorComponent> createState() => _DynamicColorComponentState();
+}
+
+class _DynamicColorComponentState extends State<DynamicColorComponent> {
+  void toggleUseDynamicColor(bool useIt) {
+    globalConfigInfo.useDynamicColor = useIt;
+    if (!useIt) {
+      initPrimaryColor();
+    }
+    var mainState = MainPage.maybeOf(context);
+    if (mainState == null) {
+      if (widget.parentRefresh != null) {
+        widget.parentRefresh!();
+      } else {
+        setState(() { });
+      }
+    } else {
+      mainState.refresh();
+      if (widget.parentRefresh != null) {
+        widget.parentRefresh!();
+      } else {
+        setState(() { });
+      }
+    }
+  }
+  @override
+  Widget build(BuildContext context) {
+    return SwitchListTile(
+      title: const Text("使用动态颜色"),
+      subtitle: const Text("自动从壁纸提取主题颜色（dynamic color）"),
+      activeColor: bdwmPrimaryColor,
+      value: globalConfigInfo.useDynamicColor,
+      onChanged: (value) {
+        toggleUseDynamicColor(value);
+      },
+    );
+  }
+}
+
 class PrimaryColorComponent extends StatefulWidget {
   // Settings is const, so refresh
   final Function? parentRefresh;
@@ -119,6 +163,7 @@ class _PrimaryColorComponentState extends State<PrimaryColorComponent> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      enabled: !globalConfigInfo.useDynamicColor,
       onTap: () async {
         var newColor = await showDialog<Color>(context: context, builder:(context) {
           return ColorPickerComponent(primaryColor: bdwmPrimaryColor,);
@@ -173,6 +218,32 @@ class _SettingsAppState extends State<SettingsApp> {
           const Divider(),
           const UseMD3Component(),
           const Divider(),
+          DynamicColorComponent(parentRefresh: () { refresh(); },),
+          const Divider(),
+          PrimaryColorComponent(parentRefresh: () { refresh(); },),
+          const Divider(),
+          SwitchListTile(
+            title: const Text("预览图片质量：高"),
+            subtitle: const Text("仅限正文和签名档中嵌入的预览图片"),
+            activeColor: bdwmPrimaryColor,
+            value: globalConfigInfo.highQualityPreview,
+            onChanged: (value) {
+              globalConfigInfo.highQualityPreview = value;
+              refresh();
+            },
+          ),
+          const Divider(),
+          SwitchListTile(
+            title: const Text("自动清理图片缓存"),
+            subtitle: const Text("退出主题帖页面时清理"),
+            activeColor: bdwmPrimaryColor,
+            value: globalConfigInfo.autoClearImageCache,
+            onChanged: (value) {
+              globalConfigInfo.autoClearImageCache = value;
+              refresh();
+            },
+          ),
+          const Divider(),
           SwitchListTile(
             title: const Text("消息中使用 BBS 的图片表情"),
             subtitle: const Text("需要联网下载。否则使用 Unicode 的 Emoji（不完整）"),
@@ -198,28 +269,6 @@ class _SettingsAppState extends State<SettingsApp> {
             },
           ),
           const Divider(),
-          SwitchListTile(
-            title: const Text("预览高图片质量"),
-            subtitle: const Text("仅限正文和签名档中嵌入的预览图片"),
-            activeColor: bdwmPrimaryColor,
-            value: globalConfigInfo.highQualityPreview,
-            onChanged: (value) {
-              globalConfigInfo.highQualityPreview = value;
-              refresh();
-            },
-          ),
-          const Divider(),
-          SwitchListTile(
-            title: const Text("自动清理图片缓存"),
-            subtitle: const Text("退出主题帖页面时清理"),
-            activeColor: bdwmPrimaryColor,
-            value: globalConfigInfo.autoClearImageCache,
-            onChanged: (value) {
-              globalConfigInfo.autoClearImageCache = value;
-              refresh();
-            },
-          ),
-          const Divider(),
           ListTile(
             onTap: () async {
               var vStr = await showTextDialog(context, "[8, 24]的数字", inputNumber: true);
@@ -242,8 +291,6 @@ class _SettingsAppState extends State<SettingsApp> {
               child: Text("字", style: TextStyle(fontSize: globalConfigInfo.contentFontSize)),
             ),
           ),
-          const Divider(),
-          PrimaryColorComponent(parentRefresh: () { refresh(); },),
           const Divider(),
           ListTile(
             onTap: () async {
