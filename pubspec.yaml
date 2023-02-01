@@ -68,6 +68,7 @@ dependencies:
   dynamic_fonts: ^2.0.0
   quick_actions: ^1.0.1
   intl: ^0.17.0
+  dynamic_color: ^1.6.0
 
 dev_dependencies:
   flutter_test:
