@@ -6,7 +6,6 @@ import 'package:flutter_treeview/flutter_treeview.dart';
 
 import '../bdwm/collection.dart';
 import '../html_parser/collection_parser.dart';
-import './constants.dart';
 import '../utils.dart' show getQueryValue;
 import '../globalvars.dart' show globalConfigInfo;
 import './utils.dart' show showConfirmDialog, showInformDialog, showAlertDialog;

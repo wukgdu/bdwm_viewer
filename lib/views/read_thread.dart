@@ -794,6 +794,8 @@ class ReadThreadPageState extends State<ReadThreadPage> {
     if (widget.tiebaForm) {
       computeNewOrder();
     }
+    // TODO: hide bottomAppBar when scroll down
+    // itemPositionsListener.itemPositions.addListener(() { });
     WidgetsBinding.instance.addPostFrameCallback((_){
       if (widget.postid != null) {
         var i = 0;

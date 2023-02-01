@@ -199,8 +199,8 @@ class _SettingsAppState extends State<SettingsApp> {
           ),
           const Divider(),
           SwitchListTile(
-            title: const Text("预览图片质量"),
-            subtitle: const Text("高（仅限正文和签名档中嵌入的预览图片）"),
+            title: const Text("预览高图片质量"),
+            subtitle: const Text("仅限正文和签名档中嵌入的预览图片"),
             activeColor: bdwmPrimaryColor,
             value: globalConfigInfo.highQualityPreview,
             onChanged: (value) {
