@@ -121,7 +121,7 @@ class _DynamicColorComponentState extends State<DynamicColorComponent> {
   Widget build(BuildContext context) {
     return SwitchListTile(
       title: const Text("使用动态颜色"),
-      subtitle: const Text("自动从壁纸提取主题颜色（dynamic color）"),
+      subtitle: const Text("自动从壁纸提取主题颜色（dynamic color）。低版本安卓不一定支持"),
       activeColor: bdwmPrimaryColor,
       value: globalConfigInfo.useDynamicColor,
       onChanged: (value) {
