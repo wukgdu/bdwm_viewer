@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../views/read_thread.dart';
 import '../views/utils.dart';
@@ -11,9 +12,10 @@ import '../utils.dart' show clearAllExtendedImageCache;
 import '../router.dart' show nv2Push, nv2Replace;
 
 class MyFloatingActionButtonMenu extends StatefulWidget {
-  final GlobalKey<ReadThreadPageState>? threadStateKey;
   final bool showFAB;
-  const MyFloatingActionButtonMenu({super.key, required this.threadStateKey, this.showFAB=true});
+  final void Function({bool far}) gotoNextPost;
+  final void Function({bool far}) gotoPreviousPost;
+  const MyFloatingActionButtonMenu({super.key, this.showFAB=true, required this.gotoNextPost, required this.gotoPreviousPost});
 
   @override
   State<MyFloatingActionButtonMenu> createState() => _MyFloatingActionButtonMenuState();
@@ -50,22 +52,18 @@ class _MyFloatingActionButtonMenuState extends State<MyFloatingActionButtonMenu>
     showFAB = widget.showFAB;
     nextButton = genButton(icon: Icon(Icons.arrow_downward, color: bdwmPrimaryColor,),
       onTap: () {
-        if (widget.threadStateKey!.currentState == null) { return; }
-        widget.threadStateKey!.currentState!.gotoNextPost();
+        widget.gotoNextPost();
       },
       onLongPress: () {
-        if (widget.threadStateKey!.currentState == null) { return; }
-        widget.threadStateKey!.currentState!.gotoNextPost(far: true);
+        widget.gotoNextPost(far: true);
       },
     );
     prevButton = genButton(icon: Icon(Icons.arrow_upward, color: bdwmPrimaryColor,),
       onTap: () {
-        if (widget.threadStateKey!.currentState == null) { return; }
-        widget.threadStateKey!.currentState!.gotoPreviousPost();
+        widget.gotoPreviousPost();
       },
       onLongPress: () {
-        if (widget.threadStateKey!.currentState == null) { return; }
-        widget.threadStateKey!.currentState!.gotoPreviousPost(far: true);
+        widget.gotoPreviousPost(far: true);
       },
     );
     removeButton = genButton(icon: Icon(Icons.remove, color: bdwmPrimaryColor,),
@@ -118,6 +116,396 @@ class _MyFloatingActionButtonMenuState extends State<MyFloatingActionButtonMenu>
   }
 }
 
+class ThreadDetailApp extends StatefulWidget {
+  final Function refreshCallBack;
+  final Function goPage;
+  final ThreadPageInfo threadPageInfo;
+  final String threadLink;
+  final int page;
+  final String userName;
+  final String bid;
+  final String threadid;
+  final String? postid;
+  final bool? needToBoard;
+  final bool tiebaForm;
+  final Function toggleTiebaForm;
+  const ThreadDetailApp({super.key,
+    required this.refreshCallBack, required this.threadPageInfo, required this.threadLink,
+    required this.page, required this.goPage, required this.userName,
+    required this.bid, required this.threadid, this.postid, this.needToBoard,
+    required this.tiebaForm, required this.toggleTiebaForm,
+  });
+
+  @override
+  State<ThreadDetailApp> createState() => _ThreadDetailAppState();
+}
+
+class _ThreadDetailAppState extends State<ThreadDetailApp> {
+  bool showFAB = true;
+  final _titleFont = const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
+  ValueNotifier<bool> marked = ValueNotifier<bool>(false);
+  final ItemScrollController itemScrollController = ItemScrollController();
+  final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
+  var newOrder = <TiebaFormItemInfo>[];
+
+  @override
+  void initState() {
+    super.initState();
+    showFAB = globalConfigInfo.getShowFAB();
+    marked.value = globalMarkedThread.contains(widget.threadLink);
+    if (widget.tiebaForm) {
+      computeNewOrder();
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      if (widget.postid != null) {
+        var i = 0;
+        while (i<widget.threadPageInfo.posts.length) {
+          var p = widget.threadPageInfo.posts[i];
+          if (p.postID == widget.postid) {
+            break;
+          }
+          i+=1;
+        }
+        if ((i!=0) && (i<widget.threadPageInfo.posts.length)) {
+          itemScrollController.scrollTo(index: i, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
+        }
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant ThreadDetailApp oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.tiebaForm) {
+      computeNewOrder();
+    } else {
+      newOrder.clear();
+    }
+  }
+
+  @override
+  void dispose() {
+    marked.dispose();
+    super.dispose();
+  }
+
+  Future<bool> addMarked({required String link, required String title, required String userName, required String boardName}) async {
+    int timestamp = DateTime.now().millisecondsSinceEpoch;
+    return await globalMarkedThread.addOne(link: link, title: title, userName: userName, boardName: boardName, timestamp: timestamp);
+  }
+
+  List<TiebaFormItemInfo> computeTiebaIndex() {
+    var res = <TiebaFormItemInfo>[];
+    List<String> firstLine = [];
+    List<String> quoteID = [];
+    List<String> firstQuoteLine = [];
+    for (int i=0; i<widget.threadPageInfo.posts.length; i+=1) {
+      var res = getShortInfoFromContent(widget.threadPageInfo.posts[i].content);
+      firstLine.add(res[0]);
+      quoteID.add(res[1]);
+      firstQuoteLine.add(res[2]);
+    }
+    for (int i=0; i<widget.threadPageInfo.posts.length; i+=1) {
+      var postInfo = widget.threadPageInfo.posts[i];
+      var postid = int.parse(postInfo.postID);
+      var parentIdx= i;
+      var oriIdx = i;
+      var subIdx = 0;
+      if (i==0) {
+        res.add(TiebaFormItemInfo(postid: postid, oriIdx: oriIdx, parentIdx: parentIdx, subIdx: subIdx));
+        continue;
+      }
+      int j=i-1;
+      for (; j>=0; j-=1) {
+        if (quoteID[i] == widget.threadPageInfo.posts[j].authorInfo.userName) {
+          if (firstQuoteLine[i] == firstLine[j]) {
+            break;
+          }
+        }
+      }
+      if (j==-1) {
+        parentIdx = oriIdx;
+        subIdx = 0;
+      } else {
+        parentIdx = j;
+        subIdx = res[j].subIdx+1;
+      }
+      res.add(TiebaFormItemInfo(postid: postid, oriIdx: oriIdx, parentIdx: parentIdx, subIdx: subIdx));
+    }
+    return res;
+  }
+  
+  void computeNewOrder() {
+    newOrder = computeTiebaIndex();
+    List<List<int>> ancestorLists = [];
+    for (var ele in newOrder) {
+      var aPList = <int>[];
+      var sIdx = ele.oriIdx;
+      while (true) {
+        aPList.add(sIdx);
+        var nIdx = newOrder[sIdx].parentIdx;
+        if (nIdx == sIdx) {
+          break;
+        }
+        sIdx = nIdx;
+      }
+      ancestorLists.add(aPList.reversed.toList());
+    }
+    newOrder.sort((a, b) {
+      var aPList = ancestorLists[a.oriIdx];
+      var bPList = ancestorLists[b.oriIdx];
+      int i=0;
+      for (;i < aPList.length && i < bPList.length; i+=1) {
+        if (aPList[i] == bPList[i]) {
+          continue;
+        }
+        return aPList[i] - bPList[i];
+      }
+      if (i < aPList.length) {
+        return 1;
+      }
+      return -1;
+    },);
+  }
+
+  void gotoPreviousPost({bool far=false}) {
+    if (far) {
+      itemScrollController.scrollTo(index: 0, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
+      return;
+    }
+    var itemPositions = itemPositionsListener.itemPositions.value.toList();
+    var firstPosition = itemPositions.first;
+    for (var ips in itemPositions) {
+      if (firstPosition.index > ips.index) {
+        firstPosition = ips;
+      }
+    }
+    var prevIndex = firstPosition.index-1;
+    if (firstPosition.itemLeadingEdge < 0) {
+      prevIndex = firstPosition.index;
+    }
+    if (prevIndex < 0) {
+      prevIndex = 0;
+    }
+    itemScrollController.jumpTo(index: prevIndex);
+  }
+
+  void gotoNextPost({bool far=false}) {
+    if (far) {
+      itemScrollController.scrollTo(index: widget.threadPageInfo.posts.length-1, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
+      return;
+    }
+    var itemPositions = itemPositionsListener.itemPositions.value.toList();
+    var firstPosition = itemPositions.first;
+    for (var ips in itemPositions) {
+      if (firstPosition.index > ips.index) {
+        firstPosition = ips;
+      }
+    }
+    var nextIndex = firstPosition.index + 1;
+    if (nextIndex > widget.threadPageInfo.posts.length-1) {
+      return;
+    }
+    itemScrollController.jumpTo(index: nextIndex);
+  }
+
+  Widget _onepost(OnePostInfo item, {int? subIdx}) {
+    var userName = item.authorInfo.userName;
+    Set<String> seeNoHimHer = globalConfigInfo.getSeeNoThem();
+    var hideIt = false;
+    if (seeNoHimHer.contains(userName.toLowerCase())) {
+      hideIt = true;
+    }
+    return OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack,
+      boardName: widget.threadPageInfo.board.text, threadid: widget.threadid,
+      subIdx: subIdx, hideIt: hideIt,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.threadPageInfo.board.text.split('(').first),
+        actions: [
+          ValueListenableBuilder(
+            valueListenable: marked,
+            builder: (context, value, child) {
+              bool markedValue = value as bool;
+              return IconButton(
+                onPressed: () async {
+                  if (markedValue) {
+                    globalMarkedThread.removeOne(widget.threadLink);
+                  } else {
+                    var notfull = await addMarked(link: widget.threadLink, title: widget.threadPageInfo.title, userName: widget.userName, boardName: widget.threadPageInfo.board.text);
+                    if (notfull == false) {
+                      if (!mounted) { return; }
+                      showAlertDialog(context, "收藏数量已达上限", const Text("rt"),
+                        actions1: TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text("取消"),
+                        ),
+                        actions2: TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            nv2Push(context, '/markedThread');
+                          },
+                          child: const Text("清理"),
+                        ),
+                      );
+                      return;
+                    }
+                  }
+                  marked.value = !markedValue;
+                },
+                icon: Icon(markedValue ? Icons.star : Icons.star_outline),
+              );
+            },
+          ),
+          IconButton(
+            onPressed: () {
+              widget.toggleTiebaForm();
+            },
+            icon: Icon(widget.tiebaForm ? Icons.change_circle : Icons.account_tree),
+          ),
+          IconButton(
+            onPressed: () {
+              if (!mounted) { return; }
+              shareWithResultWrap(context, "$v2Host/post-read.php?bid=${widget.threadPageInfo.boardid}&threadid=${widget.threadPageInfo.threadid}", subject: "分享帖子");
+            },
+            icon: const Icon(Icons.share),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          GestureDetector(
+            onDoubleTap: () {
+              // Scrollable.ensureVisible(itemKeys[0].currentContext!, duration: const Duration(milliseconds: 1500));
+              gotoPreviousPost(far: true);
+            },
+            onLongPress: () {
+              gotoNextPost(far: true);
+            },
+            child: Container(
+              padding: const EdgeInsets.all(10.0),
+              alignment: Alignment.centerLeft,
+              // height: 20,
+              child: Text(
+                widget.threadPageInfo.title,
+                style: _titleFont,
+              ),
+            ),
+          ),
+          Expanded(
+            child: ScrollablePositionedList.builder(
+              itemCount: widget.threadPageInfo.posts.length,
+              itemBuilder: (context, index) {
+                if (widget.tiebaForm) {
+                  var oriIdx = newOrder[index].oriIdx;
+                  var subIdx = newOrder[index].subIdx;
+                  return _onepost(widget.threadPageInfo.posts[oriIdx], subIdx: subIdx > 5 ? 5 : subIdx);
+                }
+                return _onepost(widget.threadPageInfo.posts[index]);
+              },
+              itemScrollController: itemScrollController,
+              itemPositionsListener: itemPositionsListener,
+            ),
+          ),
+        ]
+      ),
+      bottomNavigationBar: BottomAppBar(
+        shape: null,
+        // color: Colors.blue,
+        child: IconTheme(
+          data: const IconThemeData(color: Colors.redAccent),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              IconButton(
+                color: bdwmPrimaryColor,
+                disabledColor: Colors.grey,
+                tooltip: '刷新',
+                icon: const Icon(Icons.refresh),
+                onPressed: () {
+                  widget.refreshCallBack();
+                },
+              ),
+              if (widget.needToBoard != null && widget.needToBoard == true)
+                IconButton(
+                  color: bdwmPrimaryColor,
+                  disabledColor: Colors.grey,
+                  tooltip: '返回本版',
+                  icon: const Icon(Icons.list),
+                  onPressed: () {
+                    nv2Push(context, '/board', arguments: {
+                      'boardName': widget.threadPageInfo.board.text.split('(').first,
+                      'bid': widget.threadPageInfo.boardid,
+                    },);
+                  },
+                ),
+              IconButton(
+                color: bdwmPrimaryColor,
+                disabledColor: Colors.grey,
+                tooltip: '上一页',
+                icon: const Icon(Icons.arrow_back),
+                onPressed: widget.page == 1 ? null : () {
+                  if (!mounted) { return; }
+                  widget.goPage(widget.page-1);
+                },
+              ),
+              TextButton(
+                child: Text("${widget.page}/${widget.threadPageInfo.pageNum}"),
+                onPressed: () async {
+                  var nPageStr = await showPageDialog(context, widget.page, widget.threadPageInfo.pageNum);
+                  if (nPageStr == null) { return; }
+                  if (nPageStr.isEmpty) { return; }
+                  var nPage = int.parse(nPageStr);
+                  widget.goPage(nPage);
+                },
+                onLongPress: () {
+                  var newPage = widget.page;
+                  if (widget.page == widget.threadPageInfo.pageNum) {
+                    newPage = 1;
+                  } else {
+                    newPage = widget.threadPageInfo.pageNum;
+                  }
+                  if (newPage == widget.page) { return; }
+                  widget.goPage(newPage);
+                },
+              ),
+              IconButton(
+                color: bdwmPrimaryColor,
+                disabledColor: Colors.grey,
+                tooltip: '下一页',
+                icon: const Icon(Icons.arrow_forward),
+                onPressed: widget.page == widget.threadPageInfo.pageNum ? null : () {
+                  // if (page == threadPageInfo.pageNum) {
+                  //   return;
+                  // }
+                  if (!mounted) { return; }
+                  widget.goPage(widget.page+1);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+      floatingActionButton: !showFAB ? null : MyFloatingActionButtonMenu(
+        showFAB: showFAB,
+        gotoNextPost: ({bool far=false}) {
+          gotoNextPost(far: far);
+        },
+        gotoPreviousPost: ({bool far=false}) {
+          gotoPreviousPost(far: far);
+        },
+      ),
+    );
+  }
+}
+
 class ThreadApp extends StatefulWidget {
   final String bid;
   final String threadid;
@@ -126,23 +514,18 @@ class ThreadApp extends StatefulWidget {
   final bool? needToBoard;
   final String? postid;
   const ThreadApp({Key? key, required this.bid, required this.threadid, this.boardName, required this.page, this.needToBoard, this.postid}) : super(key: key);
-  // ThreadApp.empty({Key? key}) : super(key: key);
 
   @override
-  // State<ThreadApp> createState() => _ThreadAppState();
-  State<ThreadApp> createState() => _ThreadAppState();
+  State <ThreadApp> createState() =>  ThreadAppState();
 }
 
-class _ThreadAppState extends State<ThreadApp> {
+class  ThreadAppState extends State <ThreadApp> {
   int page = 1;
   late CancelableOperation getDataCancelable;
-  String? postid;
-  bool tiebaForm = false;
   bool firstTime = true;
-  ValueNotifier<bool> marked = ValueNotifier<bool>(false);
+  String? postid;
   String threadLink = "";
-  bool showFAB = true;
-  GlobalKey<ReadThreadPageState>? threadStateKey;
+  bool tiebaForm = false;
   // Future<ThreadPageInfo>? _future;
   @override
   void initState() {
@@ -155,19 +538,9 @@ class _ThreadAppState extends State<ThreadApp> {
     // _future = getData();
     postid = widget.postid;
     threadLink = "$v2Host/post-read.php?bid=${widget.bid}&threadid=${widget.threadid}";
-    marked.value = globalMarkedThread.contains(threadLink);
     getDataCancelable = CancelableOperation.fromFuture(getData(firstTime: true), onCancel: () {
       debugPrint("cancel it");
     },);
-    showFAB = globalConfigInfo.getShowFAB();
-    if (showFAB) {
-      threadStateKey = GlobalKey<ReadThreadPageState>();
-    }
-  }
-
-  Future<bool> addMarked({required String link, required String title, required String userName, required String boardName}) async {
-    int timestamp = DateTime.now().millisecondsSinceEpoch;
-    return await globalMarkedThread.addOne(link: link, title: title, userName: userName, boardName: boardName, timestamp: timestamp);
   }
 
   void addHistory({required String link, required String title, required String userName, required String boardName}) {
@@ -179,7 +552,6 @@ class _ThreadAppState extends State<ThreadApp> {
 
   @override
   void dispose() {
-    marked.dispose();
     Future.microtask(() => getDataCancelable.cancel(),);
     clearAllExtendedImageCache(really: globalConfigInfo.getAutoClearImageCache());
     super.dispose();
@@ -208,8 +580,12 @@ class _ThreadAppState extends State<ThreadApp> {
   }
 
   void refresh() {
+    goPage(page);
+  }
+
+  void goPage(int newPage) {
     setState(() {
-      page = page;
+      page = newPage;
       getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
         debugPrint("cancel it");
       },);
@@ -266,170 +642,29 @@ class _ThreadAppState extends State<ThreadApp> {
           userName = threadPageInfo.posts.first.authorInfo.userName;
         }
         addHistory(link: threadLink, title: threadPageInfo.title, userName: userName, boardName: threadPageInfo.board.text);
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(threadPageInfo.board.text.split('(').first),
-            actions: [
-              ValueListenableBuilder(
-                valueListenable: marked,
-                builder: (context, value, child) {
-                  bool markedValue = value as bool;
-                  return IconButton(
-                    onPressed: () async {
-                      if (markedValue) {
-                        globalMarkedThread.removeOne(threadLink);
-                      } else {
-                        var notfull = await addMarked(link: threadLink, title: threadPageInfo.title, userName: userName, boardName: threadPageInfo.board.text);
-                        if (notfull == false) {
-                          if (!mounted) { return; }
-                          showAlertDialog(context, "收藏数量已达上限", const Text("rt"),
-                            actions1: TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text("取消"),
-                            ),
-                            actions2: TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                nv2Push(context, '/markedThread');
-                              },
-                              child: const Text("清理"),
-                            ),
-                          );
-                          return;
-                        }
-                      }
-                      marked.value = !markedValue;
-                    },
-                    icon: Icon(markedValue ? Icons.star : Icons.star_outline),
-                  );
-                },
-              ),
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    tiebaForm = !tiebaForm;
-                  });
-                },
-                icon: Icon(tiebaForm ? Icons.change_circle : Icons.account_tree),
-              ),
-              IconButton(
-                onPressed: () {
-                  if (!mounted) { return; }
-                  shareWithResultWrap(context, "$v2Host/post-read.php?bid=${threadPageInfo.boardid}&threadid=${threadPageInfo.threadid}", subject: "分享帖子");
-                },
-                icon: const Icon(Icons.share),
-              ),
-            ],
-          ),
-          body: ReadThreadPage(bid: widget.bid, threadid: widget.threadid, page: page.toString(), threadPageInfo: threadPageInfo, postid: postid,
-            tiebaForm: tiebaForm,
-            key: threadStateKey,
-            refreshCallBack: () {
-              refresh();
-            },
-          ),
-          bottomNavigationBar: BottomAppBar(
-            shape: null,
-            // color: Colors.blue,
-            child: IconTheme(
-              data: const IconThemeData(color: Colors.redAccent),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  IconButton(
-                    color: bdwmPrimaryColor,
-                    disabledColor: Colors.grey,
-                    tooltip: '刷新',
-                    icon: const Icon(Icons.refresh),
-                    onPressed: () {
-                      refresh();
-                    },
-                  ),
-                  if (widget.needToBoard != null && widget.needToBoard == true)
-                    IconButton(
-                      color: bdwmPrimaryColor,
-                      disabledColor: Colors.grey,
-                      tooltip: '返回本版',
-                      icon: const Icon(Icons.list),
-                      onPressed: () {
-                        nv2Push(context, '/board', arguments: {
-                          'boardName': threadPageInfo.board.text.split('(').first,
-                          'bid': threadPageInfo.boardid,
-                        },);
-                      },
-                    ),
-                  IconButton(
-                    color: bdwmPrimaryColor,
-                    disabledColor: Colors.grey,
-                    tooltip: '上一页',
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: page == 1 ? null : () {
-                      if (!mounted) { return; }
-                      setState(() {
-                        page = page - 1;
-                        getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
-                          debugPrint("cancel it");
-                        },);
-                      });
-                    },
-                  ),
-                  TextButton(
-                    child: Text("$page/${threadPageInfo.pageNum}"),
-                    onPressed: () async {
-                      var nPageStr = await showPageDialog(context, page, threadPageInfo.pageNum);
-                      if (nPageStr == null) { return; }
-                      if (nPageStr.isEmpty) { return; }
-                      var nPage = int.parse(nPageStr);
-                      setState(() {
-                        page = nPage;
-                        getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
-                          debugPrint("cancel it");
-                        },);
-                      });
-                    },
-                    onLongPress: () {
-                      var newPage = page;
-                      if (page == threadPageInfo.pageNum) {
-                        newPage = 1;
-                      } else {
-                        newPage = threadPageInfo.pageNum;
-                      }
-                      if (newPage == page) { return; }
-                      page = newPage;
-                      setState(() {
-                        getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
-                          debugPrint("cancel it");
-                        },);
-                      });
-                    },
-                  ),
-                  IconButton(
-                    color: bdwmPrimaryColor,
-                    disabledColor: Colors.grey,
-                    tooltip: '下一页',
-                    icon: const Icon(Icons.arrow_forward),
-                    onPressed: page == threadPageInfo.pageNum ? null : () {
-                      // if (page == threadPageInfo.pageNum) {
-                      //   return;
-                      // }
-                      if (!mounted) { return; }
-                      setState(() {
-                        page = page + 1;
-                        getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
-                          debugPrint("cancel it");
-                        },);
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-          floatingActionButton: !showFAB ? null : MyFloatingActionButtonMenu(threadStateKey: threadStateKey, showFAB: showFAB,),
+        return ThreadDetailApp(
+          threadPageInfo: threadPageInfo,
+          page: page,
+          userName: userName,
+          bid: widget.bid,
+          threadid: widget.threadid,
+          threadLink: threadLink,
+          goPage: (int newPage) {
+            goPage(newPage);
+          },
+          refreshCallBack: () {
+            refresh();
+          },
+          tiebaForm: tiebaForm,
+          toggleTiebaForm: () {
+            setState(() {
+              tiebaForm = !tiebaForm;
+            });
+          },
+          postid: postid,
+          needToBoard: widget.needToBoard,
         );
-      },
+      }
     );
   }
 }
