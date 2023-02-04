@@ -159,7 +159,11 @@ class MainPageBuilder {
         }
         return PostNewApp(boardName: boardName ?? "版面", bid: bid ?? "", postid: postid, parentid: parentid, nickName: nickName);
       case "/zone":
-        return const ZoneApp();
+        bool needBack = false;
+        if (settings.arguments != null) {
+          needBack = (settings.arguments as Map)['needBack'] ?? false;
+        }
+        return ZoneApp(needBack: needBack);
       case "/favorite":
         return const FavoriteApp();
       case "/block":

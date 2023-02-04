@@ -8,8 +8,8 @@ import '../globalvars.dart';
 import '../html_parser/zone_parser.dart';
 
 class ZoneApp extends StatefulWidget {
-  final zoneDrawer = const MyDrawer(selectedIdx: 1);
-  const ZoneApp({super.key});
+  final bool? needBack;
+  const ZoneApp({super.key, this.needBack});
 
   @override
   State<ZoneApp> createState() => _ZoneAppState();
@@ -17,6 +17,7 @@ class ZoneApp extends StatefulWidget {
 
 class _ZoneAppState extends State<ZoneApp> {
   late CancelableOperation getDataCancelable;
+  Widget? zoneDrawer;
 
   Future<ZoneInfo> getData() async {
     // return getExampleZone();
@@ -33,6 +34,9 @@ class _ZoneAppState extends State<ZoneApp> {
     super.initState();
     getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
     },);
+    if ((widget.needBack == null) || (widget.needBack == false)) {
+      zoneDrawer = const MyDrawer(selectedIdx: 1);
+    }
   }
 
   @override
@@ -50,7 +54,7 @@ class _ZoneAppState extends State<ZoneApp> {
         if (snapshot.connectionState != ConnectionState.done) {
           // return const Center(child: CircularProgressIndicator());
           return Scaffold(
-            drawer: widget.zoneDrawer,
+            drawer: zoneDrawer,
             appBar: AppBar(
               title: const Text("版面目录"),
             ),
@@ -59,7 +63,7 @@ class _ZoneAppState extends State<ZoneApp> {
         }
         if (snapshot.hasError) {
           return Scaffold(
-            drawer: widget.zoneDrawer,
+            drawer: zoneDrawer,
             appBar: AppBar(
               title: const Text("版面目录"),
             ),
@@ -68,7 +72,7 @@ class _ZoneAppState extends State<ZoneApp> {
         }
         if (!snapshot.hasData || snapshot.data == null) {
           return Scaffold(
-            drawer: widget.zoneDrawer,
+            drawer: zoneDrawer,
             appBar: AppBar(
               title: const Text("版面目录"),
             ),
@@ -78,7 +82,7 @@ class _ZoneAppState extends State<ZoneApp> {
         var zoneInfo = snapshot.data as ZoneInfo;
         if (zoneInfo.errorMessage != null) {
           return Scaffold(
-            drawer: widget.zoneDrawer,
+            drawer: zoneDrawer,
             appBar: AppBar(
               title: const Text("版面目录"),
             ),
@@ -88,7 +92,7 @@ class _ZoneAppState extends State<ZoneApp> {
           );
         }
         return Scaffold(
-          drawer: widget.zoneDrawer,
+          drawer: zoneDrawer,
           appBar: AppBar(
             title: const Text("版面目录"),
           ),

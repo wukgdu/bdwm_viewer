@@ -199,12 +199,18 @@ class FavoritePageState extends State<FavoritePage> {
             },
           ),
         ),
-        Container(
-          alignment: Alignment.center,
-          child: TextButton(
-            onPressed: () { clearUnread(); },
-            child: const Text("清除未读")
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            TextButton(
+              onPressed: () { clearUnread(); },
+              child: const Text("清除未读")
+            ),
+            TextButton(
+              onPressed: () { nv2Push(context, "/zone", arguments: { 'needBack': true, }); },
+              child: const Text("版面目录")
+            ),
+          ],
         ),
       ],
     );
