@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 
+import './utils.dart';
+import './html_widget.dart' show WrapImageNetwork, innerLinkJump;
 import '../bdwm/req.dart';
 import '../globalvars.dart';
-import './html_widget.dart' show WrapImageNetwork, innerLinkJump;
 import '../html_parser/top10_parser.dart';
+import '../views/constants.dart' show bdwmPrimaryColor;
 import '../pages/read_thread.dart';
-import './utils.dart';
 import '../utils.dart' show getQueryValue;
 import '../pages/detail_image.dart';
 import '../router.dart' show nv2Replace, nv2Push;
@@ -108,7 +109,10 @@ class _EntryHomeComponentState extends State<EntryHomeComponent> {
             onTap: () {
               gotoDetailImage(context: context, link: welcomeInfo.imgLink);
             },
-            child: WrapImageNetwork(imgLink: welcomeInfo.imgLink, useLinearProgress: true, mustClear: true, highQuality: true,),
+            child: ColoredBox(
+              color: bdwmPrimaryColor,
+              child: WrapImageNetwork(imgLink: welcomeInfo.imgLink, useLinearProgress: true, mustClear: true, highQuality: true,),
+            ),
           ),
           actions: [
             TextButton(
