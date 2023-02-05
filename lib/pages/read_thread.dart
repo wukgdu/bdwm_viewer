@@ -146,7 +146,11 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
   ValueNotifier<bool> marked = ValueNotifier<bool>(false);
   final ItemScrollController itemScrollController = ItemScrollController();
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
+  GlobalKey scrollKey = GlobalKey();
   var newOrder = <TiebaFormItemInfo>[];
+  int? _lastIndex;
+  double? _lastEdge;
+  bool _showBottomAppBar = true;
 
   @override
   void initState() {
@@ -156,6 +160,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
     if (widget.tiebaForm) {
       computeNewOrder();
     }
+    itemPositionsListener.itemPositions.addListener(listenToScroll);
     WidgetsBinding.instance.addPostFrameCallback((_){
       if (widget.postid != null) {
         var i = 0;
@@ -185,6 +190,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
 
   @override
   void dispose() {
+    itemPositionsListener.itemPositions.removeListener(listenToScroll);
     marked.dispose();
     super.dispose();
   }
@@ -268,11 +274,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
     },);
   }
 
-  void gotoPreviousPost({bool far=false}) {
-    if (far) {
-      itemScrollController.scrollTo(index: 0, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
-      return;
-    }
+  ItemPosition getFirstItem() {
     var itemPositions = itemPositionsListener.itemPositions.value.toList();
     var firstPosition = itemPositions.first;
     for (var ips in itemPositions) {
@@ -280,6 +282,15 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
         firstPosition = ips;
       }
     }
+    return firstPosition;
+  }
+
+  void gotoPreviousPost({bool far=false}) {
+    if (far) {
+      itemScrollController.scrollTo(index: 0, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
+      return;
+    }
+    var firstPosition = getFirstItem();
     var prevIndex = firstPosition.index-1;
     if (firstPosition.itemLeadingEdge < 0) {
       prevIndex = firstPosition.index;
@@ -295,18 +306,54 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
       itemScrollController.scrollTo(index: widget.threadPageInfo.posts.length-1, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
       return;
     }
-    var itemPositions = itemPositionsListener.itemPositions.value.toList();
-    var firstPosition = itemPositions.first;
-    for (var ips in itemPositions) {
-      if (firstPosition.index > ips.index) {
-        firstPosition = ips;
-      }
-    }
+    var firstPosition = getFirstItem();
     var nextIndex = firstPosition.index + 1;
     if (nextIndex > widget.threadPageInfo.posts.length-1) {
       return;
     }
     itemScrollController.jumpTo(index: nextIndex);
+  }
+
+  void showBottomAppBar() {
+    if (!_showBottomAppBar) {
+      setState(() { _showBottomAppBar = true; });
+    }
+  }
+
+  void hideBottomAppBar() {
+    if (_showBottomAppBar) {
+      setState(() { _showBottomAppBar = false; });
+    }
+  }
+
+  void listenToScroll() {
+    var scrollListHeight = scrollKey.currentContext?.size?.height ?? 1.0;
+    var firstPosition = getFirstItem();
+    if (_lastIndex==null) {
+      _lastIndex = firstPosition.index;
+      _lastEdge = firstPosition.itemLeadingEdge * scrollListHeight;
+      return;
+    }
+    int hideIt = 0;
+    double newEdge = firstPosition.itemLeadingEdge * scrollListHeight;
+    if (firstPosition.index > _lastIndex!) {
+      hideIt = 1;
+    } else if (firstPosition.index < _lastIndex!) {
+      hideIt = -1;
+    } else {
+      if (newEdge < _lastEdge!) {
+        hideIt = 1;
+      } else if (newEdge > _lastEdge!) {
+        hideIt = -1;
+      }
+    }
+    _lastIndex = firstPosition.index;
+    _lastEdge = newEdge;
+    if (hideIt == 1) {
+      hideBottomAppBar();
+    } else if (hideIt == -1) {
+      showBottomAppBar();
+    }
   }
 
   Widget _onepost(OnePostInfo item, {int? subIdx}) {
@@ -401,6 +448,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
           ),
           Expanded(
             child: ScrollablePositionedList.builder(
+              key: scrollKey,
               itemCount: widget.threadPageInfo.posts.length,
               itemBuilder: (context, index) {
                 if (widget.tiebaForm) {
@@ -419,6 +467,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
       bottomNavigationBar: BottomAppBar(
         shape: null,
         // color: Colors.blue,
+        height: _showBottomAppBar ? null : 0.0,
         child: IconTheme(
           data: const IconThemeData(color: Colors.redAccent),
           child: Row(
