@@ -300,7 +300,7 @@ class _SettingsAppState extends State<SettingsApp> {
               refresh();
             },
             title: const Text("备忘录字体"),
-            subtitle: Text(globalConfigInfo.boardNoteFont),
+            subtitle: Text(globalConfigInfo.getBoardNoteFont()),
           ),
           const Divider(),
           SwitchListTile(
@@ -320,6 +320,16 @@ class _SettingsAppState extends State<SettingsApp> {
             value: globalConfigInfo.showFAB,
             onChanged: (value) {
               globalConfigInfo.showFAB = value;
+              refresh();
+            },
+          ),
+          const Divider(),
+          SwitchListTile(
+            title: const Text("看帖时自动隐藏底部栏"),
+            activeColor: bdwmPrimaryColor,
+            value: globalConfigInfo.autoHideBottomBar,
+            onChanged: (value) {
+              globalConfigInfo.autoHideBottomBar = value;
               refresh();
             },
           ),

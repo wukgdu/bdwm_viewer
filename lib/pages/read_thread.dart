@@ -15,7 +15,8 @@ class MyFloatingActionButtonMenu extends StatefulWidget {
   final bool showFAB;
   final void Function({bool far}) gotoNextPost;
   final void Function({bool far}) gotoPreviousPost;
-  const MyFloatingActionButtonMenu({super.key, this.showFAB=true, required this.gotoNextPost, required this.gotoPreviousPost});
+  final Function? toggleIgnore;
+  const MyFloatingActionButtonMenu({super.key, this.showFAB=true, required this.gotoNextPost, required this.gotoPreviousPost, this.toggleIgnore});
 
   @override
   State<MyFloatingActionButtonMenu> createState() => _MyFloatingActionButtonMenuState();
@@ -104,6 +105,9 @@ class _MyFloatingActionButtonMenuState extends State<MyFloatingActionButtonMenu>
           isExtended: true,
           heroTag: "MyFloatingActionButtonMenu",
           onPressed: () {
+            if (widget.toggleIgnore!=null) {
+              widget.toggleIgnore!();
+            }
             setState(() {
               isOpen = !isOpen;
             });
@@ -151,6 +155,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
   int? _lastIndex;
   double? _lastEdge;
   bool _showBottomAppBar = true;
+  bool _ignorePrevNext = true;
 
   @override
   void initState() {
@@ -160,7 +165,9 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
     if (widget.tiebaForm) {
       computeNewOrder();
     }
-    itemPositionsListener.itemPositions.addListener(listenToScroll);
+    if (globalConfigInfo.getAutoHideBottomBar()) {
+      itemPositionsListener.itemPositions.addListener(listenToScroll);
+    }
     WidgetsBinding.instance.addPostFrameCallback((_){
       if (widget.postid != null) {
         var i = 0;
@@ -181,6 +188,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
   @override
   void didUpdateWidget(covariant ThreadDetailApp oldWidget) {
     super.didUpdateWidget(oldWidget);
+    _ignorePrevNext = true;
     if (widget.tiebaForm) {
       computeNewOrder();
     } else {
@@ -190,7 +198,9 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
 
   @override
   void dispose() {
-    itemPositionsListener.itemPositions.removeListener(listenToScroll);
+    if (globalConfigInfo.getAutoHideBottomBar()) {
+      itemPositionsListener.itemPositions.removeListener(listenToScroll);
+    }
     marked.dispose();
     super.dispose();
   }
@@ -315,12 +325,14 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
   }
 
   void showBottomAppBar() {
+    if (!_ignorePrevNext) { return; }
     if (!_showBottomAppBar) {
       setState(() { _showBottomAppBar = true; });
     }
   }
 
   void hideBottomAppBar() {
+    if (!_ignorePrevNext) { return; }
     if (_showBottomAppBar) {
       setState(() { _showBottomAppBar = false; });
     }
@@ -549,6 +561,9 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
         },
         gotoPreviousPost: ({bool far=false}) {
           gotoPreviousPost(far: far);
+        },
+        toggleIgnore: () {
+          _ignorePrevNext = !_ignorePrevNext;
         },
       ),
     );

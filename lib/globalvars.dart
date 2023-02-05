@@ -392,6 +392,7 @@ class BDWMConfig {
   bool showFAB = true;
   bool useMD3 = false;
   bool useDynamicColor = false;
+  bool autoHideBottomBar = true;
   String boardNoteFont = "";
   String primaryColorString = "";
   double contentFontSize = 16.0;
@@ -424,6 +425,7 @@ class BDWMConfig {
       "qmd": qmd,
       "useMD3": useMD3,
       "useDynamicColor": useDynamicColor,
+      "autoHideBottomBar": autoHideBottomBar,
     };
   }
   void fromJson(Map<String, dynamic> jsonContent) {
@@ -440,12 +442,24 @@ class BDWMConfig {
     qmd = jsonContent['qmd'] ?? "";
     useMD3 = jsonContent['useMD3'] ?? false;
     useDynamicColor = jsonContent['useDynamicColor'] ?? false;
+    autoHideBottomBar = jsonContent['autoHideBottomBar'] ?? true;
     boardNoteFont = jsonContent['boardNoteFont'] ?? simFont;
     List seeNoHimHerList = jsonContent['seeNoThem'] ?? <String>[];
     seeNoThem = Set<String>.from(seeNoHimHerList.map((e) => e as String));
   }
   String gist() {
     return jsonEncode(toJson());
+  }
+
+  bool getAutoHideBottomBar() {
+    return autoHideBottomBar;
+  }
+
+  Future<bool> setAutoHideBottomBar(bool newValue) async {
+    return await lock.synchronized(() async {
+      autoHideBottomBar = newValue;
+      return await update();
+    });
   }
 
   bool getUseDynamicColor() {
