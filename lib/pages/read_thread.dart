@@ -15,7 +15,7 @@ class MyFloatingActionButtonMenu extends StatefulWidget {
   final bool showFAB;
   final void Function({bool far}) gotoNextPost;
   final void Function({bool far}) gotoPreviousPost;
-  final Function? toggleIgnore;
+  final void Function(bool)? toggleIgnore;
   const MyFloatingActionButtonMenu({super.key, this.showFAB=true, required this.gotoNextPost, required this.gotoPreviousPost, this.toggleIgnore});
 
   @override
@@ -69,6 +69,9 @@ class _MyFloatingActionButtonMenuState extends State<MyFloatingActionButtonMenu>
     );
     removeButton = genButton(icon: Icon(Icons.remove, color: bdwmPrimaryColor,),
       onTap: () {
+        if (widget.toggleIgnore!=null) {
+          widget.toggleIgnore!(true);
+        }
         setState(() {
           showFAB = false;
         });
@@ -79,7 +82,7 @@ class _MyFloatingActionButtonMenuState extends State<MyFloatingActionButtonMenu>
   @override
   void didUpdateWidget(covariant MyFloatingActionButtonMenu oldWidget) {
     super.didUpdateWidget(oldWidget);
-    showFAB = widget.showFAB;
+    // showFAB = widget.showFAB;
     isOpen = false;
   }
 
@@ -106,7 +109,7 @@ class _MyFloatingActionButtonMenuState extends State<MyFloatingActionButtonMenu>
           heroTag: "MyFloatingActionButtonMenu",
           onPressed: () {
             if (widget.toggleIgnore!=null) {
-              widget.toggleIgnore!();
+              widget.toggleIgnore!(isOpen);
             }
             setState(() {
               isOpen = !isOpen;
@@ -133,11 +136,13 @@ class ThreadDetailApp extends StatefulWidget {
   final bool? needToBoard;
   final bool tiebaForm;
   final Function toggleTiebaForm;
+  final bool showFAB;
   const ThreadDetailApp({super.key,
     required this.refreshCallBack, required this.threadPageInfo, required this.threadLink,
     required this.page, required this.goPage, required this.userName,
     required this.bid, required this.threadid, this.postid, this.needToBoard,
     required this.tiebaForm, required this.toggleTiebaForm,
+    required this.showFAB,
   });
 
   @override
@@ -145,7 +150,6 @@ class ThreadDetailApp extends StatefulWidget {
 }
 
 class _ThreadDetailAppState extends State<ThreadDetailApp> {
-  bool showFAB = true;
   final _titleFont = const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
   ValueNotifier<bool> marked = ValueNotifier<bool>(false);
   final ItemScrollController itemScrollController = ItemScrollController();
@@ -160,7 +164,6 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
   @override
   void initState() {
     super.initState();
-    showFAB = globalConfigInfo.getShowFAB();
     marked.value = globalMarkedThread.contains(widget.threadLink);
     if (widget.tiebaForm) {
       computeNewOrder();
@@ -554,16 +557,16 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
           ),
         ),
       ),
-      floatingActionButton: !showFAB ? null : MyFloatingActionButtonMenu(
-        showFAB: showFAB,
+      floatingActionButton: !widget.showFAB ? null : MyFloatingActionButtonMenu(
+        showFAB: widget.showFAB,
         gotoNextPost: ({bool far=false}) {
           gotoNextPost(far: far);
         },
         gotoPreviousPost: ({bool far=false}) {
           gotoPreviousPost(far: far);
         },
-        toggleIgnore: () {
-          _ignorePrevNext = !_ignorePrevNext;
+        toggleIgnore: (bool newValue) {
+          _ignorePrevNext = newValue;
         },
       ),
     );
@@ -590,6 +593,7 @@ class  ThreadAppState extends State <ThreadApp> {
   String? postid;
   String threadLink = "";
   bool tiebaForm = false;
+  bool showFAB = true;
   // Future<ThreadPageInfo>? _future;
   @override
   void initState() {
@@ -601,6 +605,7 @@ class  ThreadAppState extends State <ThreadApp> {
         : int.parse(widget.page);
     // _future = getData();
     postid = widget.postid;
+    showFAB = globalConfigInfo.getShowFAB();
     threadLink = "$v2Host/post-read.php?bid=${widget.bid}&threadid=${widget.threadid}";
     getDataCancelable = CancelableOperation.fromFuture(getData(firstTime: true), onCancel: () {
       debugPrint("cancel it");
@@ -725,6 +730,7 @@ class  ThreadAppState extends State <ThreadApp> {
               tiebaForm = !tiebaForm;
             });
           },
+          showFAB: showFAB,
           postid: postid,
           needToBoard: widget.needToBoard,
         );
