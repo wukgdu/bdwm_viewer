@@ -479,81 +479,85 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
           ),
         ]
       ),
-      bottomNavigationBar: BottomAppBar(
-        shape: null,
-        // color: Colors.blue,
-        height: _showBottomAppBar ? null : 0.0,
-        child: IconTheme(
-          data: const IconThemeData(color: Colors.redAccent),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              IconButton(
-                color: bdwmPrimaryColor,
-                disabledColor: Colors.grey,
-                tooltip: '刷新',
-                icon: const Icon(Icons.refresh),
-                onPressed: () {
-                  widget.refreshCallBack();
-                },
-              ),
-              if (widget.needToBoard != null && widget.needToBoard == true)
+      bottomNavigationBar: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        height: _showBottomAppBar ? 80.0 : 0,
+        child: BottomAppBar(
+          shape: null,
+          // color: Colors.blue,
+          // height: _showBottomAppBar ? null : 0.0,
+          child: IconTheme(
+            data: const IconThemeData(color: Colors.redAccent),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
                 IconButton(
                   color: bdwmPrimaryColor,
                   disabledColor: Colors.grey,
-                  tooltip: '返回本版',
-                  icon: const Icon(Icons.list),
+                  tooltip: '刷新',
+                  icon: const Icon(Icons.refresh),
                   onPressed: () {
-                    nv2Push(context, '/board', arguments: {
-                      'boardName': widget.threadPageInfo.board.text.split('(').first,
-                      'bid': widget.threadPageInfo.boardid,
-                    },);
+                    widget.refreshCallBack();
                   },
                 ),
-              IconButton(
-                color: bdwmPrimaryColor,
-                disabledColor: Colors.grey,
-                tooltip: '上一页',
-                icon: const Icon(Icons.arrow_back),
-                onPressed: widget.page == 1 ? null : () {
-                  if (!mounted) { return; }
-                  widget.goPage(widget.page-1);
-                },
-              ),
-              TextButton(
-                child: Text("${widget.page}/${widget.threadPageInfo.pageNum}"),
-                onPressed: () async {
-                  var nPageStr = await showPageDialog(context, widget.page, widget.threadPageInfo.pageNum);
-                  if (nPageStr == null) { return; }
-                  if (nPageStr.isEmpty) { return; }
-                  var nPage = int.parse(nPageStr);
-                  widget.goPage(nPage);
-                },
-                onLongPress: () {
-                  var newPage = widget.page;
-                  if (widget.page == widget.threadPageInfo.pageNum) {
-                    newPage = 1;
-                  } else {
-                    newPage = widget.threadPageInfo.pageNum;
-                  }
-                  if (newPage == widget.page) { return; }
-                  widget.goPage(newPage);
-                },
-              ),
-              IconButton(
-                color: bdwmPrimaryColor,
-                disabledColor: Colors.grey,
-                tooltip: '下一页',
-                icon: const Icon(Icons.arrow_forward),
-                onPressed: widget.page == widget.threadPageInfo.pageNum ? null : () {
-                  // if (page == threadPageInfo.pageNum) {
-                  //   return;
-                  // }
-                  if (!mounted) { return; }
-                  widget.goPage(widget.page+1);
-                },
-              ),
-            ],
+                if (widget.needToBoard != null && widget.needToBoard == true)
+                  IconButton(
+                    color: bdwmPrimaryColor,
+                    disabledColor: Colors.grey,
+                    tooltip: '返回本版',
+                    icon: const Icon(Icons.list),
+                    onPressed: () {
+                      nv2Push(context, '/board', arguments: {
+                        'boardName': widget.threadPageInfo.board.text.split('(').first,
+                        'bid': widget.threadPageInfo.boardid,
+                      },);
+                    },
+                  ),
+                IconButton(
+                  color: bdwmPrimaryColor,
+                  disabledColor: Colors.grey,
+                  tooltip: '上一页',
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: widget.page == 1 ? null : () {
+                    if (!mounted) { return; }
+                    widget.goPage(widget.page-1);
+                  },
+                ),
+                TextButton(
+                  child: Text("${widget.page}/${widget.threadPageInfo.pageNum}"),
+                  onPressed: () async {
+                    var nPageStr = await showPageDialog(context, widget.page, widget.threadPageInfo.pageNum);
+                    if (nPageStr == null) { return; }
+                    if (nPageStr.isEmpty) { return; }
+                    var nPage = int.parse(nPageStr);
+                    widget.goPage(nPage);
+                  },
+                  onLongPress: () {
+                    var newPage = widget.page;
+                    if (widget.page == widget.threadPageInfo.pageNum) {
+                      newPage = 1;
+                    } else {
+                      newPage = widget.threadPageInfo.pageNum;
+                    }
+                    if (newPage == widget.page) { return; }
+                    widget.goPage(newPage);
+                  },
+                ),
+                IconButton(
+                  color: bdwmPrimaryColor,
+                  disabledColor: Colors.grey,
+                  tooltip: '下一页',
+                  icon: const Icon(Icons.arrow_forward),
+                  onPressed: widget.page == widget.threadPageInfo.pageNum ? null : () {
+                    // if (page == threadPageInfo.pageNum) {
+                    //   return;
+                    // }
+                    if (!mounted) { return; }
+                    widget.goPage(widget.page+1);
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
