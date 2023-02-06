@@ -462,22 +462,37 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
             ),
           ),
           Expanded(
-            child: ScrollablePositionedList.builder(
-              key: scrollKey,
-              itemCount: widget.threadPageInfo.posts.length,
-              itemBuilder: (context, index) {
-                if (widget.tiebaForm) {
-                  var oriIdx = newOrder[index].oriIdx;
-                  var subIdx = newOrder[index].subIdx;
-                  return _onepost(widget.threadPageInfo.posts[oriIdx], subIdx: subIdx > 5 ? 5 : subIdx);
+            child: GestureDetector(
+              onHorizontalDragEnd: (details) {
+                var dx = details.velocity.pixelsPerSecond.dx;
+                if (dx < 10) {
+                  // 向左滑动
+                  if (widget.page < widget.threadPageInfo.pageNum) {
+                    widget.goPage(widget.page+1);
+                  }
+                } else if (dx > 10) {
+                  if (widget.page > 1) {
+                    widget.goPage(widget.page-1);
+                  }
                 }
-                return _onepost(widget.threadPageInfo.posts[index]);
               },
-              itemScrollController: itemScrollController,
-              itemPositionsListener: itemPositionsListener,
+              child: ScrollablePositionedList.builder(
+                key: scrollKey,
+                itemCount: widget.threadPageInfo.posts.length,
+                itemBuilder: (context, index) {
+                  if (widget.tiebaForm) {
+                    var oriIdx = newOrder[index].oriIdx;
+                    var subIdx = newOrder[index].subIdx;
+                    return _onepost(widget.threadPageInfo.posts[oriIdx], subIdx: subIdx > 5 ? 5 : subIdx);
+                  }
+                  return _onepost(widget.threadPageInfo.posts[index]);
+                },
+                itemScrollController: itemScrollController,
+                itemPositionsListener: itemPositionsListener,
+              ),
             ),
           ),
-        ]
+        ],
       ),
       bottomNavigationBar: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
