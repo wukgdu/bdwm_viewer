@@ -388,6 +388,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
       hideIt = 0;
     }
     if (!_showBottomAppBar && (initScrollHeight! < newTrailingEdge) && (newTrailingEdge <= initScrollHeight!+80.0)) {
+      // MD3 bottom app bar height < 80，用80判断也没问题
       hideIt = 0;
     }
     _lastIndex = lastPosition.index;
@@ -524,7 +525,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
       ),
       bottomNavigationBar: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        height: _showBottomAppBar ? 80.0 : 0,
+        height: _showBottomAppBar ? (globalConfigInfo.useMD3 ? 80.0 : null) : 0,
         child: BottomAppBar(
           shape: null,
           // color: Colors.blue,
