@@ -157,7 +157,8 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
   GlobalKey scrollKey = GlobalKey();
   var newOrder = <TiebaFormItemInfo>[];
   int? _lastIndex;
-  double? _lastEdge;
+  double? _lastTrailingEdge;
+  double? initScrollHeight;
   bool _showBottomAppBar = true;
   bool _ignorePrevNext = true;
 
@@ -298,6 +299,17 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
     return firstPosition;
   }
 
+  ItemPosition getLastItem() {
+    var itemPositions = itemPositionsListener.itemPositions.value.toList();
+    var lastPosition = itemPositions.last;
+    for (var ips in itemPositions) {
+      if (lastPosition.index < ips.index) {
+        lastPosition = ips;
+      }
+    }
+    return lastPosition;
+  }
+
   void gotoPreviousPost({bool far=false}) {
     if (far) {
       itemScrollController.scrollTo(index: 0, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
@@ -341,29 +353,45 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
     }
   }
 
+  bool sameWithDelta(double a, double b, {double delta=0.1}) {
+    if ((a-b).abs() < delta) {
+      return true;
+    }
+    return false;
+  }
+
   void listenToScroll() {
+    const double delta = 2.0; // MD3 height of bottomAppBar is 80.0
     var scrollListHeight = scrollKey.currentContext?.size?.height ?? 1.0;
-    var firstPosition = getFirstItem();
+    initScrollHeight ??= scrollListHeight;
+    var lastPosition = getLastItem();
     if (_lastIndex==null) {
-      _lastIndex = firstPosition.index;
-      _lastEdge = firstPosition.itemLeadingEdge * scrollListHeight;
+      _lastIndex = lastPosition.index;
+      _lastTrailingEdge = lastPosition.itemTrailingEdge * scrollListHeight;
       return;
     }
     int hideIt = 0;
-    double newEdge = firstPosition.itemLeadingEdge * scrollListHeight;
-    if (firstPosition.index > _lastIndex!) {
+    double newTrailingEdge = lastPosition.itemTrailingEdge * scrollListHeight;
+    if (lastPosition.index > _lastIndex!) {
       hideIt = 1;
-    } else if (firstPosition.index < _lastIndex!) {
+    } else if (lastPosition.index < _lastIndex!) {
       hideIt = -1;
     } else {
-      if (newEdge < _lastEdge!) {
+      if ((newTrailingEdge < _lastTrailingEdge! - delta)) {
         hideIt = 1;
-      } else if (newEdge > _lastEdge!) {
+      } else if ((newTrailingEdge > _lastTrailingEdge! + delta)) {
         hideIt = -1;
       }
     }
-    _lastIndex = firstPosition.index;
-    _lastEdge = newEdge;
+    // debugPrint("$hideIt $_showBottomAppBar $scrollListHeight $_lastTrailingEdge $newTrailingEdge");
+    if (sameWithDelta(newTrailingEdge, scrollListHeight) && sameWithDelta(newTrailingEdge, _lastTrailingEdge!+80.0)) {
+      hideIt = 0;
+    }
+    if (!_showBottomAppBar && (initScrollHeight! < newTrailingEdge) && (newTrailingEdge <= initScrollHeight!+80.0)) {
+      hideIt = 0;
+    }
+    _lastIndex = lastPosition.index;
+    _lastTrailingEdge = newTrailingEdge;
     if (hideIt == 1) {
       hideBottomAppBar();
     } else if (hideIt == -1) {
