@@ -393,7 +393,7 @@ class BDWMConfig {
   bool useMD3 = false;
   bool useDynamicColor = false;
   bool autoHideBottomBar = true;
-  String boardNoteFont = "";
+  String boardNoteFont = simFont;
   String primaryColorString = "";
   double contentFontSize = 16.0;
   String maxPageNum = "8";
