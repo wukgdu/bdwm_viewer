@@ -150,6 +150,9 @@ class ThreadDetailApp extends StatefulWidget {
 }
 
 double? _initScrollHeight;
+void resetInitScrollHeight() {
+  _initScrollHeight = null;
+}
 // 回复帖子主题帖重新刷新后，class内state的initScrollHeight会变化，可能因为输入法占了屏幕？
 // 因此一开始保留这个变量用作之后的判断
 class _ThreadDetailAppState extends State<ThreadDetailApp> {

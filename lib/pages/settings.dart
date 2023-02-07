@@ -6,6 +6,7 @@ import '../views/constants.dart';
 import '../views/utils.dart';
 import '../main.dart' show MainPage, initPrimaryColor;
 import './board_note.dart' show showFontDialog;
+import './read_thread.dart' show resetInitScrollHeight;
 
 class ColorPickerComponent extends StatefulWidget {
   final Color primaryColor;
@@ -68,6 +69,7 @@ class UseMD3Component extends StatefulWidget {
 
 class _UseMD3ComponentState extends State<UseMD3Component> {
   void setMD(bool useMD3) {
+    resetInitScrollHeight();
     globalConfigInfo.useMD3 = useMD3;
     var mainState = MainPage.maybeOf(context);
     mainState?.refresh();
