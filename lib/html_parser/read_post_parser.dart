@@ -52,7 +52,7 @@ SinglePostInfo parseSinglePost(String htmlStr) {
         boardName = getTrimmedString(ld);
         boardLink = absThreadLink(href);
       } else if (href.contains("post-read")) {
-        threadid = getQueryValue(href, "threadid") ?? "";
+        // threadid = getQueryValue(href, "threadid") ?? "";
         title = getTrimmedString(ld);
       }
     }
@@ -65,6 +65,7 @@ SinglePostInfo parseSinglePost(String htmlStr) {
   var threadLink = document.querySelector(".view-full-post")?.attributes['href'] ?? "";
   if (threadLink.isNotEmpty) {
     threadLink = absThreadLink(threadLink);
+    threadid = getQueryValue(threadLink, "threadid") ?? "";
   }
   return SinglePostInfo(
     blockid: blockid, boardid: boardid, threadid: threadid, title: title, board: TextAndLink(boardName, boardLink),
