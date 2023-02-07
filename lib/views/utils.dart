@@ -6,6 +6,7 @@ import 'package:path/path.dart' as path;
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
+import 'package:media_scanner/media_scanner.dart';
 // import 'package:fwfh_selectable_text/fwfh_selectable_text.dart';
 
 import '../globalvars.dart' show networkErrorText;
@@ -220,6 +221,9 @@ Future<bool?> showLinkMenu(BuildContext context, String link, {String? downloadP
                 if (resp.statusCode == 200) {
                   File(down).writeAsBytes(resp.bodyBytes).then((value) {
                     if (value.existsSync()) {
+                      if  (defaultTargetPlatform == TargetPlatform.android) {
+                        MediaScanner.loadMedia(path: down);
+                      }
                       quickNotify("下载完成", down);
                     } else {
                       quickNotify("写入文件失败", down);
