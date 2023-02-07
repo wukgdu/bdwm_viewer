@@ -6,12 +6,11 @@ import 'package:path/path.dart' as path;
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
-import 'package:permission_handler/permission_handler.dart' show Permission;
 // import 'package:fwfh_selectable_text/fwfh_selectable_text.dart';
 
 import '../globalvars.dart' show networkErrorText;
 import './constants.dart';
-import '../utils.dart' show quickNotify, checkAndRequestPermission;
+import '../utils.dart' show quickNotify, checkAndRequestStoragePermission;
 
 Future<String?> showAlertDialog(BuildContext context, String title, Widget content, {Widget? actions1, Widget? actions2, Widget? actions3, List<Widget>? actions, bool? barrierDismissible=true}) {
   AlertDialog alert = AlertDialog(
@@ -206,7 +205,7 @@ Future<bool?> showLinkMenu(BuildContext context, String link, {String? downloadP
                   }
                   down = saveRes.reason;
                 } else {
-                  var couldStore = await checkAndRequestPermission(Permission.storage);
+                  var couldStore = await checkAndRequestStoragePermission();
                   if (couldStore == false) {
                     return;
                   }
@@ -274,7 +273,7 @@ class SaveRes {
 }
 
 Future<SaveRes> genDownloadPath({String? name}) async {
-  var couldStore = await checkAndRequestPermission(Permission.storage);
+  var couldStore = await checkAndRequestStoragePermission();
   if (couldStore == false) {
     return SaveRes(false, "没有保存文件权限");
   }

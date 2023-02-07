@@ -69,6 +69,7 @@ dependencies:
   quick_actions: ^1.0.1
   intl: ^0.17.0
   dynamic_color: ^1.6.0
+  device_info_plus: ^8.0.0
 
 dev_dependencies:
   flutter_test:

@@ -4,6 +4,7 @@ import 'dart:io' show Platform;
 import 'package:quick_notify/quick_notify.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 bool isAndroid() {
   return Platform.isAndroid;
@@ -21,7 +22,35 @@ class TextAndLink {
   }
 }
 
+Future<bool> checkAndRequestStoragePermission() async {
+  // https://github.com/Baseflow/flutter-permission-handler/issues/907
+  bool couldDoIt = true;
+  var p = Permission.storage;
+  if (Platform.isWindows) {
+    couldDoIt = await checkAndRequestPermission(p);
+  } else if (Platform.isAndroid) {
+    bool pStorage = true;
+    bool pVideos = true;
+    bool pPhotos = true;
+    bool pAudio = true;
+
+    // Only check for storage < Android 13
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    if (androidInfo.version.sdkInt >= 33) {
+      pVideos = await checkAndRequestPermission(Permission.videos);
+      pPhotos = await checkAndRequestPermission(Permission.photos);
+      pAudio = await checkAndRequestPermission(Permission.audio);
+    } else {
+      pStorage = await checkAndRequestPermission(p);
+    }
+    couldDoIt = pStorage & pVideos & pPhotos & pAudio;
+  }
+  return couldDoIt;
+}
+
 Future<bool> checkAndRequestPermission(Permission p) async {
+  // https://developer.android.com/guide/topics/ui/notifiers/notification-permission?hl=zh-cn
   var couldDoIt = true;
   var hasIt = await p.isGranted;
   if (!hasIt) {
