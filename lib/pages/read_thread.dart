@@ -149,6 +149,9 @@ class ThreadDetailApp extends StatefulWidget {
   State<ThreadDetailApp> createState() => _ThreadDetailAppState();
 }
 
+double? _initScrollHeight;
+// 回复帖子主题帖重新刷新后，class内state的initScrollHeight会变化，可能因为输入法占了屏幕？
+// 因此一开始保留这个变量用作之后的判断
 class _ThreadDetailAppState extends State<ThreadDetailApp> {
   final _titleFont = const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
   ValueNotifier<bool> marked = ValueNotifier<bool>(false);
@@ -158,7 +161,6 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
   var newOrder = <TiebaFormItemInfo>[];
   int? _lastIndex;
   double? _lastTrailingEdge;
-  double? initScrollHeight;
   bool _showBottomAppBar = true;
   bool _ignorePrevNext = true;
 
@@ -363,7 +365,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
   void listenToScroll() {
     const double delta = 2.0; // MD3 height of bottomAppBar is 80.0
     var scrollListHeight = scrollKey.currentContext?.size?.height ?? 1.0;
-    initScrollHeight ??= scrollListHeight;
+    _initScrollHeight ??= scrollListHeight;
     var lastPosition = getLastItem();
     if (_lastIndex==null) {
       _lastIndex = lastPosition.index;
@@ -383,11 +385,11 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
         hideIt = -1;
       }
     }
-    // debugPrint("$hideIt $_showBottomAppBar $scrollListHeight $_lastTrailingEdge $newTrailingEdge");
+    // debugPrint("$hideIt $_showBottomAppBar $scrollListHeight $_lastTrailingEdge $newTrailingEdge $_initScrollHeight");
     if (sameWithDelta(newTrailingEdge, scrollListHeight) && sameWithDelta(newTrailingEdge, _lastTrailingEdge!+80.0)) {
       hideIt = 0;
     }
-    if (!_showBottomAppBar && (initScrollHeight! - 0.1 < newTrailingEdge) && (newTrailingEdge <= initScrollHeight!+80.1)) {
+    if (!_showBottomAppBar && (_initScrollHeight! - 0.1 < newTrailingEdge) && (newTrailingEdge <= _initScrollHeight!+80.1)) {
       // MD3 bottom app bar height < 80，用80判断也没问题
       hideIt = 0;
     }
