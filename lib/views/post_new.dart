@@ -312,6 +312,7 @@ class _PostNewPageState extends State<PostNewPage> {
               // const Text("标题"),
               Expanded(
                 child: TextField(
+                  autofocus: (widget.parentid == null) && (widget.postid == null), // 发帖
                   controller: titleValue,
                   decoration: const InputDecoration(
                     labelText: "标题",
@@ -433,7 +434,7 @@ class _PostNewPageState extends State<PostNewPage> {
             scrollController: _scrollController,
             scrollable: true,
             focusNode: _focusNode,
-            autoFocus: true,
+            autoFocus: widget.parentid != null, // 回帖
             readOnly: false,
             expands: false,
             padding: const EdgeInsets.all(5.0),

@@ -111,6 +111,7 @@ class _MailNewPageState extends State<MailNewPage> {
               // const Text("标题"),
               Expanded(
                 child: TextField(
+                  // autofocus: widget.parentid == null, // 发帖
                   controller: titleValue,
                   decoration: const InputDecoration(
                     labelText: "标题",
