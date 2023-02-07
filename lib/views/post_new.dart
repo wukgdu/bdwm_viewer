@@ -18,7 +18,7 @@ import './html_widget.dart';
 import './quill_utils.dart';
 import './upload.dart';
 import './utils.dart';
-import '../router.dart' show nv2Pop;
+import '../router.dart' show nv2Pop, forceRefresh, nv2Replace;
 
 class PostNewPage extends StatefulWidget {
   final String bid;
@@ -397,8 +397,19 @@ class _PostNewPageState extends State<PostNewPage> {
                           onPressed: () { Navigator.of(context).pop(); },
                           child: const Text("知道了"),
                         )
-                      ).then((value) {
-                        nv2Pop(context);
+                      ).then((value2) {
+                        if (widget.parentid == null && widget.postid == null) {
+                          // 版面发新帖
+                          if (value.postid == null || value.postid == -1) { return; }
+                          nv2Replace(context, '/singlePost', arguments: {
+                            'bid': widget.bid,
+                            'postid': value.postid.toString(),
+                          });
+                          // forceRefresh(value.postid!);
+                        } else {
+                          forceRefresh(value.postid ?? -1);
+                          nv2Pop(context);
+                        }
                       });
                     } else {
                       var errorMessage = "发送失败，请稍后重试";

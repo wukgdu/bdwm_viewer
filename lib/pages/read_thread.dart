@@ -9,7 +9,7 @@ import '../bdwm/req.dart';
 import '../views/constants.dart' show bdwmPrimaryColor;
 import '../globalvars.dart';
 import '../utils.dart' show clearAllExtendedImageCache;
-import '../router.dart' show nv2Push, nv2Replace;
+import '../router.dart' show nv2Push, nv2Replace, ForceRerefreshWidget, getForceID, forceRefresh;
 
 class MyFloatingActionButtonMenu extends StatefulWidget {
   final bool showFAB;
@@ -655,9 +655,10 @@ class  ThreadAppState extends State <ThreadApp> {
     postid = widget.postid;
     showFAB = globalConfigInfo.getShowFAB();
     threadLink = "$v2Host/post-read.php?bid=${widget.bid}&threadid=${widget.threadid}";
-    getDataCancelable = CancelableOperation.fromFuture(getData(firstTime: true), onCancel: () {
-      debugPrint("cancel it");
-    },);
+    // called in didChangeDepencies
+    // getDataCancelable = CancelableOperation.fromFuture(getData(firstTime: true), onCancel: () {
+    //   debugPrint("cancel it");
+    // },);
   }
 
   void addHistory({required String link, required String title, required String userName, required String boardName}) {
@@ -674,20 +675,31 @@ class  ThreadAppState extends State <ThreadApp> {
     super.dispose();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    int pid = getForceID();
+    postid = pid == -1 ? widget.postid : pid.toString();
+    debugPrint("*************** change $pid");
+    forceRefresh(-1);
+    getDataCancelable = CancelableOperation.fromFuture(getData(firstTime: true), onCancel: () {
+      debugPrint("cancel it");
+    },);
+  }
+
   Future<ThreadPageInfo> getData({bool firstTime=false}) async {
     var bid = widget.bid;
     var threadid = widget.threadid;
     var url = "$v2Host/post-read.php?bid=$bid&threadid=$threadid";
-    if (firstTime && widget.page == "a") {
-      url += "&page=a";
-      if (widget.postid != null) {
-        url += "&postid=${widget.postid}";
-      }
-    } else if (! (page == 0 || page == 1)) {
-      url += "&page=$page";
-    }
     if (!firstTime) {
       postid = null;
+    }
+    if (firstTime && postid != null) {
+      url += "&page=a";
+      url += "&postid=$postid";
+      // postid = null;
+    } else if (! (page == 0 || page == 1)) {
+      url += "&page=$page";
     }
     var resp = await bdwmClient.get(url, headers: genHeaders2());
     if (resp == null) {
@@ -711,6 +723,7 @@ class  ThreadAppState extends State <ThreadApp> {
 
   @override
   Widget build(BuildContext context) {
+    int needReloadID = ForceRerefreshWidget.maybeOf(context)?.reload ?? -1;
     return FutureBuilder(
       future: getDataCancelable.value,
       builder: (context, snapshot) {
@@ -754,7 +767,8 @@ class  ThreadAppState extends State <ThreadApp> {
         if (threadPageInfo.page != page) {
           page = threadPageInfo.page;
         }
-        String userName = "未知";
+        // String userName = "未知";
+        String userName = "未知+$needReloadID";
         if (threadPageInfo.posts.isNotEmpty) {
           userName = threadPageInfo.posts.first.authorInfo.userName;
         }

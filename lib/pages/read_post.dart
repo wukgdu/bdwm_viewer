@@ -96,9 +96,10 @@ class _SinglePostAppState extends State<SinglePostApp> {
             ),
           );
         }
+        var boardName = singlePostInfo.board.text.split('(').first;
         return Scaffold(
           appBar: AppBar(
-            title: Text(singlePostInfo.board.text.split('(').first),
+            title: Text(boardName),
             actions: [
               IconButton(
                 onPressed: () {
@@ -122,7 +123,7 @@ class _SinglePostAppState extends State<SinglePostApp> {
               Expanded(
                 child: SingleChildScrollView(
                   child: OnePostComponent(bid: widget.bid, onePostInfo: singlePostInfo.postInfo,
-                    threadid: singlePostInfo.threadid, boardName: widget.boardName ?? "",
+                    threadid: singlePostInfo.threadid, boardName: boardName,
                     refreshCallBack: () {
                       refresh();
                     },

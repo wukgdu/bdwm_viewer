@@ -358,6 +358,34 @@ class MyPage extends Page {
   }
 }
 
+int _reload = -1;
+int getForceID() {
+  return _reload;
+}
+
+void forceRefresh(int a) {
+  _reload = a;
+}
+
+class ForceRerefreshWidget extends InheritedWidget {
+  const ForceRerefreshWidget({
+    Key? key,
+    required this.reload,
+    required Widget child,
+  }) : super(key: key, child: child);
+
+  final int reload;
+
+  static ForceRerefreshWidget? maybeOf(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<ForceRerefreshWidget>();
+  }
+
+  @override
+  bool updateShouldNotify(ForceRerefreshWidget oldWidget) {
+    return (oldWidget.reload != reload) && (reload != -1);
+  }
+}
+
 class MainRouterDelegate extends RouterDelegate<MyRouteConfig>
   with ChangeNotifier, PopNavigatorRouterDelegateMixin<MyRouteConfig> {
   @override
@@ -384,7 +412,7 @@ class MainRouterDelegate extends RouterDelegate<MyRouteConfig>
     }
     int? maxPageNum = int.tryParse(globalConfigInfo.getMaxPageNum());
     if (maxPageNum!=null && (maxPageNum <= 0 || maxPageNum >= mainRoutes.length)) { maxPageNum = null; }
-    var toIter = maxPageNum != null ? mainRoutes.reversed : mainRoutes;
+    var toIter = mainRoutes.reversed;
     int sNum = 0;
     for (var s in toIter) {
       var w = mainPageBuilder.build(s);
@@ -398,24 +426,25 @@ class MainRouterDelegate extends RouterDelegate<MyRouteConfig>
         s.delete = true;
       }
     }
-    if (maxPageNum != null) {
-      pages = pages.reversed.toList(growable: false);
-    }
+    pages = pages.reversed.toList(growable: false);
     mainRoutes.removeWhere((element) => element.delete==true);
     debugPrint("route and page: ${mainRoutes.length} ${pages.length}");
-    return Navigator(
-      key: navigatorKey,
-      pages: pages,
-      onPopPage: (route, result) {
-        if (!route.didPop(result)) {
-          return false;
+    return ForceRerefreshWidget(
+      reload: _reload,
+      child: Navigator(
+        key: navigatorKey,
+        pages: pages,
+        onPopPage: (route, result) {
+          if (!route.didPop(result)) {
+            return false;
+          }
+          pop();
+          return true;
         }
-        pop();
-        return true;
-      }
+      ),
     );
   }
-  
+
   @override
   Future<void> setNewRoutePath(MyRouteConfig configuration) {
     if (mainRoutes.isEmpty) { return Future.value(null); }

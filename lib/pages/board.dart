@@ -106,6 +106,17 @@ class _BoardAppState extends State<BoardApp> {
     super.dispose();
   }
 
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   int pid = getForceID();
+  //   debugPrint("*************** change $pid");
+  //   forceRefresh(-1);
+  //   getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+  //     debugPrint("cancel it");
+  //   },);
+  // }
+
   Future<BoardInfo> getData() async {
     var url = "$v2Host/thread.php?bid=${widget.bid}";
     if (! (page == 0 || page == 1)) {
