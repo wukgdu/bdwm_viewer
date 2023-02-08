@@ -396,6 +396,9 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
       // MD3 bottom app bar height < 80，用80判断也没问题
       hideIt = 0;
     }
+    if ((_initScrollHeight! < newTrailingEdge) && (newTrailingEdge <= _initScrollHeight!+80.1)) {
+      hideIt = 1;
+    }
     _lastIndex = lastPosition.index;
     _lastTrailingEdge = newTrailingEdge;
     if (hideIt == 1) {
