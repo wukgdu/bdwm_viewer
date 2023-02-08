@@ -362,6 +362,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
                   genContentTextSpan(rawContent),
                   if (link.isNotEmpty)
                     WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
                       child: GestureDetector(
                         onTap: () {
                           if (link.startsWith("https://bbs.pku.edu.cn/v2/user.php")) {
