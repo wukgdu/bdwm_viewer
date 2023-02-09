@@ -5,6 +5,8 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import './utils.dart' show checkAndRequestPermission;
+import './router.dart' show nv2RawPush;
+import './check_update.dart' show innerLinkForBBS;
 
 // https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/lib/main.dart
 
@@ -24,12 +26,13 @@ const AndroidNotificationDetails androidNotificationDetailsGeneral = AndroidNoti
 void sendNotification(String title, String content, {String? payload, String type="general"}) {
   switch (type) {
     case "general":
-      quickNotify(title, content);
+      // for different channel
+      quickNotify(title, content, payload: payload);
       break;
   }
 }
 
-Future<void> quickNotify(String title, String content) async {
+Future<void> quickNotify(String title, String content, {String? payload}) async {
   bool couldDoIt = await checkAndRequestNotificationPermission();
   if (!couldDoIt) { return; }
   if (Platform.isWindows) {
@@ -37,7 +40,7 @@ Future<void> quickNotify(String title, String content) async {
     const NotificationDetails notificationDetails = NotificationDetails(android: androidNotificationDetailsGeneral);
     await flutterLocalNotificationsPlugin.show(
       quickID++, title, content, notificationDetails,
-      payload: ''
+      payload: payload
     );
   }
 }
@@ -71,6 +74,22 @@ Future<bool> checkAndRequestNotificationPermission() async {
 // void notificationTapBackground(NotificationResponse notificationResponse) {
 // }
 
+void processNotification(String payload) {
+  if (payload.isEmpty) { return; }
+  if (payload == "/message") {
+    nv2RawPush("/message");
+  } else if (payload == "/mail") {
+    nv2RawPush("/mail");
+  } else if (payload == "version") {
+    nv2RawPush("/collectionArticle", arguments: {
+      "link": innerLinkForBBS,
+      "title": "最新版本",
+    });
+  } else if (payload == "/login") {
+    nv2RawPush("/login");
+  }
+}
+
 Future<void> initFlnInstance() async {
   // TODO: didNotificationLaunchApp
   const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('ic_quick_notify');
@@ -83,7 +102,7 @@ Future<void> initFlnInstance() async {
         (NotificationResponse notificationResponse) {
       switch (notificationResponse.notificationResponseType) {
         case NotificationResponseType.selectedNotification:
-          // selectNotificationStream.add(notificationResponse.payload);
+          processNotification(notificationResponse.payload ?? "");
           break;
         case NotificationResponseType.selectedNotificationAction:
           break;

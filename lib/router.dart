@@ -321,6 +321,12 @@ class MainPageBuilder {
   }
 }
 
+MainRouterDelegate? mainRouterDelegate;
+
+void nv2RawPush(String name, {Object? arguments}) {
+  mainRouterDelegate?.push(name, arguments: arguments);
+}
+
 void nv2Push(BuildContext context, String name, {Object? arguments}) {
   var delegate = Router.of(context).routerDelegate as MainRouterDelegate;
   delegate.push(name, arguments: arguments);

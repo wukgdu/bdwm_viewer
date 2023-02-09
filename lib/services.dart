@@ -139,8 +139,7 @@ class NotifyMessage {
     if (content.length > 30) {
       content = content.substring(0, 30);
     }
-    // TODO: 分别发送？，点击打开消息页面，历史消息？
-    sendNotification("$count条消息", content);
+    sendNotification("$count条消息", content, payload: "/message");
   }
 }
 
@@ -248,8 +247,7 @@ class NotifyMail {
     if (content.length > 40) {
       content = content.substring(0, 40);
     }
-    // TODO: 打开站内信
-    sendNotification(title, content);
+    sendNotification(title, content, payload: "/mail");
   }
 }
 

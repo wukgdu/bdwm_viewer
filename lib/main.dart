@@ -115,7 +115,6 @@ class MainPageState extends State<MainPage> {
   ValueNotifier<int> messageCount = ValueNotifier<int>(0);
   ValueNotifier<int> mailCount = ValueNotifier<int>(0);
   MessageBriefNotifier messageBrief = MessageBriefNotifier([]);
-  late final MainRouterDelegate mainRouterDelegate;
 
   void updateUnreadMessageData() {
     unreadMessage.updateValue((NotifyMessageInfo info) {
@@ -157,10 +156,10 @@ class MainPageState extends State<MainPage> {
           // 没用的case，保留switch为了以后可能的修改
           case '/me':
           case '/favorite':
-            mainRouterDelegate.replace(shortcutType);
+            mainRouterDelegate?.replace(shortcutType);
             break;
           default:
-            mainRouterDelegate.push(shortcutType);
+            mainRouterDelegate?.push(shortcutType);
         }
       });
       quickActions.setShortcutItems(<ShortcutItem>[

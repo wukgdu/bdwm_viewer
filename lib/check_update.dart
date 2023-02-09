@@ -27,8 +27,7 @@ Future<bool> checkUpdate() async {
     List<int> versionLocalNumbers = curVersionForBBS.split(".").map((e) => int.parse(e)).toList();
     bool thereIsNewVersion = isNewVersion(versionOnlineNumbers, versionLocalNumbers);
     if (thereIsNewVersion) {
-      // TODO: 打开最新版本页面
-      sendNotification("新版本", versionOnline);
+      sendNotification("新版本", versionOnline, payload: "version");
     }
   } catch (e) {
     sendNotification("新版本检查失败", e.toString());

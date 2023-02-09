@@ -15,8 +15,7 @@ class BdwmClient {
       // debugPrint(cookie);
       await globalUInfo.checkAndLogout(cookie);
       if (globalUInfo.login == false) {
-        // TODO: 打开登录界面
-        sendNotification("OBViewer", "登录已失效");
+        sendNotification("OBViewer", "登录已失效", payload: "/login");
       }
     }
   }
