@@ -123,6 +123,44 @@ class _MyFloatingActionButtonMenuState extends State<MyFloatingActionButtonMenu>
   }
 }
 
+class LongPressIconButton extends StatelessWidget {
+  final bool enabled;
+  final Color primaryColor;
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+  final double? iconSize;
+  final IconData iconData;
+  final Color? disabledColor;
+
+  const LongPressIconButton({
+    super.key,
+    required this.primaryColor,
+    required this.iconData,
+    required this.enabled,
+    this.iconSize,
+    this.onTap,
+    this.onLongPress,
+    this.disabledColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: enabled ? onTap : null,
+      onLongPress: enabled ? onLongPress : null,
+      borderRadius: BorderRadius.circular((iconSize ?? 24.0) / 2.0 + 8.0),
+      hoverColor: primaryColor.withOpacity(0.08),
+      focusColor: primaryColor.withOpacity(0.08),
+      highlightColor: primaryColor.withOpacity(0.12),
+      splashColor: primaryColor.withOpacity(0.12),
+      child: Container(
+        padding: const EdgeInsets.all(8.0),
+        child: Icon(iconData, color: enabled ? primaryColor : disabledColor, size: iconSize,),
+      ),
+    );
+  }
+}
+
 class ThreadDetailApp extends StatefulWidget {
   final Function refreshCallBack;
   final Function goPage;
@@ -565,14 +603,16 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
                       },);
                     },
                   ),
-                IconButton(
-                  color: bdwmPrimaryColor,
+                LongPressIconButton(
+                  primaryColor: bdwmPrimaryColor,
+                  iconData: Icons.arrow_back,
+                  enabled: widget.page > 1,
                   disabledColor: Colors.grey,
-                  tooltip: '上一页',
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: widget.page == 1 ? null : () {
-                    if (!mounted) { return; }
+                  onTap: () {
                     widget.goPage(widget.page-1);
+                  },
+                  onLongPress: () {
+                    widget.goPage(1);
                   },
                 ),
                 TextButton(
