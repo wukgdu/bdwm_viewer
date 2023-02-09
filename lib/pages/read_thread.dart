@@ -150,6 +150,9 @@ class ThreadDetailApp extends StatefulWidget {
 }
 
 double? _initScrollHeight;
+void resetInitScrollHeight() {
+  _initScrollHeight = null;
+}
 // 回复帖子主题帖重新刷新后，class内state的initScrollHeight会变化，可能因为输入法占了屏幕？
 // 因此一开始保留这个变量用作之后的判断
 class _ThreadDetailAppState extends State<ThreadDetailApp> {
@@ -392,6 +395,9 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
     if (!_showBottomAppBar && (_initScrollHeight! - 0.1 < newTrailingEdge) && (newTrailingEdge <= _initScrollHeight!+80.1)) {
       // MD3 bottom app bar height < 80，用80判断也没问题
       hideIt = 0;
+    }
+    if ((_initScrollHeight! < newTrailingEdge) && (newTrailingEdge <= _initScrollHeight!+80.1)) {
+      hideIt = 1;
     }
     _lastIndex = lastPosition.index;
     _lastTrailingEdge = newTrailingEdge;
@@ -679,6 +685,7 @@ class  ThreadAppState extends State <ThreadApp> {
     // getDataCancelable = CancelableOperation.fromFuture(getData(firstTime: true), onCancel: () {
     //   debugPrint("cancel it");
     // },);
+    resetInitScrollHeight();
   }
 
   void addHistory({required String link, required String title, required String userName, required String boardName}) {

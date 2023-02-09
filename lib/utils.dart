@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 
-import 'package:quick_notify/quick_notify.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -60,17 +59,6 @@ Future<bool> checkAndRequestPermission(Permission p) async {
     }
   }
   return couldDoIt;
-}
-
-void quickNotify(String title, String content) async {
-  var couldNotify = await checkAndRequestPermission(Permission.notification);
-  if (couldNotify == false) {
-    return;
-  }
-  QuickNotify.notify(
-    title: title,
-    content: content,
-  );
 }
 
 void clearAllExtendedImageCache({bool? really=false}) {

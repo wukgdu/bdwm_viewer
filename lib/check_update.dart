@@ -1,10 +1,10 @@
 import './globalvars.dart';
 import './html_parser/collection_parser.dart';
 import './bdwm/req.dart';
-import './utils.dart';
+import './notification.dart' show sendNotification;
 
 const String innerLinkForBBS = "https://bbs.pku.edu.cn/v2/collection-read.php?path=groups%2FGROUP_0%2FPersonalCorpus%2FO%2Fonepiece%2FD93F86C79%2FA862DAFBA";
-const String curVersionForBBS = "1.7.3";
+const String curVersionForBBS = "1.7.4";
 
 bool isNewVersion(List<int> onlineNumbers, List<int> localNumbers) {
   if (onlineNumbers[0] > localNumbers[0]) { return true; }
@@ -27,10 +27,10 @@ Future<bool> checkUpdate() async {
     List<int> versionLocalNumbers = curVersionForBBS.split(".").map((e) => int.parse(e)).toList();
     bool thereIsNewVersion = isNewVersion(versionOnlineNumbers, versionLocalNumbers);
     if (thereIsNewVersion) {
-      quickNotify("新版本", versionOnline);
+      sendNotification("新版本", versionOnline, payload: "version");
     }
   } catch (e) {
-    quickNotify("新版本检查失败", e.toString());
+    sendNotification("新版本检查失败", e.toString());
   }
   return true;
 }

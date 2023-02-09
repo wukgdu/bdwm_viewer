@@ -3,10 +3,9 @@ import 'dart:math' show min;
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 // import '../globalvars.dart';
-import '../utils.dart' show checkAndRequestPermission;
+import '../utils.dart' show checkAndRequestStoragePermission;
 import "./utils.dart";
 import './constants.dart';
 import '../bdwm/upload.dart';
@@ -57,7 +56,7 @@ class _UploadDialogBodyState extends State<UploadDialogBody> {
         children: [
           TextButton(
             onPressed: () {
-              checkAndRequestPermission(Permission.storage)
+              checkAndRequestStoragePermission()
               .then((couldDoIt) {
                 if (!couldDoIt) {
                   ScaffoldMessenger.of(context).showSnackBar(

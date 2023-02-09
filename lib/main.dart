@@ -15,6 +15,7 @@ import './services_instance.dart';
 import './bdwm/mail.dart';
 import './utils.dart';
 import './check_update.dart' show checkUpdateByTime;
+import './notification.dart' show initFlnInstance;
 
 void main() async {
   if (isAndroid()) {
@@ -28,6 +29,7 @@ void main() async {
   await globalNotConfigInfo.init();
   await globalThreadHistory.init();
   await globalMarkedThread.init();
+  await initFlnInstance();
   initPrimaryColor();
   checkUpdateByTime();
   await unreadMessage.initWorker();
@@ -113,7 +115,6 @@ class MainPageState extends State<MainPage> {
   ValueNotifier<int> messageCount = ValueNotifier<int>(0);
   ValueNotifier<int> mailCount = ValueNotifier<int>(0);
   MessageBriefNotifier messageBrief = MessageBriefNotifier([]);
-  late final MainRouterDelegate mainRouterDelegate;
 
   void updateUnreadMessageData() {
     unreadMessage.updateValue((NotifyMessageInfo info) {
@@ -155,10 +156,10 @@ class MainPageState extends State<MainPage> {
           // 没用的case，保留switch为了以后可能的修改
           case '/me':
           case '/favorite':
-            mainRouterDelegate.replace(shortcutType);
+            mainRouterDelegate?.replace(shortcutType);
             break;
           default:
-            mainRouterDelegate.push(shortcutType);
+            mainRouterDelegate?.push(shortcutType);
         }
       });
       quickActions.setShortcutItems(<ShortcutItem>[
