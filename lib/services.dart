@@ -7,6 +7,7 @@ import './bdwm/message.dart';
 import './bdwm/mail.dart';
 import './utils.dart';
 import './globalvars.dart';
+import './notification.dart' show sendNotification;
 
 class NotifyMessageInfo {
   List<UnreadMessageInfo> value = <UnreadMessageInfo>[];
@@ -138,7 +139,8 @@ class NotifyMessage {
     if (content.length > 30) {
       content = content.substring(0, 30);
     }
-    quickNotify("$count条消息", content);
+    // TODO: 分别发送？，点击打开消息页面，历史消息？
+    sendNotification("$count条消息", content);
   }
 }
 
@@ -246,7 +248,8 @@ class NotifyMail {
     if (content.length > 40) {
       content = content.substring(0, 40);
     }
-    quickNotify(title, content);
+    // TODO: 打开站内信
+    sendNotification(title, content);
   }
 }
 

@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 
 import '../globalvars.dart';
-import '../utils.dart';
+import '../notification.dart' show sendNotification;
 
 class BdwmClient {
   final http.Client client = http.Client();
@@ -15,7 +15,8 @@ class BdwmClient {
       // debugPrint(cookie);
       await globalUInfo.checkAndLogout(cookie);
       if (globalUInfo.login == false) {
-        quickNotify("OBViewer", "登录已失效");
+        // TODO: 打开登录界面
+        sendNotification("OBViewer", "登录已失效");
       }
     }
   }

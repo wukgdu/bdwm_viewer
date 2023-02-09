@@ -11,7 +11,8 @@ import 'package:media_scanner/media_scanner.dart';
 
 import '../globalvars.dart' show networkErrorText;
 import './constants.dart';
-import '../utils.dart' show quickNotify, checkAndRequestStoragePermission;
+import '../utils.dart' show checkAndRequestStoragePermission;
+import '../notification.dart' show sendNotification;
 
 Future<String?> showAlertDialog(BuildContext context, String title, Widget content, {Widget? actions1, Widget? actions2, Widget? actions3, List<Widget>? actions, bool? barrierDismissible=true}) {
   AlertDialog alert = AlertDialog(
@@ -224,16 +225,16 @@ Future<bool?> showLinkMenu(BuildContext context, String link, {String? downloadP
                       if  (defaultTargetPlatform == TargetPlatform.android) {
                         MediaScanner.loadMedia(path: down);
                       }
-                      quickNotify("下载完成", down);
+                      sendNotification("下载完成", down);
                     } else {
-                      quickNotify("写入文件失败", down);
+                      sendNotification("写入文件失败", down);
                     }
                   },);
                 } else {
                   if (timeout) {
-                    quickNotify("下载超时", "超过$seconds秒");
+                    sendNotification("下载超时", "超过$seconds秒");
                   } else {
-                    quickNotify("下载失败", down);
+                    sendNotification("下载失败", down);
                   }
                 }
               }

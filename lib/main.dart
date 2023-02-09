@@ -15,6 +15,7 @@ import './services_instance.dart';
 import './bdwm/mail.dart';
 import './utils.dart';
 import './check_update.dart' show checkUpdateByTime;
+import './notification.dart' show initFlnInstance;
 
 void main() async {
   if (isAndroid()) {
@@ -28,6 +29,7 @@ void main() async {
   await globalNotConfigInfo.init();
   await globalThreadHistory.init();
   await globalMarkedThread.init();
+  await initFlnInstance();
   initPrimaryColor();
   checkUpdateByTime();
   await unreadMessage.initWorker();
