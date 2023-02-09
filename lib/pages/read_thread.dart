@@ -667,6 +667,7 @@ class  ThreadAppState extends State <ThreadApp> {
     // getDataCancelable = CancelableOperation.fromFuture(getData(firstTime: true), onCancel: () {
     //   debugPrint("cancel it");
     // },);
+    resetInitScrollHeight();
   }
 
   void addHistory({required String link, required String title, required String userName, required String boardName}) {
