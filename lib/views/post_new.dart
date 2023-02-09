@@ -325,7 +325,9 @@ class _PostNewPageState extends State<PostNewPage> {
                   if (titleValue.text.isEmpty) {
                     showAlertDialog(context, "有问题", const Text("标题不能为空"),
                       actions1: TextButton(
-                        onPressed: () { Navigator.of(context).pop(); },
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          },
                         child: const Text("知道了"),
                       )
                     );
@@ -394,7 +396,7 @@ class _PostNewPageState extends State<PostNewPage> {
                       // TODO: handle forward (no plan)
                       showAlertDialog(context, "发送成功", const Text("rt"),
                         actions1: TextButton(
-                          onPressed: () { Navigator.of(context).pop(); },
+                          onPressed: () {Navigator.of(context).pop();},
                           child: const Text("知道了"),
                         )
                       ).then((value2) {
