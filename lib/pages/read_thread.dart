@@ -562,6 +562,15 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
                 IconButton(
                   color: bdwmPrimaryColor,
                   disabledColor: Colors.grey,
+                  tooltip: '首页',
+                  icon: const Icon(Icons.first_page),
+                  onPressed:  () {
+                    widget.goPage(1);
+                  },
+                ),
+                IconButton(
+                  color: bdwmPrimaryColor,
+                  disabledColor: Colors.grey,
                   tooltip: '上一页',
                   icon: const Icon(Icons.arrow_back),
                   onPressed: widget.page == 1 ? null : () {
@@ -600,6 +609,15 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
                     // }
                     if (!mounted) { return; }
                     widget.goPage(widget.page+1);
+                  },
+                ),
+                IconButton(
+                  color: bdwmPrimaryColor,
+                  disabledColor: Colors.grey,
+                  tooltip: '末页',
+                  icon: const Icon(Icons.last_page),
+                  onPressed: () {
+                    widget.goPage(widget.threadPageInfo.pageNum);
                   },
                 ),
               ],
