@@ -188,9 +188,15 @@ class _CollectionPageState extends State<CollectionPage> {
                         } else {
                           if (multiSelectedPath.isEmpty) { return; }
                           var paths = getSelectedPath();
-                          bdwmOperateCollectionBatched(action: "delete", list: paths)
-                          .then((batchRes) {
-                            confirmAfterBatchOperation(context, batchRes, ope: "删除");
+                          showConfirmDialog(context, "文集", "确认删除？").then((value) {
+                            if (value==null) { return; }
+                            if (value.isEmpty) { return; }
+                            if (value == "yes") {
+                              bdwmOperateCollectionBatched(action: "delete", list: paths)
+                              .then((batchRes) {
+                                confirmAfterBatchOperation(context, batchRes, ope: "删除");
+                              });
+                            }
                           });
                         }
                       }
@@ -273,6 +279,15 @@ class _CollectionPageState extends State<CollectionPage> {
                         }
                       }
                     ),
+                    if (item.type.contains("file")) ...[
+                      const Divider(),
+                      ElevatedButton(
+                        child: const Text("收入文集"),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        }
+                      ),
+                    ],
                     const Divider(),
                     ElevatedButton(
                       child: Text(inMultiSelect ? '取消多选' : '多选'),
@@ -298,17 +313,27 @@ class _CollectionPageState extends State<CollectionPage> {
           );
         },
         leading: item.type.contains("dir") ? const Icon(Icons.folder) : const Icon(Icons.article),
-        trailing: inMultiSelect ? Checkbox(
-          value: multiSelectedPath.contains(item),
-          onChanged: (value) {
-            if (value == null) { return; }
-            if (value) {
-              multiSelectedPath.add(item);
+        trailing: inMultiSelect ? GestureDetector(
+          onLongPress: () {
+            if (multiSelectedPath.length != widget.collectionList.collectionItems.length) {
+              multiSelectedPath.addAll(widget.collectionList.collectionItems);
             } else {
-              multiSelectedPath.remove(item);
+              multiSelectedPath.clear();
             }
             setState(() { });
           },
+          child: Checkbox(
+            value: multiSelectedPath.contains(item),
+            onChanged: (value) {
+              if (value == null) { return; }
+              if (value) {
+                multiSelectedPath.add(item);
+              } else {
+                multiSelectedPath.remove(item);
+              }
+              setState(() { });
+            },
+          ),
         ) : ReorderableDragStartListener(
           index: index,
           child: const Icon(Icons.drag_handle),
