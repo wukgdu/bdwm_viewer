@@ -77,11 +77,28 @@ class _CollectionPageState extends State<CollectionPage> {
   final _controller = ScrollController();
   String oPath = "";
   int oIndex = -1;
+  bool inMultiSelect = false;
+  Set<CollectionItem> multiSelectedPath = {};
 
   @override
   void dispose() {
     _controller.dispose();
+    multiSelectedPath.clear();
     super.dispose();
+  }
+
+  List<String> getSelectedPath() {
+    var selectItems = multiSelectedPath.toList();
+    selectItems.sort((a, b) { return a.id - b.id; });
+    var httpPaths = selectItems.map((item) {
+      var path = getQueryValue(item.path, 'path');
+      if (path == null) {
+        return "";
+      }
+      path = path.replaceAll('%2F', '/');
+      return path;
+    });
+    return httpPaths.where((element) => element.isNotEmpty).toList();
   }
 
   Widget oneItem(CollectionItem item, {Key? key}) {
@@ -135,64 +152,121 @@ class _CollectionPageState extends State<CollectionPage> {
                         path = path.replaceAll('%2F', '/');
                         deleteCollectionWrap(path, context, () {
                           widget.collectionList.collectionItems.remove(item);
-                          setState(() { });
-                        });
-                      }
-                    ),
-                    const Divider(),
-                    ElevatedButton(
-                      child: const Text('移动到其他位置'),
-                      onPressed: () async {
-                        Navigator.of(context).pop();
-                        var nIndexStr = await showPageDialog(context, item.id, widget.collectionList.totalCount);
-                        if (nIndexStr == null) { return; }
-                        if (nIndexStr.isEmpty) { return; }
-                        var nIndex = int.parse(nIndexStr);
-                        if (!mounted) { return; }
-                        reorderCollectionWrap(item.path, nIndex-1, context, refreshCallBack: () {
                           if (widget.refresh!=null) {
                             widget.refresh!();
                           }
                         });
                       }
                     ),
+                    if (!inMultiSelect) ...[
+                      const Divider(),
+                      ElevatedButton(
+                        child: const Text('移动到其他位置'),
+                        onPressed: () async {
+                          Navigator.of(context).pop();
+                          var nIndexStr = await showPageDialog(context, item.id, widget.collectionList.totalCount);
+                          if (nIndexStr == null) { return; }
+                          if (nIndexStr.isEmpty) { return; }
+                          var nIndex = int.parse(nIndexStr);
+                          if (!mounted) { return; }
+                          reorderCollectionWrap(item.path, nIndex-1, context, refreshCallBack: () {
+                            if (widget.refresh!=null) {
+                              widget.refresh!();
+                            }
+                          });
+                        }
+                      ),
+                    ],
                     const Divider(),
                     ElevatedButton(
                       child: const Text('移动到其他文件夹'),
                       onPressed: () async {
                         Navigator.of(context).pop();
-                        var path = getQueryValue(item.path, 'path');
-                        if (path == null) {
-                          showInformDialog(context, "移动失败", "未找到路径");
-                          return;
-                        }
-                        path = path.replaceAll('%2F', '/');
-                        showCollectionDialog(context, isSingle: true)
-                        .then((value) {
-                          if (value == null || value.isEmpty) {
+                        if (!inMultiSelect) {
+                          var path = getQueryValue(item.path, 'path');
+                          if (path == null) {
+                            showInformDialog(context, "移动失败", "未找到路径");
                             return;
                           }
-                          var base = value;
-                          if (base.isEmpty || base=="none") {
-                            return;
-                          }
-                          bdwmOperateCollection(action: "move", path: path!, tobase: value)
-                          .then((importRes) {
-                            var txt = "移动成功";
-                            if (importRes.success == false) {
-                              txt = "发生错误啦><";
-                              if (importRes.error == -1) {
-                                txt = importRes.desc ?? txt;
-                              } else if (importRes.error == 9) {
-                                txt = "您没有足够权限执行此操作";
-                              }
-                              showInformDialog(context, "移动文集", txt,);
-                            } else {
-                              if (widget.refresh!=null) {
-                                widget.refresh!();
-                              }
+                          path = path.replaceAll('%2F', '/');
+                          showCollectionDialog(context, isSingle: true)
+                          .then((value) {
+                            if (value == null || value.isEmpty) {
+                              return;
                             }
+                            var base = value;
+                            if (base.isEmpty || base=="none") {
+                              return;
+                            }
+                            bdwmOperateCollection(action: "move", path: path!, tobase: value)
+                            .then((importRes) {
+                              var txt = "移动成功";
+                              if (importRes.success == false) {
+                                txt = "发生错误啦><";
+                                if (importRes.error == -1) {
+                                  txt = importRes.desc ?? txt;
+                                } else if (importRes.error == 9) {
+                                  txt = "您没有足够权限执行此操作";
+                                }
+                                showInformDialog(context, "移动文集", txt,);
+                              } else {
+                                if (widget.refresh!=null) {
+                                  widget.refresh!();
+                                }
+                              }
+                            });
                           });
+                        } else {
+                          if (multiSelectedPath.isEmpty) { return; }
+                          var paths = getSelectedPath();
+                          showCollectionDialog(context, isSingle: true)
+                          .then((value) {
+                            if (value == null || value.isEmpty) {
+                              return;
+                            }
+                            var base = value;
+                            if (base.isEmpty || base=="none") {
+                              return;
+                            }
+                            bdwmOperateCollectionBatched(action: "move", list: paths, tobase: value)
+                            .then((batchRes) {
+                              var txt = "移动成功";
+                              bool success = false;
+                              if (batchRes.success != null) {
+                                success = batchRes.success!;
+                                if (batchRes.success==true) {
+                                  txt = "移动成功";
+                                } else {
+                                  txt = batchRes.desc ?? "移动失败";
+                                }
+                              } else {
+                                success = batchRes.results.every((element) => element == false);
+                                if (success) {
+                                  txt = "移动成功";
+                                } else {
+                                  txt = batchRes.desc ?? "移动不完全成功";
+                                }
+                              }
+                              if (success == false) {
+                                showInformDialog(context, "移动文集", txt,);
+                              } else {
+                                multiSelectedPath.clear();
+                                if (widget.refresh!=null) {
+                                  widget.refresh!();
+                                }
+                              }
+                            });
+                          });
+                        }
+                      }
+                    ),
+                    const Divider(),
+                    ElevatedButton(
+                      child: Text(inMultiSelect ? '取消多选' : '多选'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        setState(() {
+                          inMultiSelect = !inMultiSelect;
                         });
                       }
                     ),
@@ -210,6 +284,18 @@ class _CollectionPageState extends State<CollectionPage> {
           );
         },
         leading: item.type.contains("dir") ? const Icon(Icons.folder) : const Icon(Icons.article),
+        trailing: inMultiSelect ? Checkbox(
+          value: multiSelectedPath.contains(item),
+          onChanged: (value) {
+            if (value == null) { return; }
+            if (value) {
+              multiSelectedPath.add(item);
+            } else {
+              multiSelectedPath.remove(item);
+            }
+            setState(() { });
+          },
+        ) : null,
         title: Text(item.name),
         subtitle: Text.rich(
           TextSpan(
@@ -226,7 +312,8 @@ class _CollectionPageState extends State<CollectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ReorderableListView.builder(
+    return !inMultiSelect
+    ? ReorderableListView.builder(
       scrollController: _controller,
       itemBuilder: (context, index) {
         var e = widget.collectionList.collectionItems[index];
@@ -252,6 +339,14 @@ class _CollectionPageState extends State<CollectionPage> {
         }
         reorderCollectionWrap(oPath, index, context);
       },
+    )
+    : ListView.builder(
+      controller: _controller,
+      itemBuilder: (context, index) {
+        var e = widget.collectionList.collectionItems[index];
+        return oneItem(e, key: Key("$index"));
+      },
+      itemCount: widget.collectionList.collectionItems.length,
     );
   }
 }

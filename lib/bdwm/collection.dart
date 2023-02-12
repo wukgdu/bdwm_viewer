@@ -166,3 +166,50 @@ Future<CollectionImportRes> bdwmOperateCollection({required String path, require
   );
   return res;
 }
+
+class CollectionBatchRes {
+  bool? success = true;
+  List<dynamic> results = [];
+  String? desc;
+
+  CollectionBatchRes.empty();
+  CollectionBatchRes.error({
+    required this.success,
+    required this.desc,
+  });
+  CollectionBatchRes({
+    required this.success,
+    required this.results,
+    this.desc,
+  });
+}
+
+Future<CollectionBatchRes> bdwmOperateCollectionBatched({required List<String> list, required String action, String? tobase}) async {
+  var actionUrl = "$v2Host/ajax/operate_collection_batched.php";
+  var data = {
+    "action": action,
+  };
+  for (int i=0; i<list.length; i+=1) {
+    data['list[$i]'] = list[i].toString();
+  }
+  if (action=="copy") {
+    assert(tobase != null);
+    data['tobase'] = tobase ?? "";
+  } else if (action=="move") {
+    assert(tobase != null);
+    data['tobase'] = tobase ?? "";
+  }
+  var headers = genHeaders2();
+  var resp = await bdwmClient.post(actionUrl, headers: headers, data: data);
+  if (resp == null) {
+    return CollectionBatchRes.error(success: false, desc: networkErrorText);
+  }
+  var respContent = json.decode(resp.body);
+  // List resultsTmp = respContent['results'] ?? <bool>[];
+  // var results = List<bool>.from(resultsTmp.map((e) => e as bool));
+  var res = CollectionBatchRes(
+    success: respContent['success'],
+    results: respContent['results'],
+  );
+  return res;
+}
