@@ -101,6 +101,34 @@ class _CollectionPageState extends State<CollectionPage> {
     return httpPaths.where((element) => element.isNotEmpty).toList();
   }
 
+  void confirmAfterBatchOperation(BuildContext context, CollectionBatchRes batchRes, {String ope=""}) {
+    var txt = "成功";
+    bool success = false;
+    if (batchRes.success != null) {
+      success = batchRes.success!;
+      if (batchRes.success==true) {
+        txt = "成功";
+      } else {
+        txt = batchRes.desc ?? "失败";
+      }
+    } else {
+      success = batchRes.results.every((element) => element == false);
+      if (success) {
+        txt = "成功";
+      } else {
+        txt = batchRes.desc ?? "不完全成功";
+      }
+    }
+    if (success == false) {
+      showInformDialog(context, "$ope操作", txt);
+    } else {
+      multiSelectedPath.clear();
+      if (widget.refresh!=null) {
+        widget.refresh!();
+      }
+    }
+  }
+
   Widget oneItem(CollectionItem item, {Key? key}) {
     return Card(
       key: key,
@@ -144,18 +172,27 @@ class _CollectionPageState extends State<CollectionPage> {
                       child: const Text('删除'),
                       onPressed: () {
                         Navigator.of(context).pop();
-                        var path = getQueryValue(item.path, 'path');
-                        if (path == null) {
-                          showInformDialog(context, "删除失败", "未找到路径");
-                          return;
-                        }
-                        path = path.replaceAll('%2F', '/');
-                        deleteCollectionWrap(path, context, () {
-                          widget.collectionList.collectionItems.remove(item);
-                          if (widget.refresh!=null) {
-                            widget.refresh!();
+                        if (!inMultiSelect) {
+                          var path = getQueryValue(item.path, 'path');
+                          if (path == null) {
+                            showInformDialog(context, "删除失败", "未找到路径");
+                            return;
                           }
-                        });
+                          path = path.replaceAll('%2F', '/');
+                          deleteCollectionWrap(path, context, () {
+                            widget.collectionList.collectionItems.remove(item);
+                            if (widget.refresh!=null) {
+                              widget.refresh!();
+                            }
+                          });
+                        } else {
+                          if (multiSelectedPath.isEmpty) { return; }
+                          var paths = getSelectedPath();
+                          bdwmOperateCollectionBatched(action: "delete", list: paths)
+                          .then((batchRes) {
+                            confirmAfterBatchOperation(context, batchRes, ope: "删除");
+                          });
+                        }
                       }
                     ),
                     if (!inMultiSelect) ...[
@@ -230,31 +267,7 @@ class _CollectionPageState extends State<CollectionPage> {
                             }
                             bdwmOperateCollectionBatched(action: "move", list: paths, tobase: value)
                             .then((batchRes) {
-                              var txt = "移动成功";
-                              bool success = false;
-                              if (batchRes.success != null) {
-                                success = batchRes.success!;
-                                if (batchRes.success==true) {
-                                  txt = "移动成功";
-                                } else {
-                                  txt = batchRes.desc ?? "移动失败";
-                                }
-                              } else {
-                                success = batchRes.results.every((element) => element == false);
-                                if (success) {
-                                  txt = "移动成功";
-                                } else {
-                                  txt = batchRes.desc ?? "移动不完全成功";
-                                }
-                              }
-                              if (success == false) {
-                                showInformDialog(context, "移动文集", txt,);
-                              } else {
-                                multiSelectedPath.clear();
-                                if (widget.refresh!=null) {
-                                  widget.refresh!();
-                                }
-                              }
+                              confirmAfterBatchOperation(context, batchRes, ope: "移动");
                             });
                           });
                         }
