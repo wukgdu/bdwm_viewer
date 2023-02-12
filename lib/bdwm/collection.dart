@@ -139,14 +139,18 @@ Future<CollectionImportRes> bdwmCollectionImport({required String from, required
   return collectionImportRes;
 }
 
-Future<CollectionImportRes> bdwmOperateCollection({required String path, required String action, String? tobase}) async {
+Future<CollectionImportRes> bdwmOperateCollection({required String path, required String action, String? tobase, String? pos}) async {
   var actionUrl = "$v2Host/ajax/operate_collection.php";
   var data = {
     "action": action,
     "path": path,
   };
   if (action=="copy") {
+    assert(tobase != null);
     data['tobase'] = tobase ?? "";
+  } else if (action=="movepos") {
+    assert(pos != null);
+    data['pos'] = pos ?? "";
   }
   var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
   if (resp == null) {

@@ -13,7 +13,7 @@ import './read_thread.dart' show AttachmentComponent;
 import './html_widget.dart';
 import '../router.dart' show nv2Push;
 
-void deleteCollectionArticleWrap(String path, BuildContext context, Function refreshCallBack) {
+void deleteCollectionWrap(String path, BuildContext context, Function refreshCallBack) {
   showConfirmDialog(context, "文集", "确认删除？").then((value) {
     if (value==null) { return; }
     if (value.isEmpty) { return; }
@@ -25,7 +25,7 @@ void deleteCollectionArticleWrap(String path, BuildContext context, Function ref
         if (!res.success) {
           content = "删除失败";
           if (res.error == -1) {
-            content = res.desc!;
+            content = "删除失败：${res.desc}";
           }
         }
         showInformDialog(context, title, content).then((value2) {
@@ -34,6 +34,31 @@ void deleteCollectionArticleWrap(String path, BuildContext context, Function ref
           }
         });
       });
+    }
+  });
+}
+
+void reorderCollectionWrap(String httpPath, int index, BuildContext context, {Function? refreshCallBack}) {
+  var path = getQueryValue(httpPath, 'path');
+  if (path == null) {
+    showInformDialog(context, "移动失败", "未找到路径");
+    return;
+  }
+  path = path.replaceAll('%2F', '/');
+  bdwmOperateCollection(action: "movepos", path: path, pos: index.toString())
+  .then((CollectionImportRes res) {
+    var title = "文集";
+    var content = "移动成功";
+    if (!res.success) {
+      content = "移动失败";
+      if (res.error == -1) {
+        content = "移动失败：${res.desc}";
+      }
+      showInformDialog(context, title, content);
+    } else {
+      if (refreshCallBack!=null) {
+        refreshCallBack();
+      }
     }
   });
 }
@@ -49,6 +74,8 @@ class CollectionPage extends StatefulWidget {
 
 class _CollectionPageState extends State<CollectionPage> {
   final _controller = ScrollController();
+  String oPath = "";
+  int oIndex = -1;
 
   @override
   void dispose() {
@@ -56,8 +83,9 @@ class _CollectionPageState extends State<CollectionPage> {
     super.dispose();
   }
 
-  Widget oneItem(CollectionItem item) {
+  Widget oneItem(CollectionItem item, {Key? key}) {
     return Card(
+      key: key,
       child: ListTile(
         onTap: () {
           if (item.type == "dir") {
@@ -104,7 +132,7 @@ class _CollectionPageState extends State<CollectionPage> {
                           return;
                         }
                         path = path.replaceAll('%2F', '/');
-                        deleteCollectionArticleWrap(path, context, () {
+                        deleteCollectionWrap(path, context, () {
                           widget.collectionList.collectionItems.remove(item);
                           setState(() { });
                         });
@@ -140,12 +168,31 @@ class _CollectionPageState extends State<CollectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      controller: _controller,
-      itemCount: widget.collectionList.collectionItems.length,
+    return ReorderableListView.builder(
+      scrollController: _controller,
       itemBuilder: (context, index) {
         var e = widget.collectionList.collectionItems[index];
-        return oneItem(e);
+        return oneItem(e, key: Key("$index"));
+      },
+      itemCount: widget.collectionList.collectionItems.length,
+      onReorder: (int oldIndex, int newIndex) {
+        setState(() {
+          if (oldIndex < newIndex) {
+            newIndex -= 1;
+          }
+          final item = widget.collectionList.collectionItems.removeAt(oldIndex);
+          widget.collectionList.collectionItems.insert(newIndex, item);
+        });
+      },
+      onReorderStart: (index) {
+        oPath = widget.collectionList.collectionItems[index].path;
+        oIndex = index;
+      },
+      onReorderEnd: (index) {
+        if (oIndex < index) {
+          index -= 1;
+        }
+        reorderCollectionWrap(oPath, index, context);
       },
     );
   }
@@ -203,7 +250,7 @@ class _CollectionArticlePageState extends State<CollectionArticlePage> {
             if (widget.collectionArticle.canDelete)
               TextButton(
                 onPressed: () {
-                  deleteCollectionArticleWrap(widget.collectionArticle.path, context, widget.refreshCallBack);
+                  deleteCollectionWrap(widget.collectionArticle.path, context, widget.refreshCallBack);
                 },
                 child: const Text("删除"),
               ),
