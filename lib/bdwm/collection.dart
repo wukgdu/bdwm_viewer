@@ -148,6 +148,9 @@ Future<CollectionImportRes> bdwmOperateCollection({required String path, require
   if (action=="copy") {
     assert(tobase != null);
     data['tobase'] = tobase ?? "";
+  } else if (action=="move") {
+    assert(tobase != null);
+    data['tobase'] = tobase ?? "";
   } else if (action=="movepos") {
     assert(pos != null);
     data['pos'] = pos ?? "";

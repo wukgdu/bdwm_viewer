@@ -121,7 +121,7 @@ class _CollectionPageState extends State<CollectionPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Center(child: SelectableText(item.name),),
+                    Center(child: SelectableText("${item.name}（位置：${item.id}）"),),
                     const Divider(),
                     ElevatedButton(
                       child: const Text('删除'),
@@ -141,7 +141,7 @@ class _CollectionPageState extends State<CollectionPage> {
                     ),
                     const Divider(),
                     ElevatedButton(
-                      child: Text('移动到其他位置，当前 ${item.id}'),
+                      child: const Text('移动到其他位置'),
                       onPressed: () async {
                         Navigator.of(context).pop();
                         var nIndexStr = await showPageDialog(context, item.id, widget.collectionList.totalCount);
@@ -153,6 +153,46 @@ class _CollectionPageState extends State<CollectionPage> {
                           if (widget.refresh!=null) {
                             widget.refresh!();
                           }
+                        });
+                      }
+                    ),
+                    const Divider(),
+                    ElevatedButton(
+                      child: const Text('移动到其他文件夹'),
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        var path = getQueryValue(item.path, 'path');
+                        if (path == null) {
+                          showInformDialog(context, "移动失败", "未找到路径");
+                          return;
+                        }
+                        path = path.replaceAll('%2F', '/');
+                        showCollectionDialog(context, isSingle: true)
+                        .then((value) {
+                          if (value == null || value.isEmpty) {
+                            return;
+                          }
+                          var base = value;
+                          if (base.isEmpty || base=="none") {
+                            return;
+                          }
+                          bdwmOperateCollection(action: "move", path: path!, tobase: value)
+                          .then((importRes) {
+                            var txt = "移动成功";
+                            if (importRes.success == false) {
+                              txt = "发生错误啦><";
+                              if (importRes.error == -1) {
+                                txt = importRes.desc ?? txt;
+                              } else if (importRes.error == 9) {
+                                txt = "您没有足够权限执行此操作";
+                              }
+                              showInformDialog(context, "移动文集", txt,);
+                            } else {
+                              if (widget.refresh!=null) {
+                                widget.refresh!();
+                              }
+                            }
+                          });
                         });
                       }
                     ),
@@ -287,7 +327,7 @@ class _CollectionArticlePageState extends State<CollectionArticlePage> {
                   .then((importRes) {
                     var txt = "收藏成功";
                     if (importRes.success == false) {
-                      var txt = "发生错误啦><";
+                      txt = "发生错误啦><";
                       if (importRes.error == -1) {
                         txt = importRes.desc ?? txt;
                       } else if (importRes.error == 9) {

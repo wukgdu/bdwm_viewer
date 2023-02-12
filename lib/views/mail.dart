@@ -177,7 +177,7 @@ class _MailDetailPageState extends State<MailDetailPage> {
                   .then((importRes) {
                     var txt = "收藏成功";
                     if (importRes.success == false) {
-                      var txt = "发生错误啦><";
+                      txt = "发生错误啦><";
                       if (importRes.error == -1) {
                         txt = importRes.desc ?? txt;
                       } else if (importRes.error == 9) {
