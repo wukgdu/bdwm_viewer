@@ -8,7 +8,7 @@ import '../bdwm/collection.dart';
 import '../html_parser/collection_parser.dart';
 import '../utils.dart' show getQueryValue;
 import '../globalvars.dart' show globalConfigInfo;
-import './utils.dart' show showConfirmDialog, showInformDialog, showAlertDialog;
+import './utils.dart' show showConfirmDialog, showInformDialog, showAlertDialog, showPageDialog;
 import './read_thread.dart' show AttachmentComponent;
 import './html_widget.dart';
 import '../router.dart' show nv2Push;
@@ -66,7 +66,8 @@ void reorderCollectionWrap(String httpPath, int index, BuildContext context, {Fu
 class CollectionPage extends StatefulWidget {
   final CollectionList collectionList;
   final String title;
-  const CollectionPage({super.key, required this.collectionList, required this.title});
+  final Function? refresh;
+  const CollectionPage({super.key, required this.collectionList, required this.title, this.refresh});
 
   @override
   State<CollectionPage> createState() => _CollectionPageState();
@@ -135,6 +136,23 @@ class _CollectionPageState extends State<CollectionPage> {
                         deleteCollectionWrap(path, context, () {
                           widget.collectionList.collectionItems.remove(item);
                           setState(() { });
+                        });
+                      }
+                    ),
+                    const Divider(),
+                    ElevatedButton(
+                      child: Text('移动到其他位置，当前 ${item.id}'),
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        var nIndexStr = await showPageDialog(context, item.id, widget.collectionList.totalCount);
+                        if (nIndexStr == null) { return; }
+                        if (nIndexStr.isEmpty) { return; }
+                        var nIndex = int.parse(nIndexStr);
+                        if (!mounted) { return; }
+                        reorderCollectionWrap(item.path, nIndex-1, context, refreshCallBack: () {
+                          if (widget.refresh!=null) {
+                            widget.refresh!();
+                          }
                         });
                       }
                     ),

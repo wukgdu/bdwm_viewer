@@ -129,7 +129,7 @@ class _CollectionAppState extends State<CollectionApp> {
               ),
             ],
           ),
-          body: CollectionPage(collectionList: collectionList, title: collectionList.title),
+          body: CollectionPage(collectionList: collectionList, title: collectionList.title, refresh: () { refresh(); },),
           bottomNavigationBar: BottomAppBar(
             shape: null,
             // color: Colors.blue,
