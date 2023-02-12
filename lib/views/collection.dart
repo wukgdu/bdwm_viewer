@@ -129,7 +129,7 @@ class _CollectionPageState extends State<CollectionPage> {
     }
   }
 
-  Widget oneItem(CollectionItem item, {Key? key}) {
+  Widget oneItem(CollectionItem item, int index, {Key? key}) {
     return Card(
       key: key,
       child: ListTile(
@@ -280,6 +280,7 @@ class _CollectionPageState extends State<CollectionPage> {
                         Navigator.of(context).pop();
                         setState(() {
                           inMultiSelect = !inMultiSelect;
+                          multiSelectedPath.clear();
                         });
                       }
                     ),
@@ -308,7 +309,10 @@ class _CollectionPageState extends State<CollectionPage> {
             }
             setState(() { });
           },
-        ) : null,
+        ) : ReorderableDragStartListener(
+          index: index,
+          child: const Icon(Icons.drag_handle),
+        ),
         title: Text(item.name),
         subtitle: Text.rich(
           TextSpan(
@@ -325,12 +329,12 @@ class _CollectionPageState extends State<CollectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return !inMultiSelect
-    ? ReorderableListView.builder(
+    return ReorderableListView.builder(
       scrollController: _controller,
+      buildDefaultDragHandles: false,
       itemBuilder: (context, index) {
         var e = widget.collectionList.collectionItems[index];
-        return oneItem(e, key: Key("$index"));
+        return oneItem(e, index, key: Key("$index"));
       },
       itemCount: widget.collectionList.collectionItems.length,
       onReorder: (int oldIndex, int newIndex) {
@@ -350,16 +354,12 @@ class _CollectionPageState extends State<CollectionPage> {
         if (oIndex < index) {
           index -= 1;
         }
-        reorderCollectionWrap(oPath, index, context);
+        reorderCollectionWrap(oPath, index, context, refreshCallBack: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("移动成功"), duration: Duration(milliseconds: 600),),
+          );
+        });
       },
-    )
-    : ListView.builder(
-      controller: _controller,
-      itemBuilder: (context, index) {
-        var e = widget.collectionList.collectionItems[index];
-        return oneItem(e, key: Key("$index"));
-      },
-      itemCount: widget.collectionList.collectionItems.length,
     );
   }
 }
