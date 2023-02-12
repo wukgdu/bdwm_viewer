@@ -87,10 +87,15 @@ class _CollectionPageState extends State<CollectionPage> {
     super.dispose();
   }
 
-  List<String> getSelectedPath() {
+  List<String> getSelectedPath({bool onlyFile=false}) {
     var selectItems = multiSelectedPath.toList();
     selectItems.sort((a, b) { return a.id - b.id; });
     var httpPaths = selectItems.map((item) {
+      if (onlyFile) {
+        if (!item.type.contains("file")) {
+          return "";
+        }
+      }
       var path = getQueryValue(item.path, 'path');
       if (path == null) {
         return "";
@@ -127,6 +132,42 @@ class _CollectionPageState extends State<CollectionPage> {
         widget.refresh!();
       }
     }
+  }
+
+  void collectionMoveOrCopy(BuildContext context, CollectionItem item, String action, String ope) {
+    var path = getQueryValue(item.path, 'path');
+    if (path == null) {
+      showInformDialog(context, "$ope失败", "未找到路径");
+      return;
+    }
+    path = path.replaceAll('%2F', '/');
+    showCollectionDialog(context, isSingle: true)
+    .then((value) {
+      if (value == null || value.isEmpty) {
+        return;
+      }
+      var base = value;
+      if (base.isEmpty || base=="none") {
+        return;
+      }
+      bdwmOperateCollection(action: action, path: path!, tobase: value)
+      .then((importRes) {
+        var txt = "$ope成功";
+        if (importRes.success == false) {
+          txt = "发生错误啦><";
+          if (importRes.error == -1) {
+            txt = importRes.desc ?? txt;
+          } else if (importRes.error == 9) {
+            txt = "您没有足够权限执行此操作";
+          }
+          showInformDialog(context, "$ope文集", txt,);
+        } else {
+          if (widget.refresh!=null) {
+            widget.refresh!();
+          }
+        }
+      });
+    });
   }
 
   Widget oneItem(CollectionItem item, int index, {Key? key}) {
@@ -226,39 +267,7 @@ class _CollectionPageState extends State<CollectionPage> {
                       onPressed: () async {
                         Navigator.of(context).pop();
                         if (!inMultiSelect) {
-                          var path = getQueryValue(item.path, 'path');
-                          if (path == null) {
-                            showInformDialog(context, "移动失败", "未找到路径");
-                            return;
-                          }
-                          path = path.replaceAll('%2F', '/');
-                          showCollectionDialog(context, isSingle: true)
-                          .then((value) {
-                            if (value == null || value.isEmpty) {
-                              return;
-                            }
-                            var base = value;
-                            if (base.isEmpty || base=="none") {
-                              return;
-                            }
-                            bdwmOperateCollection(action: "move", path: path!, tobase: value)
-                            .then((importRes) {
-                              var txt = "移动成功";
-                              if (importRes.success == false) {
-                                txt = "发生错误啦><";
-                                if (importRes.error == -1) {
-                                  txt = importRes.desc ?? txt;
-                                } else if (importRes.error == 9) {
-                                  txt = "您没有足够权限执行此操作";
-                                }
-                                showInformDialog(context, "移动文集", txt,);
-                              } else {
-                                if (widget.refresh!=null) {
-                                  widget.refresh!();
-                                }
-                              }
-                            });
-                          });
+                          collectionMoveOrCopy(context, item, "move", "移动");
                         } else {
                           if (multiSelectedPath.isEmpty) { return; }
                           var paths = getSelectedPath();
@@ -285,6 +294,31 @@ class _CollectionPageState extends State<CollectionPage> {
                         child: const Text("收入文集"),
                         onPressed: () {
                           Navigator.of(context).pop();
+                          if (!inMultiSelect) {
+                            collectionMoveOrCopy(context, item, "copy", "收入文集");
+                          } else {
+                            if (multiSelectedPath.isEmpty) { return; }
+                            var paths = getSelectedPath(onlyFile: true);
+                            showConfirmDialog(context, "只有文章可收入", "共有${paths.length}个，确认收入？").then((value) {
+                              if (value==null) { return; }
+                              if (value.isEmpty) { return; }
+                              if (value != "yes") { return; }
+                              showCollectionDialog(context, isSingle: true)
+                              .then((value) {
+                                if (value == null || value.isEmpty) {
+                                  return;
+                                }
+                                var base = value;
+                                if (base.isEmpty || base=="none") {
+                                  return;
+                                }
+                                bdwmOperateCollectionBatched(action: "copy", list: paths, tobase: value)
+                                .then((batchRes) {
+                                  confirmAfterBatchOperation(context, batchRes, ope: "收入文集");
+                                });
+                              });
+                            });
+                          }
                         }
                       ),
                     ],
@@ -296,6 +330,9 @@ class _CollectionPageState extends State<CollectionPage> {
                         setState(() {
                           inMultiSelect = !inMultiSelect;
                           multiSelectedPath.clear();
+                          if (inMultiSelect) {
+                            multiSelectedPath.add(item);
+                          }
                         });
                       }
                     ),
