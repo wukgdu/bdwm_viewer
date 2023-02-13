@@ -11,6 +11,8 @@ import '../globalvars.dart';
 import '../utils.dart' show clearAllExtendedImageCache;
 import '../router.dart' show nv2Push, nv2Replace, ForceRerefreshWidget, getForceID, forceRefresh;
 
+const double md3BottomAppBarHeight = 80.0;
+
 class MyFloatingActionButtonMenu extends StatefulWidget {
   final bool showFAB;
   final void Function({bool far}) gotoNextPost;
@@ -216,6 +218,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
       itemPositionsListener.itemPositions.addListener(listenToScroll);
     }
     WidgetsBinding.instance.addPostFrameCallback((_){
+      // _initScrollHeight = scrollKey.currentContext?.size?.height;
       if (widget.postid != null) {
         var i = 0;
         while (i<widget.threadPageInfo.posts.length) {
@@ -236,6 +239,10 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
   void didUpdateWidget(covariant ThreadDetailApp oldWidget) {
     super.didUpdateWidget(oldWidget);
     _ignorePrevNext = true;
+    if (globalConfigInfo.getAutoHideBottomBar()) {
+      itemPositionsListener.itemPositions.removeListener(listenToScroll);
+      itemPositionsListener.itemPositions.addListener(listenToScroll);
+    }
     if (widget.tiebaForm) {
       computeNewOrder();
     } else {
@@ -408,9 +415,15 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
     var scrollListHeight = scrollKey.currentContext?.size?.height ?? 1.0;
     _initScrollHeight ??= scrollListHeight;
     var lastPosition = getLastItem();
+    // debugPrint("height: $_initScrollHeight");
     if (_lastIndex==null) {
       _lastIndex = lastPosition.index;
       _lastTrailingEdge = lastPosition.itemTrailingEdge * scrollListHeight;
+      if (lastPosition.index == widget.threadPageInfo.posts.length-1) {
+        if (_initScrollHeight!-0.1 < _lastTrailingEdge! && _lastTrailingEdge! <= _initScrollHeight! + md3BottomAppBarHeight + 0.1) {
+          itemPositionsListener.itemPositions.removeListener(listenToScroll);
+        }
+      }
       return;
     }
     int hideIt = 0;
@@ -427,14 +440,14 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
       }
     }
     // debugPrint("$hideIt $_showBottomAppBar $scrollListHeight $_lastTrailingEdge $newTrailingEdge $_initScrollHeight");
-    if (sameWithDelta(newTrailingEdge, scrollListHeight) && sameWithDelta(newTrailingEdge, _lastTrailingEdge!+80.0)) {
+    if (sameWithDelta(newTrailingEdge, scrollListHeight) && sameWithDelta(newTrailingEdge, _lastTrailingEdge!+md3BottomAppBarHeight)) {
       hideIt = 0;
     }
-    if (!_showBottomAppBar && (_initScrollHeight! - 0.1 < newTrailingEdge) && (newTrailingEdge <= _initScrollHeight!+80.1)) {
+    if (!_showBottomAppBar && (_initScrollHeight! - 0.1 < newTrailingEdge) && (newTrailingEdge <= _initScrollHeight!+md3BottomAppBarHeight+0.1)) {
       // MD3 bottom app bar height < 80，用80判断也没问题
       hideIt = 0;
     }
-    if ((_initScrollHeight! < newTrailingEdge) && (newTrailingEdge <= _initScrollHeight!+80.1)) {
+    if ((_initScrollHeight! < newTrailingEdge) && (newTrailingEdge <= _initScrollHeight!+md3BottomAppBarHeight+0.1)) {
       hideIt = 0;
     }
     _lastIndex = lastPosition.index;
@@ -571,7 +584,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
       ),
       bottomNavigationBar: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        height: _showBottomAppBar ? (globalConfigInfo.useMD3 ? 80.0 : null) : 0,
+        height: _showBottomAppBar ? (globalConfigInfo.useMD3 ? md3BottomAppBarHeight : null) : 0,
         child: BottomAppBar(
           shape: null,
           // color: Colors.blue,
