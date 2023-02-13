@@ -5,6 +5,7 @@ import 'package:async/async.dart';
 import 'package:flutter_treeview/flutter_treeview.dart';
 
 import '../bdwm/collection.dart';
+import './constants.dart' show bdwmPrimaryColor;
 import '../html_parser/collection_parser.dart';
 import '../utils.dart' show getQueryValue;
 import '../globalvars.dart' show globalConfigInfo;
@@ -360,6 +361,7 @@ class _CollectionPageState extends State<CollectionPage> {
             setState(() { });
           },
           child: Checkbox(
+            activeColor: bdwmPrimaryColor,
             value: multiSelectedPath.contains(item),
             onChanged: (value) {
               if (value == null) { return; }
