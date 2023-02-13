@@ -2,12 +2,132 @@ import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 
 import '../bdwm/req.dart';
+import '../bdwm/collection.dart' show bdwmCollectionCreateDir;
 import '../views/collection.dart';
 import '../globalvars.dart';
 import '../views/utils.dart';
 import '../html_parser/collection_parser.dart';
 import '../router.dart' show nv2Push;
 import '../views/constants.dart' show bdwmPrimaryColor;
+import '../utils.dart' show getQueryValue;
+
+class CollectionCreateDirComponent extends StatefulWidget {
+  final String base;
+  final Function? callBack;
+  const CollectionCreateDirComponent({super.key, required this.base, this.callBack});
+
+  @override
+  State<CollectionCreateDirComponent> createState() => _CollectionCreateDirComponentState();
+}
+
+class _CollectionCreateDirComponentState extends State<CollectionCreateDirComponent> {
+  TextEditingController titleValue = TextEditingController();
+  TextEditingController bmsValue = TextEditingController();
+
+  @override
+  void dispose() {
+    titleValue.dispose();
+    bmsValue.dispose();
+    super.dispose();
+  }
+
+  void createDir() {
+    String title = titleValue.text.trim();
+    if (title.isEmpty) {
+      showInformDialog(context, "创建文件夹", "名称不可为空");
+      return;
+    }
+    String bms = bmsValue.text.trim();
+    bdwmCollectionCreateDir(title: title, base: widget.base, bms: bms)
+    .then((res) {
+      bool success = res.success;
+      if (success==true) {
+        showInformDialog(context, "创建文件夹成功", "rt")
+        .then((_) {
+          if (widget.callBack!=null) {
+            widget.callBack!();
+          }
+        });
+      } else {
+        var txt = "发生错误啦><";
+        if (res.error == -1) {
+          txt = res.desc ?? txt;
+        } else if (res.error == 9) {
+          txt = "您没有足够权限执行此操作";
+        }
+        showInformDialog(context, "创建文件夹失败", txt);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TextFormField(
+          decoration: const InputDecoration(
+            icon: Icon(Icons.folder),
+            hintText: '文件夹名称',
+          ),
+          controller: titleValue,
+          autocorrect: false,
+        ),
+        TextFormField(
+          decoration: const InputDecoration(
+            icon: Icon(Icons.assignment_ind),
+            hintText: '整理者（可空）',
+          ),
+          controller: bmsValue,
+          autocorrect: false,
+        ),
+        const SizedBox(height: 12,),
+        ElevatedButton(
+          onPressed: () {
+            createDir();
+          },
+          child: const Text("新建文件夹"),
+        ),
+      ],
+    );
+  }
+}
+
+Future<bool?> showAddCollectionMenu(BuildContext context, String base, String curName, {Function? refresh}) async {
+  return showModalBottomSheet<bool>(
+    context: context,
+    builder: (BuildContext contextBottom) {
+      return Container(
+        margin: const EdgeInsets.all(10.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Center(child: SelectableText(curName, style: const TextStyle(fontWeight: FontWeight.bold),),),
+            Center(child: SelectableText(base),),
+            const Divider(),
+            CollectionCreateDirComponent(base: base, callBack: refresh),
+            const Divider(),
+            ElevatedButton(
+              onPressed: () {
+                showInformDialog(context, "暂不支持", "以后更新");
+              },
+              child: const Text("新建文件"),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+String? getCollectionPathFromHttp(String httpPath) {
+  var path = getQueryValue(httpPath, 'path');
+  if (path == null) {
+    return null;
+  }
+  path = path.replaceAll('%2F', '/');
+  return path;
+}
 
 class CollectionApp extends StatefulWidget {
   final String link;
@@ -131,7 +251,7 @@ class _CollectionAppState extends State<CollectionApp> {
           ),
           body: CollectionPage(collectionList: collectionList, title: collectionList.title, refresh: () { refresh(); },),
           bottomNavigationBar: BottomAppBar(
-            shape: null,
+            // shape: const CircularNotchedRectangle(),
             // color: Colors.blue,
             child: IconTheme(
               data: const IconThemeData(color: Colors.redAccent),
@@ -193,6 +313,17 @@ class _CollectionAppState extends State<CollectionApp> {
                         getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
                         },);
                       });
+                    },
+                  ),
+                  IconButton(
+                    color: bdwmPrimaryColor,
+                    disabledColor: Colors.grey,
+                    tooltip: '新建',
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      var path = getCollectionPathFromHttp(widget.link);
+                      if (path == null) { return; }
+                      showAddCollectionMenu(context, path, collectionList.title, refresh: () { refresh(); });
                     },
                   ),
                 ],

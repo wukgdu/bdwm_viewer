@@ -21,6 +21,14 @@ class _LoginPageState extends State<LoginPage> {
     //   widget.changeTitle!("登录");
     // }
   }
+
+  @override
+  void dispose() {
+    usernameValue.dispose();
+    passwordValue.dispose();
+    super.dispose();
+  }
+
   TextEditingController usernameValue = TextEditingController();
   TextEditingController passwordValue = TextEditingController();
   bool hidePassword = true;

@@ -213,3 +213,43 @@ Future<CollectionBatchRes> bdwmOperateCollectionBatched({required List<String> l
   );
   return res;
 }
+
+class CollectionCreateDirRes {
+  bool success = true;
+  int error = 0;
+  String? desc;
+  String? name;
+
+  CollectionCreateDirRes.empty();
+  CollectionCreateDirRes.error({
+    required this.success,
+    required this.error,
+    this.desc,
+  });
+  CollectionCreateDirRes({
+    required this.success,
+    required this.name,
+    required this.error,
+  });
+}
+
+Future<CollectionCreateDirRes> bdwmCollectionCreateDir({required String title, required String base, String bms=""}) async {
+  var actionUrl = "$v2Host/ajax/create_collection_dir.php";
+  var data = {
+    "base": base,
+    "title": title,
+    "bms": bms,
+  };
+  var headers = genHeaders2();
+  var resp = await bdwmClient.post(actionUrl, headers: headers, data: data);
+  if (resp == null) {
+    return CollectionCreateDirRes.error(success: false, error: -1, desc: networkErrorText);
+  }
+  var respContent = json.decode(resp.body);
+  var res = CollectionCreateDirRes(
+    success: respContent['success'],
+    name: respContent['name'] ?? "",
+    error: respContent['error'] ?? 0,
+  );
+  return res;
+}
