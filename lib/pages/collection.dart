@@ -9,7 +9,7 @@ import '../views/utils.dart';
 import '../html_parser/collection_parser.dart';
 import '../router.dart' show nv2Push;
 import '../views/constants.dart' show bdwmPrimaryColor;
-import '../utils.dart' show getQueryValue;
+import '../utils.dart' show getCollectionPathFromHttp;
 
 class CollectionCreateDirComponent extends StatefulWidget {
   final String base;
@@ -118,15 +118,6 @@ Future<bool?> showAddCollectionMenu(BuildContext context, String base, String cu
       );
     },
   );
-}
-
-String? getCollectionPathFromHttp(String httpPath) {
-  var path = getQueryValue(httpPath, 'path');
-  if (path == null) {
-    return null;
-  }
-  path = path.replaceAll('%2F', '/');
-  return path;
 }
 
 class CollectionApp extends StatefulWidget {

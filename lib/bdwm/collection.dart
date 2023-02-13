@@ -139,7 +139,7 @@ Future<CollectionImportRes> bdwmCollectionImport({required String from, required
   return collectionImportRes;
 }
 
-Future<CollectionImportRes> bdwmOperateCollection({required String path, required String action, String? tobase, String? pos}) async {
+Future<CollectionImportRes> bdwmOperateCollection({required String path, required String action, String? tobase, String? pos, String? title, String? bms}) async {
   var actionUrl = "$v2Host/ajax/operate_collection.php";
   var data = {
     "action": action,
@@ -154,6 +154,11 @@ Future<CollectionImportRes> bdwmOperateCollection({required String path, require
   } else if (action=="movepos") {
     assert(pos != null);
     data['pos'] = pos ?? "";
+  } else if (action=="edit_title") {
+    assert(title!=null);
+    assert(bms!=null);
+    data['title'] = title!;
+    data['bms'] = bms!;
   }
   var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
   if (resp == null) {

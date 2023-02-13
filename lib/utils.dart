@@ -9,6 +9,15 @@ bool isAndroid() {
   return Platform.isAndroid;
 }
 
+String? getCollectionPathFromHttp(String httpPath) {
+  var path = getQueryValue(httpPath, 'path');
+  if (path == null) {
+    return null;
+  }
+  path = path.replaceAll('%2F', '/');
+  return path;
+}
+
 class TextAndLink {
   String text = "";
   String? link;

@@ -123,8 +123,11 @@ Future<String?> showPageDialog(BuildContext context, int curPage, int maxPage) {
   );
 }
 
-Future<String?> showTextDialog(BuildContext context, String title, {bool inputNumber=false}) {
+Future<String?> showTextDialog(BuildContext context, String title, {bool inputNumber=false, String? defaultText}) {
   TextEditingController textValue = TextEditingController();
+  if (defaultText!=null) {
+    textValue.value = TextEditingValue(text: defaultText);
+  }
   Widget content() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -133,6 +136,7 @@ Future<String?> showTextDialog(BuildContext context, String title, {bool inputNu
         Expanded(
           child: TextField(
             controller: textValue,
+            autocorrect: false,
             keyboardType: inputNumber == true ? const TextInputType.numberWithOptions() : null,
           ),
         ),

@@ -7,9 +7,9 @@ import 'package:flutter_treeview/flutter_treeview.dart';
 import '../bdwm/collection.dart';
 import './constants.dart' show bdwmPrimaryColor;
 import '../html_parser/collection_parser.dart';
-import '../utils.dart' show getQueryValue;
+import '../utils.dart' show getQueryValue, getCollectionPathFromHttp;
 import '../globalvars.dart' show globalConfigInfo;
-import './utils.dart' show showConfirmDialog, showInformDialog, showAlertDialog, showPageDialog;
+import './utils.dart' show showConfirmDialog, showInformDialog, showAlertDialog, showPageDialog, showTextDialog;
 import './read_thread.dart' show AttachmentComponent;
 import './html_widget.dart';
 import '../router.dart' show nv2Push;
@@ -210,100 +210,61 @@ class _CollectionPageState extends State<CollectionPage> {
                   children: <Widget>[
                     Center(child: SelectableText("${item.name}（位置：${item.id}）"),),
                     const Divider(),
-                    ElevatedButton(
-                      child: const Text('删除'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        if (!inMultiSelect) {
-                          var path = getQueryValue(item.path, 'path');
-                          if (path == null) {
-                            showInformDialog(context, "删除失败", "未找到路径");
-                            return;
+                    Wrap(
+                      spacing: 10.0,
+                      runSpacing: 5.0,
+                      children: [
+                        ElevatedButton(
+                          child: const Text("重命名"),
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+                            var path = getCollectionPathFromHttp(item.path);
+                            if (path == null) { return; }
+                            var newTitle = await showTextDialog(context, "新名称", defaultText: item.name);
+                            if (newTitle == null) { return; }
+                            bdwmOperateCollection(path: path, action: "edit_title", title: newTitle, bms: item.author)
+                            .then((res) {
+                              if (res.success) {
+                                if (widget.refresh!=null) {
+                                  widget.refresh!();
+                                }
+                              } else {
+                                var txt = "rt";
+                                if (res.error == -1) {
+                                  txt = res.desc ?? txt;
+                                }
+                                showInformDialog(context, "重命名失败", txt);
+                              }
+                            });
                           }
-                          path = path.replaceAll('%2F', '/');
-                          deleteCollectionWrap(path, context, () {
-                            widget.collectionList.collectionItems.remove(item);
-                            if (widget.refresh!=null) {
-                              widget.refresh!();
-                            }
-                          });
-                        } else {
-                          if (multiSelectedPath.isEmpty) { return; }
-                          var paths = getSelectedPath();
-                          showConfirmDialog(context, "文集", "确认删除？").then((value) {
-                            if (value==null) { return; }
-                            if (value.isEmpty) { return; }
-                            if (value == "yes") {
-                              bdwmOperateCollectionBatched(action: "delete", list: paths)
-                              .then((batchRes) {
-                                confirmAfterBatchOperation(context, batchRes, ope: "删除");
+                        ),
+                        if (!inMultiSelect) ...[
+                          ElevatedButton(
+                            child: const Text('移动到其他位置'),
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                              var nIndexStr = await showPageDialog(context, item.id, widget.collectionList.totalCount);
+                              if (nIndexStr == null) { return; }
+                              if (nIndexStr.isEmpty) { return; }
+                              var nIndex = int.parse(nIndexStr);
+                              if (!mounted) { return; }
+                              reorderCollectionWrap(item.path, nIndex-1, context, refreshCallBack: () {
+                                if (widget.refresh!=null) {
+                                  widget.refresh!();
+                                }
                               });
                             }
-                          });
-                        }
-                      }
-                    ),
-                    if (!inMultiSelect) ...[
-                      const Divider(),
-                      ElevatedButton(
-                        child: const Text('移动到其他位置'),
-                        onPressed: () async {
-                          Navigator.of(context).pop();
-                          var nIndexStr = await showPageDialog(context, item.id, widget.collectionList.totalCount);
-                          if (nIndexStr == null) { return; }
-                          if (nIndexStr.isEmpty) { return; }
-                          var nIndex = int.parse(nIndexStr);
-                          if (!mounted) { return; }
-                          reorderCollectionWrap(item.path, nIndex-1, context, refreshCallBack: () {
-                            if (widget.refresh!=null) {
-                              widget.refresh!();
-                            }
-                          });
-                        }
-                      ),
-                    ],
-                    const Divider(),
-                    ElevatedButton(
-                      child: const Text('移动到其他文件夹'),
-                      onPressed: () async {
-                        Navigator.of(context).pop();
-                        if (!inMultiSelect) {
-                          collectionMoveOrCopy(context, item, "move", "移动");
-                        } else {
-                          if (multiSelectedPath.isEmpty) { return; }
-                          var paths = getSelectedPath();
-                          showCollectionDialog(context, isSingle: true)
-                          .then((value) {
-                            if (value == null || value.isEmpty) {
-                              return;
-                            }
-                            var base = value;
-                            if (base.isEmpty || base=="none") {
-                              return;
-                            }
-                            bdwmOperateCollectionBatched(action: "move", list: paths, tobase: value)
-                            .then((batchRes) {
-                              confirmAfterBatchOperation(context, batchRes, ope: "移动");
-                            });
-                          });
-                        }
-                      }
-                    ),
-                    if (item.type.contains("file")) ...[
-                      const Divider(),
-                      ElevatedButton(
-                        child: const Text("收入文集"),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          if (!inMultiSelect) {
-                            collectionMoveOrCopy(context, item, "copy", "收入文集");
-                          } else {
-                            if (multiSelectedPath.isEmpty) { return; }
-                            var paths = getSelectedPath(onlyFile: true);
-                            showConfirmDialog(context, "只有文章可收入", "共有${paths.length}个，确认收入？").then((value) {
-                              if (value==null) { return; }
-                              if (value.isEmpty) { return; }
-                              if (value != "yes") { return; }
+                          ),
+                        ],
+                        ElevatedButton(
+                          child: const Text('移动到其他文件夹'),
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+                            if (!inMultiSelect) {
+                              collectionMoveOrCopy(context, item, "move", "移动");
+                            } else {
+                              if (multiSelectedPath.isEmpty) { return; }
+                              var paths = getSelectedPath();
                               showCollectionDialog(context, isSingle: true)
                               .then((value) {
                                 if (value == null || value.isEmpty) {
@@ -313,16 +274,82 @@ class _CollectionPageState extends State<CollectionPage> {
                                 if (base.isEmpty || base=="none") {
                                   return;
                                 }
-                                bdwmOperateCollectionBatched(action: "copy", list: paths, tobase: value)
+                                bdwmOperateCollectionBatched(action: "move", list: paths, tobase: value)
                                 .then((batchRes) {
-                                  confirmAfterBatchOperation(context, batchRes, ope: "收入文集");
+                                  confirmAfterBatchOperation(context, batchRes, ope: "移动");
                                 });
                               });
-                            });
+                            }
                           }
-                        }
-                      ),
-                    ],
+                        ),
+                        ElevatedButton(
+                          child: const Text('删除'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            if (!inMultiSelect) {
+                              var path = getQueryValue(item.path, 'path');
+                              if (path == null) {
+                                showInformDialog(context, "删除失败", "未找到路径");
+                                return;
+                              }
+                              path = path.replaceAll('%2F', '/');
+                              deleteCollectionWrap(path, context, () {
+                                widget.collectionList.collectionItems.remove(item);
+                                if (widget.refresh!=null) {
+                                  widget.refresh!();
+                                }
+                              });
+                            } else {
+                              if (multiSelectedPath.isEmpty) { return; }
+                              var paths = getSelectedPath();
+                              showConfirmDialog(context, "文集", "确认删除？").then((value) {
+                                if (value==null) { return; }
+                                if (value.isEmpty) { return; }
+                                if (value == "yes") {
+                                  bdwmOperateCollectionBatched(action: "delete", list: paths)
+                                  .then((batchRes) {
+                                    confirmAfterBatchOperation(context, batchRes, ope: "删除");
+                                  });
+                                }
+                              });
+                            }
+                          }
+                        ),
+                        if (item.type.contains("file")) ...[
+                          ElevatedButton(
+                            child: const Text("收入文集"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              if (!inMultiSelect) {
+                                collectionMoveOrCopy(context, item, "copy", "收入文集");
+                              } else {
+                                if (multiSelectedPath.isEmpty) { return; }
+                                var paths = getSelectedPath(onlyFile: true);
+                                showConfirmDialog(context, "只有文章可收入", "共有${paths.length}个，确认收入？").then((value) {
+                                  if (value==null) { return; }
+                                  if (value.isEmpty) { return; }
+                                  if (value != "yes") { return; }
+                                  showCollectionDialog(context, isSingle: true)
+                                  .then((value) {
+                                    if (value == null || value.isEmpty) {
+                                      return;
+                                    }
+                                    var base = value;
+                                    if (base.isEmpty || base=="none") {
+                                      return;
+                                    }
+                                    bdwmOperateCollectionBatched(action: "copy", list: paths, tobase: value)
+                                    .then((batchRes) {
+                                      confirmAfterBatchOperation(context, batchRes, ope: "收入文集");
+                                    });
+                                  });
+                                });
+                              }
+                            }
+                          ),
+                        ],
+                      ],
+                    ),
                     const Divider(),
                     ElevatedButton(
                       child: Text(inMultiSelect ? '取消多选' : '多选'),
