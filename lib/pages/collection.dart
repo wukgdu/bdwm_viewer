@@ -44,6 +44,7 @@ class _CollectionCreateDirComponentState extends State<CollectionCreateDirCompon
       if (success==true) {
         showInformDialog(context, "创建文件夹成功", "rt")
         .then((_) {
+          Navigator.of(context).pop();
           if (widget.callBack!=null) {
             widget.callBack!();
           }
@@ -92,32 +93,36 @@ class _CollectionCreateDirComponentState extends State<CollectionCreateDirCompon
   }
 }
 
-Future<bool?> showAddCollectionMenu(BuildContext context, String base, String curName, {Function? refresh}) async {
-  return showModalBottomSheet<bool>(
-    context: context,
-    builder: (BuildContext contextBottom) {
-      return Container(
-        margin: const EdgeInsets.all(10.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Center(child: SelectableText(curName, style: const TextStyle(fontWeight: FontWeight.bold),),),
-            Center(child: SelectableText(base),),
-            const Divider(),
-            CollectionCreateDirComponent(base: base, callBack: refresh),
-            const Divider(),
-            ElevatedButton(
-              onPressed: () {
-                showInformDialog(context, "暂不支持", "以后更新");
-              },
-              child: const Text("新建文件"),
-            ),
-          ],
-        ),
-      );
-    },
-  );
+class CollectionCreateComponent extends StatelessWidget {
+  final String curName;
+  final String base;
+  final Function? refresh;
+  const CollectionCreateComponent({super.key, required this.curName, required this.base, this.refresh});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      actions: null,
+      title: const Text("新建"),
+      content: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Center(child: SelectableText(curName, style: const TextStyle(fontWeight: FontWeight.bold),),),
+          Center(child: SelectableText(base),),
+          const Divider(),
+          CollectionCreateDirComponent(base: base, callBack: refresh),
+          const Divider(),
+          ElevatedButton(
+            onPressed: () {
+              showInformDialog(context, "暂不支持", "以后更新");
+            },
+            child: const Text("新建文件"),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class CollectionApp extends StatefulWidget {
@@ -314,7 +319,10 @@ class _CollectionAppState extends State<CollectionApp> {
                     onPressed: () {
                       var path = getCollectionPathFromHttp(widget.link);
                       if (path == null) { return; }
-                      showAddCollectionMenu(context, path, collectionList.title, refresh: () { refresh(); });
+                      showAlertDialog2(
+                        context,
+                        CollectionCreateComponent(curName: collectionList.title, base: path, refresh: () { refresh(); },),
+                      );
                     },
                   ),
                 ],
