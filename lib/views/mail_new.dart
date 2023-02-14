@@ -4,7 +4,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 import 'package:flutter_quill/flutter_quill.dart' as fquill;
-import 'package:flutter_quill_extensions/embeds/builders.dart' show ImageEmbedBuilder;
 
 import '../bdwm/search.dart';
 import '../bdwm/mail.dart';
@@ -19,6 +18,7 @@ import '../html_parser/mailnew_parser.dart';
 import './utils.dart';
 import './upload.dart';
 import '../router.dart' show nv2Pop;
+import './editor.dart' show FquillEditor, FquillEditorToolbar, genController;
 
 class MailNewPage extends StatefulWidget {
   final String? bid;
@@ -53,15 +53,7 @@ class _MailNewPageState extends State<MailNewPage> {
     super.initState();
     quoteText = widget.quote;
     quoteMode = quoteModes[1];
-    if (widget.content != null && widget.content!.isNotEmpty) {
-      var clist = html2Quill(widget.content!);
-      _controller = fquill.QuillController(
-        document: fquill.Document.fromJson(clist),
-        selection: const TextSelection.collapsed(offset: 0),
-      );
-    } else {
-      _controller = fquill.QuillController.basic();
-    }
+    _controller = genController(widget.content);
     if (widget.title != null && widget.title!.isNotEmpty) {
       titleValue.text = widget.title!;
     }
@@ -268,82 +260,11 @@ class _MailNewPageState extends State<MailNewPage> {
           ),
           margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
           height: 200,
-          child: fquill.QuillEditor.basic(
-            controller: _controller,
-            readOnly: false, // true for view only mode
-            embedBuilders: [ImageEmbedBuilder()],
-            // locale: const Locale('zh', 'CN'),
-          ),
+          child: FquillEditor(controller: _controller, autoFocus: false),
         ),
         Container(
           padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-          child: fquill.QuillToolbar.basic(
-            controller: _controller,
-            toolbarSectionSpacing: 1,
-            showAlignmentButtons: false,
-            showBoldButton: true,
-            showUnderLineButton: true,
-            showStrikeThrough: false,
-            showDirection: false,
-            showFontFamily: false,
-            showFontSize: false,
-            showHeaderStyle: false,
-            showIndent: false,
-            showLink: false,
-            showSearchButton: false,
-            showListBullets: false,
-            showListNumbers: false,
-            showListCheck: false,
-            showDividers: false,
-            showRightAlignment: false,
-            showItalicButton: false,
-            showCenterAlignment: false,
-            showLeftAlignment: false,
-            showJustifyAlignment: false,
-            showSmallButton: false,
-            showInlineCode: false,
-            showCodeBlock: false,
-            showColorButton: false,
-            showRedo: false,
-            showUndo: false,
-            showBackgroundColorButton: false,
-            customButtons: [
-              fquill.QuillCustomButton(
-                icon: Icons.color_lens,
-                onTap: () {
-                  showColorDialog(context, (bdwmRichText['fc'] as Map<String, int>).keys.toList())
-                  .then((value) {
-                    if (value == null) { return; }
-                    _controller.formatSelection(fquill.ColorAttribute(value));
-                  });
-                }
-              ),
-              fquill.QuillCustomButton(
-                icon: Icons.format_color_fill,
-                onTap: () {
-                  showColorDialog(context, (bdwmRichText['bc'] as Map<String, int>).keys.toList())
-                  .then((value) {
-                    if (value == null) { return; }
-                    _controller.formatSelection(fquill.BackgroundAttribute(value));
-                  });
-                }
-              ),
-              fquill.QuillCustomButton(
-                icon: Icons.image,
-                onTap: () {
-                  showTextDialog(context, "图片链接")
-                  .then((value) {
-                    if (value==null) { return; }
-                    if (value.isEmpty) { return; }
-                    var index = _controller.selection.baseOffset;
-                    var length = _controller.selection.extentOffset - index;
-                    _controller.replaceText(index, length, fquill.BlockEmbed.image(value), null);
-                    _controller.formatText(index, 1, const fquill.StyleAttribute("mobileAlignment:topLeft;mobileWidth:150;mobileHeight:150"));
-                  },);
-                }
-              ),
-            ],
-          ),
+          child: FquillEditorToolbar(controller: _controller),
         ),
         if (quoteText!=null)
           Container(
