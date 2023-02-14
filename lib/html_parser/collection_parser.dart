@@ -34,6 +34,12 @@ class CollectionList {
   String title = "";
   int totalCount = 0;
   String? errorMessage;
+  bool canArchive = false;
+  bool canMove = false;
+  bool canDelete = false;
+  bool canCreateFile = false;
+  bool canCreateDir = false;
+  bool canReorder = false;
 
   CollectionList.empty();
   CollectionList.error({
@@ -45,6 +51,12 @@ class CollectionList {
     required this.maxPage,
     required this.title,
     required this.totalCount,
+    required this.canArchive,
+    required this.canMove,
+    required this.canDelete,
+    required this.canCreateFile,
+    required this.canCreateDir,
+    required this.canReorder,
   });
 }
 
@@ -91,7 +103,19 @@ CollectionList parseCollectionList(String htmlStr) {
       break;
     }
   }
-  return CollectionList(collectionItems: collectionItems, maxPage: maxPage, title: collectionTitle, totalCount: totalCount);
+
+  bool canArchive = document.querySelector(".toolbar-button.archive") != null;
+  bool canMove = document.querySelector(".toolbar-button.move") != null;
+  bool canDelete = document.querySelector(".toolbar-button.delete") != null;
+  bool canCreateFile = document.querySelector(".toolbar-button.add-file") != null;
+  bool canCreateDir = document.querySelector(".toolbar-button.add-dir") != null;
+  bool canReorder = document.querySelector(".toolbar-button.sort") != null;
+
+  return CollectionList(
+    collectionItems: collectionItems, maxPage: maxPage, title: collectionTitle, totalCount: totalCount,
+    canArchive: canArchive, canMove: canMove, canDelete: canDelete, canCreateFile: canCreateFile,
+    canCreateDir: canCreateDir, canReorder: canReorder,
+  );
 }
 
 CollectionList getExampleCollectionList() {

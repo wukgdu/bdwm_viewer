@@ -215,8 +215,7 @@ class _CollectionPageState extends State<CollectionPage> {
                       runSpacing: 5.0,
                       children: [
                         ElevatedButton(
-                          child: const Text("重命名"),
-                          onPressed: () async {
+                          onPressed: !widget.collectionList.canMove ? null : () async {
                             Navigator.of(context).pop();
                             var path = getCollectionPathFromHttp(item.path);
                             if (path == null) { return; }
@@ -236,12 +235,12 @@ class _CollectionPageState extends State<CollectionPage> {
                                 showInformDialog(context, "重命名失败", txt);
                               }
                             });
-                          }
+                          },
+                          child: const Text("重命名"),
                         ),
                         if (!inMultiSelect) ...[
                           ElevatedButton(
-                            child: const Text('移动到其他位置'),
-                            onPressed: () async {
+                            onPressed: !widget.collectionList.canReorder ? null : () async {
                               Navigator.of(context).pop();
                               var nIndexStr = await showPageDialog(context, item.id, widget.collectionList.totalCount);
                               if (nIndexStr == null) { return; }
@@ -253,12 +252,12 @@ class _CollectionPageState extends State<CollectionPage> {
                                   widget.refresh!();
                                 }
                               });
-                            }
+                            },
+                            child: const Text('移动到其他位置'),
                           ),
                         ],
                         ElevatedButton(
-                          child: const Text('移动到其他文件夹'),
-                          onPressed: () async {
+                          onPressed: !widget.collectionList.canMove ? null : () async {
                             Navigator.of(context).pop();
                             if (!inMultiSelect) {
                               collectionMoveOrCopy(context, item, "move", "移动");
@@ -280,11 +279,11 @@ class _CollectionPageState extends State<CollectionPage> {
                                 });
                               });
                             }
-                          }
+                          },
+                          child: const Text('移动到其他文件夹'),
                         ),
                         ElevatedButton(
-                          child: const Text('删除'),
-                          onPressed: () {
+                          onPressed: !widget.collectionList.canDelete ? null : () {
                             Navigator.of(context).pop();
                             if (!inMultiSelect) {
                               var path = getQueryValue(item.path, 'path');
@@ -313,12 +312,12 @@ class _CollectionPageState extends State<CollectionPage> {
                                 }
                               });
                             }
-                          }
+                          },
+                          child: const Text('删除'),
                         ),
                         if (item.type.contains("file")) ...[
                           ElevatedButton(
-                            child: const Text("收入文集"),
-                            onPressed: () {
+                            onPressed: !widget.collectionList.canArchive ? null : () {
                               Navigator.of(context).pop();
                               if (!inMultiSelect) {
                                 collectionMoveOrCopy(context, item, "copy", "收入文集");
@@ -345,7 +344,8 @@ class _CollectionPageState extends State<CollectionPage> {
                                   });
                                 });
                               }
-                            }
+                            },
+                            child: const Text("收入文集"),
                           ),
                         ],
                       ],
@@ -400,10 +400,10 @@ class _CollectionPageState extends State<CollectionPage> {
               setState(() { });
             },
           ),
-        ) : ReorderableDragStartListener(
+        ) : widget.collectionList.canReorder ? ReorderableDragStartListener(
           index: index,
           child: const Icon(Icons.drag_handle),
-        ),
+        ) : null,
         title: Text(item.name),
         subtitle: Text.rich(
           TextSpan(

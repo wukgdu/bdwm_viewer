@@ -14,7 +14,8 @@ import '../utils.dart' show getCollectionPathFromHttp;
 class CollectionCreateDirComponent extends StatefulWidget {
   final String base;
   final Function? callBack;
-  const CollectionCreateDirComponent({super.key, required this.base, this.callBack});
+  final bool canCreateDir;
+  const CollectionCreateDirComponent({super.key, required this.base, this.callBack, required this.canCreateDir});
 
   @override
   State<CollectionCreateDirComponent> createState() => _CollectionCreateDirComponentState();
@@ -83,7 +84,7 @@ class _CollectionCreateDirComponentState extends State<CollectionCreateDirCompon
         ),
         const SizedBox(height: 12,),
         ElevatedButton(
-          onPressed: () {
+          onPressed: !widget.canCreateDir ? null : () {
             createDir();
           },
           child: const Text("新建文件夹"),
@@ -97,7 +98,12 @@ class CollectionCreateComponent extends StatelessWidget {
   final String curName;
   final String base;
   final Function? refresh;
-  const CollectionCreateComponent({super.key, required this.curName, required this.base, this.refresh});
+  final bool canCreateDir;
+  final bool canCreateFile;
+  const CollectionCreateComponent({
+    super.key, required this.curName, required this.base,
+    this.refresh, required this.canCreateDir, required this.canCreateFile,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -111,10 +117,10 @@ class CollectionCreateComponent extends StatelessWidget {
           Center(child: SelectableText(curName, style: const TextStyle(fontWeight: FontWeight.bold),),),
           Center(child: SelectableText(base),),
           const Divider(),
-          CollectionCreateDirComponent(base: base, callBack: refresh),
+          CollectionCreateDirComponent(base: base, callBack: refresh, canCreateDir: canCreateDir),
           const Divider(),
           ElevatedButton(
-            onPressed: () {
+            onPressed: !canCreateFile ? null : () {
               showInformDialog(context, "暂不支持", "以后更新");
             },
             child: const Text("新建文件"),
@@ -316,12 +322,15 @@ class _CollectionAppState extends State<CollectionApp> {
                     disabledColor: Colors.grey,
                     tooltip: '新建',
                     icon: const Icon(Icons.add),
-                    onPressed: () {
+                    onPressed: !(collectionList.canCreateDir || collectionList.canCreateFile) ? null : () {
                       var path = getCollectionPathFromHttp(widget.link);
                       if (path == null) { return; }
                       showAlertDialog2(
                         context,
-                        CollectionCreateComponent(curName: collectionList.title, base: path, refresh: () { refresh(); },),
+                        CollectionCreateComponent(
+                          curName: collectionList.title, base: path, refresh: () { refresh(); },
+                          canCreateDir: collectionList.canCreateDir, canCreateFile: collectionList.canCreateFile,
+                        ),
                       );
                     },
                   ),
