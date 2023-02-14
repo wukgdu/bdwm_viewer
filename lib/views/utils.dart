@@ -84,78 +84,134 @@ Future<String?> showConfirmDialog(BuildContext context, String title, String con
   );
 }
 
-Future<String?> showPageDialog(BuildContext context, int curPage, int maxPage) {
+class PageDialog extends StatefulWidget {
+  final int maxPage;
+  const PageDialog({super.key, required this.maxPage});
+
+  @override
+  State<PageDialog> createState() => _PageDialogState();
+}
+
+class _PageDialogState extends State<PageDialog> {
   TextEditingController pageValue = TextEditingController();
-  Widget content() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(child: TextField(
-          controller: pageValue,
-          // decoration: InputDecoration(
-          // ),
-          keyboardType: const TextInputType.numberWithOptions(),
+
+  @override
+  void dispose() {
+    pageValue.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text("跳转"),
+      content: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(child: TextField(
+            controller: pageValue,
+            // decoration: InputDecoration(
+            // ),
+            keyboardType: const TextInputType.numberWithOptions(),
+          ),
+          ),
+          const Text("/"),
+          Text(widget.maxPage.toString()),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () { Navigator.of(context).pop(); },
+          child: const Text("取消"),
         ),
+        TextButton(
+          onPressed: () {
+            if (pageValue.text.isEmpty) { return; }
+            var nPage = int.tryParse(pageValue.text);
+            if (nPage == null) { return; }
+            if ((nPage > 0) && (nPage <= widget.maxPage)) {
+              Navigator.of(context).pop(pageValue.text);
+            }
+          },
+          child: const Text("确认"),
         ),
-        const Text("/"),
-        Text(maxPage.toString()),
       ],
     );
   }
-  return showAlertDialog(
-    context, "跳转", content(),
-    actions1: TextButton(
-      onPressed: () { Navigator.of(context).pop(); },
-      child: const Text("取消"),
-    ),
-    actions2: TextButton(
-      onPressed: () {
-        if (pageValue.text.isEmpty) { return; }
-        var nPage = int.tryParse(pageValue.text);
-        if (nPage == null) { return; }
-        if ((nPage > 0) && (nPage <= maxPage)) {
-          Navigator.of(context).pop(pageValue.text);
-        }
-      },
-      child: const Text("确认"),
-    ),
+}
+
+Future<String?> showPageDialog(BuildContext context, int curPage, int maxPage) {
+  return showAlertDialog2(
+    context,
+    PageDialog(maxPage: maxPage)
   );
 }
 
-Future<String?> showTextDialog(BuildContext context, String title, {bool inputNumber=false, String? defaultText}) {
+class TextDialog extends StatefulWidget {
+  final String title;
+  final bool inputNumber;
+  final String? defaultText;
+  const TextDialog({super.key, required this.title, this.inputNumber=false, this.defaultText});
+
+  @override
+  State<TextDialog> createState() => _TextDialogState();
+}
+
+class _TextDialogState extends State<TextDialog> {
   TextEditingController textValue = TextEditingController();
-  if (defaultText!=null) {
-    textValue.value = TextEditingValue(text: defaultText);
+  @override
+  void initState() {
+    super.initState();
+    if (widget.defaultText!=null) {
+      textValue.value = TextEditingValue(text: widget.defaultText!);
+    }
   }
-  Widget content() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(
-          child: TextField(
-            controller: textValue,
-            autocorrect: false,
-            keyboardType: inputNumber == true ? const TextInputType.numberWithOptions() : null,
+
+  @override
+  void dispose() {
+    textValue.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.title),
+      content: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: TextField(
+              controller: textValue,
+              autocorrect: false,
+              keyboardType: widget.inputNumber == true ? const TextInputType.numberWithOptions() : null,
+            ),
           ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () { Navigator.of(context).pop(); },
+          child: const Text("取消"),
+        ),
+        TextButton(
+          onPressed: () {
+            if (textValue.text.isEmpty) { return; }
+            Navigator.of(context).pop(textValue.text);
+          },
+          child: const Text("确认"),
         ),
       ],
     );
   }
-  return showAlertDialog(
-    context, title, content(),
-    actions1: TextButton(
-      onPressed: () { Navigator.of(context).pop(); },
-      child: const Text("取消"),
-    ),
-    actions2: TextButton(
-      onPressed: () {
-        if (textValue.text.isEmpty) { return; }
-        Navigator.of(context).pop(textValue.text);
-      },
-      child: const Text("确认"),
-    ),
+}
+
+Future<String?> showTextDialog(BuildContext context, String title, {bool inputNumber=false, String? defaultText}) {
+  return showAlertDialog2(
+    context,
+    TextDialog(title: title, inputNumber: inputNumber, defaultText: defaultText,),
   );
 }
 
