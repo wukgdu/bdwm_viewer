@@ -81,7 +81,7 @@ class _Top100PageState extends State<Top100Page> {
         minLeadingWidth: 20,
         trailing: Container(
           alignment: Alignment.center,
-          width: 24,
+          width: 30,
           child: Text("${item.id}")
         ),
         // dense: true,
