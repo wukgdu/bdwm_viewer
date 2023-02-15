@@ -20,6 +20,7 @@ class PostNewInfo {
   String? contentHtml;
   String? oriSignature;
   String attachpath = "";
+  int sigCount = 0;
   List<String> attachFiles = [];
 
   PostNewInfo.empty();
@@ -39,6 +40,7 @@ class PostNewInfo {
     required this.quoteInfo,
     required this.attachpath,
     required this.attachFiles,
+    required this.sigCount,
   });
 }
 
@@ -108,7 +110,9 @@ PostNewInfo parsePostNew(String htmlStr) {
   }
 
   var signatureInfo = <SignatureItem>[];
+  int sigCount = 0;
   if (selectOptionDom != null) {
+    sigCount = int.parse(selectOptionDom.attributes['data-signature-count'] ?? "0");
     for (var sodom in selectOptionDom.querySelectorAll("option")) {
       var key = getTrimmedString(sodom);
       var value = sodom.attributes['value'] ?? "";
@@ -150,7 +154,7 @@ PostNewInfo parsePostNew(String htmlStr) {
   return PostNewInfo(
     bid: bid, signatureInfo: signatureInfo, canNoreply: canNoreply, canRemind: canRemind, canForward: canForward, canAnony: canAnony,
     titleText: titleText, contentText: contentText, contentHtml: contentHtml, oriSignature: oriSignature, quoteInfo: quoteInfo,
-    attachpath: attachpath, attachFiles: attachFiles,
+    attachpath: attachpath, attachFiles: attachFiles, sigCount: sigCount,
   );
 }
 

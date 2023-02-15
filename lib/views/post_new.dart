@@ -145,9 +145,7 @@ class _PostNewPageState extends State<PostNewPage> {
                   if (needAnony) { config['anony'] = true; }
                   var nSignature = signature?.value ?? "";
                   if (nSignature == "random") {
-                    var moreCount = widget.postid == null ? 2 : 3;
-                    // 无，随机，不修改
-                    var maxS = widget.postNewInfo.signatureInfo.length - moreCount;
+                    var maxS = widget.postNewInfo.sigCount;
                     var randomI = math.Random().nextInt(maxS);
                     nSignature = randomI.toString();
                   } else if (nSignature == "keep") {
