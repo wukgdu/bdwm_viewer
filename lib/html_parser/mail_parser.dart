@@ -116,6 +116,7 @@ class MailDetailInfo {
   String signatureHtml = "";
   String time = "";
   String attachmentHtml = "";
+  String userDescription = "";
   List<AttachmentInfo> attachmentInfo = <AttachmentInfo>[];
   String? errorMessage;
 
@@ -131,6 +132,7 @@ class MailDetailInfo {
     required this.attachmentHtml,
     required this.attachmentInfo,
     required this.time,
+    required this.userDescription,
     this.errorMessage,
   });
 }
@@ -148,12 +150,15 @@ MailDetailInfo parseMailDetailInfo(String htmlStr) {
   String title = "";
   String uid = "";
   String user = "";
+  String userDescription = "";
   String avatar = absImgSrc(contentDom.querySelector("img.avatar")?.attributes['src'] ?? defaultAvator);
   var titleDom = contentDom.querySelector(".title");
   if (titleDom != null) {
     title = getTrimmedString(titleDom.children.first);
     uid = (titleDom.querySelector(".sender a")?.attributes['href'] ?? "").split("=").last;
     user = getTrimmedString(titleDom.querySelector(".sender a"));
+    var tmpStr = titleDom.querySelector(".sender")?.text ?? "";
+    userDescription = tmpStr.split("：")[0];
   }
   var content = getTrimmedHtml(contentDom.querySelector(".file-read"));
   var attachmentInfo = <AttachmentInfo>[];
@@ -187,6 +192,6 @@ MailDetailInfo parseMailDetailInfo(String htmlStr) {
   return MailDetailInfo(
     user: user, uid: uid, avatar: avatar, title: title, content: content,
     attachmentHtml: attachmentHtml, attachmentInfo: attachmentInfo,
-    time: time, signatureHtml: signatureHtml,
+    time: time, signatureHtml: signatureHtml, userDescription: userDescription,
   );
 }

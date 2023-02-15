@@ -126,7 +126,7 @@ class _MailDetailPageState extends State<MailDetailPage> {
               },
             ),
             title: SelectableText(widget.mailDetailInfo.title),
-            subtitle: SelectableText("创建人 ${widget.mailDetailInfo.user}\n${widget.mailDetailInfo.time}"),
+            subtitle: SelectableText("${widget.mailDetailInfo.userDescription} ${widget.mailDetailInfo.user}\n${widget.mailDetailInfo.time}"),
             isThreeLine: true,
           ),
         ),
