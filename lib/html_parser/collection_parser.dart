@@ -6,6 +6,7 @@ import 'package:html/parser.dart' show parse;
 import '../globalvars.dart';
 import './utils.dart';
 import './read_thread_parser.dart';
+import '../utils.dart' show getQueryValue;
 
 class CollectionItem {
   int id = 0;
@@ -144,6 +145,7 @@ class CollectionArticle {
   String? errorMessage;
   String path = "";
   bool canDelete = false;
+  String? modifyPath;
 
   CollectionArticle.empty();
   CollectionArticle.error({required this.errorMessage,});
@@ -159,6 +161,7 @@ class CollectionArticle {
     this.errorMessage,
     required this.path,
     required this.canDelete,
+    this.modifyPath,
   });
 }
 
@@ -217,17 +220,28 @@ CollectionArticle parseCollectionArticle(String htmlStr) {
     path = pathDom.attributes['data-path'] ?? "";
   }
 
+  String? modifyPath;
   bool canDelete = false;
   var toolBoxDom = document.querySelector(".toolbox");
   if (toolBoxDom!=null) {
     if (toolBoxDom.querySelector("a.delete")!=null) {
       canDelete = true;
     }
+    for (var aDom in toolBoxDom.querySelectorAll("a")) {
+      var aHref = aDom.attributes['href'] ?? "";
+      if (getTrimmedString(aDom)=="编辑" || aHref.contains("modify")) {
+        modifyPath = getQueryValue(aHref, "path");
+        modifyPath = modifyPath?.replaceAll("%2F", "/");
+        modifyPath = modifyPath?.replaceAll("%2f", "/");
+        break;
+      }
+    }
   }
 
   return CollectionArticle(
     user: user, uid: uid, avatar: avatar, title: title, content: content, path: path,
     attachmentHtml: attachmentHtml, attachmentInfo: attachmentInfo, time: time, canDelete: canDelete,
+    modifyPath: modifyPath,
   );
 }
 

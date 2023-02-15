@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import './req.dart';
 import '../globalvars.dart' show v2Host, genHeaders2, networkErrorText;
+import '../views/html_widget.dart' show BDWMAnsiText;
+import './utils.dart' show rawString;
 
 class CollectionInfo {
   String path = "";
@@ -252,6 +254,60 @@ Future<CollectionCreateDirRes> bdwmCollectionCreateDir({required String title, r
   }
   var respContent = json.decode(resp.body);
   var res = CollectionCreateDirRes(
+    success: respContent['success'],
+    name: respContent['name'] ?? "",
+    error: respContent['error'] ?? 0,
+  );
+  return res;
+}
+
+class CollectionNewRes {
+  bool success = true;
+  int error = 0;
+  String? errorMessage;
+  String? name = "";
+
+  CollectionNewRes.empty();
+  CollectionNewRes.error({
+    this.success=false,
+    required this.error,
+    this.errorMessage,
+  });
+  CollectionNewRes({
+    required this.success,
+    required this.error,
+    required this.name,
+  });
+}
+
+Future<CollectionNewRes> bdwmCollectionNew({
+  required String mode,
+  required String title,
+  required String content,
+  required String attachpath,
+  required String baseOrPath,
+  bool simple=false,
+}) async {
+  bool isNewFile = mode=="new"; // else "modify"
+  String bpKey = isNewFile ? "base" : "path";
+  var actionUrl = isNewFile ? "$v2Host/ajax/create_collection_file.php" : "$v2Host/ajax/edit_collection_file.php";
+  String lastConent = simple
+  ? "[${BDWMAnsiText.raw(content.endsWith("\n") ? rawString(content) : rawString("$content\n"))}]"
+  : content;
+  var data = {
+    "title": title,
+    "content": lastConent,
+    "mode": mode,
+    "attachpath": attachpath,
+    bpKey: baseOrPath,
+  };
+  var headers = genHeaders2();
+  var resp = await bdwmClient.post(actionUrl, headers: headers, data: data);
+  if (resp == null) {
+    return CollectionNewRes.error(success: false, error: -1, errorMessage: networkErrorText);
+  }
+  var respContent = json.decode(resp.body);
+  var res = CollectionNewRes(
     success: respContent['success'],
     name: respContent['name'] ?? "",
     error: respContent['error'] ?? 0,

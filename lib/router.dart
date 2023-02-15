@@ -10,6 +10,7 @@ import './pages/user.dart';
 import './pages/about.dart';
 import './pages/read_thread.dart';
 import './pages/post_new.dart';
+import './pages/collection_new.dart' show CollectionNewApp;
 import './pages/collection.dart';
 import './pages/block.dart';
 import './pages/zone.dart';
@@ -199,6 +200,19 @@ class MainPageBuilder {
           return null;
         }
         return CollectionArticleApp(link: link!, title: title!,);
+      case "/collectionNew":
+        String mode;
+        String baseOrPath;
+        String title;
+        if (settings.arguments != null) {
+          var settingsMap = settings.arguments as Map;
+          mode = settingsMap['mode'] as String;
+          baseOrPath = settingsMap['baseOrPath'] as String;
+          title = settingsMap['title'] as String;
+        } else {
+          return null;
+        }
+        return CollectionNewApp(mode: mode, baseOrPath: baseOrPath, title: title,);
       case "/login":
         bool needBack = false;
         if (settings.arguments != null) {

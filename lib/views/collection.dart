@@ -458,7 +458,8 @@ class _CollectionPageState extends State<CollectionPage> {
 class CollectionArticlePage extends StatefulWidget {
   final CollectionArticle collectionArticle;
   final Function refreshCallBack;
-  const CollectionArticlePage({super.key, required this.collectionArticle, required this.refreshCallBack});
+  final String title;
+  const CollectionArticlePage({super.key, required this.collectionArticle, required this.refreshCallBack, required this.title});
 
   @override
   State<CollectionArticlePage> createState() => _CollectionArticlePageState();
@@ -504,6 +505,18 @@ class _CollectionArticlePageState extends State<CollectionArticlePage> {
           ),
         Wrap(
           children: [
+            if (widget.collectionArticle.modifyPath != null) ...[
+              TextButton(
+                onPressed: () {
+                  nv2Push(context, '/collectionNew', arguments: {
+                    'mode': "modify",
+                    'title': widget.title,
+                    'baseOrPath': widget.collectionArticle.modifyPath,
+                  });
+                },
+                child: const Text("编辑"),
+              ),
+            ],
             if (widget.collectionArticle.canDelete)
               TextButton(
                 onPressed: () {

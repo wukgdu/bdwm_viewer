@@ -90,6 +90,7 @@ class _PostNewPageState extends State<PostNewPage> {
     }
 
     attachFiles = widget.postNewInfo.attachFiles;
+    attachCount = attachFiles.length;
   }
 
   @override

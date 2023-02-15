@@ -121,7 +121,12 @@ class CollectionCreateComponent extends StatelessWidget {
           const Divider(),
           ElevatedButton(
             onPressed: !canCreateFile ? null : () {
-              showInformDialog(context, "暂不支持", "以后更新");
+              Navigator.of(context).pop();
+              nv2Push(context, '/collectionNew', arguments: {
+                'mode': "new",
+                'title': curName,
+                'baseOrPath': base,
+              });
             },
             child: const Text("新建文件"),
           ),
@@ -460,7 +465,7 @@ class _CollectionArticleAppState extends State<CollectionArticleApp> {
               ),
             ],
           ),
-          body: CollectionArticlePage(collectionArticle: collectionArticle, refreshCallBack: () { refresh(); },),
+          body: CollectionArticlePage(collectionArticle: collectionArticle, refreshCallBack: () { refresh(); }, title: widget.title),
         );
       },
     );

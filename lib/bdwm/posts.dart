@@ -4,6 +4,8 @@ import 'package:crypto/crypto.dart';
 
 import '../globalvars.dart';
 import './req.dart';
+import '../views/html_widget.dart' show BDWMAnsiText;
+import './utils.dart' show rawString;
 
 String genMD5(String s) {
   var content = const Utf8Encoder().convert(s);
@@ -35,19 +37,12 @@ Future<PostRes> bdwmSimplePost({required String bid, required String title, requ
     actionUrl = "$v2Host/ajax/edit_post.php";
   }
   var contentStr = content;
-  var contentData = [
-    {
-      "type": "ansi",
-      "bold": false,
-      "underline": false,
-      "fore_color": 9,
-      "back_color": 9,
-      "content": content.endsWith("\n") ? content : "$content\n",
-    },
-  ];
+  String lastConent = (useBDWM!=null&&useBDWM==true)
+  ? contentStr
+  : "[${BDWMAnsiText.raw(content.endsWith("\n") ? rawString(content) : rawString("$content\n"))}]";
   var data = {
     'title': title,
-    'content': (useBDWM!=null&&useBDWM==true) ? contentStr : contentData,
+    'content': lastConent,
     'bid': bid,
     'postinfo': <String, dynamic>{},
     'actionid': "",
