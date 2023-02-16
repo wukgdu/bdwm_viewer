@@ -471,20 +471,15 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
             }
             var p1 = src.indexOf("base64,");
             var str = src.substring(p1+7);
-            var data = base64Decode(str);
             res.add(WidgetSpan(
               child: GestureDetector(
-                child: Container(
-                  constraints: BoxConstraints(maxHeight: _cacheHeight.toDouble()),
-                  // alignment: Alignment.centerLeft,
-                  child: Image.memory(data, cacheHeight: globalConfigInfo.getHighQualityPreview() ? null : _cacheHeight,)
-                ),
+                child: Text("[查看图片]", style: TextStyle(color: bdwmPrimaryColor).merge(ts),),
                 onTap: () {
                   if (context != null) {
                     var curTime = DateTime.now().toIso8601String().replaceAll(":", "_");
                     curTime = curTime.split(".").first;
                     var imgName = "OBViewer-$curTime.$srcType";
-                    gotoDetailImage(context: context, link: "", imgData: data, name: imgName);
+                    gotoDetailImage(context: context, link: "", imgDataStr: str, name: imgName);
                   }
                 },
               )));

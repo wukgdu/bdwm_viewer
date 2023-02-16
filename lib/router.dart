@@ -301,6 +301,7 @@ class MainPageBuilder {
         String? imgLink;
         String? imgName;
         Uint8List? imgData;
+        String? imgDataStr;
         List<String>? imgLinks;
         List<String>? imgNames;
         int? curIdx;
@@ -309,6 +310,7 @@ class MainPageBuilder {
           imgLink = settingsMap['link'] as String?;
           imgName = settingsMap['name'] as String?;
           imgData = settingsMap['imgData'] as Uint8List?;
+          imgDataStr = settingsMap['imgDataStr'] as String?;
           imgLinks = settingsMap['imgLinks'] as List<String>?;
           imgNames = settingsMap['imgNames'] as List<String>?;
           curIdx = settingsMap['curIdx'] as int?;
@@ -317,7 +319,7 @@ class MainPageBuilder {
         }
         return DetailImage(
           imgLink: imgLink ?? "", imgName: imgName, imgData: imgData,
-          imgLinks: imgLinks, imgNames: imgNames, curIdx: curIdx,
+          imgLinks: imgLinks, imgNames: imgNames, curIdx: curIdx, imgDataStr: imgDataStr,
         );
       case "/home":
         if (messageCount == null || mailCount == null) { return null; }

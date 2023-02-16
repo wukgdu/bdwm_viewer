@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 
 import '../router.dart';
 import 'package:flutter/foundation.dart';
@@ -13,12 +14,13 @@ import '../views/utils.dart' show SaveRes, genDownloadPath, showDownloadMenu;
 
 void gotoDetailImage({
   required BuildContext context, required String link, String? name, Uint8List? imgData,
-  List<String>? imgLinks, List<String>? imgNames, int? curIdx,
+  List<String>? imgLinks, List<String>? imgNames, int? curIdx, String? imgDataStr,
 }) {
   nv2Push(context, '/detailImage', arguments: {
     'link': link,
     'name': name,
     'imgData': imgData,
+    'imgDataStr': imgDataStr,
     'imgLinks': imgLinks,
     'imgNames': imgNames,
     'curIdx': curIdx,
@@ -29,10 +31,11 @@ class DetailImage extends StatefulWidget {
   final String imgLink;
   final String? imgName;
   final Uint8List? imgData;
+  final String? imgDataStr;
   final List<String>? imgLinks;
   final List<String>? imgNames;
   final int? curIdx;
-  const DetailImage({Key? key, required this.imgLink, this.imgName, this.imgData, this.imgLinks, this.imgNames, this.curIdx}) : super(key: key);
+  const DetailImage({Key? key, required this.imgLink, this.imgName, this.imgData, this.imgLinks, this.imgNames, this.curIdx, this.imgDataStr}) : super(key: key);
 
   @override
   State<DetailImage> createState() => _DetailImageState();
@@ -50,7 +53,7 @@ class _DetailImageState extends State<DetailImage> {
     super.initState();
     imgLink = widget.imgLink;
     imgName = widget.imgName;
-    imgData = widget.imgData;
+    imgData = widget.imgData ?? (widget.imgDataStr!=null ? base64Decode(widget.imgDataStr!) : null);
     currentIdx = widget.curIdx ?? -1;
   }
 
