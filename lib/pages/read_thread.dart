@@ -204,8 +204,6 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
   var newOrder = <TiebaFormItemInfo>[];
   int? _lastIndex;
   double? _lastTrailingEdge;
-  int? _lastLeadingIndex;
-  double? _lastLeadingEdge;
   bool _showBottomAppBar = true;
   bool _ignorePrevNext = true;
 
@@ -417,7 +415,6 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
     var scrollListHeight = scrollKey.currentContext?.size?.height ?? 1.0;
     _initScrollHeight ??= scrollListHeight;
     var lastPosition = getLastItem();
-    var firstPosition = getFirstItem();
     // debugPrint("height: $_initScrollHeight");
     if (_lastIndex==null) {
       _lastIndex = lastPosition.index;
@@ -427,8 +424,6 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
           itemPositionsListener.itemPositions.removeListener(listenToScroll);
         }
       }
-      _lastLeadingIndex = firstPosition.index;
-      _lastLeadingEdge = firstPosition.itemLeadingEdge * scrollListHeight;
       return;
     }
     int hideIt = 0;
@@ -455,16 +450,8 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
     if ((_initScrollHeight! < newTrailingEdge) && (newTrailingEdge <= _initScrollHeight!+md3BottomAppBarHeight+0.1)) {
       hideIt = 0;
     }
-    var newLeadingEdge = firstPosition.itemLeadingEdge * scrollListHeight;
-    if (firstPosition.index == _lastLeadingIndex) {
-      if (sameWithDelta(_lastLeadingEdge!, newLeadingEdge)) {
-        hideIt = 0;
-      }
-    }
     _lastIndex = lastPosition.index;
     _lastTrailingEdge = newTrailingEdge;
-    _lastLeadingIndex = firstPosition.index;
-    _lastLeadingEdge = newLeadingEdge;
     if (hideIt == 1) {
       hideBottomAppBar();
     } else if (hideIt == -1) {
