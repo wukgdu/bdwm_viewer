@@ -461,28 +461,32 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
           res.add(const WidgetSpan(child: Text("图片"),));
         } else {
           if (src.startsWith("data")) {
-            var typePos1 = src.indexOf(":image/");
-            var srcType = "png";
-            if (typePos1 != -1) {
-              var typePos2 = src.indexOf(";");
-              if (typePos2 != -1) {
-                srcType = src.substring(typePos1+7, typePos2);
-              }
-            }
             var p1 = src.indexOf("base64,");
-            var str = src.substring(p1+7);
-            res.add(WidgetSpan(
-              child: GestureDetector(
-                child: Text("[查看图片]", style: TextStyle(color: bdwmPrimaryColor).merge(ts),),
-                onTap: () {
-                  if (context != null) {
-                    var curTime = DateTime.now().toIso8601String().replaceAll(":", "_");
-                    curTime = curTime.split(".").first;
-                    var imgName = "OBViewer-$curTime.$srcType";
-                    gotoDetailImage(context: context, link: "", imgDataStr: str, name: imgName);
-                  }
-                },
-              )));
+            if (p1!=-1) {
+              var str = src.substring(p1+7);
+              var metaSrc = src.substring(0, p1);
+              var typePos1 = metaSrc.indexOf(":image/");
+              var srcType = "png";
+              if (typePos1 != -1) {
+                var typePos2 = metaSrc.indexOf(";");
+                if (typePos2 != -1) {
+                  srcType = metaSrc.substring(typePos1+7, typePos2);
+                }
+              }
+              res.add(WidgetSpan(
+                child: GestureDetector(
+                  child: Text("[查看图片]", style: TextStyle(color: bdwmPrimaryColor).merge(ts),),
+                  onTap: () {
+                    if (context != null) {
+                      var curTime = DateTime.now().toIso8601String().replaceAll(":", "_");
+                      curTime = curTime.split(".").first;
+                      var imgName = "OBViewer-$curTime.$srcType";
+                      gotoDetailImage(context: context, link: "", imgDataStr: str, name: imgName);
+                    }
+                  },
+                ),
+              ));
+            }
           } else {
             res.add(WidgetSpan(
               child: GestureDetector(
