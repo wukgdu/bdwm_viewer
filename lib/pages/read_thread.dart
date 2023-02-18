@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:flutter/rendering.dart';
+// import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../views/read_thread.dart';
 import '../views/utils.dart';
@@ -189,22 +190,23 @@ class ThreadDetailApp extends StatefulWidget {
   State<ThreadDetailApp> createState() => _ThreadDetailAppState();
 }
 
-double? _initScrollHeight;
-void resetInitScrollHeight() {
-  _initScrollHeight = null;
-}
+// double? _initScrollHeight;
+// void resetInitScrollHeight() {
+//   _initScrollHeight = null;
+// }
 // 回复帖子主题帖重新刷新后，class内state的initScrollHeight会变化，可能因为输入法占了屏幕？
 // 因此一开始保留这个变量用作之后的判断
 class _ThreadDetailAppState extends State<ThreadDetailApp> {
   final _titleFont = const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
-  ValueNotifier<bool> marked = ValueNotifier<bool>(false);
-  final ItemScrollController itemScrollController = ItemScrollController();
-  final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
+  final ScrollController _scrollController = ScrollController();
+  final ValueNotifier<bool> marked = ValueNotifier<bool>(false);
+  // final ItemScrollController itemScrollController = ItemScrollController();
+  // final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
   GlobalKey scrollKey = GlobalKey();
   var newOrder = <TiebaFormItemInfo>[];
-  int? _lastIndex;
-  double? _lastTrailingEdge;
-  bool _showBottomAppBar = true;
+  // int? _lastIndex;
+  // double? _lastTrailingEdge;
+  final ValueNotifier<bool> _showBottomAppBar = ValueNotifier<bool>(true);
   bool _ignorePrevNext = true;
 
   @override
@@ -215,7 +217,8 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
       computeNewOrder();
     }
     if (globalConfigInfo.getAutoHideBottomBar()) {
-      itemPositionsListener.itemPositions.addListener(listenToScroll);
+      // itemPositionsListener.itemPositions.addListener(listenToScroll);
+      _scrollController.addListener(listenToScrollRaw);
     }
     WidgetsBinding.instance.addPostFrameCallback((_){
       // _initScrollHeight = scrollKey.currentContext?.size?.height;
@@ -229,7 +232,11 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
           i+=1;
         }
         if ((i!=0) && (i<widget.threadPageInfo.posts.length)) {
-          itemScrollController.scrollTo(index: i, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
+          // itemScrollController.scrollTo(index: i, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
+          var kStr = widget.threadPageInfo.posts[i].postNumber;
+          var k = GlobalObjectKey(kStr);
+          if (k.currentContext==null) { return; }
+          Scrollable.ensureVisible(k.currentContext!, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
         }
       }
     });
@@ -240,8 +247,10 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
     super.didUpdateWidget(oldWidget);
     _ignorePrevNext = true;
     if (globalConfigInfo.getAutoHideBottomBar()) {
-      itemPositionsListener.itemPositions.removeListener(listenToScroll);
-      itemPositionsListener.itemPositions.addListener(listenToScroll);
+      // itemPositionsListener.itemPositions.removeListener(listenToScroll);
+      // itemPositionsListener.itemPositions.addListener(listenToScroll);
+      _scrollController.removeListener(listenToScrollRaw);
+      _scrollController.addListener(listenToScrollRaw);
     }
     if (widget.tiebaForm) {
       computeNewOrder();
@@ -253,9 +262,12 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
   @override
   void dispose() {
     if (globalConfigInfo.getAutoHideBottomBar()) {
-      itemPositionsListener.itemPositions.removeListener(listenToScroll);
+      // itemPositionsListener.itemPositions.removeListener(listenToScroll);
+      _scrollController.removeListener(listenToScrollRaw);
     }
     marked.dispose();
+    _showBottomAppBar.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -338,68 +350,126 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
     },);
   }
 
-  ItemPosition getFirstItem() {
-    var itemPositions = itemPositionsListener.itemPositions.value.toList();
-    var firstPosition = itemPositions.first;
-    for (var ips in itemPositions) {
-      if (firstPosition.index > ips.index) {
-        firstPosition = ips;
+  // ItemPosition getFirstItem() {
+  //   var itemPositions = itemPositionsListener.itemPositions.value.toList();
+  //   var firstPosition = itemPositions.first;
+  //   for (var ips in itemPositions) {
+  //     if (firstPosition.index > ips.index) {
+  //       firstPosition = ips;
+  //     }
+  //   }
+  //   return firstPosition;
+  // }
+
+  // ItemPosition getLastItem() {
+  //   var itemPositions = itemPositionsListener.itemPositions.value.toList();
+  //   var lastPosition = itemPositions.last;
+  //   for (var ips in itemPositions) {
+  //     if (lastPosition.index < ips.index) {
+  //       lastPosition = ips;
+  //     }
+  //   }
+  //   return lastPosition;
+  // }
+
+  // void gotoPreviousPost({bool far=false}) {
+  //   if (far) {
+  //     itemScrollController.scrollTo(index: 0, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
+  //     return;
+  //   }
+  //   var firstPosition = getFirstItem();
+  //   var prevIndex = firstPosition.index-1;
+  //   if (firstPosition.itemLeadingEdge < 0) {
+  //     prevIndex = firstPosition.index;
+  //   }
+  //   if (prevIndex < 0) {
+  //     prevIndex = 0;
+  //   }
+  //   itemScrollController.jumpTo(index: prevIndex);
+  // }
+
+  // void gotoNextPost({bool far=false}) {
+  //   if (far) {
+  //     itemScrollController.scrollTo(index: widget.threadPageInfo.posts.length-1, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
+  //     return;
+  //   }
+  //   var firstPosition = getFirstItem();
+  //   var nextIndex = firstPosition.index + 1;
+  //   if (nextIndex > widget.threadPageInfo.posts.length-1) {
+  //     return;
+  //   }
+  //   itemScrollController.jumpTo(index: nextIndex);
+  // }
+
+  void gotoPreviousPostRaw({bool far=false}) {
+    if (far) {
+      _scrollController.animateTo(_scrollController.position.minScrollExtent, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
+      return;
+    }
+    var scrollListBox = scrollKey.currentContext?.findRenderObject() as RenderBox?;
+    if (scrollListBox == null) { return; }
+    var validContext = <BuildContext>[];
+    var validY = <double>[];
+    for (var item in widget.threadPageInfo.posts) {
+      var kStr = item.postNumber;
+      var k = GlobalObjectKey(kStr);
+      if (k.currentContext != null) {
+        validContext.add(k.currentContext!);
+        var box = k.currentContext!.findRenderObject() as RenderBox?;
+        if (box == null) { return; }
+        validY.add(box.localToGlobal(Offset.zero).dy);
       }
     }
-    return firstPosition;
-  }
-
-  ItemPosition getLastItem() {
-    var itemPositions = itemPositionsListener.itemPositions.value.toList();
-    var lastPosition = itemPositions.last;
-    for (var ips in itemPositions) {
-      if (lastPosition.index < ips.index) {
-        lastPosition = ips;
+    var leadingEdge = scrollListBox.localToGlobal(Offset.zero).dy;
+    for (var i=validY.length-1; i>=0; i-=1) {
+      if (validY[i] < leadingEdge) {
+        Scrollable.ensureVisible(validContext[i]);
+        break;
       }
     }
-    return lastPosition;
   }
 
-  void gotoPreviousPost({bool far=false}) {
+  void gotoNextPostRaw({bool far=false}) {
     if (far) {
-      itemScrollController.scrollTo(index: 0, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
+      _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
       return;
     }
-    var firstPosition = getFirstItem();
-    var prevIndex = firstPosition.index-1;
-    if (firstPosition.itemLeadingEdge < 0) {
-      prevIndex = firstPosition.index;
+    var scrollListBox = scrollKey.currentContext?.findRenderObject() as RenderBox?;
+    if (scrollListBox == null) { return; }
+    var validContext = <BuildContext>[];
+    var validY = <double>[];
+    for (var item in widget.threadPageInfo.posts) {
+      var kStr = item.postNumber;
+      var k = GlobalObjectKey(kStr);
+      if (k.currentContext != null) {
+        validContext.add(k.currentContext!);
+        var box = k.currentContext!.findRenderObject() as RenderBox?;
+        if (box == null) { return; }
+        validY.add(box.localToGlobal(Offset.zero).dy);
+      }
     }
-    if (prevIndex < 0) {
-      prevIndex = 0;
+    var leadingEdge = scrollListBox.localToGlobal(Offset.zero).dy;
+    for (var i=0; i<validY.length; i+=1) {
+      if (validY[i] > leadingEdge) {
+        Scrollable.ensureVisible(validContext[i]);
+        break;
+      }
     }
-    itemScrollController.jumpTo(index: prevIndex);
-  }
-
-  void gotoNextPost({bool far=false}) {
-    if (far) {
-      itemScrollController.scrollTo(index: widget.threadPageInfo.posts.length-1, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
-      return;
-    }
-    var firstPosition = getFirstItem();
-    var nextIndex = firstPosition.index + 1;
-    if (nextIndex > widget.threadPageInfo.posts.length-1) {
-      return;
-    }
-    itemScrollController.jumpTo(index: nextIndex);
   }
 
   void showBottomAppBar() {
     if (!_ignorePrevNext) { return; }
-    if (!_showBottomAppBar) {
-      setState(() { _showBottomAppBar = true; });
+    if (!_showBottomAppBar.value) {
+      // setState(() { _showBottomAppBar = true; });
+      _showBottomAppBar.value = true;
     }
   }
 
   void hideBottomAppBar() {
     if (!_ignorePrevNext) { return; }
-    if (_showBottomAppBar) {
-      setState(() { _showBottomAppBar = false; });
+    if (_showBottomAppBar.value) {
+      // setState(() { _showBottomAppBar = false; });
+      _showBottomAppBar.value = false;
     }
   }
 
@@ -410,54 +480,63 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
     return false;
   }
 
-  void listenToScroll() {
-    const double delta = 2.0; // MD3 height of bottomAppBar is 80.0
-    var scrollListHeight = scrollKey.currentContext?.size?.height ?? 1.0;
-    _initScrollHeight ??= scrollListHeight;
-    var lastPosition = getLastItem();
-    // debugPrint("height: $_initScrollHeight");
-    if (_lastIndex==null) {
-      _lastIndex = lastPosition.index;
-      _lastTrailingEdge = lastPosition.itemTrailingEdge * scrollListHeight;
-      if (lastPosition.index == widget.threadPageInfo.posts.length-1) {
-        if (_initScrollHeight!-0.1 < _lastTrailingEdge! && _lastTrailingEdge! <= _initScrollHeight! + md3BottomAppBarHeight + 0.1) {
-          itemPositionsListener.itemPositions.removeListener(listenToScroll);
-        }
-      }
-      return;
-    }
-    int hideIt = 0;
-    double newTrailingEdge = lastPosition.itemTrailingEdge * scrollListHeight;
-    if (lastPosition.index > _lastIndex!) {
-      hideIt = 1;
-    } else if (lastPosition.index < _lastIndex!) {
-      hideIt = -1;
-    } else {
-      if ((newTrailingEdge < _lastTrailingEdge! - delta)) {
-        hideIt = 1;
-      } else if ((newTrailingEdge > _lastTrailingEdge! + delta)) {
-        hideIt = -1;
-      }
-    }
-    // debugPrint("$hideIt $_showBottomAppBar $scrollListHeight $_lastTrailingEdge $newTrailingEdge $_initScrollHeight");
-    if (sameWithDelta(newTrailingEdge, scrollListHeight) && sameWithDelta(newTrailingEdge, _lastTrailingEdge!+md3BottomAppBarHeight)) {
-      hideIt = 0;
-    }
-    if (!_showBottomAppBar && (_initScrollHeight! - 0.1 < newTrailingEdge) && (newTrailingEdge <= _initScrollHeight!+md3BottomAppBarHeight+0.1)) {
-      // MD3 bottom app bar height < 80，用80判断也没问题
-      hideIt = 0;
-    }
-    if ((_initScrollHeight! < newTrailingEdge) && (newTrailingEdge <= _initScrollHeight!+md3BottomAppBarHeight+0.1)) {
-      hideIt = 0;
-    }
-    _lastIndex = lastPosition.index;
-    _lastTrailingEdge = newTrailingEdge;
-    if (hideIt == 1) {
-      hideBottomAppBar();
-    } else if (hideIt == -1) {
+  void listenToScrollRaw() {
+    ScrollDirection scrollDirection = _scrollController.position.userScrollDirection;
+    if (scrollDirection == ScrollDirection.forward) {
       showBottomAppBar();
+    } else if (scrollDirection == ScrollDirection.reverse) {
+      hideBottomAppBar();
     }
   }
+
+  // void listenToScroll() {
+  //   const double delta = 2.0; // MD3 height of bottomAppBar is 80.0
+  //   var scrollListHeight = scrollKey.currentContext?.size?.height ?? 1.0;
+  //   _initScrollHeight ??= scrollListHeight;
+  //   var lastPosition = getLastItem();
+  //   // debugPrint("height: $_initScrollHeight");
+  //   if (_lastIndex==null) {
+  //     _lastIndex = lastPosition.index;
+  //     _lastTrailingEdge = lastPosition.itemTrailingEdge * scrollListHeight;
+  //     if (lastPosition.index == widget.threadPageInfo.posts.length-1) {
+  //       if (_initScrollHeight!-0.1 < _lastTrailingEdge! && _lastTrailingEdge! <= _initScrollHeight! + md3BottomAppBarHeight + 0.1) {
+  //         itemPositionsListener.itemPositions.removeListener(listenToScroll);
+  //       }
+  //     }
+  //     return;
+  //   }
+  //   int hideIt = 0;
+  //   double newTrailingEdge = lastPosition.itemTrailingEdge * scrollListHeight;
+  //   if (lastPosition.index > _lastIndex!) {
+  //     hideIt = 1;
+  //   } else if (lastPosition.index < _lastIndex!) {
+  //     hideIt = -1;
+  //   } else {
+  //     if ((newTrailingEdge < _lastTrailingEdge! - delta)) {
+  //       hideIt = 1;
+  //     } else if ((newTrailingEdge > _lastTrailingEdge! + delta)) {
+  //       hideIt = -1;
+  //     }
+  //   }
+  //   // debugPrint("$hideIt $_showBottomAppBar $scrollListHeight $_lastTrailingEdge $newTrailingEdge $_initScrollHeight");
+  //   if (sameWithDelta(newTrailingEdge, scrollListHeight) && sameWithDelta(newTrailingEdge, _lastTrailingEdge!+md3BottomAppBarHeight)) {
+  //     hideIt = 0;
+  //   }
+  //   if (!_showBottomAppBar.value && (_initScrollHeight! - 0.1 < newTrailingEdge) && (newTrailingEdge <= _initScrollHeight!+md3BottomAppBarHeight+0.1)) {
+  //     // MD3 bottom app bar height < 80，用80判断也没问题
+  //     hideIt = 0;
+  //   }
+  //   if ((_initScrollHeight! < newTrailingEdge) && (newTrailingEdge <= _initScrollHeight!+md3BottomAppBarHeight+0.1)) {
+  //     hideIt = 0;
+  //   }
+  //   _lastIndex = lastPosition.index;
+  //   _lastTrailingEdge = newTrailingEdge;
+  //   if (hideIt == 1) {
+  //     hideBottomAppBar();
+  //   } else if (hideIt == -1) {
+  //     showBottomAppBar();
+  //   }
+  // }
 
   Widget _onepost(OnePostInfo item, {int? subIdx}) {
     var userName = item.authorInfo.userName;
@@ -466,9 +545,10 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
     if (seeNoHimHer.contains(userName.toLowerCase())) {
       hideIt = true;
     }
+    var kStr = item.postNumber;
     return OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack,
       boardName: widget.threadPageInfo.board.text, threadid: widget.threadid,
-      subIdx: subIdx, hideIt: hideIt,
+      subIdx: subIdx, hideIt: hideIt, key: GlobalObjectKey(kStr),
     );
   }
 
@@ -534,10 +614,10 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
           GestureDetector(
             onDoubleTap: () {
               // Scrollable.ensureVisible(itemKeys[0].currentContext!, duration: const Duration(milliseconds: 1500));
-              gotoPreviousPost(far: true);
+              gotoPreviousPostRaw(far: true);
             },
             onLongPress: () {
-              gotoNextPost(far: true);
+              gotoNextPostRaw(far: true);
             },
             child: Container(
               padding: const EdgeInsets.all(10.0),
@@ -564,27 +644,54 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
                   }
                 }
               },
-              child: ScrollablePositionedList.builder(
+              child: SingleChildScrollView(
+                controller: _scrollController,
                 key: scrollKey,
-                itemCount: widget.threadPageInfo.posts.length,
-                itemBuilder: (context, index) {
-                  if (widget.tiebaForm) {
-                    var oriIdx = newOrder[index].oriIdx;
-                    var subIdx = newOrder[index].subIdx;
-                    return _onepost(widget.threadPageInfo.posts[oriIdx], subIdx: subIdx > 5 ? 5 : subIdx);
-                  }
-                  return _onepost(widget.threadPageInfo.posts[index]);
-                },
-                itemScrollController: itemScrollController,
-                itemPositionsListener: itemPositionsListener,
+                child: Column(
+                  children: widget.threadPageInfo.posts.asMap().entries.map((elem) {
+                    var index = elem.key;
+                    if (widget.tiebaForm) {
+                      var oriIdx = newOrder[index].oriIdx;
+                      var subIdx = newOrder[index].subIdx;
+                      return _onepost(widget.threadPageInfo.posts[oriIdx], subIdx: subIdx > 5 ? 5 : subIdx);
+                    }
+                    return _onepost(widget.threadPageInfo.posts[index]);
+                  }).toList(),
+                ),
               ),
+              // child: ListView.builder(
+              //   controller: _scrollController,
+              //   key: scrollKey,
+              //   itemCount: widget.threadPageInfo.posts.length,
+              //   itemBuilder: (context, index) {
+              //     if (widget.tiebaForm) {
+              //       var oriIdx = newOrder[index].oriIdx;
+              //       var subIdx = newOrder[index].subIdx;
+              //       return _onepost(widget.threadPageInfo.posts[oriIdx], subIdx: subIdx > 5 ? 5 : subIdx);
+              //     }
+              //     return _onepost(widget.threadPageInfo.posts[index]);
+              //   },
+              // ),
+              // child: ScrollablePositionedList.builder(
+              //   key: scrollKey,
+              //   itemCount: widget.threadPageInfo.posts.length,
+              //   itemBuilder: (context, index) {
+              //     if (widget.tiebaForm) {
+              //       var oriIdx = newOrder[index].oriIdx;
+              //       var subIdx = newOrder[index].subIdx;
+              //       return _onepost(widget.threadPageInfo.posts[oriIdx], subIdx: subIdx > 5 ? 5 : subIdx);
+              //     }
+              //     return _onepost(widget.threadPageInfo.posts[index]);
+              //   },
+              //   itemScrollController: itemScrollController,
+              //   itemPositionsListener: itemPositionsListener,
+              // ),
             ),
           ),
         ],
       ),
-      bottomNavigationBar: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        height: _showBottomAppBar ? (globalConfigInfo.useMD3 ? md3BottomAppBarHeight : null) : 0,
+      bottomNavigationBar: ValueListenableBuilder(
+        valueListenable: _showBottomAppBar,
         child: BottomAppBar(
           shape: null,
           // color: Colors.blue,
@@ -665,14 +772,21 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
             ),
           ),
         ),
+        builder: (context, value, child) {
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            height: _showBottomAppBar.value ? (globalConfigInfo.useMD3 ? md3BottomAppBarHeight : null) : 0,
+            child: child,
+          );
+        },
       ),
       floatingActionButton: !widget.showFAB ? null : MyFloatingActionButtonMenu(
         showFAB: widget.showFAB,
         gotoNextPost: ({bool far=false}) {
-          gotoNextPost(far: far);
+          gotoNextPostRaw(far: far);
         },
         gotoPreviousPost: ({bool far=false}) {
-          gotoPreviousPost(far: far);
+          gotoPreviousPostRaw(far: far);
         },
         toggleIgnore: (bool newValue) {
           _ignorePrevNext = newValue;
@@ -720,7 +834,7 @@ class  ThreadAppState extends State <ThreadApp> {
     // getDataCancelable = CancelableOperation.fromFuture(getData(firstTime: true), onCancel: () {
     //   debugPrint("cancel it");
     // },);
-    resetInitScrollHeight();
+    // resetInitScrollHeight();
   }
 
   void addHistory({required String link, required String title, required String userName, required String boardName}) {
