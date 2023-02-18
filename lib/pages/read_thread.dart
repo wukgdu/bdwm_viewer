@@ -236,7 +236,10 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
           var kStr = widget.threadPageInfo.posts[i].postNumber;
           var k = GlobalObjectKey(kStr);
           if (k.currentContext==null) { return; }
-          Scrollable.ensureVisible(k.currentContext!, duration: const Duration(milliseconds: 1500), curve: Curves.ease);
+          Scrollable.ensureVisible(k.currentContext!, duration: const Duration(milliseconds: 1500), curve: Curves.ease)
+          .then((_) {
+            Scrollable.ensureVisible(k.currentContext!, duration: const Duration(milliseconds: 500), curve: Curves.ease);
+          });
         }
       }
     });
