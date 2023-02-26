@@ -51,7 +51,7 @@ https://github.com/wukgdu/bdwm_viewer/releases
     1. [x] 看自己和他人文集
     2. [x] 查看版面精华区
     3. [x] 收入文章到文集
-    4. [ ] 管理文集
+    4. [x] 管理文集
     5. [x] 收入他人文章
 4. 搜索
     1. [x] 帖子高级搜索
