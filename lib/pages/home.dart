@@ -1,7 +1,9 @@
+import 'package:dynamic_color/dynamic_color.dart' show ColorHarmonization;
 import 'package:flutter/material.dart';
 
 import '../globalvars.dart';
 import '../utils.dart';
+import '../views/constants.dart' show bdwmPrimaryColor;
 // import '../services.dart';
 import '../views/top100.dart';
 import '../views/top10.dart';
@@ -129,7 +131,7 @@ class _HomeAppState extends State<HomeApp> with SingleTickerProviderStateMixin {
           ),
         ],
         bottom: TabBar(
-          indicatorColor: const Color.fromARGB(159, 214, 53, 13),
+          indicatorColor: const Color.fromARGB(159, 214, 53, 13).harmonizeWith(bdwmPrimaryColor),
           labelStyle: const TextStyle(fontSize: 12),
           controller: _tabController,
           tabs: [

@@ -150,6 +150,74 @@ class _EntryHomeComponentState extends State<EntryHomeComponent> {
     );
   }
 }
+class OneTenComponent extends StatelessWidget {
+  final Top10Item item;
+  const OneTenComponent({super.key, required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(
+          item.title,
+          textAlign: TextAlign.start,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Row(
+          children: [
+            Text(item.board),
+            const SizedBox(width: 10,),
+            const Icon(Icons.comment, size: 12),
+            Text(item.countComments)
+          ],
+        ),
+        // dense: true,
+        leading: Container(
+          height: 20,
+          width: 30,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: item.id <= 3 ? Colors.redAccent : Colors.grey,
+            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+            // border: Border.all(width: 1, color: Colors.red),
+          ),
+          child: Text(item.id.toString(), style: const TextStyle(color: Colors.white)),
+        ),
+        minLeadingWidth: 20,
+        onTap: () { naviGotoThreadByLink(context, item.link, item.board, needToBoard: true); }
+      )
+    );
+  }
+}
+
+class OneBlockComponent extends StatelessWidget {
+  final BlockItem item;
+  const OneBlockComponent({super.key, required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(
+          item.title,
+          textAlign: TextAlign.start,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Row(
+          children: [
+            Text(item.board),
+            const SizedBox(width: 10,),
+            const Icon(Icons.comment, size: 12),
+            Text(item.countComments)
+          ],
+        ),
+        // dense: true,
+        minLeadingWidth: 20,
+        onTap: () { naviGotoThreadByLink(context, item.link, item.board, needToBoard: true); }
+      )
+    );
+  }
+}
 
 class TopHomePage extends StatefulWidget {
   const TopHomePage({Key? key}) : super(key: key);
@@ -206,63 +274,6 @@ class _TopHomePageState extends State<TopHomePage> {
     getDataCancelable.cancel();
     _scrollController.dispose();
     super.dispose();
-  }
-
-  Widget _oneTen(Top10Item item) {
-    return Card(
-      child: ListTile(
-        title: Text(
-          item.title,
-          textAlign: TextAlign.start,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Row(
-          children: [
-            Text(item.board),
-            const SizedBox(width: 10,),
-            const Icon(Icons.comment, size: 12),
-            Text(item.countComments)
-          ],
-        ),
-        // dense: true,
-        leading: Container(
-          height: 20,
-          width: 30,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: item.id <= 3 ? Colors.redAccent : Colors.grey,
-            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-            // border: Border.all(width: 1, color: Colors.red),
-          ),
-          child: Text(item.id.toString(), style: const TextStyle(color: Colors.white)),
-        ),
-        minLeadingWidth: 20,
-        onTap: () { naviGotoThreadByLink(context, item.link, item.board, needToBoard: true); }
-      )
-    );
-  }
-
-  Widget _oneBlockItem(BlockItem item) {
-    return Card(
-      child: ListTile(
-        title: Text(
-          item.title,
-          textAlign: TextAlign.start,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Row(
-          children: [
-            Text(item.board),
-            const SizedBox(width: 10,),
-            const Icon(Icons.comment, size: 12),
-            Text(item.countComments)
-          ],
-        ),
-        // dense: true,
-        minLeadingWidth: 20,
-        onTap: () { naviGotoThreadByLink(context, item.link, item.board, needToBoard: true); }
-      )
-    );
   }
 
   bool gotTop10(List<Top10Item>? top10Info) {
@@ -331,7 +342,9 @@ class _TopHomePageState extends State<TopHomePage> {
                       const Divider(),
                       if (gotTop10(homeInfo.top10Info) && isTop10Valid(homeInfo.top10Info!))
                         ...homeInfo.top10Info!.map((item) {
-                          return _oneTen(item);
+                          return RepaintBoundary(
+                            child: OneTenComponent(item: item),
+                          );
                         }).toList()
                       else if (gotTop10(homeInfo.top10Info) && !isTop10Valid(homeInfo.top10Info!)) ...[
                         ListTile(
@@ -373,7 +386,9 @@ class _TopHomePageState extends State<TopHomePage> {
                       const Divider(),
                       if (blockOne.blockItems.isNotEmpty)
                         ...blockOne.blockItems.map((item) {
-                          return _oneBlockItem(item);
+                          return RepaintBoundary(
+                            child: OneBlockComponent(item: item),
+                          );
                         }).toList()
                       else
                         const Text("该分区暂无热门主题帖"),
