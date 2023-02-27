@@ -219,6 +219,104 @@ class OneBlockComponent extends StatelessWidget {
   }
 }
 
+class BlocksComponent extends StatelessWidget {
+  final BlockOne blockOne;
+  final TextStyle? titleFont;
+  const BlocksComponent({super.key, required this.blockOne, this.titleFont});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          GestureDetector(
+            onTap: () {
+              var bid = getQueryValue(blockOne.blockLink, 'bid');
+              if (bid == null) { return; }
+              nv2Push(context, '/block', arguments: {
+                'bid': bid,
+                'title': blockOne.blockName,
+              },);
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(blockOne.blockName, style: titleFont),
+                const Icon(Icons.arrow_right),
+              ],
+            ),
+          ),
+          const Divider(),
+          if (blockOne.blockItems.isNotEmpty)
+            ...blockOne.blockItems.map((item) {
+              return RepaintBoundary(
+                child: OneBlockComponent(item: item),
+              );
+            }).toList()
+          else
+            const Text("该分区暂无热门主题帖"),
+        ],
+      ),
+    );
+  }
+}
+
+class TensComponent extends StatelessWidget {
+  final HomeInfo homeInfo;
+  final TextStyle? titleFont;
+  const TensComponent({super.key, required this.homeInfo, this.titleFont});
+
+  bool gotTop10(List<Top10Item>? top10Info) {
+    return top10Info != null && top10Info.isNotEmpty;
+  }
+
+  bool isTop10Valid(List<Top10Item> top10Info) {
+    if (top10Info.length > 1) {
+      return true;
+    }
+    if (top10Info.length == 1) {
+      if (top10Info[0].id == -1) {
+        return false;
+      }
+      return true;
+    }
+    // wont reach here after gotTop10
+    return true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Column(
+        // mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text("全站十大", style: titleFont),
+          const Divider(),
+          if (gotTop10(homeInfo.top10Info) && isTop10Valid(homeInfo.top10Info!))
+            ...homeInfo.top10Info!.map((item) {
+              return RepaintBoundary(
+                child: OneTenComponent(item: item),
+              );
+            }).toList()
+          else if (gotTop10(homeInfo.top10Info) && !isTop10Valid(homeInfo.top10Info!)) ...[
+            ListTile(
+              // title: Text("全站十大", style: _titleFont),
+              title: Text(homeInfo.top10Info![0].title),
+              // isThreeLine: true,
+              trailing: IconButton(
+                icon: const Icon(Icons.login),
+                onPressed: () { nv2Replace(context, '/login', arguments: {'needBack': false}); },
+              )
+            ),
+          ],
+        ]
+      ),
+    );
+  }
+}
+
 class TopHomePage extends StatefulWidget {
   const TopHomePage({Key? key}) : super(key: key);
 
@@ -276,24 +374,6 @@ class _TopHomePageState extends State<TopHomePage> {
     super.dispose();
   }
 
-  bool gotTop10(List<Top10Item>? top10Info) {
-    return top10Info != null && top10Info.isNotEmpty;
-  }
-
-  bool isTop10Valid(List<Top10Item> top10Info) {
-    if (top10Info.length > 1) {
-      return true;
-    }
-    if (top10Info.length == 1) {
-      if (top10Info[0].id == -1) {
-        return false;
-      }
-      return true;
-    }
-    // wont reach here after gotTop10
-    return true;
-  }
-
   @override
   Widget build(BuildContext context) {
     debugPrint("** top10 rebuild");
@@ -333,68 +413,10 @@ class _TopHomePageState extends State<TopHomePage> {
             itemCount: homeInfo.blockInfo.length+1,
             itemBuilder: (context, index) {
               if (index==0) {
-                return Card(
-                  child: Column(
-                    // mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text("全站十大", style: _titleFont),
-                      const Divider(),
-                      if (gotTop10(homeInfo.top10Info) && isTop10Valid(homeInfo.top10Info!))
-                        ...homeInfo.top10Info!.map((item) {
-                          return RepaintBoundary(
-                            child: OneTenComponent(item: item),
-                          );
-                        }).toList()
-                      else if (gotTop10(homeInfo.top10Info) && !isTop10Valid(homeInfo.top10Info!)) ...[
-                        ListTile(
-                          // title: Text("全站十大", style: _titleFont),
-                          title: Text(homeInfo.top10Info![0].title),
-                          // isThreeLine: true,
-                          trailing: IconButton(
-                            icon: const Icon(Icons.login),
-                            onPressed: () { nv2Replace(context, '/login', arguments: {'needBack': false}); },
-                          )
-                        ),
-                      ],
-                    ]
-                  ),
-                );
+                return TensComponent(homeInfo: homeInfo, titleFont: _titleFont,);
               } else {
                 var blockOne = homeInfo.blockInfo[index-1];
-                return Card(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          var bid = getQueryValue(blockOne.blockLink, 'bid');
-                          if (bid == null) { return; }
-                          nv2Push(context, '/block', arguments: {
-                            'bid': bid,
-                            'title': blockOne.blockName,
-                          },);
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(blockOne.blockName, style: _titleFont),
-                            const Icon(Icons.arrow_right),
-                          ],
-                        ),
-                      ),
-                      const Divider(),
-                      if (blockOne.blockItems.isNotEmpty)
-                        ...blockOne.blockItems.map((item) {
-                          return RepaintBoundary(
-                            child: OneBlockComponent(item: item),
-                          );
-                        }).toList()
-                      else
-                        const Text("该分区暂无热门主题帖"),
-                    ],
-                  ),
-                );
+                return BlocksComponent(blockOne: blockOne, titleFont: _titleFont,);
               }
             },
           );
