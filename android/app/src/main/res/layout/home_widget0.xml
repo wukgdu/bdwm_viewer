@@ -1,0 +1,88 @@
+<LinearLayout
+    android:id="@+id/widget_root"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+
+    <Button
+        android:id="@+id/bt_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="刷新"
+        android:background="@android:color/white"
+        android:textColor="#e97c62"
+        android:textSize="16sp" />
+
+    <LinearLayout
+        android:id="@+id/list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#ffcccccc"
+        android:showDividers="middle">
+
+        <Button
+            android:id="@+id/top10_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:textColor="#000000" />
+        <Button
+            android:id="@+id/top10_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:textColor="#000000" />
+        <Button
+            android:id="@+id/top10_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:textColor="#000000" />
+        <Button
+            android:id="@+id/top10_4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:textColor="#000000" />
+        <Button
+            android:id="@+id/top10_5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:textColor="#000000" />
+        <Button
+            android:id="@+id/top10_6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:textColor="#000000" />
+        <Button
+            android:id="@+id/top10_7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:textColor="#000000" />
+        <Button
+            android:id="@+id/top10_8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:textColor="#000000" />
+        <Button
+            android:id="@+id/top10_9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:textColor="#000000" />
+        <Button
+            android:id="@+id/top10_10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:textColor="#000000" />
+    </LinearLayout>
+</LinearLayout>

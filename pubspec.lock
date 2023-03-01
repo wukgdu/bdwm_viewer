@@ -397,6 +397,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.1.0"
+  home_widget:
+    dependency: "direct main"
+    description:
+      name: home_widget
+      sha256: c7a57566606ce702454f074a0b933ee156f05ea6ef1f79f4cb680a171afe59dd
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.2.0+1"
   html:
     dependency: "direct main"
     description:

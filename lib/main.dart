@@ -6,6 +6,7 @@ import 'package:dynamic_fonts/dynamic_fonts.dart';
 import 'package:quick_actions/quick_actions.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 // import 'package:flutter/rendering.dart';
+import 'package:home_widget/home_widget.dart';
 
 import './router.dart';
 import './globalvars.dart';
@@ -16,6 +17,7 @@ import './bdwm/mail.dart';
 import './utils.dart';
 import './check_update.dart' show checkUpdateByTime;
 import './notification.dart' show initFlnInstance;
+import './views/top10.dart' show getDataTop10, gotTop10, isTop10Valid;
 
 void main() async {
   if (isAndroid()) {
@@ -35,7 +37,37 @@ void main() async {
   await unreadMessage.initWorker();
   await unreadMail.initWorker();
   registerDynamicFont();
+  if (isAndroid()) {
+    await HomeWidget.registerBackgroundCallback(backgroundCallback);
+  }
   runApp(const MainPage());
+}
+
+@pragma("vm:entry-point")
+Future<void> backgroundCallback(Uri? uri) async {
+  if (uri == null) { return; }
+  await globalUInfo.init();
+  if (uri.host == 'obviewerupdatetop10') {
+    String top10string = "";
+    await HomeWidget.getWidgetData<String>('_top10string', defaultValue: "").then((value) async {
+      if (value == null) { return; }
+      var homeInfo = await getDataTop10();
+      if (homeInfo.errorMessage != null) {
+        top10string = "";
+      } else {
+        if (gotTop10(homeInfo.top10Info) && isTop10Valid(homeInfo.top10Info!)) {
+          for (var item in homeInfo.top10Info!) {
+            top10string += "${item.title}\n${item.link}\n";
+          }
+        } else {
+          top10string = "";
+        }
+      }
+    });
+    debugPrint(top10string);
+    await HomeWidget.saveWidgetData<String>('_top10string', top10string);
+    await HomeWidget.updateWidget(name: 'HomeWidget0Provider', iOSName: 'AppWidgetProvider');
+  }
 }
 
 void initPrimaryColor() {

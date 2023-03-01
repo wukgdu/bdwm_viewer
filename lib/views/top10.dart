@@ -262,28 +262,28 @@ class BlocksComponent extends StatelessWidget {
   }
 }
 
+bool gotTop10(List<Top10Item>? top10Info) {
+  return top10Info != null && top10Info.isNotEmpty;
+}
+
+bool isTop10Valid(List<Top10Item> top10Info) {
+  if (top10Info.length > 1) {
+    return true;
+  }
+  if (top10Info.length == 1) {
+    if (top10Info[0].id == -1) {
+      return false;
+    }
+    return true;
+  }
+  // wont reach here after gotTop10
+  return true;
+}
+
 class TensComponent extends StatelessWidget {
   final HomeInfo homeInfo;
   final TextStyle? titleFont;
   const TensComponent({super.key, required this.homeInfo, this.titleFont});
-
-  bool gotTop10(List<Top10Item>? top10Info) {
-    return top10Info != null && top10Info.isNotEmpty;
-  }
-
-  bool isTop10Valid(List<Top10Item> top10Info) {
-    if (top10Info.length > 1) {
-      return true;
-    }
-    if (top10Info.length == 1) {
-      if (top10Info[0].id == -1) {
-        return false;
-      }
-      return true;
-    }
-    // wont reach here after gotTop10
-    return true;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -324,24 +324,24 @@ class TopHomePage extends StatefulWidget {
   State<TopHomePage> createState() => _TopHomePageState();
 }
 
+Future<HomeInfo> getDataTop10() async {
+  var resp = await bdwmClient.get("$v2Host/mobile/home.php", headers: genHeaders());
+  if (resp == null) {
+    return HomeInfo.error(errorMessage: networkErrorText);
+  }
+  return parseHome(resp.body);
+}
+
 class _TopHomePageState extends State<TopHomePage> {
   final _titleFont = const TextStyle(fontSize: 20, fontWeight: FontWeight.normal);
   final _scrollController = ScrollController();
   late CancelableOperation getDataCancelable;
 
-  Future<HomeInfo> getData() async {
-    var resp = await bdwmClient.get("$v2Host/mobile/home.php", headers: genHeaders());
-    if (resp == null) {
-      return HomeInfo.error(errorMessage: networkErrorText);
-    }
-    return parseHome(resp.body);
-  }
-
   @override
   void initState() {
     super.initState();
     // homeInfo = getExampleHomeInfo();
-    getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {});
+    getDataCancelable = CancelableOperation.fromFuture(getDataTop10(), onCancel: () {});
     // _scrollController.addListener(() {
     //   debugPrint(_scrollController.offset);
     // });
@@ -363,7 +363,7 @@ class _TopHomePageState extends State<TopHomePage> {
   Future<void> updateData() async {
     if (!mounted) { return; }
     setState(() {
-      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {});
+      getDataCancelable = CancelableOperation.fromFuture(getDataTop10(), onCancel: () {});
     });
   }
 
