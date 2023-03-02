@@ -18,6 +18,7 @@ import './utils.dart';
 import './check_update.dart' show checkUpdateByTime;
 import './notification.dart' show initFlnInstance;
 import './views/top10.dart' show getDataTop10, gotTop10, isTop10Valid;
+import './pages/read_thread.dart' show naviGotoThreadByLink;
 
 void main() async {
   if (isAndroid()) {
@@ -37,14 +38,12 @@ void main() async {
   await unreadMessage.initWorker();
   await unreadMail.initWorker();
   registerDynamicFont();
-  if (isAndroid()) {
-    await HomeWidget.registerBackgroundCallback(backgroundCallback);
-  }
   runApp(const MainPage());
 }
 
 @pragma("vm:entry-point")
 Future<void> backgroundCallback(Uri? uri) async {
+  print('back $uri');
   if (uri == null) { return; }
   await globalUInfo.init();
   if (uri.host == 'obviewerupdatetop10') {
@@ -201,6 +200,8 @@ class MainPageState extends State<MainPage> {
         const ShortcutItem(type: '/recentThread', localizedTitle: '最近浏览', icon: 'ic_wei'),
         const ShortcutItem(type: '/markedThread', localizedTitle: '帖子收藏', icon: 'ic_wei'),
       ]);
+
+      HomeWidget.registerBackgroundCallback(backgroundCallback);
     }
   }
 
@@ -220,6 +221,33 @@ class MainPageState extends State<MainPage> {
     clearAllExtendedImageCache(really: true);
     debugPrint("main dispose");
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _checkForWidgetLaunch();
+    HomeWidget.widgetClicked.listen(_launchedFromWidget);
+  }
+
+  void _checkForWidgetLaunch() {
+    HomeWidget.initiallyLaunchedFromHomeWidget().then(_launchedFromWidget);
+  }
+
+  void _launchedFromWidget(Uri? uri) {
+    print('uri $uri');
+    if (uri == null) { return; }
+    print("a${uri.path}b");
+    if (uri.host == 'obvieweropenlink') {
+      var link = uri.queryParameters["link"] ?? "";
+      if (link.isEmpty) {
+        return;
+      }
+      var arguments = naviGotoThreadByLink(null, link, "", getArguments: true);
+      if (arguments == null) { return; }
+      print(arguments);
+      mainRouterDelegate?.push('/thread', arguments: arguments);
+    }
   }
 
   void refresh() {

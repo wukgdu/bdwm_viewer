@@ -1020,10 +1020,10 @@ void naviGotoThread(context, String bid, String threadid, String page, String bo
   });
 }
 
-void naviGotoThreadByLink(context, String link, String boardName, {bool? needToBoard, String? pageDefault, bool replaceIt=false}) {
+Map<String, Object?>? naviGotoThreadByLink(BuildContext? context, String link, String boardName, {bool? needToBoard, String? pageDefault, bool replaceIt=false, bool getArguments=false}) {
   var pb1 = link.indexOf('bid');
   if (pb1 == -1) {
-    return;
+    return null;
   }
   var pb2 = link.indexOf('&', pb1);
   var bid = link.substring(pb1+4, pb2 == -1 ? null : pb2);
@@ -1051,17 +1051,23 @@ void naviGotoThreadByLink(context, String link, String boardName, {bool? needToB
   }
   var pt1 = link.indexOf('threadid');
   if (pt1 == -1) {
-    return;
+    return null;
   }
   var pt2 = link.indexOf('&', pt1);
   var threadid = link.substring(pt1+9, pt2 == -1 ? null : pt2);
-  var nv2Do = replaceIt ? nv2Replace : nv2Push;
-  nv2Do(context, '/thread', arguments: {
+  Map<String, Object?> arguments = {
     'bid': bid,
     'threadid': threadid,
     'page': page,
     'boardName': boardName,
     'needToBoard': needToBoard,
     'postid': postid,
-  });
+  };
+  if (getArguments == true) {
+    return arguments;
+  }
+  if (context==null) { return null; }
+  var nv2Do = replaceIt ? nv2Replace : nv2Push;
+  nv2Do(context, '/thread', arguments: arguments);
+  return null;
 }

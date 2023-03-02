@@ -7,9 +7,10 @@
     android:minHeight="110dp"
     android:minResizeWidth="180dp"
     android:minResizeHeight="110dp"
-    android:maxResizeWidth="270dp"
+    android:maxResizeWidth="360dp"
     android:maxResizeHeight="600dp"
     android:resizeMode="horizontal|vertical"
     android:initialLayout="@layout/home_widget0"
+    android:previewLayout="@layout/home_widget0"
     android:widgetCategory="home_screen">
 </appwidget-provider>

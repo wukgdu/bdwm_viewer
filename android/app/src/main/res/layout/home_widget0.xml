@@ -1,6 +1,7 @@
 <LinearLayout
     android:id="@+id/widget_root"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -13,9 +14,11 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="未名十大"
-            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
             android:textColor="#000000"
             android:textSize="16sp"
+            android:layout_gravity="left"
+            android:layout_marginLeft="40px"
             android:gravity="center" />
         <Button
             android:id="@+id/bt_update"
@@ -28,74 +31,28 @@
             android:textSize="16sp" />
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/list_view"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#cccccc"
-        android:divider="@drawable/divider"
-        android:showDividers="middle">
-
-        <Button
-            android:id="@+id/top10_1"
+        android:layout_height="match_parent"
+        android:background="#dddddd">
+        <ListView
+            android:id="@+id/list_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:textColor="#000000" />
-        <Button
-            android:id="@+id/top10_2"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:divider="#00000000"
+            android:dividerHeight="5dp"
+            tools:listitem="@layout/widget_item" />
+        <TextView
+            android:id="@+id/empty_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
             android:background="@android:color/white"
-            android:textColor="#000000" />
-        <Button
-            android:id="@+id/top10_3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:textColor="#000000" />
-        <Button
-            android:id="@+id/top10_4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:textColor="#000000" />
-        <Button
-            android:id="@+id/top10_5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:textColor="#000000" />
-        <Button
-            android:id="@+id/top10_6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:textColor="#000000" />
-        <Button
-            android:id="@+id/top10_7"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:textColor="#000000" />
-        <Button
-            android:id="@+id/top10_8"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:textColor="#000000" />
-        <Button
-            android:id="@+id/top10_9"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:textColor="#000000" />
-        <Button
-            android:id="@+id/top10_10"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:textColor="#000000" />
-    </LinearLayout>
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:text="暂无数据"
+            android:textSize="20sp" />
+    </FrameLayout>
 </LinearLayout>
