@@ -28,13 +28,16 @@ class HomeWidget0Provider : HomeWidgetProvider() {
                 val builder = RemoteViews.RemoteCollectionItems.Builder()
                 val itemsString = widgetData.getString("_top10string", "");
                 if (!itemsString.isNullOrEmpty()) {
+                    val itemKind: Int = 3;
                     val values = itemsString.split("\n".toRegex()).toTypedArray();
-                    val dataLength: Int = (values.size-1) / 2;
+                    val dataLength: Int = (values.size-1) / itemKind;
                     for (index in 0 until dataLength) {
-                        val title = values[index*2];
-                        val link = values[index*2+1];
+                        val title = values[index*itemKind];
+                        val link = values[index*itemKind+1];
+                        val commentCount = values[index*itemKind+2];
                         val rv = RemoteViews(context.packageName, R.layout.widget_item).apply {
-                            setTextViewText(R.id.widget_item, title);
+                            setTextViewText(R.id.widget_title, title);
+                            setTextViewText(R.id.widget_count, commentCount);
                             val intent = Intent()
                             intent.data = Uri.parse("bdwmViewer://obvieweropenlink?link=$link")
                             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));

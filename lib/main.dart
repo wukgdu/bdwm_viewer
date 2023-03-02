@@ -43,7 +43,6 @@ void main() async {
 
 @pragma("vm:entry-point")
 Future<void> backgroundCallback(Uri? uri) async {
-  print('back $uri');
   if (uri == null) { return; }
   await globalUInfo.init();
   if (uri.host == 'obviewerupdatetop10') {
@@ -56,7 +55,7 @@ Future<void> backgroundCallback(Uri? uri) async {
       } else {
         if (gotTop10(homeInfo.top10Info) && isTop10Valid(homeInfo.top10Info!)) {
           for (var item in homeInfo.top10Info!) {
-            top10string += "${item.title}\n${item.link}\n";
+            top10string += "${item.title}\n${item.link}\n${item.countComments}\n";
           }
         } else {
           top10string = "";
@@ -235,9 +234,9 @@ class MainPageState extends State<MainPage> {
   }
 
   void _launchedFromWidget(Uri? uri) {
-    print('uri $uri');
+    debugPrint('uri $uri');
     if (uri == null) { return; }
-    print("a${uri.path}b");
+    debugPrint("a${uri.path}b");
     if (uri.host == 'obvieweropenlink') {
       var link = uri.queryParameters["link"] ?? "";
       if (link.isEmpty) {
@@ -245,7 +244,6 @@ class MainPageState extends State<MainPage> {
       }
       var arguments = naviGotoThreadByLink(null, link, "", getArguments: true);
       if (arguments == null) { return; }
-      print(arguments);
       mainRouterDelegate?.push('/thread', arguments: arguments);
     }
   }

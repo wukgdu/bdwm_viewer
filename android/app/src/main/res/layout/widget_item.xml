@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_item"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     android:background="@drawable/rounded_corner"
-    android:padding="5dp"
-    android:maxLength="24"
-    android:ellipsize="end"
-    android:maxLines="1"
-    android:textColor="#000000"
-    android:textSize="16sp" />
+    android:orientation="horizontal"
+    android:padding="7dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/widget_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ffffff"
+        android:layout_marginRight="5dp"
+        android:textColor="#ea6242"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/widget_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLength="24"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="#000000"
+        android:textSize="14sp" />
+</LinearLayout>
