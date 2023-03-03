@@ -12,5 +12,6 @@
     android:resizeMode="horizontal|vertical"
     android:initialLayout="@layout/home_widget0"
     android:previewLayout="@layout/home_widget0"
+    android:previewImage="@drawable/appwidget0"
     android:widgetCategory="home_screen">
 </appwidget-provider>

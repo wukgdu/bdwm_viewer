@@ -50,6 +50,9 @@
             <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/home_widget0" />
         </receiver>
+        <service android:name="HomeWidget0Service"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            android:exported="false" />
 
         <!-- Used for Background Work -->
         <receiver android:name="es.antonborri.home_widget.HomeWidgetBackgroundReceiver"

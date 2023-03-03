@@ -236,13 +236,13 @@ class MainPageState extends State<MainPage> {
   void _launchedFromWidget(Uri? uri) {
     debugPrint('uri $uri');
     if (uri == null) { return; }
-    debugPrint("a${uri.path}b");
     if (uri.host == 'obvieweropenlink') {
       var link = uri.queryParameters["link"] ?? "";
+      debugPrint('open $link');
       if (link.isEmpty) {
         return;
       }
-      var arguments = naviGotoThreadByLink(null, link, "", getArguments: true);
+      var arguments = naviGotoThreadByLink(null, link, "", getArguments: true, needToBoard: true);
       if (arguments == null) { return; }
       mainRouterDelegate?.push('/thread', arguments: arguments);
     }
