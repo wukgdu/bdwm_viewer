@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../check_update.dart' show curVersionForBBS;
+
 // const bdwmPrimaryColor = Color(0xffea6242);
 const bdwmSurfaceColor = Color(0xffe97c62);
 Color bdwmPrimaryColor = bdwmSurfaceColor;
@@ -58,7 +60,7 @@ const Map<String, Color> topicsLabelColor = {
 
 const serifFont = TextStyle(fontFamily: 'serif');
 
-const signatureOBViewer = [{"content":"发自 onepiece 的客户端\n","fore_color":8,"back_color":9,"bold":false,"blink":false,"underline":false,"reverse":false,"type":"ansi"},];
+const signatureOBViewer = [{"content":"发自 onepiece 的客户端 $curVersionForBBS\n","fore_color":8,"back_color":9,"bold":false,"blink":false,"underline":false,"reverse":false,"type":"ansi"},];
 
 const messageEmojis = {
   "[微笑]": "🙂", "[撇嘴]": "😕", "[色]": "😍", "[发呆]": "😐", "[得意]": "😎", "[流泪]": "😢", "[害羞]": "😳", "[闭嘴]": "🤐", "[睡]": "😴", "[大哭]": "😭",
