@@ -6,7 +6,7 @@ import '../views/utils.dart';
 import '../bdwm/search.dart';
 import '../services_instance.dart';
 import '../views/constants.dart' show bdwmPrimaryColor;
-import '../globalvars.dart' show globalContactInfo, globalUInfo;
+import '../globalvars.dart' show globalContactInfo, globalUInfo, globalConfigInfo;
 
 class MessagelistApp extends StatefulWidget {
   final MessageBriefNotifier brief;
@@ -154,13 +154,26 @@ class MessagePersonApp extends StatefulWidget {
 }
 
 class _MessagePersonAppState extends State<MessagePersonApp> {
+  int count = 50;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.userName),
+        actions: [
+          TextButton(
+            onPressed: () {
+              if (count < 300) {
+                setState(() {
+                  count += 50;
+                });
+              }
+            },
+            child: Text("$count", style: TextStyle(color: globalConfigInfo.getUseMD3() ? null : Colors.white)),
+          ),
+        ],
       ),
-      body: MessagePersonPage(withWho: widget.userName),
+      body: MessagePersonPage(withWho: widget.userName, count: count,),
     );
   }
 }

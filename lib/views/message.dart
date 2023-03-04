@@ -242,8 +242,8 @@ class _MessageListPageState extends State<MessageListPage> {
 
 class MessagePersonPage extends StatefulWidget {
   final String withWho;
-  final int count = 50;
-  const MessagePersonPage({super.key, required this.withWho});
+  final int count;
+  const MessagePersonPage({super.key, required this.withWho, this.count=50});
 
   @override
   State<MessagePersonPage> createState() => _MessagePersonPageState();
@@ -253,6 +253,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
   late CancelableOperation getDataCancelable;
   final ScrollController _controller = ScrollController();
   TextEditingController contentController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   final emojiKeyList = messageEmojis.keys.toList();
 
   Future<MessageInfo> getData() async {
@@ -272,6 +273,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
     super.initState();
     getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
     },);
+    _focusNode.addListener(afterFocus);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       // _controller.jumpTo(_controller.position.maxScrollExtent);
       var res = await bdwmSetMessagesRead(widget.withWho);
@@ -281,19 +283,33 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
     });
   }
 
-  void update() {
-    setState(() {
-      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
-      },);
-    });
+  @override
+  void didUpdateWidget(covariant MessagePersonPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    update();
   }
 
   @override
   void dispose() {
     _controller.dispose();
     contentController.dispose();
+    _focusNode.removeListener(afterFocus);
+    _focusNode.dispose();
     Future.microtask(() => getDataCancelable.cancel(),);
     super.dispose();
+  }
+
+  void afterFocus() {
+    if (_focusNode.hasFocus) {
+      _controller.animateTo(0.0, duration: const Duration(milliseconds: 1000), curve: Curves.ease);
+    }
+  }
+
+  void update() {
+    setState(() {
+      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+      },);
+    });
   }
 
   TextSpan genContentTextSpan(String rawContent) {
@@ -431,6 +447,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
                 }
               }
               return ListView.builder(
+                key: PageStorageKey(widget.withWho),
                 reverse: true,
                 controller: _controller,
                 itemCount: messageinfo.messages.length,
@@ -455,6 +472,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
               Expanded(
                 child: TextField(
                   controller: contentController,
+                  focusNode: _focusNode,
                   minLines: 1,
                   maxLines: 3,
                   readOnly: widget.withWho == "deliver" ? true : false,
