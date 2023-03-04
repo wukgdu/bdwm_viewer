@@ -446,14 +446,19 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
                   return const Center(child: Text("出错啦"),);
                 }
               }
-              return ListView.builder(
-                key: PageStorageKey(widget.withWho),
-                reverse: true,
-                controller: _controller,
-                itemCount: messageinfo.messages.length,
-                itemBuilder: ((context, index) {
-                  return oneItem(messageinfo.messages[index]);
-                }),
+              return GestureDetector(
+                onTap: () {
+                  _focusNode.unfocus();
+                },
+                child: ListView.builder(
+                  key: PageStorageKey(widget.withWho),
+                  reverse: true,
+                  controller: _controller,
+                  itemCount: messageinfo.messages.length,
+                  itemBuilder: ((context, index) {
+                    return oneItem(messageinfo.messages[index]);
+                  }),
+                ),
               );
             }
           )
