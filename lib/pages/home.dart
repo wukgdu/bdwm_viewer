@@ -31,7 +31,7 @@ class StackIcon extends StatelessWidget {
             top: 10,
             right: 0,
             child: Container(
-              width: 20,
+              width: 16,
               // height: 20,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
@@ -40,7 +40,7 @@ class StackIcon extends StatelessWidget {
               child: Text(
                 count > 9
                   ? '9+' : count.toString(),
-                style: const TextStyle(color: Colors.white, fontSize: 12),
+                style: const TextStyle(color: Colors.white, fontSize: 8),
                 textAlign: TextAlign.center,
               ),
             ),
