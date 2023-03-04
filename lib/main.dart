@@ -225,8 +225,10 @@ class MainPageState extends State<MainPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _checkForWidgetLaunch();
-    HomeWidget.widgetClicked.listen(_launchedFromWidget);
+    if (isAndroid()) {
+      _checkForWidgetLaunch();
+      HomeWidget.widgetClicked.listen(_launchedFromWidget);
+    }
   }
 
   void _checkForWidgetLaunch() {
