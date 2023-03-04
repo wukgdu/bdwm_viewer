@@ -8,6 +8,7 @@ import '../html_parser/friends_parser.dart';
 import './user.dart' show UserOperationComponent;
 import '../router.dart' show nv2Push;
 import './utils.dart' show showPageDialog;
+import './html_widget.dart' show genSimpleCachedImageProvider;
 
 class FriendPage extends StatefulWidget {
   final String mode;
@@ -91,7 +92,7 @@ class _FriendPageState extends State<FriendPage> {
                           child: CircleAvatar(
                             // radius: 100,
                             backgroundColor: Colors.white,
-                            backgroundImage: NetworkImage(e.avatar),
+                            backgroundImage: genSimpleCachedImageProvider(e.avatar),
                           ),
                         ),
                         onTap: () {

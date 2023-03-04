@@ -476,7 +476,7 @@ class _CollectionArticlePageState extends State<CollectionArticlePage> {
             leading: GestureDetector(
               child: CircleAvatar(
                 backgroundColor: Colors.white,
-                backgroundImage: NetworkImage(widget.collectionArticle.avatar),
+                backgroundImage: genSimpleCachedImageProvider(widget.collectionArticle.avatar),
               ),
               onTap: () {
                 if (widget.collectionArticle.uid.isEmpty) {

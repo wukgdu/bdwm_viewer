@@ -21,6 +21,51 @@ import '../router.dart' show nv2Push;
 
 const int _cacheHeight = 150;
 
+ExtendedNetworkImageProvider genSimpleCachedImageProvider(String imgLink) {
+  return ExtendedNetworkImageProvider(
+    imgLink,
+    cache: true,
+    timeLimit: null,
+  );
+}
+
+class SimpleCachedImage extends StatelessWidget {
+  final String imgLink;
+  final double? height;
+  final double? width;
+  const SimpleCachedImage({super.key, required this.imgLink, this.height, this.width});
+
+  @override
+  Widget build(BuildContext context) {
+    return ExtendedImage.network(
+      imgLink,
+      height: height,
+      width: width,
+      fit: BoxFit.contain,
+      cache: true,
+      enableMemoryCache: true,
+      clearMemoryCacheWhenDispose: true,
+      clearMemoryCacheIfFailed: true,
+      handleLoadingProgress: true,
+      filterQuality: FilterQuality.high,
+      cacheHeight: null,
+      timeLimit: null,
+      loadStateChanged: (ExtendedImageState state) {
+        switch (state.extendedImageLoadState) {
+          case LoadState.loading:
+            return SizedBox(height: height, width: width,);
+          case LoadState.completed:
+            return null;
+          case LoadState.failed:
+            return null;
+          default:
+            return null;
+        }
+      },
+    );
+  }
+}
+
 class WrapImageNetwork extends StatefulWidget {
   final String imgLink;
   final String? imgAlt;

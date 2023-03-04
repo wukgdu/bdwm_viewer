@@ -6,6 +6,7 @@ import '../globalvars.dart';
 import '../html_parser/top100_parser.dart';
 import '../pages/read_thread.dart';
 import '../router.dart' show nv2Push;
+import './html_widget.dart' show genSimpleCachedImageProvider;
 
 class Top100Page extends StatefulWidget {
   const Top100Page({Key? key}) : super(key: key);
@@ -68,7 +69,7 @@ class _Top100PageState extends State<Top100Page> {
             child: CircleAvatar(
               // radius: 100,
               backgroundColor: Colors.white,
-              backgroundImage: NetworkImage(item.avatarLink),
+              backgroundImage: genSimpleCachedImageProvider(item.avatarLink),
             ),
           ),
           onTap: () {

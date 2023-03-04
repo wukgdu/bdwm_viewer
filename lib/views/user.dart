@@ -374,10 +374,6 @@ class _UserInfoPageState extends State<UserInfoPage> {
       children: [
         Card(
           child: ListTile(
-            // leading: CircleAvatar(
-            //   backgroundColor: Colors.white,
-            //   backgroundImage: NetworkImage(user.avatarLink),
-            // ),
             leading: GestureDetector(
               onTap: () {
                 gotoDetailImage(context: context, link: user.avatarLink, imgData: null, name: "${user.bbsID}.jpg");
@@ -387,12 +383,13 @@ class _UserInfoPageState extends State<UserInfoPage> {
                 children: [
                   CircleAvatar(
                     backgroundColor: Colors.white,
-                    backgroundImage: NetworkImage(user.avatarLink),
+                    backgroundImage: genSimpleCachedImageProvider(user.avatarLink),
                   ),
-                  if (user.avatarFrameLink.isNotEmpty)
-                    Image.network(
-                      user.avatarFrameLink,
+                  if (user.avatarFrameLink.isNotEmpty) ...[
+                    SimpleCachedImage(
+                      imgLink: user.avatarFrameLink,
                     ),
+                  ],
                 ],
               ),
             ),

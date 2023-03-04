@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../html_parser/mail_parser.dart';
-import './html_widget.dart' show HtmlComponent;
+import './html_widget.dart' show HtmlComponent, genSimpleCachedImageProvider;
 import './read_thread.dart' show AttachmentComponent;
 import './collection.dart' show showCollectionDialog;
 import '../bdwm/collection.dart';
@@ -42,7 +42,7 @@ class _MailListPageState extends State<MailListPage> {
                 child: CircleAvatar(
                   // radius: 100,
                   backgroundColor: Colors.white,
-                  backgroundImage: NetworkImage(item.avatar),
+                  backgroundImage: genSimpleCachedImageProvider(item.avatar),
                 ),
               ),
               onTap: () {
@@ -116,7 +116,7 @@ class _MailDetailPageState extends State<MailDetailPage> {
             leading: GestureDetector(
               child: CircleAvatar(
                 backgroundColor: Colors.white,
-                backgroundImage: NetworkImage(widget.mailDetailInfo.avatar),
+                backgroundImage: genSimpleCachedImageProvider(widget.mailDetailInfo.avatar),
               ),
               onTap: () {
                 if (widget.mailDetailInfo.uid.isEmpty) {

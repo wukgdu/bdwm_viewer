@@ -605,7 +605,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                     child: CircleAvatar(
                       // radius: 20,
                       backgroundColor: Colors.white,
-                      backgroundImage: NetworkImage(item.authorInfo.avatarLink),
+                      backgroundImage: genSimpleCachedImageProvider(item.authorInfo.avatarLink),
                     ),
                     onTap: () {
                       if (item.authorInfo.uid.isEmpty) {
