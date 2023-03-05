@@ -5,17 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@android:color/white">
+    android:background="@color/myColorBackground">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/myColorTitleBackground">
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="未名十大"
             android:layout_centerVertical="true"
-            android:textColor="#000000"
+            android:textColor="@color/myColorText"
             android:textSize="16sp"
             android:layout_gravity="left"
             android:layout_marginLeft="40px"
@@ -27,19 +28,19 @@
             android:layout_alignParentRight="true"
             android:text="刷新"
             android:background="@null"
-            android:textColor="#e97c62"
+            android:textColor="@color/myColorTextButton"
             android:textSize="16sp" />
     </RelativeLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#dddddd">
+        android:background="@color/myColorListBackground">
         <ListView
             android:id="@+id/list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
+            android:layout_margin="8dp"
             android:gravity="center"
             android:divider="#00000000"
             android:dividerHeight="5dp"
@@ -49,8 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:background="@android:color/white"
-            android:textColor="#000000"
+            android:textColor="@color/myColorText"
             android:textStyle="bold"
             android:text="暂无数据"
             android:textSize="20sp" />

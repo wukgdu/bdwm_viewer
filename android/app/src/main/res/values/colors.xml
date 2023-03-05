@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="myColorBackground">#00000000</color>
+    <color name="myColorTitleBackground">#ffffffff</color>
+    <color name="myColorListBackground">#ffdddddd</color>
+    <color name="myColorListItem">#ffffffff</color>
+    <color name="myColorText">#ff000000</color>
+    <color name="myColorTextButton">#ffe97c62</color>
+    <color name="myColorNumber">#ffea6242</color>
+</resources>
