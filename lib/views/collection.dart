@@ -80,6 +80,23 @@ class _CollectionPageState extends State<CollectionPage> {
   int oIndex = -1;
   bool inMultiSelect = false;
   Set<CollectionItem> multiSelectedPath = {};
+  int firstIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.collectionList.collectionItems.isNotEmpty) {
+      firstIndex = widget.collectionList.collectionItems.first.id - 1;
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant CollectionPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.collectionList.collectionItems.isNotEmpty) {
+      firstIndex = widget.collectionList.collectionItems.first.id - 1;
+    }
+  }
 
   @override
   void dispose() {
@@ -445,6 +462,7 @@ class _CollectionPageState extends State<CollectionPage> {
         if (oIndex < index) {
           index -= 1;
         }
+        index += firstIndex;
         reorderCollectionWrap(oPath, index, context, refreshCallBack: () {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("移动成功"), duration: Duration(milliseconds: 600),),
