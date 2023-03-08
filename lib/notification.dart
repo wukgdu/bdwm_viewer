@@ -12,12 +12,12 @@ import './check_update.dart' show innerLinkForBBS;
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 int quickID = 0;
-const String groupKey = "com.wukgdu365.bdwm_viewer";
+const String groupKey = "com.wukgdu365.bdwm_viewer.GENERAL_NOTIFICATION";
 
 const AndroidNotificationDetails androidNotificationDetailsGeneral = AndroidNotificationDetails(
   "general", "通用",
   channelDescription: 'OBViewer 通用通知渠道',
-  groupKey: groupKey,
+  // groupKey: groupKey,
   importance: Importance.max,
   priority: Priority.high,
   ticker: 'OBViewer',
