@@ -31,6 +31,7 @@ import './pages/marked_thread.dart';
 import './pages/user_stat.dart';
 import './pages/board_note.dart';
 import './pages/read_post.dart';
+import './pages/favorite_collection.dart';
 import './views/search.dart' show PostSearchSettings;
 import './services.dart';
 import './globalvars.dart';
@@ -247,6 +248,8 @@ class MainPageBuilder {
         return MailNewApp(bid: bid, parentid: parentid, receiver: receiver);
       case "/friend":
         return const FriendsApp();
+      case "/favoriteCollection":
+        return const FavoriteCollectionApp();
       case "/search":
         return const SearchApp();
       case "/simpleSearchResult":

@@ -54,7 +54,7 @@ class AboutApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       // needBack should always be false/null
-      drawer: const MyDrawer(selectedIdx: 6),
+      drawer: const MyDrawer(selectedIdx: 7),
       appBar: AppBar(
         title: const Text("关于"),
       ),
