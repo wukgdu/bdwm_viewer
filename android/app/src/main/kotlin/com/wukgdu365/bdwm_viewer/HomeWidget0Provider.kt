@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.widget.RemoteViews
+import android.widget.Toast;
 import es.antonborri.home_widget.HomeWidgetBackgroundIntent
 import es.antonborri.home_widget.HomeWidgetLaunchIntent
 import es.antonborri.home_widget.HomeWidgetPlugin
@@ -36,6 +37,7 @@ class HomeWidget0Provider : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         val widgetData = HomeWidgetPlugin.getData(context) // SharedPreferences
+        Toast.makeText(context, "更新十大", Toast.LENGTH_SHORT).show()
         appWidgetIds.forEach { widgetId ->
             val views = RemoteViews(context.packageName, R.layout.home_widget0).apply({
                 // Open App on Widget Click
