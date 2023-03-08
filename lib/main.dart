@@ -47,22 +47,24 @@ Future<void> backgroundCallback(Uri? uri) async {
   await globalUInfo.init();
   if (uri.host == 'obviewerupdatetop10') {
     String top10string = "";
-    await HomeWidget.getWidgetData<String>('_top10string', defaultValue: "").then((value) async {
-      if (value == null) { return; }
-      var homeInfo = await getDataTop10();
-      if (homeInfo.errorMessage != null) {
-        top10string = "";
-      } else {
-        if (gotTop10(homeInfo.top10Info) && isTop10Valid(homeInfo.top10Info!)) {
-          for (var item in homeInfo.top10Info!) {
-            top10string += "${item.title}\n${item.link}\n${item.countComments}\n";
-          }
-        } else {
-          top10string = "";
+    String top10Status = "";
+    var homeInfo = await getDataTop10();
+    if (homeInfo.errorMessage != null) {
+      top10string = await HomeWidget.getWidgetData<String>('_top10string', defaultValue: "") ?? "";
+      top10Status = "网络超时";
+    } else {
+      if (gotTop10(homeInfo.top10Info) && isTop10Valid(homeInfo.top10Info!)) {
+        for (var item in homeInfo.top10Info!) {
+          top10string += "${item.title}\n${item.link}\n${item.countComments}\n";
         }
+        top10Status = "更新十大成功";
+      } else {
+        top10string = await HomeWidget.getWidgetData<String>('_top10string', defaultValue: "") ?? "";
+        top10Status = "获取十大失败";
       }
-    });
+    }
     debugPrint(top10string);
+    await HomeWidget.saveWidgetData<String>('_top10status', top10Status);
     await HomeWidget.saveWidgetData<String>('_top10string', top10string);
     await HomeWidget.updateWidget(name: 'HomeWidget0Provider', iOSName: 'AppWidgetProvider');
   }
