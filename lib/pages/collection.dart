@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 
 import '../bdwm/req.dart';
-import '../bdwm/collection.dart' show bdwmCollectionCreateDir;
+import '../bdwm/collection.dart' show bdwmCollectionCreateDir, bdwmCollectionSetGood;
 import '../views/collection.dart';
 import '../globalvars.dart';
 import '../views/utils.dart';
@@ -233,6 +233,23 @@ class _CollectionAppState extends State<CollectionApp> {
           appBar: AppBar(
             title: Text(collectionList.title),
             actions: [
+              IconButton(
+                onPressed: () async {
+                  var path = getCollectionPathFromHttp(widget.link);
+                  if (path == null) { return; }
+                  var res = await bdwmCollectionSetGood(action: "add", paths: [path]);
+                  if (!mounted) { return; }
+                  bool success = res.success;
+                  var txt = "收藏成功";
+                  if (success==false) {
+                    txt = res.errorMessage ?? "收藏失败";
+                  }
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(txt), duration: const Duration(milliseconds: 600),),
+                  );
+                },
+                icon: const Icon(Icons.star_border_rounded),
+              ),
               IconButton(
                 onPressed: (widget.link.contains("?")) ? () {
                   var p1 = widget.link.lastIndexOf("%2F");

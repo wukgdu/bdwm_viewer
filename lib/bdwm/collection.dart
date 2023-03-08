@@ -314,3 +314,39 @@ Future<CollectionNewRes> bdwmCollectionNew({
   );
   return res;
 }
+
+class CollectionSetRes {
+  bool success = true;
+  int error = 0;
+  String? errorMessage;
+
+  CollectionSetRes.empty();
+  CollectionSetRes.error({
+    this.success=false,
+    required this.error,
+    this.errorMessage,
+  });
+  CollectionSetRes({
+    required this.success,
+    required this.error,
+  });
+}
+
+Future<CollectionSetRes> bdwmCollectionSetGood({required String action, required List<String> paths}) async {
+  var actionUrl = "$v2Host/ajax/set_good_collections.php";
+  var data = {
+    "action": action,
+    "paths": jsonEncode(paths),
+  };
+  var headers = genHeaders2();
+  var resp = await bdwmClient.post(actionUrl, headers: headers, data: data);
+  if (resp == null) {
+    return CollectionSetRes.error(success: false, error: -1, errorMessage: networkErrorText);
+  }
+  var respContent = json.decode(resp.body);
+  var res = CollectionSetRes(
+    success: respContent['success'],
+    error: respContent['error'] ?? 0,
+  );
+  return res;
+}
