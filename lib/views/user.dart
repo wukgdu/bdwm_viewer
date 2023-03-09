@@ -6,6 +6,7 @@ import 'package:async/async.dart';
 import "../html_parser/user_parser.dart";
 import "../bdwm/req.dart";
 import "../bdwm/search.dart";
+// import "../bdwm/settings.dart";
 import "../globalvars.dart";
 import '../bdwm/users.dart';
 import "../bdwm/logout.dart";
@@ -13,6 +14,7 @@ import "./utils.dart";
 import "./constants.dart";
 import "../pages/detail_image.dart";
 import './html_widget.dart';
+import '../html_parser/modify_profile_parser.dart';
 import '../router.dart' show nv2Push, nv2PushAndRemoveAll;
 
 class UserOperationCombinedComponent extends StatefulWidget {
@@ -226,6 +228,213 @@ class _ShowIpComponentState extends State<ShowIpComponent> {
             child: Text(showIp ? "隐藏" : "点击查看"),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class RankSelectComponent extends StatefulWidget {
+  final String rankName;
+  final String selected;
+  final SelfProfileRankSysInfo selfProfileRankSysInfo;
+  final Function(String newRankName, String newSelected)? updateFunc;
+  const RankSelectComponent({super.key, required this.rankName, required this.selected, required this.selfProfileRankSysInfo, this.updateFunc});
+
+  @override
+  State<RankSelectComponent> createState() => _RankSelectComponentState();
+}
+
+class _RankSelectComponentState extends State<RankSelectComponent> {
+  List<DropdownMenuItem<String>> rankOptions = [];
+  String selected = "";
+  int rankIndex = 0;
+
+  void update() {
+    selected = widget.selected;
+    rankOptions.clear();
+    for (int i=0; i<widget.selfProfileRankSysInfo.values.length; i+=1) {
+      rankOptions.add(DropdownMenuItem<String>(
+        value: widget.selfProfileRankSysInfo.values[i],
+        child: Text(widget.selfProfileRankSysInfo.names[i]),
+      ));
+    }
+    var selectedInt = int.tryParse(selected);
+    if (selectedInt != null) {
+      for (int i=0; i<widget.selfProfileRankSysInfo.rankSysDesc[selectedInt].length; i+=1) {
+        if (widget.selfProfileRankSysInfo.rankSysDesc[selectedInt][i] == widget.rankName) {
+          rankIndex = i;
+          break;
+        }
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    update();
+  }
+
+  @override
+  void didUpdateWidget(covariant RankSelectComponent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // update();
+    selected = widget.selected;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String>(
+      isDense: true,
+      hint: const Text("等级系统"),
+      icon: const Icon(Icons.arrow_drop_down),
+      value: selected,
+      items: rankOptions,
+      onChanged: (String? value) {
+        if (value == null) { return; }
+        int valueInt = int.parse(value);
+        var newRankName = widget.selfProfileRankSysInfo.rankSysDesc[valueInt][rankIndex];
+        if (widget.updateFunc != null) {
+          widget.updateFunc!(newRankName, value);
+        } else {
+          setState(() {
+            selected = value;
+          });
+        }
+      },
+    );
+  }
+}
+
+class RankSysComponent extends StatefulWidget {
+  final String rankName;
+  final String userName;
+  const RankSysComponent({super.key, required this.rankName, required this.userName});
+
+  @override
+  State<RankSysComponent> createState() => _RankSysComponentState();
+}
+
+class _RankSysComponentState extends State<RankSysComponent> {
+  CancelableOperation? getDataCancelable;
+  String rankName = "";
+  String selected = "";
+  bool underEdit = false;
+
+  @override
+  void initState() {
+    super.initState();
+    rankName = widget.rankName;
+    debugPrint("********** rankSys re init");
+  }
+
+  @override
+  void didUpdateWidget(covariant RankSysComponent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    rankName = widget.rankName;
+  }
+
+  @override
+  void dispose() {
+    getDataCancelable?.cancel();
+    super.dispose();
+  }
+
+  Future<SelfProfileInfo> getData() async {
+    var resp = await bdwmClient.get("$v2Host/modify-profile.php", headers: genHeaders());
+    if (resp == null) {
+      return SelfProfileInfo.error(errorMessage: networkErrorText);
+    }
+    return parseSelfProfile(resp.body);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Container(
+        height: 40,
+        padding: const EdgeInsets.only(left: 10),
+        child: Row(
+          children: [
+            const Text("等级："),
+            SelectableText(rankName),
+            if (!underEdit) ...[
+              if ((globalUInfo.login == true) && (globalUInfo.username == widget.userName)) ...[
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      underEdit = true;
+                      getDataCancelable ??= CancelableOperation.fromFuture(getData(), onCancel: () {});
+                    });
+                  },
+                  icon: Icon(Icons.edit, size: 16, color: bdwmPrimaryColor,),
+                ),
+              ]
+            ] else ...[
+              FutureBuilder(
+                future: getDataCancelable!.value,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.done) {
+                    return const SizedBox(width: 60, child: LinearProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return const Text("错误");
+                  }
+                  if (!snapshot.hasData || snapshot.data == null) {
+                    return const Text("错误：未获取数据");
+                  }
+                  SelfProfileInfo selfProfileInfo = snapshot.data as SelfProfileInfo;
+                  if (selfProfileInfo.errorMessage != null) {
+                    return const Text("获取失败");
+                  }
+                  var rankSysInfo = selfProfileInfo.selfProfileRankSysInfo;
+                  selected = rankSysInfo.selected;
+                  return RankSelectComponent(
+                    rankName: rankName,
+                    selected: selected,
+                    selfProfileRankSysInfo: rankSysInfo,
+                    updateFunc:(newRankName, newSelected) {
+                      setState(() {
+                        rankName = newRankName;
+                        rankSysInfo.selected = newSelected;
+                        // selected = newSelected;
+                      });
+                    },
+                  );
+                },
+              ),
+              IconButton(
+                onPressed: () async {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("暂不支持修改"), duration: Duration(milliseconds: 600),),
+                  );
+                  // 不行，不能只修改等级系统
+                  // var res = await bdwmSetProfileRankOnly(selected);
+                  // if (res.success) {
+                  //   setState(() {
+                  //     underEdit = false;
+                  //   });
+                  // } else {
+                  //   var reason = res.errorMessage ?? "rt";
+                  //   if (!mounted) { return; }
+                  //   ScaffoldMessenger.of(context).showSnackBar(
+                  //     SnackBar(content: Text("设置失败：$reason"), duration: const Duration(milliseconds: 600),),
+                  //   );
+                  // }
+                },
+                icon: Icon(Icons.check, size: 16, color: bdwmPrimaryColor,),
+              ),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    underEdit = false;
+                  });
+                },
+                icon: Icon(Icons.close, size: 16, color: bdwmPrimaryColor,),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -474,7 +683,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
               _oneLineItem("上站次数", user.countLogin),
               _oneLineItem("发帖数", user.countPost),
               _oneLineItem("积分", user.score),
-              _oneLineItem("等级", user.rankName),
+              RankSysComponent(rankName: user.rankName, userName: user.bbsID,),
               _oneLineItem("原创分", user.rating),
               _oneLineItem("最近上站时间", user.recentLogin),
               _oneLineItem("最近离站时间", user.recentLogout),
