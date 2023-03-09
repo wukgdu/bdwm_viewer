@@ -37,6 +37,9 @@ Future<void> quickNotify(String title, String content, {String? payload}) async 
   if (!couldDoIt) { return; }
   if (Platform.isWindows) {
   } else if (Platform.isAndroid) {
+    // TODO: 判断是否要group
+    // var activeNotifications = await flutterLocalNotificationsPlugin.getActiveNotifications();
+    // activeNotifications.first.groupKey;
     const NotificationDetails notificationDetails = NotificationDetails(android: androidNotificationDetailsGeneral);
     await flutterLocalNotificationsPlugin.show(
       quickID++, title, content, notificationDetails,
