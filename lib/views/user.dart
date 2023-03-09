@@ -290,6 +290,7 @@ class _RankSelectComponentState extends State<RankSelectComponent> {
       icon: const Icon(Icons.arrow_drop_down),
       value: selected,
       items: rankOptions,
+      style: Theme.of(context).textTheme.titleMedium,
       onChanged: (String? value) {
         if (value == null) { return; }
         int valueInt = int.parse(value);
@@ -352,9 +353,12 @@ class _RankSysComponentState extends State<RankSysComponent> {
   Widget build(BuildContext context) {
     return Card(
       child: Container(
-        height: 40,
+        constraints: const BoxConstraints(
+          minHeight: 40.0
+        ),
         padding: const EdgeInsets.only(left: 10),
-        child: Row(
+        child: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             const Text("等级："),
             SelectableText(rankName),
