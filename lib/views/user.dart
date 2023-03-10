@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import "../html_parser/user_parser.dart";
 import "../bdwm/req.dart";
@@ -579,7 +580,6 @@ class _UserInfoPageState extends State<UserInfoPage> {
     debugPrint("** user rebuild");
     var genderIcon = user.gender.contains("保密") ? const Icon(Icons.lock) :
       user.gender == "男" ? const Icon(Icons.man) : const Icon(Icons.woman);
-    var subtitle1 = user.personalCollection.link != null ? "个人文集 ${user.personalCollection.text}" : user.personalCollection.text;
     var subtitle2 = user.duty ?? '本站职务：无';
     if (user.errorMessage != null) {
       return Center(child: Text(user.errorMessage!));
@@ -632,7 +632,9 @@ class _UserInfoPageState extends State<UserInfoPage> {
             subtitle: Text.rich(
               TextSpan(
                 children: [
-                  if (user.personalCollection.link != null && user.personalCollection.link!.isNotEmpty)
+                  if (user.personalCollection.link != null
+                    && user.personalCollection.link!.isNotEmpty
+                    && !user.personalCollection.link!.contains("collection-application.php")) ...[
                     WidgetSpan(
                       child: GestureDetector(
                         onTap: () {
@@ -651,8 +653,32 @@ class _UserInfoPageState extends State<UserInfoPage> {
                         ),
                       ),
                     )
-                  else
-                    TextSpan(text: subtitle1),
+                  ] else if (user.personalCollection.link != null && user.personalCollection.link!.contains("collection-application.php")) ...[
+                    WidgetSpan(
+                      child: GestureDetector(
+                        onTap: () {
+                          showConfirmDialog(context, "使用默认浏览器打开链接?", user.personalCollection.link!).then((value) {
+                            if (value == null) {
+                              return;
+                            }
+                            if (value == "yes") {
+                              var parsedUrl = Uri.parse(user.personalCollection.link!);
+                              // await canLaunchUrl(parsedUrl)
+                              launchUrl(parsedUrl, mode: LaunchMode.externalApplication).then((result) {
+                                if (result == true) { return; }
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("打开链接失败"), duration: Duration(milliseconds: 600),),
+                                );
+                              });
+                            }
+                          });
+                        },
+                        child: Text(user.personalCollection.text, style: textLinkStyle),
+                      ),
+                    )
+                  ] else ...[
+                    TextSpan(text: user.personalCollection.text),
+                  ],
                   const TextSpan(text: "\n"),
                   TextSpan(text: subtitle2),
                 ]

@@ -121,6 +121,11 @@ UserProfile parseUser(String htmlStr) {
     personalCollectionLink = absThreadLink(tmpPCLink.attributes['href'] ?? "");
     personalCollection = getTrimmedString(tmpPCLink);
   }
+  var applyCollectionDom = nickInfo.querySelector("a[href='collection-application.php']");
+  if (applyCollectionDom != null) {
+    personalCollection = getTrimmedString(applyCollectionDom);
+    personalCollectionLink = absThreadLink("collection-application.php");
+  }
 
   var profileDom = document.querySelector('.profile');
   if (profileDom == null) {
