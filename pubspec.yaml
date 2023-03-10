@@ -72,6 +72,8 @@ dependencies:
   device_info_plus: ^8.0.0
   flutter_local_notifications: ^13.0.0
   home_widget: ^0.2.0+1
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:

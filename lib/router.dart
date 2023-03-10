@@ -32,6 +32,8 @@ import './pages/user_stat.dart';
 import './pages/board_note.dart';
 import './pages/read_post.dart';
 import './pages/favorite_collection.dart';
+import './pages/modify_profile.dart';
+import './html_parser/modify_profile_parser.dart' show SelfProfileInfo;
 import './views/search.dart' show PostSearchSettings;
 import './services.dart';
 import './globalvars.dart';
@@ -300,6 +302,13 @@ class MainPageBuilder {
         return const SettingsApp();
       case "/userStat":
         return const UserStatApp();
+      case "/modifyProfile":
+        SelfProfileInfo selfProfileInfo = SelfProfileInfo.empty();
+        if (settings.arguments != null) {
+          var settingsMap = settings.arguments as Map;
+          selfProfileInfo = settingsMap['selfProfileInfo'] as SelfProfileInfo;
+        }
+        return ModifyProfileApp(selfProfileInfo: selfProfileInfo,);
       case "/detailImage":
         String? imgLink;
         String? imgName;

@@ -234,11 +234,10 @@ class _ShowIpComponentState extends State<ShowIpComponent> {
 }
 
 class RankSelectComponent extends StatefulWidget {
-  final String rankName;
   final String selected;
   final SelfProfileRankSysInfo selfProfileRankSysInfo;
-  final Function(String newRankName, String newSelected)? updateFunc;
-  const RankSelectComponent({super.key, required this.rankName, required this.selected, required this.selfProfileRankSysInfo, this.updateFunc});
+  final Function(String newSelected)? updateFunc;
+  const RankSelectComponent({super.key, required this.selected, required this.selfProfileRankSysInfo, this.updateFunc});
 
   @override
   State<RankSelectComponent> createState() => _RankSelectComponentState();
@@ -247,7 +246,6 @@ class RankSelectComponent extends StatefulWidget {
 class _RankSelectComponentState extends State<RankSelectComponent> {
   List<DropdownMenuItem<String>> rankOptions = [];
   String selected = "";
-  int rankIndex = 0;
 
   void update() {
     selected = widget.selected;
@@ -257,15 +255,6 @@ class _RankSelectComponentState extends State<RankSelectComponent> {
         value: widget.selfProfileRankSysInfo.values[i],
         child: Text(widget.selfProfileRankSysInfo.names[i]),
       ));
-    }
-    var selectedInt = int.tryParse(selected);
-    if (selectedInt != null) {
-      for (int i=0; i<widget.selfProfileRankSysInfo.rankSysDesc[selectedInt].length; i+=1) {
-        if (widget.selfProfileRankSysInfo.rankSysDesc[selectedInt][i] == widget.rankName) {
-          rankIndex = i;
-          break;
-        }
-      }
     }
   }
 
@@ -293,10 +282,8 @@ class _RankSelectComponentState extends State<RankSelectComponent> {
       style: Theme.of(context).textTheme.titleMedium,
       onChanged: (String? value) {
         if (value == null) { return; }
-        int valueInt = int.parse(value);
-        var newRankName = widget.selfProfileRankSysInfo.rankSysDesc[valueInt][rankIndex];
         if (widget.updateFunc != null) {
-          widget.updateFunc!(newRankName, value);
+          widget.updateFunc!(value);
         } else {
           setState(() {
             selected = value;
@@ -318,21 +305,18 @@ class RankSysComponent extends StatefulWidget {
 
 class _RankSysComponentState extends State<RankSysComponent> {
   CancelableOperation? getDataCancelable;
-  String rankName = "";
-  String selected = "";
+  SelfProfileInfo? selfProfileInfo;
   bool underEdit = false;
 
   @override
   void initState() {
     super.initState();
-    rankName = widget.rankName;
     debugPrint("********** rankSys re init");
   }
 
   @override
   void didUpdateWidget(covariant RankSysComponent oldWidget) {
     super.didUpdateWidget(oldWidget);
-    rankName = widget.rankName;
   }
 
   @override
@@ -359,16 +343,17 @@ class _RankSysComponentState extends State<RankSysComponent> {
         padding: const EdgeInsets.only(left: 10),
         child: Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
+          runAlignment: WrapAlignment.center,
           children: [
             const Text("等级："),
-            SelectableText(rankName),
+            SelectableText(widget.rankName),
             if (!underEdit) ...[
               if ((globalUInfo.login == true) && (globalUInfo.username == widget.userName)) ...[
                 IconButton(
                   onPressed: () {
                     setState(() {
                       underEdit = true;
-                      getDataCancelable ??= CancelableOperation.fromFuture(getData(), onCancel: () {});
+                      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {});
                     });
                   },
                   icon: Icon(Icons.edit, size: 16, color: bdwmPrimaryColor,),
@@ -387,21 +372,18 @@ class _RankSysComponentState extends State<RankSysComponent> {
                   if (!snapshot.hasData || snapshot.data == null) {
                     return const Text("错误：未获取数据");
                   }
-                  SelfProfileInfo selfProfileInfo = snapshot.data as SelfProfileInfo;
-                  if (selfProfileInfo.errorMessage != null) {
+                  selfProfileInfo = snapshot.data as SelfProfileInfo;
+                  if (selfProfileInfo!.errorMessage != null) {
+                    getDataCancelable = null;
                     return const Text("获取失败");
                   }
-                  var rankSysInfo = selfProfileInfo.selfProfileRankSysInfo;
-                  selected = rankSysInfo.selected;
+                  var rankSysInfo = selfProfileInfo!.selfProfileRankSysInfo;
                   return RankSelectComponent(
-                    rankName: rankName,
-                    selected: selected,
+                    selected: rankSysInfo.selected,
                     selfProfileRankSysInfo: rankSysInfo,
-                    updateFunc:(newRankName, newSelected) {
+                    updateFunc:(newSelected) {
                       setState(() {
-                        rankName = newRankName;
                         rankSysInfo.selected = newSelected;
-                        // selected = newSelected;
                       });
                     },
                   );
@@ -409,22 +391,13 @@ class _RankSysComponentState extends State<RankSysComponent> {
               ),
               IconButton(
                 onPressed: () async {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("暂不支持修改"), duration: Duration(milliseconds: 600),),
-                  );
-                  // 不行，不能只修改等级系统
-                  // var res = await bdwmSetProfileRankOnly(selected);
-                  // if (res.success) {
-                  //   setState(() {
-                  //     underEdit = false;
-                  //   });
-                  // } else {
-                  //   var reason = res.errorMessage ?? "rt";
-                  //   if (!mounted) { return; }
-                  //   ScaffoldMessenger.of(context).showSnackBar(
-                  //     SnackBar(content: Text("设置失败：$reason"), duration: const Duration(milliseconds: 600),),
-                  //   );
-                  // }
+                  if (selfProfileInfo == null) { return; }
+                  nv2Push(context, '/modifyProfile', arguments: {
+                    'selfProfileInfo': selfProfileInfo,
+                  });
+                  setState(() {
+                    underEdit = false;
+                  });
                 },
                 icon: Icon(Icons.check, size: 16, color: bdwmPrimaryColor,),
               ),

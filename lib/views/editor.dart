@@ -255,7 +255,7 @@ class _FquillEditorState extends State<FquillEditor> {
       expands: false,
       padding: const EdgeInsets.all(5.0),
       keyboardAppearance: Theme.of(context).brightness,
-      // locale: const Locale('zh', 'CN'),
+      locale: const Locale('zh'),
       embedBuilders: [ImageEmbedBuilder()],
     );
   }

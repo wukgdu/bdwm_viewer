@@ -19,6 +19,14 @@ class SelfProfileRankSysInfo {
 
 class SelfProfileInfo {
   String? errorMessage;
+  String nickName = "";
+  int birthYear = 1970;
+  int birthMonth = 1;
+  int birthDay = 1;
+  String gender = "M";
+  bool hideHoroscope = false;
+  bool hideGender = false;
+  String desc = "";
   SelfProfileRankSysInfo selfProfileRankSysInfo = SelfProfileRankSysInfo.empty();
 
   SelfProfileInfo.empty();
@@ -26,6 +34,14 @@ class SelfProfileInfo {
     required this.errorMessage,
   });
   SelfProfileInfo({
+    required this.nickName,
+    required this.birthYear,
+    required this.birthMonth,
+    required this.birthDay,
+    required this.gender,
+    required this.hideHoroscope,
+    required this.hideGender,
+    required this.desc,
     required this.selfProfileRankSysInfo,
   });
 }
@@ -56,5 +72,39 @@ SelfProfileInfo parseSelfProfile(String htmlStr) {
       selfProfileRankSysInfo.rankSysDesc.add(rankDesc.split(" » "));
     }
   }
-  return SelfProfileInfo(selfProfileRankSysInfo: selfProfileRankSysInfo);
+  String nickName = "", gender = "M", desc = "";
+  int birthYear = 1970, birthMonth = 1, birthDay = 1;
+  bool hideHoroscope = false, hideGender = false;
+
+  var nickNameDom = mainBlockDom.querySelector("input[name=nickname]");
+  nickName = nickNameDom?.attributes['value'] ?? nickName;
+  var genderDom = mainBlockDom.querySelectorAll("input[name=gender]");
+  for (var itemDom in genderDom) {
+    if (itemDom.attributes.containsKey("checked")) {
+      gender = itemDom.attributes["value"] ?? gender;
+      break;
+    }
+  }
+
+  var hideGenderDom = mainBlockDom.querySelector("input[name=hide_gender]");
+  hideGender = hideGenderDom?.attributes.containsKey("checked") ?? hideGender;
+  var hideHoroscopeDom = mainBlockDom.querySelector("input[name=hide_horoscope]");
+  hideHoroscope = hideHoroscopeDom?.attributes.containsKey("checked") ?? hideHoroscope;
+
+  var birthYearDom = mainBlockDom.querySelector("input[name=birthyear]");
+  birthYear = int.tryParse(birthYearDom?.attributes['value'] ?? "") ?? birthYear;
+  var birthMonthDom = mainBlockDom.querySelector("input[name=birthmonth]");
+  birthMonth = int.tryParse(birthMonthDom?.attributes['value'] ?? "") ?? birthMonth;
+  var birthDayDom = mainBlockDom.querySelector("input[name=birthday]");
+  birthDay = int.tryParse(birthDayDom?.attributes['value'] ?? "") ?? birthDay;
+
+  var descDom = mainBlockDom.querySelector("#desc-origin");
+  desc = getTrimmedHtml(descDom);
+
+  return SelfProfileInfo(
+    nickName: nickName, gender: gender, desc: desc,
+    birthYear: birthYear, birthMonth: birthMonth, birthDay: birthDay,
+    hideHoroscope: hideHoroscope, hideGender: hideGender,
+    selfProfileRankSysInfo: selfProfileRankSysInfo
+  );
 }

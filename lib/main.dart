@@ -7,6 +7,7 @@ import 'package:quick_actions/quick_actions.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 // import 'package:flutter/rendering.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import './router.dart';
 import './globalvars.dart';
@@ -300,6 +301,11 @@ class MainPageState extends State<MainPage> {
         }
         return MaterialApp.router(
           title: 'OBViewer',
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          supportedLocales: const [
+            Locale('en'),
+            Locale('zh'),
+          ],
           theme: useDynamicColor ? ThemeData(
             colorScheme: lightColorScheme,
             extensions: [lightCustomColors],

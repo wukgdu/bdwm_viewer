@@ -155,7 +155,7 @@ void travelHtml2Quill(hdom.Element? document, Map<String, dynamic>? attributes, 
   }
 }
 
-String quill2BDWMtext(List<dynamic> quillDelta) {
+String quill2BDWMtext(List<dynamic> quillDelta, {bool removeLastReturn=false}) {
   var res = <BDWMtext>[];
   int idx = quillDelta.length-1;
   while (idx >= 0) {
@@ -231,6 +231,17 @@ String quill2BDWMtext(List<dynamic> quillDelta) {
       } else {
         // normal, bold, underline, color, background color
         res.add(BDWMAnsiText(type: "ansi", bold: bold, underline: underline, foreColor: foreColor, backColor: backColor, content: content));
+      }
+    }
+  }
+  if (removeLastReturn && res.isNotEmpty) {
+    if (res.last is BDWMAnsiText) {
+      var l = res.last as BDWMAnsiText;
+      if (l.content.endsWith("\n")) {
+        l.content = l.content.substring(0, l.content.length-1);
+        if (l.content.isEmpty) {
+          res.removeLast();
+        }
       }
     }
   }
