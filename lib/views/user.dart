@@ -307,6 +307,10 @@ class _RankSysComponentState extends State<RankSysComponent> {
   CancelableOperation? getDataCancelable;
   SelfProfileInfo? selfProfileInfo;
   bool underEdit = false;
+  final iconButtonStyle = IconButton.styleFrom(
+    minimumSize: const Size(20, 20),
+    padding: const EdgeInsets.all(4.0),
+  );
 
   @override
   void initState() {
@@ -323,6 +327,22 @@ class _RankSysComponentState extends State<RankSysComponent> {
   void dispose() {
     getDataCancelable?.cancel();
     super.dispose();
+  }
+
+  Widget genSizedIconButton({required void Function()? onPressed, required Icon icon}) {
+    return SizedBox(
+      width: 30,
+      height: 30,
+      child: IconButton(
+        splashRadius: 18,
+        color: bdwmPrimaryColor,
+        style: iconButtonStyle,
+        // constraints: const BoxConstraints(),
+        iconSize: 16,
+        onPressed: onPressed,
+        icon: icon,
+      ),
+    );
   }
 
   Future<SelfProfileInfo> getData() async {
@@ -349,23 +369,23 @@ class _RankSysComponentState extends State<RankSysComponent> {
             SelectableText(widget.rankName),
             if (!underEdit) ...[
               if ((globalUInfo.login == true) && (globalUInfo.username == widget.userName)) ...[
-                IconButton(
+                genSizedIconButton(
                   onPressed: () {
                     setState(() {
                       underEdit = true;
                       getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {});
                     });
                   },
-                  icon: Icon(Icons.edit, size: 16, color: bdwmPrimaryColor,),
+                  icon: const Icon(Icons.edit),
                 ),
               ],
-              IconButton(
+              genSizedIconButton(
                 onPressed: () {
                   var userFuturePageState = context.findAncestorStateOfType<_UserFuturePageState>();
                   if (userFuturePageState == null) { return; }
                   userFuturePageState.refresh();
                 },
-                icon: Icon(Icons.refresh, size: 16, color: bdwmPrimaryColor,),
+                icon: const Icon(Icons.refresh),
               ),
             ] else ...[
               FutureBuilder(
@@ -397,7 +417,7 @@ class _RankSysComponentState extends State<RankSysComponent> {
                   );
                 },
               ),
-              IconButton(
+              genSizedIconButton(
                 onPressed: () async {
                   if (selfProfileInfo == null) { return; }
                   nv2Push(context, '/modifyProfile', arguments: {
@@ -407,15 +427,15 @@ class _RankSysComponentState extends State<RankSysComponent> {
                     underEdit = false;
                   });
                 },
-                icon: Icon(Icons.check, size: 16, color: bdwmPrimaryColor,),
+                icon: const Icon(Icons.check),
               ),
-              IconButton(
+              genSizedIconButton(
                 onPressed: () {
                   setState(() {
                     underEdit = false;
                   });
                 },
-                icon: Icon(Icons.close, size: 16, color: bdwmPrimaryColor,),
+                icon: const Icon(Icons.close),
               ),
             ],
           ],

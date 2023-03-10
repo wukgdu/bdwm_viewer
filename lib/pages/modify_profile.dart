@@ -21,6 +21,7 @@ class ModifyProfileApp extends StatefulWidget {
 
 class _ModifyProfileAppState extends State<ModifyProfileApp> {
   static const hSpace = SizedBox(width: 8.0,);
+  static const escChar = "[";
   TextEditingController nickNameTextController = TextEditingController();
   late final fquill.QuillController _controller;
 
@@ -68,7 +69,7 @@ class _ModifyProfileAppState extends State<ModifyProfileApp> {
         actions: [
           TextButton(
             onPressed: () async {
-              var doIt = await showConfirmDialog(context, "确认保存？", "不保证复杂的签名档正确");
+              var doIt = await showConfirmDialog(context, "确认保存？", "不保证复杂的说明档正确");
               if (doIt == null || doIt != "yes") { return; }
               var quillDelta = _controller.document.toDelta().toJson();
               try {
@@ -117,7 +118,27 @@ class _ModifyProfileAppState extends State<ModifyProfileApp> {
                     ),
                   ),
                 ),
-                const SelectableText("["),
+                SizedBox(
+                  width: 36,
+                  child: TextButton(
+                    onPressed: () {
+                      if (!nickNameTextController.selection.isValid) { return; }
+                      var curIdx = nickNameTextController.selection.base.offset;
+                      var curText = nickNameTextController.text;
+                      nickNameTextController.text = "${curText.substring(0, curIdx)}$escChar${curText.substring(curIdx)}";
+                      nickNameTextController.selection = TextSelection(
+                        baseOffset: curIdx + escChar.length,
+                        extentOffset: curIdx + escChar.length,
+                      );
+                    },
+                    style: TextButton.styleFrom(
+                      minimumSize: const Size(20, 20),
+                      // padding: const EdgeInsets.all(4.0),
+                      textStyle: const TextStyle(fontSize: 14),
+                    ),
+                    child: const Text(escChar),
+                  ),
+                )
               ],
             ),
           ),
@@ -193,7 +214,7 @@ class _ModifyProfileAppState extends State<ModifyProfileApp> {
               children: [
                 const Text("详情", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),),
                 hSpace,
-                Text(widget.selfProfileInfo.selfProfileRankSysInfo.rankSysDesc[int.parse(rankSys)].join("→")),
+                SelectableText(widget.selfProfileInfo.selfProfileRankSysInfo.rankSysDesc[int.parse(rankSys)].join("→")),
               ],
             )
           ),
