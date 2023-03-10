@@ -69,7 +69,7 @@ class _ModifyProfileAppState extends State<ModifyProfileApp> {
         actions: [
           TextButton(
             onPressed: () async {
-              var doIt = await showConfirmDialog(context, "确认保存？", "不保证复杂的说明档正确");
+              var doIt = await showConfirmDialog(context, "确认保存？", "不保证复杂的说明档正确。下方编辑富文本时支持的功能基本都可以，其他的不保证");
               if (doIt == null || doIt != "yes") { return; }
               var quillDelta = _controller.document.toDelta().toJson();
               try {
