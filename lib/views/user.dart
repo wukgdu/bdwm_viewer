@@ -358,7 +358,15 @@ class _RankSysComponentState extends State<RankSysComponent> {
                   },
                   icon: Icon(Icons.edit, size: 16, color: bdwmPrimaryColor,),
                 ),
-              ]
+              ],
+              IconButton(
+                onPressed: () {
+                  var userFuturePageState = context.findAncestorStateOfType<_UserFuturePageState>();
+                  if (userFuturePageState == null) { return; }
+                  userFuturePageState.refresh();
+                },
+                icon: Icon(Icons.refresh, size: 16, color: bdwmPrimaryColor,),
+              ),
             ] else ...[
               FutureBuilder(
                 future: getDataCancelable!.value,
@@ -744,6 +752,12 @@ class _UserFuturePageState extends State<UserFuturePage> {
   void dispose() {
     getDataCancelable.cancel();
     super.dispose();
+  }
+
+  void refresh() {
+    setState(() {
+      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {});
+    });
   }
 
   @override

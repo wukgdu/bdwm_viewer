@@ -5,8 +5,11 @@ import '../bdwm/settings.dart';
 import '../html_parser/modify_profile_parser.dart';
 import '../views/quill_utils.dart' show quill2BDWMtext;
 import '../views/utils.dart' show showConfirmDialog, showInformDialog;
+import '../views/constants.dart' show bdwmPrimaryColor;
 import '../views/editor.dart' show FquillEditor, FquillEditorToolbar, genController;
 import '../views/user.dart' show RankSelectComponent;
+import '../globalvars.dart' show globalConfigInfo;
+import '../router.dart' show nv2Pop;
 
 class ModifyProfileApp extends StatefulWidget {
   final SelfProfileInfo selfProfileInfo;
@@ -63,8 +66,8 @@ class _ModifyProfileAppState extends State<ModifyProfileApp> {
       appBar: AppBar(
         title: const Text("修改资料"),
         actions: [
-          GestureDetector(
-            onTap: () async {
+          TextButton(
+            onPressed: () async {
               var doIt = await showConfirmDialog(context, "确认保存？", "不保证复杂的签名档正确");
               if (doIt == null || doIt != "yes") { return; }
               var quillDelta = _controller.document.toDelta().toJson();
@@ -84,16 +87,17 @@ class _ModifyProfileAppState extends State<ModifyProfileApp> {
               );
               if (res.success) {
                 if (!mounted) { return; }
-                showInformDialog(context, "保存成功", "rt");
+                await showInformDialog(context, "保存成功", "rt");
+                if (!mounted) { return; }
+                nv2Pop(context);
               } else {
                 var reason = res.errorMessage ?? "rt";
                 if (!mounted) { return; }
                 showInformDialog(context, "保存失败", reason);
               }
             },
-            child: Text("保存", style: Theme.of(context).textTheme.titleMedium),
+            child: Text("保存", style: TextStyle(color: globalConfigInfo.getUseMD3() ? null : Colors.white)),
           ),
-          hSpace,
         ],
       ),
       body: ListView(
@@ -135,7 +139,7 @@ class _ModifyProfileAppState extends State<ModifyProfileApp> {
                   },
                   child: Text("$birthYear-$birthMonth-$birthDay"),
                 ),
-                Checkbox(value: hideHoroScope, onChanged: (value) {
+                Checkbox(value: hideHoroScope, activeColor: bdwmPrimaryColor, onChanged: (value) {
                   setState(() {
                     hideHoroScope = value as bool;
                   });
@@ -148,19 +152,19 @@ class _ModifyProfileAppState extends State<ModifyProfileApp> {
             Row(
               children: [
                 const Text("性别", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),),
-                Radio(value: "M", groupValue: gender, onChanged: (value) {
+                Radio(value: "M", groupValue: gender, activeColor: bdwmPrimaryColor, onChanged: (value) {
                   setState(() {
                     gender = value as String;
                   });
                 },),
                 const Text("男"),
-                Radio(value: "F", groupValue: gender, onChanged: (value) {
+                Radio(value: "F", groupValue: gender, activeColor: bdwmPrimaryColor, onChanged: (value) {
                   setState(() {
                     gender = value as String;
                   });
                 },),
                 const Text("女"),
-                Checkbox(value: hideGender, onChanged: (value) {
+                Checkbox(value: hideGender, activeColor: bdwmPrimaryColor, onChanged: (value) {
                   setState(() {
                     hideGender = value as bool;
                   });
