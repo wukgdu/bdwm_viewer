@@ -33,6 +33,10 @@ class FavoriteCollectionInfo {
 
 FavoriteCollectionInfo parseFavoriteCollection(String htmlStr) {
   var document = parse(htmlStr);
+  var errorMessage = checkError(document);
+  if (errorMessage != null) {
+    return FavoriteCollectionInfo.error(errorMessage: errorMessage);
+  }
   List<Element>? topicList = document.querySelector("#favorites-list")?.querySelectorAll(".favorite-block");
   if (topicList == null) {
     return FavoriteCollectionInfo.empty();

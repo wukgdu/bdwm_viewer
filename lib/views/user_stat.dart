@@ -53,6 +53,9 @@ class _UserStatFuturePageState extends State<UserStatFuturePage> {
           return const Center(child: Text("错误：未获取数据"),);
         }
         TableDataInfo tableDataInfo = snapshot.data as TableDataInfo;
+        if (tableDataInfo.errorMessage != null) {
+          return Center(child: Text(tableDataInfo.errorMessage!),);
+        }
         return UserStatPage(tableDataInfo: tableDataInfo,);
       },
     );
