@@ -216,7 +216,7 @@ class _ShowIpComponentState extends State<ShowIpComponent> {
                 } catch (_) {
                   ipStr = "查询失败";
                 }
-                return SelectableText(ipStr);
+                return SelectionArea(child: Text(ipStr));
               },
             ),
           ],
@@ -322,12 +322,18 @@ class _RankSysComponentState extends State<RankSysComponent> {
   @override
   void didUpdateWidget(covariant RankSysComponent oldWidget) {
     super.didUpdateWidget(oldWidget);
+    clearData();
   }
 
   @override
   void dispose() {
     getDataCancelable?.cancel();
     super.dispose();
+  }
+
+  void clearData() {
+    getDataCancelable = null;
+    selfProfileInfo = null;
   }
 
   Widget genSizedIconButton({required void Function()? onPressed, required Icon icon}) {
@@ -367,7 +373,7 @@ class _RankSysComponentState extends State<RankSysComponent> {
           runAlignment: WrapAlignment.center,
           children: [
             const Text("等级："),
-            SelectableText(widget.rankName),
+            SelectionArea(child: Text(widget.rankName)),
             if (!underEdit) ...[
               if ((globalUInfo.login == true) && (globalUInfo.username == widget.userName)) ...[
                 genSizedIconButton(
@@ -403,7 +409,7 @@ class _RankSysComponentState extends State<RankSysComponent> {
                   }
                   selfProfileInfo = snapshot.data as SelfProfileInfo;
                   if (selfProfileInfo!.errorMessage != null) {
-                    getDataCancelable = null;
+                    clearData();
                     return const Text("获取失败");
                   }
                   var rankSysInfo = selfProfileInfo!.selfProfileRankSysInfo;
@@ -426,6 +432,7 @@ class _RankSysComponentState extends State<RankSysComponent> {
                   });
                   setState(() {
                     underEdit = false;
+                    clearData();
                   });
                 },
                 icon: const Icon(Icons.check),
@@ -434,6 +441,7 @@ class _RankSysComponentState extends State<RankSysComponent> {
                 onPressed: () {
                   setState(() {
                     underEdit = false;
+                    clearData();
                   });
                 },
                 icon: const Icon(Icons.close),
@@ -488,7 +496,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
               ...[icon],
             Text(label),
             const Text("："),
-            selectable ? SelectableText(value) : Text(value),
+            selectable ? SelectionArea(child: Text(value)) : Text(value),
           ],
         ),
       ),
@@ -607,8 +615,8 @@ class _UserInfoPageState extends State<UserInfoPage> {
                 ],
               ),
             ),
-            title: SelectableText.rich(
-              TextSpan(
+            title: SelectionArea(
+              child: Text.rich(TextSpan(
                 children: <InlineSpan>[
                   TextSpan(text: user.bbsID, style: serifFont),
                   const TextSpan(text: " ("),
@@ -628,7 +636,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                   ),
                 ],
               ),
-            ),
+            ),),
             subtitle: Text.rich(
               TextSpan(
                 children: [

@@ -630,8 +630,8 @@ class _OnePostComponentState extends State<OnePostComponent> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SelectableText.rich(
-                      TextSpan(
+                    SelectionArea(
+                      child: Text.rich(TextSpan(
                         style: const TextStyle(height: 1.0),
                         children: [
                           TextSpan(text: item.authorInfo.userName, style: serifFont),
@@ -651,7 +651,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                             style: TextStyle(color: item.authorInfo.status.contains("在线") ? onlineColor : Colors.grey),
                           ),
                         ],
-                      ),
+                      ),),
                     ),
                     if (item.modifyTime.isNotEmpty)
                       Text(
