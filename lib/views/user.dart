@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:async/async.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -322,7 +323,9 @@ class _RankSysComponentState extends State<RankSysComponent> {
   @override
   void didUpdateWidget(covariant RankSysComponent oldWidget) {
     super.didUpdateWidget(oldWidget);
-    clearData();
+    if (!kDebugMode) {
+      clearData();
+    }
   }
 
   @override
