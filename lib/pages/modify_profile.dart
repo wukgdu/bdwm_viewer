@@ -56,6 +56,7 @@ class _ModifyProfileAppState extends State<ModifyProfileApp> {
   Widget genContainer(Widget child) {
     return Container(
       constraints: const BoxConstraints(minHeight: 40.0),
+      alignment: Alignment.centerLeft,
       child: child,
     );
   }
@@ -219,13 +220,7 @@ class _ModifyProfileAppState extends State<ModifyProfileApp> {
             )
           ),
           genContainer(
-            Row(
-              children: [
-                const Text("说明档", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),),
-                hSpace,
-                FquillEditorToolbar(controller: _controller,),
-              ],
-            )
+            const Text("说明档", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0,),),
           ),
           Container(
             decoration: BoxDecoration(
@@ -235,6 +230,7 @@ class _ModifyProfileAppState extends State<ModifyProfileApp> {
             height: 200,
             child: FquillEditor(controller: _controller, autoFocus: false,),
           ),
+          FquillEditorToolbar(controller: _controller,)
         ],
       ),
     );
