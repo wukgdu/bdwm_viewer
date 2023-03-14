@@ -120,9 +120,13 @@ void travelHtml2Quill(hdom.Element? document, Map<String, dynamic>? attributes, 
       } else if (ele.localName == "img") {
         var src = ele.attributes['src'];
         if (src == null) {
-          res.add(QuillText(insert: "图片"));
+          res.add(QuillText(insert: "[未知图片]"));
+        } else if (ele.classes.contains("tex")) {
+          res.add(QuillText(insert: ele.attributes['alt'] ?? "[未知tex]"));
+        } else if (src.startsWith("data")) {
+          res.add(QuillText(insert: "[不支持data图片]"));
         } else {
-          res.add(QuillText(insert: {"image": src}));
+          res.add(QuillText(insert: {"image": absImgSrc(src)}));
         }
         // if (cdom != document.nodes.last) {
         //   res.add(const TextSpan(text: "\n"));
