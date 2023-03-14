@@ -522,7 +522,24 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
         }
         if (isBoardNote ?? false) {
           // https://stackoverflow.com/questions/73378051/flutter-text-with-space-breaks-background-color
-          res.add(const TextSpan(text: "/", style: TextStyle(color: Colors.transparent),));
+          res.add(const TextSpan(text: "|", style: TextStyle(color: Colors.transparent),));
+        } else {
+          if (res.isNotEmpty) {
+            var lastItem = res.last;
+            while (true) {
+              if (lastItem is! TextSpan) { break; }
+              if (lastItem.children?.isEmpty ?? true) {
+                break;
+              }
+              lastItem = lastItem.children!.last;
+            }
+            if (lastItem is TextSpan) {
+              var txt = lastItem.text ?? "";
+              if (txt.trimRight().length != txt.length) {
+                res.add(const TextSpan(text: "|", style: TextStyle(color: Colors.transparent),));
+              }
+            }
+          }
         }
         if (cdom != document.nodes.last && !inCode) {
           res.add(const TextSpan(text: "\n"));
