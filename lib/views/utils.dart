@@ -1,4 +1,4 @@
-import 'dart:io' show Directory, File;
+import 'dart:io' show Directory, File, Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -433,9 +433,16 @@ typedef FutureOrFunction<T> = Future<T?> Function(String a);
 void shareWithResultWrap(BuildContext context, String text, {String? subject}) {
   final box = context.findRenderObject() as RenderBox?;
   if (box == null) { return; }
+  var newText = text;
+  var newSubject = subject;
+  if (Platform.isWindows) {
+    if (subject == null || subject.isEmpty) { return; }
+    newText = subject;
+    newSubject = text;
+  }
   Share.shareWithResult(
-    text,
-    subject: subject,
+    newText,
+    subject: newSubject,
     sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
   ).then((result) {
     var txt = "";
