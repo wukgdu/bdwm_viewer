@@ -148,7 +148,7 @@ class _BoardNoteAppState extends State<BoardNoteApp> {
                     curFont = f;
                   });
                 },
-                child: Text("切换字体", style: TextStyle(color: Theme.of(context).appBarTheme.titleTextStyle?.color ?? Colors.white),),
+                child: Text("切换字体", style: TextStyle(color: globalConfigInfo.getUseMD3() ? null : Theme.of(context).appBarTheme.titleTextStyle?.color ?? Colors.white)),
               ),
               IconButton(
                 onPressed: () {

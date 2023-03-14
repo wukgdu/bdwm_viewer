@@ -169,7 +169,7 @@ class _MessagePersonAppState extends State<MessagePersonApp> {
                 });
               }
             },
-            child: Text("$count", style: TextStyle(color: globalConfigInfo.getUseMD3() ? null : Colors.white)),
+            child: Text("$count", style: TextStyle(color: globalConfigInfo.getUseMD3() ? null : Theme.of(context).appBarTheme.titleTextStyle?.color ?? Colors.white)),
           ),
         ],
       ),

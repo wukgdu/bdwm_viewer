@@ -98,7 +98,7 @@ class _ModifyProfileAppState extends State<ModifyProfileApp> {
                 showInformDialog(context, "保存失败", reason);
               }
             },
-            child: Text("保存", style: TextStyle(color: globalConfigInfo.getUseMD3() ? null : Colors.white)),
+            child: Text("保存", style: TextStyle(color: globalConfigInfo.getUseMD3() ? null : Theme.of(context).appBarTheme.titleTextStyle?.color ?? Colors.white)),
           ),
         ],
       ),
