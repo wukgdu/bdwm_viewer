@@ -214,6 +214,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.3"
+  flutter_highlight:
+    dependency: "direct main"
+    description:
+      name: flutter_highlight
+      sha256: "7b96333867aa07e122e245c033b8ad622e4e3a42a1a2372cbb098a2541d8782c"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.7.0"
   flutter_inappwebview_quill:
     dependency: transitive
     description:
@@ -389,6 +397,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.1"
+  highlight:
+    dependency: transitive
+    description:
+      name: highlight
+      sha256: "5353a83ffe3e3eca7df0abfb72dcf3fa66cc56b953728e7113ad4ad88497cf21"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.7.0"
   holding_gesture:
     dependency: transitive
     description:

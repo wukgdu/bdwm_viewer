@@ -6,6 +6,8 @@ import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as hdom;
 import 'package:extended_image/extended_image.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_highlight/flutter_highlight.dart' show HighlightView;
+import 'package:flutter_highlight/themes/github.dart' show githubTheme;
 
 import "./utils.dart";
 import './constants.dart';
@@ -463,6 +465,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
           style: newTS,),
         );
       } else if (ele.localName == "p") {
+        bool inCode =false;
         if (ele.classes.contains('quotehead') || ele.classes.contains('blockquote')) {
           var contentSize = ts?.fontSize ?? 14;
           res.add(WidgetSpan(child: Icon(Icons.format_quote, size: contentSize, color: const Color(0xffA6DDE3)), alignment: PlaceholderAlignment.top));
@@ -482,6 +485,36 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
             children: travelHtml(ele, context: context, ts: ts, isBoardNote: isBoardNote),
             style: TextStyle(color: bdwmPrimaryColor, backgroundColor: null),
           ));
+        } else if (ele.classes.contains("code")) {
+          var codeString = "";
+          inCode = true;
+          var codeLanguage = ele.attributes["data-lang"] ?? "js";
+          for (var codeDom in ele.nodes) {
+            if (codeDom.nodeType == hdom.Node.TEXT_NODE) {
+              codeString += (codeDom.text ?? "");
+            } else if (codeDom.nodeType == hdom.Node.ELEMENT_NODE) {
+              var codeEle = codeDom as hdom.Element;
+              if (codeEle.localName == "span") {
+                  codeString += codeEle.text;
+              } else if (codeEle.localName == "br") {
+                if (codeDom != ele.nodes.last) {
+                  codeString += "\n";
+                }
+              } else {
+                codeString += codeEle.text;
+              }
+            }
+          }
+          debugPrint(codeLanguage);
+          res.add(WidgetSpan(
+            child: HighlightView(
+              codeString,
+              language: codeLanguage,
+              theme: githubTheme,
+              tabSize: 4,
+              padding: EdgeInsets.zero,
+            ),
+          ));
         } else {
           res.add(TextSpan(
             children: travelHtml(ele, context: context, ts: ts, isBoardNote: isBoardNote),
@@ -491,7 +524,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
           // https://stackoverflow.com/questions/73378051/flutter-text-with-space-breaks-background-color
           res.add(const TextSpan(text: "/", style: TextStyle(color: Colors.transparent),));
         }
-        if (cdom != document.nodes.last) {
+        if (cdom != document.nodes.last && !inCode) {
           res.add(const TextSpan(text: "\n"));
         }
       } else if (ele.localName == "h5") {
