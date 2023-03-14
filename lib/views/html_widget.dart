@@ -352,8 +352,8 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
       if (cdom.text == "\n") {
         continue;
       }
-      // var text = tryGetNormalSpaceString(cdom.text);
-      var text = cdom.text;
+      var text = tryGetNormalSpaceString(cdom.text);
+      // var text = cdom.text;
       if (text == null) { continue; }
       // https://stackoverflow.com/questions/18760943/character-code-of-unknown-character-character-e-g-square-or-question-mark-romb
       // flutter bug? if unknown character appears first, other normal emoji will become unknown too.
@@ -365,7 +365,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
         text = text.replaceAll(String.fromCharCode(1763), String.fromCharCodes([0, 1763]));
       }
       // https://stackoverflow.com/questions/51999816/how-does-flutters-text-widget-let-it-display-all-spaces-that-end-with-a-space
-      text = text.replaceAll("\u0020", "\u00a0");
+      // text = text.replaceAll("\u0020", "\u00a0");
       if (isBoardNote ?? false) {
         if (globalConfigInfo.getBoardNoteFont() == notoSansMonoCJKscFont) {
           text = text.replaceAll("ο", "o ");
@@ -523,27 +523,27 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
             children: travelHtml(ele, context: context, ts: ts, isBoardNote: isBoardNote),
           ));
         }
-        // if (isBoardNote ?? false) {
-        //   // https://stackoverflow.com/questions/73378051/flutter-text-with-space-breaks-background-color
-        //   res.add(const TextSpan(text: "|", style: TextStyle(color: Colors.transparent),));
-        // } else {
-        //   if (res.isNotEmpty) {
-        //     var lastItem = res.last;
-        //     while (true) {
-        //       if (lastItem is! TextSpan) { break; }
-        //       if (lastItem.children?.isEmpty ?? true) {
-        //         break;
-        //       }
-        //       lastItem = lastItem.children!.last;
-        //     }
-        //     if (lastItem is TextSpan) {
-        //       var txt = lastItem.text ?? "";
-        //       if (txt.trimRight().length != txt.length) {
-        //         res.add(const TextSpan(text: "|", style: TextStyle(color: Colors.transparent),));
-        //       }
-        //     }
-        //   }
-        // }
+        if (isBoardNote ?? false) {
+          // https://stackoverflow.com/questions/73378051/flutter-text-with-space-breaks-background-color
+          res.add(const TextSpan(text: "|", style: TextStyle(color: Colors.transparent),));
+        } else {
+          if (res.isNotEmpty) {
+            var lastItem = res.last;
+            while (true) {
+              if (lastItem is! TextSpan) { break; }
+              if (lastItem.children?.isEmpty ?? true) {
+                break;
+              }
+              lastItem = lastItem.children!.last;
+            }
+            if (lastItem is TextSpan) {
+              var txt = lastItem.text ?? "";
+              if (txt.trimRight().length != txt.length) {
+                res.add(const TextSpan(text: "|", style: TextStyle(color: Colors.transparent),));
+              }
+            }
+          }
+        }
         if (cdom != document.nodes.last && !inCode) {
           res.add(const TextSpan(text: "\n"));
         }
