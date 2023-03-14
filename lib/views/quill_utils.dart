@@ -123,8 +123,8 @@ void travelHtml2Quill(hdom.Element? document, Map<String, dynamic>? attributes, 
           res.add(QuillText(insert: "[未知图片]"));
         } else if (ele.classes.contains("tex")) {
           res.add(QuillText(insert: ele.attributes['alt'] ?? "[未知tex]"));
-        } else if (src.startsWith("data")) {
-          res.add(QuillText(insert: "[不支持data图片]"));
+        // } else if (src.startsWith("data")) {
+        //   res.add(QuillText(insert: "[不支持data图片]"));
         } else {
           res.add(QuillText(insert: {"image": absImgSrc(src)}));
         }

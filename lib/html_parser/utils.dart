@@ -74,6 +74,9 @@ String absImgSrc(String src) {
   if (src.startsWith("http")) {
     return res;
   }
+  if (src.startsWith("data")) {
+    return res;
+  }
   if (src.startsWith('/')) {
     res = bbsHost + src;
   } else {
