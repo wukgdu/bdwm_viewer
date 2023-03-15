@@ -146,7 +146,7 @@ Future<MessageSendRes> bdwmSendMessages(String withWho, String content) async {
   }
   var resContent = json.decode(resp.body);
   if (resContent['success']==false) {
-    return MessageSendRes.error(success: false, error: resContent['error'] ?? 0, desc: "");
+    return MessageSendRes.error(success: false, error: resContent['error'] ?? 0, desc: null);
   }
   return MessageSendRes(
     success: true,

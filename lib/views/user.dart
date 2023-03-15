@@ -127,7 +127,7 @@ class _UserOperationComponentState extends State<UserOperationComponent> {
         String? mode = widget.mode == "reject" ? "reject" : null;
         var desc = "";
         bdwmUsers(uid, action, desc, mode: mode).then((value) {
-          var title = "";
+          var title = username;
           var content = "成功$actionText";
           if (userexist) {
             content = "成功取消$actionText";

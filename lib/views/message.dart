@@ -496,6 +496,8 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
                   bdwmSendMessages(widget.withWho, txt)
                   .then((value) {
                     if (value.success == false) {
+                      var errStr = value.desc ?? "错误代码：${value.error}";
+                      showInformDialog(context, "发送失败", errStr);
                       return;
                     }
                     if (!mounted) { return; }
