@@ -19,6 +19,7 @@ String? checkError(Document document) {
 
 String? tryGetNormalSpaceString(String? dom) {
   if (dom == null) { return null; }
+  // return dom.replaceAll("\u00a0", " ").replaceAll("\u3000", "  ");
   return dom.replaceAll("\u00a0", " ");
 }
 
