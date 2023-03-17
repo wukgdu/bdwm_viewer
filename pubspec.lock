@@ -217,10 +217,11 @@ packages:
   flutter_highlight:
     dependency: "direct main"
     description:
-      name: flutter_highlight
-      sha256: "7b96333867aa07e122e245c033b8ad622e4e3a42a1a2372cbb098a2541d8782c"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
+      path: flutter_highlight
+      ref: HEAD
+      resolved-ref: "6ec6b6a1f2af7f8cac3d213b4fc2233919e7e162"
+      url: "https://github.com/wukgdu/highlight.dart"
+    source: git
     version: "0.7.0"
   flutter_inappwebview_quill:
     dependency: transitive

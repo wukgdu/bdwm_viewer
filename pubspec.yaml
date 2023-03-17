@@ -29,6 +29,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -72,9 +74,10 @@ dependencies:
   device_info_plus: ^8.0.0
   flutter_local_notifications: ^13.0.0
   home_widget: ^0.2.0+1
-  flutter_localizations:
-    sdk: flutter
-  flutter_highlight: ^0.7.0
+  flutter_highlight:
+    git:
+      url: https://github.com/wukgdu/highlight.dart
+      path: flutter_highlight
 
 dev_dependencies:
   flutter_test:
