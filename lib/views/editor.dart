@@ -332,6 +332,28 @@ class FquillEditorToolbar extends StatelessWidget {
             },);
           }
         ),
+        fquill.QuillCustomButton(
+          icon: Icons.code,
+          onTap: () {
+            showTextDialog(context, "代码语言")
+            .then((value) {
+              if (value==null) { return; }
+              if (value.isEmpty) { return; }
+              var selection = controller.selection;
+              var index = selection.baseOffset;
+              var length = selection.extentOffset - index;
+              var rawText = controller.plainTextEditingValue.text;
+              var oriText = selection.textInside(rawText);
+              var preText = '<code lang="$value">';
+              var newText = '$preText$oriText</code>';
+              controller.replaceText(index, length, newText, null);
+              controller.updateSelection(selection.copyWith(
+                baseOffset: index+preText.length,
+                extentOffset: index+preText.length,
+              ), fquill.ChangeSource.LOCAL);
+            },);
+          }
+        ),
       ]
     );
   }
