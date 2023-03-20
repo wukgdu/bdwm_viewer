@@ -385,7 +385,7 @@ var globalNotConfigInfo = BDWMNotConfig.empty();
 class BDWMConfig {
   bool showWelcome = true;
   bool useImgInMessage = true;
-  bool autoClearImageCache = true;
+  bool autoClearImageCache = false;
   bool extraThread = false;
   bool highQualityPreview = false;
   bool suggestUser = true;
@@ -413,7 +413,7 @@ class BDWMConfig {
       "showWelcome": showWelcome,
       "useImgInMessage": useImgInMessage,
       "seeNoThem": seeNoThem.toList(),
-      "autoClearImageCache": autoClearImageCache,
+      "autoClearImageCache_1": autoClearImageCache,
       "maxPageNum": maxPageNum,
       "extraThread": extraThread,
       "contentFontSize": contentFontSize,
@@ -429,22 +429,22 @@ class BDWMConfig {
     };
   }
   void fromJson(Map<String, dynamic> jsonContent) {
-    showWelcome = jsonContent['showWelcome'] ?? true;
-    useImgInMessage = jsonContent['useImgInMessage'] ?? true;
-    autoClearImageCache = jsonContent['autoClearImageCache'] ?? true;
-    extraThread = jsonContent['extraThread'] ?? false;
-    highQualityPreview = jsonContent['highQualityPreview'] ?? false;
-    suggestUser = jsonContent['suggestUser'] ?? true;
-    showFAB = jsonContent['showFAB'] ?? true;
-    maxPageNum = jsonContent['maxPageNum'] ?? "8";
-    contentFontSize = jsonContent['contentFontSize'] ?? 16.0;
-    primaryColorString = jsonContent['primaryColorString'] ?? "";
-    qmd = jsonContent['qmd'] ?? "";
-    useMD3 = jsonContent['useMD3'] ?? false;
-    useDynamicColor = jsonContent['useDynamicColor'] ?? false;
-    autoHideBottomBar = jsonContent['autoHideBottomBar'] ?? true;
-    boardNoteFont = jsonContent['boardNoteFont'] ?? simFont;
-    List seeNoHimHerList = jsonContent['seeNoThem'] ?? <String>[];
+    showWelcome = jsonContent['showWelcome'] ?? showWelcome;
+    useImgInMessage = jsonContent['useImgInMessage'] ?? useImgInMessage;
+    autoClearImageCache = jsonContent['autoClearImageCache_1'] ?? autoClearImageCache;
+    extraThread = jsonContent['extraThread'] ?? extraThread;
+    highQualityPreview = jsonContent['highQualityPreview'] ?? highQualityPreview;
+    suggestUser = jsonContent['suggestUser'] ?? suggestUser;
+    showFAB = jsonContent['showFAB'] ?? showFAB;
+    maxPageNum = jsonContent['maxPageNum'] ?? maxPageNum;
+    contentFontSize = jsonContent['contentFontSize'] ?? contentFontSize;
+    primaryColorString = jsonContent['primaryColorString'] ?? primaryColorString;
+    qmd = jsonContent['qmd'] ?? qmd;
+    useMD3 = jsonContent['useMD3'] ?? useMD3;
+    useDynamicColor = jsonContent['useDynamicColor'] ?? useDynamicColor;
+    autoHideBottomBar = jsonContent['autoHideBottomBar'] ?? autoHideBottomBar;
+    boardNoteFont = jsonContent['boardNoteFont'] ?? boardNoteFont;
+    List seeNoHimHerList = jsonContent['seeNoThem'] ?? seeNoThem.toList();
     seeNoThem = Set<String>.from(seeNoHimHerList.map((e) => e as String));
   }
   String gist() {
