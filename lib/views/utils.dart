@@ -224,7 +224,7 @@ Widget genVipLabel(int vipIdentity) {
       // border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
       color: getVipColor(vipIdentity),
     ),
-    child: const Text("V", style: TextStyle(color: Colors.white, fontSize: 14,),),
+    child: const Text("V", style: TextStyle(color: Colors.white, fontSize: null, height: 1.0),),
   );
 }
 

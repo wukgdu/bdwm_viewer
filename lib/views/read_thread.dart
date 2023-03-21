@@ -644,7 +644,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                           )),
                           const TextSpan(text: ') '),
                           if (item.authorInfo.vipIdentity != -1) ...[
-                            WidgetSpan(child: genVipLabel(item.authorInfo.vipIdentity)),
+                            WidgetSpan(child: genVipLabel(item.authorInfo.vipIdentity), alignment: PlaceholderAlignment.middle),
                           ],
                           TextSpan(
                             text: item.authorInfo.status,
