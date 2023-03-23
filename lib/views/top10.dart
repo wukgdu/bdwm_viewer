@@ -8,7 +8,7 @@ import '../globalvars.dart';
 import '../html_parser/top10_parser.dart';
 import '../views/constants.dart' show bdwmPrimaryColor;
 import '../pages/read_thread.dart';
-import '../utils.dart' show getQueryValue;
+import '../utils.dart' show getQueryValue, breakLongText;
 import '../pages/detail_image.dart';
 import '../router.dart' show nv2Replace, nv2Push;
 
@@ -159,7 +159,7 @@ class OneTenComponent extends StatelessWidget {
     return Card(
       child: ListTile(
         title: Text(
-          item.title,
+          breakLongText(item.title),
           textAlign: TextAlign.start,
           overflow: TextOverflow.ellipsis,
         ),
@@ -199,7 +199,7 @@ class OneBlockComponent extends StatelessWidget {
     return Card(
       child: ListTile(
         title: Text(
-          item.title,
+          breakLongText(item.title),
           textAlign: TextAlign.start,
           overflow: TextOverflow.ellipsis,
         ),

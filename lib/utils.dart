@@ -4,6 +4,7 @@ import 'dart:io' show Platform;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:characters/characters.dart';
 
 bool isAndroid() {
   return Platform.isAndroid;
@@ -106,4 +107,8 @@ int termStringLength(String str, {int sp=255}) {
     length += cu > sp ? 2 : 1;
   }
   return length;
+}
+
+String breakLongText(String s) {
+  return s.characters.join("\u200B");
 }

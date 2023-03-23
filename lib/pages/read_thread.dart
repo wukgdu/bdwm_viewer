@@ -9,7 +9,7 @@ import '../html_parser/read_thread_parser.dart';
 import '../bdwm/req.dart';
 import '../views/constants.dart' show bdwmPrimaryColor;
 import '../globalvars.dart';
-import '../utils.dart' show clearAllExtendedImageCache;
+import '../utils.dart' show clearAllExtendedImageCache, breakLongText;
 import '../router.dart' show nv2Push, nv2Replace, ForceRerefreshWidget, getForceID, forceRefresh;
 
 const double md3BottomAppBarHeight = 80.0;
@@ -627,7 +627,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
               alignment: Alignment.centerLeft,
               // height: 20,
               child: Text(
-                widget.threadPageInfo.title,
+                breakLongText(widget.threadPageInfo.title),
                 style: _titleFont,
               ),
             ),

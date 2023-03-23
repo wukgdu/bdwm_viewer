@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 
 import '../bdwm/req.dart';
+import '../utils.dart' show breakLongText;
 import '../globalvars.dart';
 import '../html_parser/top100_parser.dart';
 import '../pages/read_thread.dart';
@@ -52,7 +53,7 @@ class _Top100PageState extends State<Top100Page> {
     return Card(
       child: ListTile(
         title: Text(
-          item.title,
+          breakLongText(item.title),
           // style: _biggerFont,
           textAlign: TextAlign.start,
           overflow: TextOverflow.ellipsis,
