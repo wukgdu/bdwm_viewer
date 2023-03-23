@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../globalvars.dart' show globalThreadHistory;
 import './read_thread.dart';
 import '../views/utils.dart' show showConfirmDialog;
+import '../utils.dart' show breakLongText;
 
 class RecentThreadApp extends StatefulWidget {
   const RecentThreadApp({super.key});
@@ -46,7 +47,7 @@ class _RecentThreadAppState extends State<RecentThreadApp> {
                 naviGotoThreadByLink(context, items[index].link, "", needToBoard: true);
               },
               title: Text(
-                items[index].title,
+                breakLongText(items[index].title),
                 overflow: TextOverflow.ellipsis,
               ),
               subtitle: Column(

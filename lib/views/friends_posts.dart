@@ -142,8 +142,10 @@ class _FriendsPostsPageState extends State<FriendsPostsPage> {
         yield FriendsPostsInfo(processedCount: curIdx, curUserName: datum.name, items: items);
       }
       if (curIdx != listCount) {
+        await Future<void>.delayed(const Duration(seconds: 6));
+      } else {
+        await Future<void>.delayed(const Duration(seconds: 3));
       }
-      await Future<void>.delayed(const Duration(seconds: 5));
       curIdx += 1;
     }
   }

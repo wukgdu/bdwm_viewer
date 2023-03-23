@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../globalvars.dart' show globalMarkedThread;
 import './read_thread.dart';
 import '../views/utils.dart' show showConfirmDialog;
+import '../utils.dart' show breakLongText;
 
 class MarkedThreadApp extends StatefulWidget {
   const MarkedThreadApp({super.key});
@@ -46,7 +47,7 @@ class _MarkedThreadAppState extends State<MarkedThreadApp> {
                 naviGotoThreadByLink(context, items[index].link, "", needToBoard: true);
               },
               title: Text(
-                items[index].title,
+                breakLongText(items[index].title),
                 overflow: TextOverflow.ellipsis,
               ),
               subtitle: Column(
