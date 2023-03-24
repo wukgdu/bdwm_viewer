@@ -33,7 +33,8 @@ class _ColorPickerComponentState extends State<ColorPickerComponent> {
     return AlertDialog(
       title: const Text("选择主题颜色"),
       content: SingleChildScrollView(
-        child: ColorPicker(
+        child: HueRingPicker(
+          enableAlpha: true,
           pickerColor: pickColor,
           onColorChanged: (newColor) {
             setState(() {
