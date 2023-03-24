@@ -101,6 +101,21 @@ String? getQueryValue(String link, String name) {
   return link.substring(p1+name.length+1, p2==-1?null:p2);
 }
 
+var stopPattern = RegExp(r'&|\s|#');
+
+String? getQueryValueImproved(String link, String name) {
+  var p1 = link.indexOf(name);
+  if (p1==-1) { return null; }
+  int p2 = -1;
+  for (var i = p1+name.length+1; i<link.length; i+=1) {
+    if ((link[i].contains(stopPattern))) {
+      p2 = i;
+      break;
+    }
+  }
+  return link.substring(p1+name.length+1, p2==-1?null:p2);
+}
+
 int termStringLength(String str, {int sp=255}) {
   int length = 0;
   for (var cu in str.runes) {

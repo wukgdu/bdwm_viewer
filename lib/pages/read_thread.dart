@@ -9,7 +9,7 @@ import '../html_parser/read_thread_parser.dart';
 import '../bdwm/req.dart';
 import '../views/constants.dart' show bdwmPrimaryColor;
 import '../globalvars.dart';
-import '../utils.dart' show clearAllExtendedImageCache, breakLongText;
+import '../utils.dart' show clearAllExtendedImageCache, breakLongText, getQueryValueImproved;
 import '../router.dart' show nv2Push, nv2Replace, ForceRerefreshWidget, getForceID, forceRefresh;
 
 const double md3BottomAppBarHeight = 80.0;
@@ -606,7 +606,9 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
           IconButton(
             onPressed: () {
               if (!mounted) { return; }
-              shareWithResultWrap(context, "$v2Host/post-read.php?bid=${widget.threadPageInfo.boardid}&threadid=${widget.threadPageInfo.threadid}", subject: "分享帖子");
+              var sharedText = "$v2Host/post-read.php?bid=${widget.threadPageInfo.boardid}&threadid=${widget.threadPageInfo.threadid}";
+              sharedText += "\n${widget.threadPageInfo.title} - ${widget.threadPageInfo.board.text}";
+              shareWithResultWrap(context, sharedText, subject: "分享帖子");
             },
             icon: const Icon(Icons.share),
           ),
@@ -1021,40 +1023,18 @@ void naviGotoThread(context, String bid, String threadid, String page, String bo
 }
 
 Map<String, Object?>? naviGotoThreadByLink(BuildContext? context, String link, String boardName, {bool? needToBoard, String? pageDefault, bool replaceIt=false, bool getArguments=false}) {
-  var pb1 = link.indexOf('bid');
-  if (pb1 == -1) {
-    return null;
-  }
-  var pb2 = link.indexOf('&', pb1);
-  var bid = link.substring(pb1+4, pb2 == -1 ? null : pb2);
+  var bid = getQueryValueImproved(link, 'bid');
+  if (bid == null) { return null; }
   var page = pageDefault ?? "1";
   String? postid;
   if (pageDefault != null) {
-    var pp1 = link.indexOf('postid');
-    if (pp1 != -1) {
-      var pp2 = link.indexOf('&', pp1);
-      postid = link.substring(pp1+7, pp2 == -1 ? null : pp2);
-      postid = postid.split("#").first;
-    }
+    postid = getQueryValueImproved(link, 'postid');
   } else {
-    var pp1 = link.indexOf('postid');
-    if (pp1 != -1) {
-      var pp2 = link.indexOf('&', pp1);
-      postid = link.substring(pp1+7, pp2 == -1 ? null : pp2);
-      postid = postid.split("#").first;
-    }
-    var pg1 = link.indexOf("page");
-    if (pg1 != -1) {
-      var pg2 = link.indexOf('&', pg1);
-      page = link.substring(pg1+5, pg2 == -1 ? null : pg2);
-    }
+    postid = getQueryValueImproved(link, 'postid');
+    page = getQueryValueImproved(link, 'page') ?? page;
   }
-  var pt1 = link.indexOf('threadid');
-  if (pt1 == -1) {
-    return null;
-  }
-  var pt2 = link.indexOf('&', pt1);
-  var threadid = link.substring(pt1+9, pt2 == -1 ? null : pt2);
+  var threadid = getQueryValueImproved(link, 'threadid');
+  if (threadid == null) { return null; }
   Map<String, Object?> arguments = {
     'bid': bid,
     'threadid': threadid,
