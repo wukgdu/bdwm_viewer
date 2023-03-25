@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../html_parser/board_parser.dart';
 import '../html_parser/board_single_parser.dart';
-import '../utils.dart' show getQueryValue;
+import '../utils.dart' show getQueryValue, breakLongText;
 import './constants.dart';
 import '../bdwm/set_read.dart';
 import '../bdwm/req.dart';
@@ -237,7 +237,7 @@ class OneThreadInBoard extends StatelessWidget {
                     alignment: PlaceholderAlignment.middle,
                   ),
                 TextSpan(
-                  text: boardPostInfo.title,
+                  text: breakLongText(boardPostInfo.title),
                   style: boardPostInfo.isGaoLiang ? const TextStyle(color: highlightColor) : null,
                 ),
                 if (boardPostInfo.hasAttachment)

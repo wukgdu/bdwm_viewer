@@ -7,7 +7,7 @@ import 'package:flutter_treeview/flutter_treeview.dart';
 import '../bdwm/collection.dart';
 import './constants.dart' show bdwmPrimaryColor;
 import '../html_parser/collection_parser.dart';
-import '../utils.dart' show getQueryValue, getCollectionPathFromHttp;
+import '../utils.dart' show getQueryValue, getCollectionPathFromHttp, breakLongText;
 import '../globalvars.dart' show globalConfigInfo;
 import './utils.dart' show showConfirmDialog, showInformDialog, showAlertDialog, showPageDialog, showTextDialog;
 import './read_thread.dart' show AttachmentComponent;
@@ -421,7 +421,7 @@ class _CollectionPageState extends State<CollectionPage> {
           index: index,
           child: const Icon(Icons.drag_handle),
         ) : null,
-        title: Text(item.name),
+        title: Text(breakLongText(item.name)),
         subtitle: Text.rich(
           TextSpan(
             children: [
@@ -503,7 +503,7 @@ class _CollectionArticlePageState extends State<CollectionArticlePage> {
                 nv2Push(context, '/user', arguments: widget.collectionArticle.uid);
               },
             ),
-            title: SelectableText(widget.collectionArticle.title),
+            title: Text(breakLongText(widget.collectionArticle.title)),
             subtitle: SelectableText("创建人 ${widget.collectionArticle.user}\n${widget.collectionArticle.time}"),
             isThreeLine: true,
           ),

@@ -8,6 +8,7 @@ import '../router.dart' show nv2Push;
 import '../views/drawer.dart';
 import '../html_parser/favorite_collection_parser.dart';
 import '../bdwm/req.dart' show bdwmClient;
+import '../utils.dart' show breakLongText;
 
 class FavoriteCollectionApp extends StatefulWidget {
   const FavoriteCollectionApp({super.key});
@@ -122,7 +123,7 @@ class _FavoriteCollectionAppState extends State<FavoriteCollectionApp> {
               var item = favoriteCollectionInfo.items[index];
               return Card(
                 child: ListTile(
-                  title: Text(item.name),
+                  title: Text(breakLongText(item.name)),
                   subtitle: Text("${item.collectionName}\n${item.lastTime}"),
                   isThreeLine: true,
                   onTap: () {
