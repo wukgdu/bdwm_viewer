@@ -96,11 +96,11 @@ class _WrapImageNetworkState extends State<WrapImageNetwork> {
 
   @override
   Widget build(BuildContext context) {
-    if ("://".allMatches(widget.imgLink).length > 1) {
-      return const Icon(Icons.broken_image);
-    }
+    // if ("://".allMatches(widget.imgLink).length > 1) {
+    //   return const Icon(Icons.broken_image);
+    // }
 
-    try {
+    // try {
 
     return ExtendedImage.network(
       widget.imgLink,
@@ -118,12 +118,12 @@ class _WrapImageNetworkState extends State<WrapImageNetwork> {
         switch (state.extendedImageLoadState) {
           case LoadState.loading:
             if (state.loadingProgress == null) {
-              return const Text("加载中");
+              return const Text("[图片加载中]");
             }
             var curByte = state.loadingProgress?.cumulativeBytesLoaded ?? 0;
             var sumByte = state.loadingProgress?.expectedTotalBytes ?? -1;
             if (sumByte == -1) {
-              return const Text("加载中");
+              return const Text("[图片加载中]");
             }
             var text = "${(curByte * 100 / sumByte).toStringAsFixed(0)}%";
             // return Text(text);
@@ -164,9 +164,9 @@ class _WrapImageNetworkState extends State<WrapImageNetwork> {
       // printError: false,
     );
 
-    } catch (e) {
-      return const Icon(Icons.broken_image);
-    }
+    // } catch (e) {
+    //   return const Icon(Icons.broken_image);
+    // }
   }
 }
 
