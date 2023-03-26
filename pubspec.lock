@@ -312,16 +312,16 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_quill
-      sha256: "60101d160b0eff277c7b05bc245dc61e0683dc8b46b8361adf2814e05c6f1e39"
+      sha256: "3d25102d7b783018e49228cd426ec8c74e0933247113be0ef933e5c27634899b"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "7.0.1"
+    version: "7.0.2"
   flutter_quill_extensions:
     dependency: "direct main"
     description:
       path: flutter_quill_extensions
       ref: HEAD
-      resolved-ref: "34cba178f4e98cc49c3f784dc6f57730908cadbf"
+      resolved-ref: dfa2070e1c2b9224da3f5e2f0d897ee6e2a6f203
       url: "https://github.com/singerdmx/flutter-quill"
     source: git
     version: "0.1.0"
@@ -667,10 +667,10 @@ packages:
     dependency: transitive
     description:
       name: permission_handler_apple
-      sha256: "9c370ef6a18b1c4b2f7f35944d644a56aa23576f23abee654cf73968de93f163"
+      sha256: ee96ac32f5a8e6f80756e25b25b9f8e535816c8e6665a96b6d70681f8c4f7e85
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "9.0.7"
+    version: "9.0.8"
   permission_handler_platform_interface:
     dependency: transitive
     description:
