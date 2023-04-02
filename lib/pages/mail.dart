@@ -5,7 +5,7 @@ import '../bdwm/req.dart';
 import '../views/mail.dart';
 import '../html_parser/mail_parser.dart';
 import '../globalvars.dart';
-import '../views/utils.dart';
+import '../views/utils.dart' show showPageDialog, showComplexInformDialog;
 import '../router.dart' show nv2Push;
 import '../views/constants.dart' show bdwmPrimaryColor;
 
@@ -130,6 +130,27 @@ class _MailListAppState extends State<MailListApp> {
           appBar: AppBar(
             title: Text(appTitle),
             actions: [
+              IconButton(
+                icon: const Icon(Icons.info),
+                onPressed: () {
+                  showComplexInformDialog(context, "属性", SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            const Text("容量： "),
+                            Expanded(
+                              child: LinearProgressIndicator(value: mailListInfo.capacity, backgroundColor: bdwmPrimaryColor.withOpacity(0.3),),
+                            ),
+                            const Text(" "),
+                            Text(mailListInfo.sizeString),
+                          ],
+                        )
+                      ],
+                    ),
+                  ));
+                },
+              ),
               IconButton(
                 icon: const Icon(Icons.add),
                 onPressed: () {

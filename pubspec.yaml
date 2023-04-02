@@ -69,7 +69,7 @@ dependencies:
   # scrollable_positioned_list: ^0.3.5
   flutter_colorpicker: ^1.0.3
   # flutter_speed_dial: ^6.2.0
-  syncfusion_flutter_charts: ^20.3.50
+  syncfusion_flutter_charts: ^21.1.35
   media_scanner: ^2.1.0
   dynamic_fonts: ^2.0.0
   quick_actions: ^1.0.1
@@ -82,6 +82,7 @@ dependencies:
     git:
       url: https://github.com/wukgdu/highlight.dart
       path: flutter_highlight
+  # csslib: ^0.17.2
 
 dev_dependencies:
   flutter_test:

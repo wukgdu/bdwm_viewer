@@ -312,19 +312,19 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_quill
-      sha256: "3d25102d7b783018e49228cd426ec8c74e0933247113be0ef933e5c27634899b"
+      sha256: "4c612f2807db57b3fa5a114a05f4e6fd0367c8878aba8291e2205899caf59a28"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "7.0.2"
+    version: "7.0.4"
   flutter_quill_extensions:
     dependency: "direct main"
     description:
       path: flutter_quill_extensions
       ref: HEAD
-      resolved-ref: dfa2070e1c2b9224da3f5e2f0d897ee6e2a6f203
+      resolved-ref: c44dbec8f702f169590767e69f17c6db72c4d982
       url: "https://github.com/singerdmx/flutter-quill"
     source: git
-    version: "0.1.0"
+    version: "0.2.0"
   flutter_svg:
     dependency: transitive
     description:
@@ -435,10 +435,10 @@ packages:
     dependency: transitive
     description:
       name: image_picker
-      sha256: "64b21d9f0e065f9ab0e4dde458076226c97382cc0c6949144cb874c62bf8e9f8"
+      sha256: cb25f04595a88450970dbe727243ba8cd21b6f7e0d7d1fc5b789fc6f52e95494
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.8.7"
+    version: "0.8.7+1"
   image_picker_android:
     dependency: transitive
     description:
@@ -459,10 +459,10 @@ packages:
     dependency: transitive
     description:
       name: image_picker_ios
-      sha256: "50e882fe0a06bf0c8f7f5bce78d30975f279213293afc9471dc35f05617c50ff"
+      sha256: d4cb8ab04f770dab9d04c7959e5f6d22e8c5280343d425f9344f93832cf58445
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.8.7+1"
+    version: "0.8.7+2"
   image_picker_platform_interface:
     dependency: transitive
     description:
@@ -523,10 +523,10 @@ packages:
     dependency: transitive
     description:
       name: math_keyboard
-      sha256: f9b35a5ec1b39fa4f8382016b968218d3d9d0a8ee7a49bc462e5f5320e6552be
+      sha256: "81d465aff32ca5a5976b6e04269848899a55623ddc91723a623b2d6ebca5831e"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.1.8"
+    version: "0.1.9"
   media_scanner:
     dependency: "direct main"
     description:
@@ -611,10 +611,10 @@ packages:
     dependency: transitive
     description:
       name: path_provider_foundation
-      sha256: "12eee51abdf4d34c590f043f45073adbb45514a108bd9db4491547a2fd891059"
+      sha256: "818b2dc38b0f178e0ea3f7cf3b28146faab11375985d815942a68eee11c2d0f7"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.2.0"
+    version: "2.2.1"
   path_provider_linux:
     dependency: transitive
     description:
@@ -848,18 +848,18 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_charts
-      sha256: "0222ac9d8cb6c671f014effe9bd5c0aef35eadb16471355345ba87cc0ac007b3"
+      sha256: "629e5db5dd144f52f46e4bd850c2e1d07408f3fd57dc10c5bcb6990df45d4a58"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "20.4.54"
+    version: "21.1.37"
   syncfusion_flutter_core:
     dependency: transitive
     description:
       name: syncfusion_flutter_core
-      sha256: "3979f0b1c5a97422cadae52d476c21fa3e0fb671ef51de6cae1d646d8b99fe1f"
+      sha256: f23067e46b781d488abf8e22e5608ca9972b49562e95f9e46cb6134e968f721b
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "20.4.54"
+    version: "21.1.37"
   synchronized:
     dependency: "direct main"
     description:
@@ -1000,10 +1000,10 @@ packages:
     dependency: transitive
     description:
       name: video_player_android
-      sha256: dc31c60ae591aa3ccb2d460c3690ceceb86cbb826e73428d817a37650dc4e229
+      sha256: e7de6fabe5d96048cd8f4d710f25c3df84bb3cab8b22da6c082bd8f39e316984
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.4.2"
+    version: "2.4.3"
   video_player_avfoundation:
     dependency: transitive
     description:

@@ -67,6 +67,17 @@ Future<String?> showInformDialog(BuildContext context, String title, String cont
   );
 }
 
+Future<String?> showComplexInformDialog(BuildContext context, String title, Widget content) {
+  return showAlertDialog(context, title, content,
+    actions1: TextButton(
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+      child: const Text("知道了"),
+    ),
+  );
+}
+
 Future<String?> showConfirmDialog(BuildContext context, String title, String content) {
   return showAlertDialog(context, title, SelectableText(content),
     actions1: TextButton(

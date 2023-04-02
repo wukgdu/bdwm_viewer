@@ -1,4 +1,5 @@
 import 'package:html/parser.dart' show parse;
+// import 'package:csslib/parser.dart' as css_parser show parse;
 
 import '../globalvars.dart';
 import '../utils.dart';
@@ -35,6 +36,8 @@ class MailItemInfo {
 class MailListInfo {
   int maxPage = 0;
   String? errorMessage;
+  double capacity = 0.0;
+  String sizeString = "";
   List<MailItemInfo> mailItems = [];
 
   MailListInfo.empty();
@@ -45,6 +48,8 @@ class MailListInfo {
     required this.mailItems,
     this.errorMessage,
     required this.maxPage,
+    required this.capacity,
+    required this.sizeString,
   });
 }
 
@@ -58,6 +63,23 @@ MailListInfo parseMailList(String htmlStr) {
   if (listDom == null) {
     return MailListInfo.empty();
   }
+
+  double capacity = 0.0;
+  String sizeString = "";
+  var capacityDom = document.querySelector(".top-right-capacity");
+  var capDomStyleString = capacityDom?.querySelector("span.capacity")?.attributes['style'] ?? "width:0.0";
+  var widthStyleRegExp = RegExp(r"\s*width\s*:\s*(-?[\d\.]+)(%?)");
+  var match = widthStyleRegExp.firstMatch(capDomStyleString);
+  capacity = double.parse(match?.group(1) ?? "0.0");
+  bool hasPercent = match?.group(2) == "%";
+  if (hasPercent) {
+    capacity /= 100.0;
+  }
+  if (capacity < 0.0) {
+    capacity = 0.0;
+  }
+  sizeString = getTrimmedString(capacityDom?.querySelector("span.size"));
+
   var mailItems = <MailItemInfo>[];
   for (var mdom in listDom.querySelectorAll(".list-item")) {
     var id = mdom.attributes['data-itemid'] ?? "";
@@ -104,7 +126,7 @@ MailListInfo parseMailList(String htmlStr) {
       break;
     }
   }
-  return MailListInfo(mailItems: mailItems, maxPage: maxPage);
+  return MailListInfo(mailItems: mailItems, maxPage: maxPage, capacity: capacity, sizeString: sizeString);
 }
 
 class MailDetailInfo {
