@@ -631,7 +631,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                   : html2TextSpan(user.nickNameHtml),
                   const TextSpan(text: ") "),
                   if (user.vipIdentity != -1) ...[
-                    WidgetSpan(child: genVipLabel(user.vipIdentity)),
+                    WidgetSpan(child: genVipLabel(user.vipIdentity), alignment: PlaceholderAlignment.middle),
                   ],
                   TextSpan(
                     text: user.status,

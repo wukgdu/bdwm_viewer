@@ -231,11 +231,11 @@ Widget genVipLabel(int vipIdentity) {
     width: 16,
     alignment: Alignment.center,
     decoration: BoxDecoration(
-      borderRadius: const BorderRadius.all(Radius.circular(6)),
+      borderRadius: const BorderRadius.all(Radius.circular(5)),
       // border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
       color: getVipColor(vipIdentity),
     ),
-    child: const Text("V", style: TextStyle(color: Colors.white, fontSize: null, height: 1.0),),
+    child: const Text("V", style: TextStyle(color: Colors.white, fontSize: 12, height: 1.0),),
   );
 }
 
@@ -244,11 +244,11 @@ Widget genThreadLabel(String label) {
     width: 42,
     alignment: Alignment.center,
     decoration: BoxDecoration(
-      borderRadius: const BorderRadius.all(Radius.circular(6)),
+      borderRadius: const BorderRadius.all(Radius.circular(5)),
       // border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
       color: topicsLabelColor[label] ?? bdwmPrimaryColor,
     ),
-    child: Text(label, style: const TextStyle(color: Colors.white, fontSize: 12,),),
+    child: Text(label, style: const TextStyle(color: Colors.white, fontSize: 12, height: null),),
   );
 }
 
