@@ -53,13 +53,13 @@ class _MailListAppState extends State<MailListApp> {
       if (mode.isNotEmpty) {
         if (mode=="删除") {
           type = "5";
-          appTitle = "站内信/删除";
+          appTitle = "删除";
         } else if (mode=="星标") {
           type = "3";
-          appTitle = "站内信/星标";
+          appTitle = "星标";
         } else if (mode=="已发送") {
           type = "4";
-          appTitle = "站内信/已发送";
+          appTitle = "已发送";
         }
       } else {
         type = "";
@@ -291,11 +291,11 @@ class _MailDetailAppState extends State<MailDetailApp> {
     super.initState();
     if (widget.type.isNotEmpty) {
       if (widget.type=="5") {
-        appTitle = "站内信/删除";
+        appTitle = "删除";
       } else if (widget.type=="3") {
-        appTitle = "站内信/星标";
+        appTitle = "星标";
       } else if (widget.type=="4") {
-        appTitle = "站内信/已发送";
+        appTitle = "已发送";
       }
     } else {
       appTitle = "站内信";
