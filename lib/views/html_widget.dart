@@ -525,7 +525,9 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
         }
         if (isBoardNote ?? false) {
           // https://stackoverflow.com/questions/73378051/flutter-text-with-space-breaks-background-color
-          res.add(TextSpan(text: "|", style: ts?.copyWith(color: Colors.transparent) ?? const TextStyle(color: Colors.transparent)));
+          res.add(WidgetSpan(child: SelectionContainer.disabled(
+            child: Text("|", style: ts?.copyWith(color: Colors.transparent) ?? const TextStyle(color: Colors.transparent))
+          )));
         } else {
           if (res.isNotEmpty) {
             var lastItem = res.last;
@@ -539,7 +541,9 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
             if (lastItem is TextSpan) {
               var txt = lastItem.text ?? "";
               if (txt.trimRight().length != txt.length) {
-                res.add(TextSpan(text: "|", style: ts?.copyWith(color: Colors.transparent) ?? const TextStyle(color: Colors.transparent)));
+                res.add(WidgetSpan(child: SelectionContainer.disabled(
+                  child: Text("|", style: ts?.copyWith(color: Colors.transparent) ?? const TextStyle(color: Colors.transparent))
+                )));
               }
             }
           }
