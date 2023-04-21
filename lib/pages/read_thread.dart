@@ -606,7 +606,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
           IconButton(
             onPressed: () {
               if (!mounted) { return; }
-              var sharedText = "$v2Host/post-read.php?bid=${widget.threadPageInfo.boardid}&threadid=${widget.threadPageInfo.threadid}";
+              var sharedText = "$v2Host/post-read.php?bid=${widget.threadPageInfo.boardid}&threadid=${widget.threadPageInfo.threadid} ";
               sharedText += "\n${widget.threadPageInfo.title} - ${widget.threadPageInfo.board.text}";
               shareWithResultWrap(context, sharedText, subject: "分享帖子");
             },
