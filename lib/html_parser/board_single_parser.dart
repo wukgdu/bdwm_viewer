@@ -210,7 +210,11 @@ BoardSingleInfo parseBoardSingleInfo(String htmlStr) {
         spanI += 1;
       }
     }
-    intro = getTrimmedString(headDom.querySelector("#intro"));
+    if (headDom.querySelector("#intro.input-wrapper") != null) {
+      intro = getTrimmedString(headDom.querySelector("#intro .intro-content"));
+    } else {
+      intro = getTrimmedString(headDom.querySelector("#intro"));
+    }
     likeCount = getTrimmedString(headDom.querySelector("#add-fav .num"));
     var starDom = headDom.querySelector("#add-fav .star");
     if (starDom != null && starDom.classes.contains('active')) {

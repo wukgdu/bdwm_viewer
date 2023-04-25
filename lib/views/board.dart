@@ -13,6 +13,95 @@ import '../pages/read_thread.dart' show naviGotoThreadByLink;
 import '../router.dart' show nv2Replace, nv2Push;
 import '../html_parser/utils.dart' show SignatureItem;
 
+class BoardIntroComponent extends StatefulWidget {
+  final String intro;
+  final bool canEditIntro;
+  const BoardIntroComponent({super.key, required this.intro, required this.canEditIntro});
+
+  @override
+  State<BoardIntroComponent> createState() => _BoardIntroComponentState();
+}
+
+class _BoardIntroComponentState extends State<BoardIntroComponent> {
+  bool changingIntro = false;
+  late TextEditingController textController;
+
+  Icon genIcon(IconData icons) {
+    return Icon(icons, color: bdwmPrimaryColor, size: Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14,);
+  }
+
+
+@override
+  void initState() {
+    super.initState();
+    textController = TextEditingController(text: widget.intro);
+  }
+
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (changingIntro) {
+      textController.text = widget.intro;
+      return Column(
+        children: [
+          TextField(
+            controller: textController,
+            minLines: 1,
+            maxLines: 6,
+            autocorrect: false,
+            style: Theme.of(context).textTheme.bodyMedium,
+            decoration: const InputDecoration(
+              // contentPadding: EdgeInsets.zero,
+              isDense: true,
+            )
+          ),
+          const SizedBox(height: 5,),
+          Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                },
+                child: genIcon(Icons.check),
+              ),
+              const SizedBox(width: 20,),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    changingIntro = false;
+                  });
+                },
+                child: genIcon(Icons.close),
+              )
+            ],
+          )
+        ],
+      );
+    }
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(text: widget.intro),
+          if (widget.canEditIntro) ...[
+            WidgetSpan(child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  changingIntro = true;
+                });
+              },
+              child: genIcon(Icons.edit),
+            ))
+          ],
+        ],
+      ),
+    );
+  }
+}
+
 class BoardExtraComponent extends StatefulWidget {
   final String boardName;
   final String bid;
@@ -406,7 +495,9 @@ class _BoardPageState extends State<BoardPage> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: Text(boardInfo.intro),),
+                Expanded(
+                  child: BoardIntroComponent(intro: boardInfo.intro, canEditIntro: boardInfo.canEditIntro,)
+                ),
                 GestureDetector(
                   onTap: () {
                     var threads = <int>[];

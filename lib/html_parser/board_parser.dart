@@ -76,6 +76,7 @@ class BoardInfo {
   String postCount = "";
   String likeCount = "0";
   String intro = "";
+  bool canEditIntro = false;
   int pageNum = 0;
   bool iLike = false;
   List<AdminInfo> admins = <AdminInfo>[];
@@ -99,6 +100,7 @@ class BoardInfo {
     required this.pageNum,
     required this.admins,
     required this.boardPostInfo,
+    required this.canEditIntro,
     this.errorMessage,
     required this.collectionLink,
   });
@@ -200,6 +202,7 @@ BoardInfo parseBoardInfo(String htmlStr) {
   String likeCount = "0";
   bool iLike = false;
   String intro = "";
+  bool canEditIntro = false;
   List<AdminInfo> admins = <AdminInfo>[];
   if (headDom != null) {
     bid = getTrimmedString(headDom.attributes['data-bid']);
@@ -234,7 +237,12 @@ BoardInfo parseBoardInfo(String htmlStr) {
         spanI += 1;
       }
     }
-    intro = getTrimmedString(headDom.querySelector("#intro"));
+    if (headDom.querySelector("#intro.input-wrapper") != null) {
+      intro = getTrimmedString(headDom.querySelector("#intro .intro-content"));
+      canEditIntro = headDom.querySelector("#intro .intro-edit-button") != null;
+    } else {
+      intro = getTrimmedString(headDom.querySelector("#intro"));
+    }
     likeCount = getTrimmedString(headDom.querySelector("#add-fav .num"));
     var starDom = headDom.querySelector("#add-fav .star");
     if (starDom != null && starDom.classes.contains('active')) {
@@ -280,6 +288,7 @@ BoardInfo parseBoardInfo(String htmlStr) {
     bid: bid, boardName: boardName, engName: engName, onlineCount: onlineCount, pageNum: pageNum,
     todayCount: todayCount, topicCount: topicCount, postCount: postCount, iLike: iLike,
     likeCount: likeCount, intro: intro, admins: admins, boardPostInfo: boardPostInfo, collectionLink: collectionLink,
+    canEditIntro: canEditIntro,
   );
 }
 
