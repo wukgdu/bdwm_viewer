@@ -75,6 +75,7 @@ class BoardInfo {
   String topicCount = "";
   String postCount = "";
   String likeCount = "0";
+  String ycfCount = "";
   String intro = "";
   bool canEditIntro = false;
   int pageNum = 0;
@@ -100,6 +101,7 @@ class BoardInfo {
     required this.pageNum,
     required this.admins,
     required this.boardPostInfo,
+    required this.ycfCount,
     required this.canEditIntro,
     this.errorMessage,
     required this.collectionLink,
@@ -200,6 +202,7 @@ BoardInfo parseBoardInfo(String htmlStr) {
   String topicCount = "";
   String postCount = "";
   String likeCount = "0";
+  String ycfCount = "";
   bool iLike = false;
   String intro = "";
   bool canEditIntro = false;
@@ -230,6 +233,9 @@ BoardInfo parseBoardInfo(String htmlStr) {
             break;
           case "帖数":
             postCount = numsDom[spanI].text;
+            break;
+          case "创分": // 原创分
+            ycfCount = numsDom[spanI].text;
             break;
           default:
         }
@@ -288,7 +294,7 @@ BoardInfo parseBoardInfo(String htmlStr) {
     bid: bid, boardName: boardName, engName: engName, onlineCount: onlineCount, pageNum: pageNum,
     todayCount: todayCount, topicCount: topicCount, postCount: postCount, iLike: iLike,
     likeCount: likeCount, intro: intro, admins: admins, boardPostInfo: boardPostInfo, collectionLink: collectionLink,
-    canEditIntro: canEditIntro,
+    canEditIntro: canEditIntro, ycfCount: ycfCount,
   );
 }
 

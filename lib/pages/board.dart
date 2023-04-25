@@ -177,6 +177,23 @@ class _BoardAppState extends State<BoardApp> {
             actions: [
               IconButton(
                 onPressed: () {
+                  showComplexInformDialog(context, "属性", SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SelectableText("在线：${boardInfo.onlineCount}"),
+                        SelectableText("今日：${boardInfo.todayCount}"),
+                        SelectableText("主题：${boardInfo.topicCount}"),
+                        SelectableText("帖数：${boardInfo.postCount}"),
+                        if (boardInfo.ycfCount.isNotEmpty) SelectableText("原创分：${boardInfo.ycfCount}"),
+                      ],
+                    ),
+                  ));
+                },
+                icon: const Icon(Icons.info),
+              ),
+              IconButton(
+                onPressed: () {
                   showAlertDialog2(context, BoardSearchAlert(boardEngName: boardInfo.engName,));
                 },
                 icon: const Icon(Icons.search),
