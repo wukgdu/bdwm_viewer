@@ -12,11 +12,13 @@ import './utils.dart';
 import '../pages/read_thread.dart' show naviGotoThreadByLink;
 import '../router.dart' show nv2Replace, nv2Push;
 import '../html_parser/utils.dart' show SignatureItem;
+import '../bdwm/admin_board.dart' show bdwmAdminBoardSetBoardDesc;
 
 class BoardIntroComponent extends StatefulWidget {
   final String intro;
   final bool canEditIntro;
-  const BoardIntroComponent({super.key, required this.intro, required this.canEditIntro});
+  final String bid;
+  const BoardIntroComponent({super.key, required this.intro, required this.canEditIntro, required this.bid});
 
   @override
   State<BoardIntroComponent> createState() => _BoardIntroComponentState();
@@ -25,6 +27,8 @@ class BoardIntroComponent extends StatefulWidget {
 class _BoardIntroComponentState extends State<BoardIntroComponent> {
   bool changingIntro = false;
   late TextEditingController textController;
+  String curIntro = "";
+  static const String defaultBoardDesc = "请用一句话介绍本版面";
 
   Icon genIcon(IconData icons) {
     return Icon(icons, color: bdwmPrimaryColor, size: Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14,);
@@ -34,7 +38,8 @@ class _BoardIntroComponentState extends State<BoardIntroComponent> {
 @override
   void initState() {
     super.initState();
-    textController = TextEditingController(text: widget.intro);
+    curIntro = widget.intro;
+    textController = TextEditingController(text: curIntro);
   }
 
   @override
@@ -46,7 +51,10 @@ class _BoardIntroComponentState extends State<BoardIntroComponent> {
   @override
   Widget build(BuildContext context) {
     if (changingIntro) {
-      textController.text = widget.intro;
+      textController.text = curIntro;
+      if (curIntro == defaultBoardDesc) {
+        textController.text = "";
+      }
       return Column(
         children: [
           TextField(
@@ -63,8 +71,24 @@ class _BoardIntroComponentState extends State<BoardIntroComponent> {
           const SizedBox(height: 5,),
           Row(
             children: [
+              const Spacer(),
               GestureDetector(
-                onTap: () {
+                onTap: () async {
+                  var newIntro = textController.text;
+                  var res = await bdwmAdminBoardSetBoardDesc(bid: widget.bid, content: newIntro);
+                  if (res.success) {
+                    curIntro = newIntro;
+                    if (curIntro.isEmpty) {
+                      curIntro = defaultBoardDesc;
+                    }
+                    setState(() {
+                      changingIntro = false;
+                    });
+                  } else {
+                    if (!mounted) { return; }
+                    var alertText = res.errorMessage ?? "编辑失败~请稍后重试";
+                    showInformDialog(context, "编辑失败", alertText);
+                  }
                 },
                 child: genIcon(Icons.check),
               ),
@@ -85,16 +109,19 @@ class _BoardIntroComponentState extends State<BoardIntroComponent> {
     return Text.rich(
       TextSpan(
         children: [
-          TextSpan(text: widget.intro),
+          TextSpan(text: curIntro),
           if (widget.canEditIntro) ...[
-            WidgetSpan(child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  changingIntro = true;
-                });
-              },
-              child: genIcon(Icons.edit),
-            ))
+            WidgetSpan(
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    changingIntro = true;
+                  });
+                },
+                child: genIcon(Icons.edit),
+              ),
+              alignment: PlaceholderAlignment.middle,
+            )
           ],
         ],
       ),
@@ -461,7 +488,7 @@ class _BoardPageState extends State<BoardPage> {
             margin: const EdgeInsets.only(top: _padding1, left: _padding2, right: _padding2, bottom: 0),
             child: Row(
               children: [
-                Text(boardInfo.boardName, style: _titleFont),
+                SelectableText(boardInfo.boardName, style: _titleFont),
                 const Spacer(),
                 StarBoard(starCount: int.parse(boardInfo.likeCount), likeIt: boardInfo.iLike, bid: int.parse(boardInfo.bid),),
               ],
@@ -472,7 +499,7 @@ class _BoardPageState extends State<BoardPage> {
             margin: const EdgeInsets.only(top: 0, left: _padding2, right: _padding2, bottom: _padding1),
             child: Row(
               children: [
-                Text(boardInfo.engName, style: _titleFont2),
+                SelectableText(boardInfo.engName, style: _titleFont2),
                 const Spacer(),
                 GestureDetector(
                   onTap: () {
@@ -496,7 +523,7 @@ class _BoardPageState extends State<BoardPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: BoardIntroComponent(intro: boardInfo.intro, canEditIntro: boardInfo.canEditIntro,)
+                  child: BoardIntroComponent(intro: boardInfo.intro, canEditIntro: boardInfo.canEditIntro, bid: boardInfo.bid,),
                 ),
                 GestureDetector(
                   onTap: () {
@@ -696,7 +723,7 @@ class _BoardSinglePageState extends State<BoardSinglePage> {
             margin: const EdgeInsets.only(top: _padding1, left: _padding2, right: _padding2, bottom: 0),
             child: Row(
               children: [
-                Text(boardInfo.boardName, style: _titleFont),
+                SelectableText(boardInfo.boardName, style: _titleFont),
                 const Spacer(),
                 StarBoard(starCount: int.parse(boardInfo.likeCount), likeIt: boardInfo.iLike, bid: int.parse(boardInfo.bid),),
               ],
@@ -707,7 +734,7 @@ class _BoardSinglePageState extends State<BoardSinglePage> {
             margin: const EdgeInsets.only(top: 0, left: _padding2, right: _padding2, bottom: _padding1),
             child: Row(
               children: [
-                Text(boardInfo.engName, style: _titleFont2),
+                SelectableText(boardInfo.engName, style: _titleFont2),
                 const Spacer(),
                 GestureDetector(
                   onTap: () {
