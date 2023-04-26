@@ -8,6 +8,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 // import 'package:flutter/rendering.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_displaymode/flutter_displaymode.dart' show FlutterDisplayMode, DisplayMode;
 
 import './router.dart';
 import './globalvars.dart';
@@ -39,6 +40,9 @@ void main() async {
   await unreadMessage.initWorker();
   await unreadMail.initWorker();
   registerDynamicFont();
+  if (isAndroid()) {
+    await setHighRefreshRate(globalConfigInfo.getRefreshRate());
+  }
   runApp(const MainPage());
 }
 
@@ -68,6 +72,20 @@ Future<void> backgroundCallback(Uri? uri) async {
     await HomeWidget.saveWidgetData<String>('_top10status', top10Status);
     await HomeWidget.saveWidgetData<String>('_top10string', top10string);
     await HomeWidget.updateWidget(name: 'HomeWidget0Provider', iOSName: 'AppWidgetProvider');
+  }
+}
+
+Future<void> setHighRefreshRate(String refreshRate) async {
+  if (refreshRate == 'no') { return; }
+  if (refreshRate == 'high') {
+    await FlutterDisplayMode.setHighRefreshRate();
+  } else if (refreshRate == 'low') {
+    await FlutterDisplayMode.setLowRefreshRate();
+  } else {
+    var values = refreshRate.split(",");
+    await FlutterDisplayMode.setPreferredMode(DisplayMode(
+      id: int.parse(values[0]), width: int.parse(values[1]), height: int.parse(values[2]), refreshRate: double.parse(values[3]),
+    ));
   }
 }
 

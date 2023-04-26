@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 import '../globalvars.dart';
 import '../views/constants.dart';
 import '../views/utils.dart';
-import '../main.dart' show MainPage, initPrimaryColor;
+import '../utils.dart' show isAndroid;
+import '../main.dart' show MainPage, initPrimaryColor, setHighRefreshRate;
 import './board_note.dart' show showFontDialog;
+import 'package:flutter_displaymode/flutter_displaymode.dart' show FlutterDisplayMode, DisplayMode;
 // import './read_thread.dart' show resetInitScrollHeight;
 
 class ColorPickerComponent extends StatefulWidget {
@@ -189,6 +192,111 @@ class _PrimaryColorComponentState extends State<PrimaryColorComponent> {
   }
 }
 
+Future<String?> showRefreshRateDialog(BuildContext context, List<DisplayMode> modes) {
+  modes.removeWhere((element) => element.width==0);
+  List<SimpleDialogOption> children = modes.map((c) {
+    return SimpleDialogOption(
+      onPressed: () {
+        Navigator.pop(context, "${c.id},${c.width},${c.height},${c.refreshRate}");
+      },
+      child: Text(c.toString()),
+    );
+  }).toList();
+  children.insert(0, SimpleDialogOption(
+    onPressed: () {
+      Navigator.pop(context, "no");
+    },
+    child: const Text("不设置（保存后重启生效）"),
+  ));
+  children.insert(0, SimpleDialogOption(
+    onPressed: () {
+      Navigator.pop(context, "low");
+    },
+    child: const Text("低"),
+  ));
+  children.insert(0, SimpleDialogOption(
+    onPressed: () {
+      Navigator.pop(context, "high");
+    },
+    child: const Text("高"),
+  ));
+  var dialog = SimpleDialog(
+    title: const Text("选择刷新率"),
+    children: children,
+  );
+
+  return showDialog<String>(
+    context: context,
+    builder: (BuildContext context) {
+      return dialog;
+    },
+  );
+}
+
+class RefreshRateComponent extends StatefulWidget {
+  const RefreshRateComponent({super.key});
+
+  @override
+  State<RefreshRateComponent> createState() => _RefreshRateComponentState();
+}
+
+class _RefreshRateComponentState extends State<RefreshRateComponent> {
+  DisplayMode? m;
+  String genDescription(String refreshRate) {
+    if (refreshRate == "no") return "未设置";
+    if (refreshRate == "high") return "高";
+    if (refreshRate == "low") return "低";
+    var values = refreshRate.split(",");
+    return "${values[1]}x${values[2]} @ ${double.parse(values[3]).round()}Hz";
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    FlutterDisplayMode.active.then((value) {
+      setState(() {
+        m = value;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: () async {
+        List<DisplayMode> modes = [];
+        try {
+          modes = await FlutterDisplayMode.supported;
+        } on PlatformException catch (e) {
+          String errorMessage = "${e.code}: ${e.message}";
+          showInformDialog(context, "遇到问题", errorMessage);
+          return;
+        } on Exception catch (e) {
+          showInformDialog(context, "遇到问题", e.toString());
+          return;
+        }
+        if (!mounted) { return; }
+        var newRate = await showRefreshRateDialog(context, modes);
+        if (newRate == null) { return; }
+        globalConfigInfo.refreshRate = newRate;
+        await setHighRefreshRate(newRate);
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+        m = await FlutterDisplayMode.active;
+        setState(() { });
+      },
+      title: const Text("刷新率"),
+      isThreeLine: true,
+      subtitle: Text.rich(TextSpan(
+        children: [
+          TextSpan(text: genDescription(globalConfigInfo.getRefreshRate())),
+          const TextSpan(text: "\n"),
+          TextSpan(text: "当前实际：${m.toString()}"),
+        ],
+      ),),
+    );
+  }
+}
+
 class SettingsApp extends StatefulWidget {
   const SettingsApp({super.key});
 
@@ -218,13 +326,16 @@ class _SettingsAppState extends State<SettingsApp> {
       ),
       body: ListView(
         children: [
-          const Divider(),
           const UseMD3Component(),
           const Divider(),
           DynamicColorComponent(parentRefresh: () { refresh(); },),
           const Divider(),
           PrimaryColorComponent(parentRefresh: () { refresh(); },),
           const Divider(),
+          if (isAndroid()) ...[
+            const RefreshRateComponent(),
+            const Divider(),
+          ],
           SwitchListTile(
             title: const Text("预览图片质量：高"),
             subtitle: const Text("仅限正文和签名档中嵌入的预览图片"),
@@ -369,7 +480,6 @@ class _SettingsAppState extends State<SettingsApp> {
               refresh();
             },
           ),
-          const Divider(),
         ],
       )
     );

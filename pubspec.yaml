@@ -82,6 +82,7 @@ dependencies:
     git:
       url: https://github.com/wukgdu/highlight.dart
       path: flutter_highlight
+  flutter_displaymode: ^0.6.0
   # csslib: ^0.17.2
 
 dev_dependencies:
