@@ -5,11 +5,9 @@ import '../html_parser/board_single_parser.dart';
 import '../utils.dart' show getQueryValue, breakLongText;
 import './constants.dart';
 import '../bdwm/set_read.dart';
-import '../bdwm/req.dart';
 import '../bdwm/star_board.dart';
-import '../globalvars.dart';
+import './html_widget.dart' show innerLinkJump;
 import './utils.dart';
-import '../pages/read_thread.dart' show naviGotoThreadByLink;
 import '../router.dart' show nv2Replace, nv2Push;
 import '../html_parser/utils.dart' show SignatureItem;
 import '../bdwm/admin_board.dart' show bdwmAdminBoardSetBoardDesc;
@@ -406,40 +404,7 @@ class OneThreadInBoard extends StatelessWidget {
           onTap: () {
             if (specialOne) {
               var link = boardPostInfo.link;
-              var p1Bid = link.indexOf("bid=");
-              var p2Bid = link.indexOf("&", p1Bid);
-              var nBid = p2Bid == -1 ? link.substring(p1Bid+4) : link.substring(p1Bid+4, p2Bid);
-              if (link.contains("post-read-single.php")) {
-                bdwmClient.get(link, headers: genHeaders2()).then((value) {
-                  if (value == null) {
-                    showNetWorkDialog(context);
-                  } else {
-                    var threadLink = directToThread(value.body, needLink: true);
-                    var threadid = getQueryValue(threadLink, 'threadid') ?? "";
-                    if (threadid.isEmpty) { return; }
-                    int? link2Int = int.tryParse(threadid);
-                    if (link2Int == null) {
-                      showAlertDialog(context, "跳转失败", Text(threadid),
-                        actions1: TextButton(
-                          onPressed: () { Navigator.of(context).pop(); },
-                          child: const Text("知道了"),
-                        ),
-                      );
-                    }
-                    naviGotoThreadByLink(context, threadLink, boardName, needToBoard: false);
-                  }
-                });
-              } else {
-                var p1Tid = link.indexOf("threadid=");
-                var p2Tid = link.indexOf("&", p1Tid);
-                var nTid = p2Tid == -1 ? link.substring(p1Tid+9) : link.substring(p1Tid+9, p2Tid);
-                nv2Push(context, '/thread', arguments: {
-                  'bid': nBid,
-                  'threadid': nTid,
-                  'boardName': boardName,
-                  'page': '1',
-                });
-              }
+              innerLinkJump(link, context);
             } else {
               nv2Push(context, '/thread', arguments: {
                 'bid': bid,
@@ -673,13 +638,17 @@ class OnePostInBoard extends StatelessWidget {
           isThreeLine: specialOne ? false : true,
           onTap: () {
             var link = boardPostInfo.link;
-            var bid1 = getQueryValue(link, 'bid');
-            var postid1 = getQueryValue(link, 'postid');
-            nv2Push(context, '/singlePost', arguments: {
-              'bid': bid1,
-              'postid': postid1,
-              'boardName': boardName,
-            });
+            if (link.contains("post-read-single.php")) {
+              var bid1 = getQueryValue(link, 'bid');
+              var postid1 = getQueryValue(link, 'postid');
+              nv2Push(context, '/singlePost', arguments: {
+                'bid': bid1,
+                'postid': postid1,
+                'boardName': boardName,
+              });
+            } else {
+              innerLinkJump(link, context);
+            }
           },
         ),
     );

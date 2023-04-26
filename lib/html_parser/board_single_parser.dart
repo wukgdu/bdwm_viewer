@@ -141,10 +141,10 @@ List<BoardSinglePostInfo> parseBoardSinglePost(Element? docu) {
     }
     String link = absThreadLink(pdom.querySelector(".link")?.attributes['href'] ?? "");
     String itemid = pdom.attributes['data-itemid']?.trim() ?? "";
-    var tid = int.tryParse(itemid);
-    if (tid == null || tid < 0) {
-      continue;
-    }
+    // var tid = int.tryParse(itemid);
+    // if (tid == null || tid < 0) {
+    //   continue;
+    // }
     String userName = getTrimmedString(pdom.querySelector(".author .name"));
     String avatarLink = absImgSrc(pdom.querySelector(".avatar img")?.attributes['src'] ?? defaultAvator);
     String uid = getTrimmedString(pdom.querySelector(".author a")?.attributes['href']?.split("=").last ?? "");
