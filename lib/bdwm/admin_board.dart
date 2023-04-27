@@ -21,6 +21,44 @@ class AdminBoardOperateRes {
   });
 }
 
+Future<AdminBoardOperateRes> bdwmAdminBoardOperateThread({required String bid, required String threadid, required String action}) async {
+  var actionUrl = "$v2Host/ajax/operate_thread.php";
+  var data = {
+    "bid": bid,
+    "list": '[$threadid]',
+    "action": action, // noreply
+  };
+  var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
+  if (resp == null) {
+    return AdminBoardOperateRes.error(success: false, error: -1, errorMessage: networkErrorText);
+  }
+  var respContent = json.decode(resp.body);
+  var res = AdminBoardOperateRes(
+    success: respContent['results'][0]==false,
+    error: respContent['error'] ?? 0,
+  );
+  return res;
+}
+
+Future<AdminBoardOperateRes> bdwmAdminBoardCreateThreadCollect({required String bid, required String threadid}) async {
+  var actionUrl = "$v2Host/ajax/create_thread_collect.php";
+  var data = {
+    "bid": bid,
+    "threadid": threadid,
+  };
+  var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
+  if (resp == null) {
+    return AdminBoardOperateRes.error(success: false, error: -1, errorMessage: networkErrorText);
+  }
+  var respContent = json.decode(resp.body);
+  var res = AdminBoardOperateRes(
+    success: respContent['success'],
+    error: respContent['error'] ?? 0,
+  );
+  return res;
+}
+
+
 // g = "ajax/operate_thread.php", x = "ajax/set_board_note.php", w = "ajax/create_thread_collect.php",
 Future<AdminBoardOperateRes> bdwmAdminBoardOperatePost({required String bid, required String postid, required String action}) async {
   var postRes = await bdwmOperatePost(bid: bid, postid: postid, action: action);

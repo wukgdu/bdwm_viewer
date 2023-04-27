@@ -10,7 +10,7 @@ import './html_widget.dart' show innerLinkJump;
 import './utils.dart';
 import '../router.dart' show nv2Replace, nv2Push;
 import '../html_parser/utils.dart' show SignatureItem;
-import '../bdwm/admin_board.dart' show bdwmAdminBoardSetBoardDesc;
+import '../bdwm/admin_board.dart' show bdwmAdminBoardSetBoardDesc, bdwmAdminBoardOperateThread, bdwmAdminBoardCreateThreadCollect;
 
 class BoardIntroComponent extends StatefulWidget {
   final String intro;
@@ -324,16 +324,60 @@ class _StarBoardState extends State<StarBoard> {
   }
 }
 
-class OneThreadInBoard extends StatelessWidget {
+class SimpleTuple2 {
+  String name;
+  String action;
+  SimpleTuple2({
+    required this.name,
+    required this.action,
+  });
+}
+
+Future<String?> getOptOptions(BuildContext context, List<SimpleTuple2> data) async {
+  var opt = await showModalBottomSheet<String>(
+    context: context,
+    builder: (BuildContext context1) {
+      return Container(
+        margin: const EdgeInsets.all(10.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (var datum in data) ...[
+              ElevatedButton(
+                onPressed: () { Navigator.of(context).pop(datum.action); },
+                child: Text(datum.name),
+              ),
+            ],
+            // ElevatedButton(
+            //   onPressed: () { Navigator.of(context).pop(); },
+            //   child: const Text("取消"),
+            // ),
+          ],
+        ),
+      );
+    }
+  );
+  return opt;
+}
+
+class OneThreadInBoard extends StatefulWidget {
   final BoardPostInfo boardPostInfo;
   final String bid;
   final String boardName;
-  const OneThreadInBoard({Key? key, required this.boardPostInfo, required this.bid, required this.boardName}) : super(key: key);
+  final bool canOpt;
+  final Function refresh;
+  const OneThreadInBoard({Key? key, required this.boardPostInfo, required this.bid, required this.boardName, required this.canOpt, required this.refresh}) : super(key: key);
 
   @override
+  State<OneThreadInBoard> createState() => _OneThreadInBoardState();
+}
+
+class _OneThreadInBoardState extends State<OneThreadInBoard> {
+  @override
   Widget build(BuildContext context) {
-    bool pinned = boardPostInfo.bpID == "置顶";
-    bool ad = boardPostInfo.bpID == "推广";
+    bool pinned = widget.boardPostInfo.bpID == "置顶";
+    bool ad = widget.boardPostInfo.bpID == "推广";
     bool specialOne = pinned || ad;
     return Card(
         child: ListTile(
@@ -344,29 +388,29 @@ class OneThreadInBoard extends StatelessWidget {
                 if (pinned)
                   WidgetSpan(child: Icon(Icons.pin_drop, color: bdwmPrimaryColor, size: 16), alignment: PlaceholderAlignment.middle)
                 else if (ad)
-                  TextSpan(text: boardPostInfo.bpID, style: const TextStyle(backgroundColor: Colors.amber, color: Colors.white))
-                else if (boardPostInfo.isNew)
+                  TextSpan(text: widget.boardPostInfo.bpID, style: const TextStyle(backgroundColor: Colors.amber, color: Colors.white))
+                else if (widget.boardPostInfo.isNew)
                   WidgetSpan(
                     child: Icon(Icons.circle, color: bdwmPrimaryColor, size: 7),
                     alignment: PlaceholderAlignment.middle,
                   ),
                 TextSpan(
-                  text: breakLongText(boardPostInfo.title),
-                  style: boardPostInfo.isGaoLiang ? const TextStyle(color: highlightColor) : null,
+                  text: breakLongText(widget.boardPostInfo.title),
+                  style: widget.boardPostInfo.isGaoLiang ? const TextStyle(color: highlightColor) : null,
                 ),
-                if (boardPostInfo.hasAttachment)
+                if (widget.boardPostInfo.hasAttachment)
                   WidgetSpan(child: Icon(Icons.attachment, color: bdwmPrimaryColor, size: 16), alignment: PlaceholderAlignment.middle),
-                if (boardPostInfo.lock)
+                if (widget.boardPostInfo.lock)
                   WidgetSpan(child: Icon(Icons.lock, color: bdwmPrimaryColor, size: 16), alignment: PlaceholderAlignment.middle),
-                if (boardPostInfo.isZhiDing)
+                if (widget.boardPostInfo.isZhiDing)
                   WidgetSpan(child: genThreadLabel("置顶"), alignment: PlaceholderAlignment.middle),
-                if (boardPostInfo.isBaoLiu)
+                if (widget.boardPostInfo.isBaoLiu)
                   WidgetSpan(child: genThreadLabel("保留"), alignment: PlaceholderAlignment.middle),
-                if (boardPostInfo.isWenZhai)
+                if (widget.boardPostInfo.isWenZhai)
                   WidgetSpan(child: genThreadLabel("文摘"), alignment: PlaceholderAlignment.middle),
-                if (boardPostInfo.isYuanChuang)
+                if (widget.boardPostInfo.isYuanChuang)
                   WidgetSpan(child: genThreadLabel("原创分"), alignment: PlaceholderAlignment.middle),
-                if (boardPostInfo.isJingHua)
+                if (widget.boardPostInfo.isJingHua)
                   WidgetSpan(child: genThreadLabel("精华"), alignment: PlaceholderAlignment.middle),
               ],
             )
@@ -375,12 +419,12 @@ class OneThreadInBoard extends StatelessWidget {
             : Text.rich(
               TextSpan(
                 children: [
-                  boardPostInfo.userName=="原帖已删除"
-                  ? TextSpan(text: boardPostInfo.userName)
+                  widget.boardPostInfo.userName=="原帖已删除"
+                  ? TextSpan(text: widget.boardPostInfo.userName)
                   : TextSpan(
                     children: [
-                      TextSpan(text: boardPostInfo.userName, style: serifFont),
-                      TextSpan(text: " 发表于 ${boardPostInfo.pTime}"),
+                      TextSpan(text: widget.boardPostInfo.userName, style: serifFont),
+                      TextSpan(text: " 发表于 ${widget.boardPostInfo.pTime}"),
                     ],
                   ),
                   const TextSpan(text: "   "),
@@ -389,12 +433,12 @@ class OneThreadInBoard extends StatelessWidget {
                     alignment: PlaceholderAlignment.middle,
                   ),
                   const TextSpan(text: " "),
-                  TextSpan(text: boardPostInfo.commentCount),
+                  TextSpan(text: widget.boardPostInfo.commentCount),
                   const TextSpan(text: "\n"),
                   TextSpan(
                     children: [
-                      TextSpan(text: boardPostInfo.lastUser, style: serifFont),
-                      TextSpan(text: " 最后回复于 ${boardPostInfo.lastTime}"),
+                      TextSpan(text: widget.boardPostInfo.lastUser, style: serifFont),
+                      TextSpan(text: " 最后回复于 ${widget.boardPostInfo.lastTime}"),
                     ],
                   ),
                 ],
@@ -403,26 +447,68 @@ class OneThreadInBoard extends StatelessWidget {
           isThreeLine: specialOne ? false : true,
           onTap: () {
             if (specialOne) {
-              var link = boardPostInfo.link;
+              var link = widget.boardPostInfo.link;
               innerLinkJump(link, context);
             } else {
               nv2Push(context, '/thread', arguments: {
-                'bid': bid,
-                'threadid': boardPostInfo.itemid,
-                'boardName': boardName,
+                'bid': widget.bid,
+                'threadid': widget.boardPostInfo.itemid,
+                'boardName': widget.boardName,
                 'page': '1',
               });
             }
           },
+          onLongPress: !widget.canOpt ? null : !specialOne ? () async {
+            var opt = await getOptOptions(context, [
+              SimpleTuple2(name: "同主题不可回复", action: "noreply"),
+              SimpleTuple2(name: "同主题取消不可回复", action: "unnoreply"),
+              SimpleTuple2(name: "同主题合集", action: "create-collect"),
+              SimpleTuple2(name: "同主题删除", action: "delete"),
+            ]);
+            if (opt == null) { return; }
+            if (opt == "noreply" || opt == "unnoreply" || opt == "delete") {
+              if (opt == "delete") {
+                if (!mounted) { return; }
+                var confirm = await showConfirmDialog(context, "同主题删除", "是否确定删除帖子");
+                if (confirm != "yes") { return; }
+              }
+              var optRes = await bdwmAdminBoardOperateThread(bid: widget.bid, threadid: widget.boardPostInfo.itemid, action: opt);
+              if (optRes.success) {
+                // if (!mounted) { return; }
+                // var boardPageWidget = context.findAncestorWidgetOfExactType<BoardPage>();
+                // if (boardPageWidget == null) { return; }
+                // boardPageWidget.refresh();
+                widget.refresh();
+              } else {
+                var confirmText = optRes.errorMessage ?? "$opt 失败~请稍后重试";
+                if (!mounted) { return; }
+                showConfirmDialog(context, "同主题操作失败", confirmText);
+              }
+            } else if (opt == "create-collect") {
+              if (!mounted) { return; }
+              var confirm = await showConfirmDialog(context, "同主题合集", "是否确定在版面生成本主题帖的合集");
+              if (confirm != "yes") { return; }
+              var optRes = await bdwmAdminBoardCreateThreadCollect(bid: widget.bid, threadid: widget.boardPostInfo.itemid);
+              if (optRes.success) {
+                widget.refresh();
+              } else {
+                var confirmText = optRes.errorMessage ?? "合集失败~请稍后重试";
+                if (!mounted) { return; }
+                showConfirmDialog(context, "同主题操作失败", confirmText);
+              }
+            }
+          } : pinned ? null : null,
         ),
     );
   }
 }
+
 class BoardPage extends StatefulWidget {
   final String bid;
   final BoardInfo boardInfo;
   final int page;
-  const BoardPage({Key? key, required this.bid, required this.boardInfo, required this.page}) : super(key: key);
+  final Function refresh;
+  const BoardPage({Key? key, required this.bid, required this.boardInfo, required this.page, required this.refresh}) : super(key: key);
 
   @override
   State<BoardPage> createState() => _BoardPageState();
@@ -562,7 +648,10 @@ class _BoardPageState extends State<BoardPage> {
           shrinkWrap: true,
           itemCount: boardInfo.boardPostInfo.length,
           itemBuilder: (context, index) {
-            return OneThreadInBoard(boardPostInfo: boardInfo.boardPostInfo[index], boardName: boardInfo.boardName, bid: boardInfo.bid);
+            return OneThreadInBoard(
+              boardPostInfo: boardInfo.boardPostInfo[index], boardName: boardInfo.boardName, bid: boardInfo.bid,
+              canOpt: boardInfo.canOpt, refresh: widget.refresh,
+            );
           },
         ),
       ],

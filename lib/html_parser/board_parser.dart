@@ -78,6 +78,7 @@ class BoardInfo {
   String ycfCount = "";
   String intro = "";
   bool canEditIntro = false;
+  bool canOpt = false;
   int pageNum = 0;
   bool iLike = false;
   List<AdminInfo> admins = <AdminInfo>[];
@@ -103,6 +104,7 @@ class BoardInfo {
     required this.boardPostInfo,
     required this.ycfCount,
     required this.canEditIntro,
+    required this.canOpt,
     this.errorMessage,
     required this.collectionLink,
   });
@@ -290,11 +292,12 @@ BoardInfo parseBoardInfo(String htmlStr) {
   String path = document.querySelector("#tab-button-collection a")?.attributes['href'] ?? "";
   String collectionLink = path.isEmpty ? "" : absThreadLink(path);
   var boardPostInfo = parseBoardPost(document.querySelector('#list-body'));
+  bool canOpt = document.querySelector(".thread-opt") != null;
   return BoardInfo(
     bid: bid, boardName: boardName, engName: engName, onlineCount: onlineCount, pageNum: pageNum,
     todayCount: todayCount, topicCount: topicCount, postCount: postCount, iLike: iLike,
     likeCount: likeCount, intro: intro, admins: admins, boardPostInfo: boardPostInfo, collectionLink: collectionLink,
-    canEditIntro: canEditIntro, ycfCount: ycfCount,
+    canEditIntro: canEditIntro, ycfCount: ycfCount, canOpt: canOpt,
   );
 }
 

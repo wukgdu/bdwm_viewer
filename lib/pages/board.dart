@@ -106,6 +106,13 @@ class _BoardAppState extends State<BoardApp> {
     super.dispose();
   }
 
+  void refresh() {
+    setState(() {
+      page = page;
+      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () { });
+    });
+  }
+
   // @override
   // void didChangeDependencies() {
   //   super.didChangeDependencies();
@@ -206,7 +213,7 @@ class _BoardAppState extends State<BoardApp> {
           //   },
           // ),
           // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-          body: BoardPage(bid: widget.bid, page: page, boardInfo: boardInfo,),
+          body: BoardPage(bid: widget.bid, page: page, boardInfo: boardInfo, refresh: () { refresh(); },),
           bottomNavigationBar: BottomAppBar(
             shape: const CircularNotchedRectangle(),
             // color: Colors.blue,
@@ -222,12 +229,7 @@ class _BoardAppState extends State<BoardApp> {
                     icon: const Icon(Icons.refresh),
                     onPressed: () {
                       if (!mounted) { return; }
-                      setState(() {
-                        page = page;
-                        getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
-                          debugPrint("cancel it");
-                        },);
-                      });
+                      refresh();
                     },
                   ),
                   IconButton(

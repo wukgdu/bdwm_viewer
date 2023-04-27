@@ -60,6 +60,7 @@ class BoardSingleInfo {
   String intro = "";
   int pageNum = 0;
   bool iLike = false;
+  bool canOpt = false;
   List<AdminInfo> admins = <AdminInfo>[];
   List<BoardSinglePostInfo> boardPostInfo = <BoardSinglePostInfo>[];
   String collectionLink = "";
@@ -81,6 +82,7 @@ class BoardSingleInfo {
     required this.pageNum,
     required this.admins,
     required this.boardPostInfo,
+    required this.canOpt,
     this.errorMessage,
     required this.collectionLink,
   });
@@ -256,9 +258,11 @@ BoardSingleInfo parseBoardSingleInfo(String htmlStr) {
   String path = document.querySelector("#tab-button-collection a")?.attributes['href'] ?? "";
   String collectionLink = path.isEmpty ? "" : absThreadLink(path);
   var boardPostInfo = parseBoardSinglePost(document.querySelector('#list-body'));
+  bool canOpt = document.querySelector(".thread-opt") != null;
   return BoardSingleInfo(
     bid: bid, boardName: boardName, engName: engName, onlineCount: onlineCount, pageNum: pageNum,
     todayCount: todayCount, topicCount: topicCount, postCount: postCount, iLike: iLike,
     likeCount: likeCount, intro: intro, admins: admins, boardPostInfo: boardPostInfo, collectionLink: collectionLink,
+    canOpt: canOpt,
   );
 }
