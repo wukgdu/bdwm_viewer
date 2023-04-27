@@ -145,6 +145,8 @@ class _BoardExtraComponentState extends State<BoardExtraComponent> {
   static final SignatureItem allPostMode = SignatureItem(key: "全部", value: "-1");
   static final SignatureItem markPostMode = SignatureItem(key: "保留", value: "3");
   static final SignatureItem digestPostMode = SignatureItem(key: "文摘", value: "2");
+  static final SignatureItem selfDeletePostMode = SignatureItem(key: "自删", value: "6");
+  static final SignatureItem deletePostMode = SignatureItem(key: "删除", value: "8");
   static final SignatureItem attachPostMode = SignatureItem(key: "附件", value: "10");
   static const dBox = SizedBox(width: 10,);
   var curThreadMode = threadMode;
@@ -161,6 +163,8 @@ class _BoardExtraComponentState extends State<BoardExtraComponent> {
       else if (widget.curPostMode == markPostMode.value) { curPostMode = markPostMode; }
       else if (widget.curPostMode == digestPostMode.value) { curPostMode = digestPostMode; }
       else if (widget.curPostMode == attachPostMode.value) { curPostMode = attachPostMode; }
+      else if (widget.curPostMode == selfDeletePostMode.value) { curPostMode = selfDeletePostMode; }
+      else if (widget.curPostMode == deletePostMode.value) { curPostMode = deletePostMode; }
     }
   }
   @override
@@ -174,7 +178,7 @@ class _BoardExtraComponentState extends State<BoardExtraComponent> {
           style: Theme.of(context).textTheme.bodyMedium,
           isDense: true,
           value: curPostMode,
-          items: [allPostMode, markPostMode, digestPostMode, attachPostMode].map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
+          items: [allPostMode, markPostMode, digestPostMode, attachPostMode, selfDeletePostMode, deletePostMode].map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
             return DropdownMenuItem<SignatureItem>(
               value: item,
               child: Text(item.key),
@@ -333,25 +337,24 @@ class SimpleTuple2 {
   });
 }
 
-Future<String?> getOptOptions(BuildContext context, List<SimpleTuple2> data) async {
+Future<String?> getOptOptions(BuildContext context, List<SimpleTuple2> data, {bool isScrollControlled=false}) async {
   var opt = await showModalBottomSheet<String>(
     context: context,
+    isScrollControlled: isScrollControlled,
     builder: (BuildContext context1) {
       return Container(
         margin: const EdgeInsets.all(10.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+        child: Wrap(
           children: [
             for (var datum in data) ...[
-              ElevatedButton(
-                onPressed: () { Navigator.of(context).pop(datum.action); },
-                child: Text(datum.name),
+              ListTile(
+                onTap: () { Navigator.of(context).pop(datum.action); },
+                title: Center(child: Text(datum.name, style: TextStyle(color: bdwmPrimaryColor),)),
               ),
             ],
-            // ElevatedButton(
-            //   onPressed: () { Navigator.of(context).pop(); },
-            //   child: const Text("取消"),
+            // ListTile(
+            //   onTap: () { Navigator.of(context).pop(); },
+            //   title: Center(child: Text("取消", style: TextStyle(color: bdwmPrimaryColor),)),
             // ),
           ],
         ),
