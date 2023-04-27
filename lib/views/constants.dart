@@ -31,7 +31,7 @@ const action2Name = {
   "mark_digest": "设置文摘区保留", "unmark_digest": "取消文摘区保留",
   "highlight_top": "高亮置顶", "unhighlight_top": "取消高亮置顶",
   "highlight": "高亮", "unhighlight": "取消高亮",
-  "noreply": "不可回复", "unnoreply": "取消不可回复",
+  "noreply": "设为不可回复", "unnoreply": "取消不可回复",
   "delete": "删除", "rate": "打原创分",
 };
 

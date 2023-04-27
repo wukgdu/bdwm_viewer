@@ -136,7 +136,7 @@ class _BoardNoteAppState extends State<BoardNoteApp> {
         }
         return Scaffold(
           appBar: AppBar(
-            title: Text(widget.boardName),
+            title: Text(boardNoteInfo.boardName ?? widget.boardName),
             actions: [
               TextButton(
                 onPressed: () async {

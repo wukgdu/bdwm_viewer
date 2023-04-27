@@ -385,7 +385,7 @@ class _VoteComponentState extends State<VoteComponent> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 5),
+      margin: EdgeInsets.zero,
       // padding: const EdgeInsets.only(top: 10),
       height: 26,
       decoration: BoxDecoration(
@@ -672,36 +672,43 @@ class _OnePostComponentState extends State<OnePostComponent> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         if (item.canOpt) ...[
-                          IconButton(
-                            style: IconButton.styleFrom(
-                              minimumSize: const Size(20, 20),
-                              padding: const EdgeInsets.all(2.0),
+                          SizedBox(
+                            width: 26,
+                            height: 26,
+                            child: IconButton(
+                              padding: EdgeInsets.zero,
+                              // style: IconButton.styleFrom(
+                              //   minimumSize: const Size(20, 20),
+                              //   padding: const EdgeInsets.all(2.0),
+                              // ),
+                              onPressed: () async {
+                                var toTop = item.isZhiDing ? "untop" : "top";
+                                var toMark = item.isBaoLiu ? "unmark" : "mark";
+                                var toDigest = item.isWenZhai ? "undigest" : "digest";
+                                var toHighlight = item.isGaoLiang ? "unhighlight" : "highlight";
+                                var toNoReply = item.isLock ? "unnoreply" : "noreply";
+                                var opt = await getOptOptions(context, [
+                                  SimpleTuple2(name: getActionName(toTop), action: toTop),
+                                  SimpleTuple2(name: getActionName(toMark), action: toMark),
+                                  SimpleTuple2(name: getActionName(toDigest), action: toDigest),
+                                  SimpleTuple2(name: getActionName(toHighlight), action: toHighlight),
+                                  SimpleTuple2(name: getActionName(toNoReply), action: toNoReply),
+                                ]);
+                                if (opt == null) { return; }
+                                var optRes = await bdwmAdminBoardOperatePost(bid: widget.bid, postid: item.postID, action: opt);
+                                if (optRes.success) {
+                                  widget.refreshCallBack();
+                                } else {
+                                  var confirmText = optRes.errorMessage ?? "${getActionName(opt)}失败~请稍后重试";
+                                  if (!mounted) { return; }
+                                  showInformDialog(context, "操作失败", confirmText);
+                                }
+                              },
+                              color: bdwmPrimaryColor,
+                              iconSize: 16,
+                              splashRadius: 13,
+                              icon: const Icon(Icons.settings)
                             ),
-                            onPressed: () async {
-                              var toTop = item.isZhiDing ? "untop" : "top";
-                              var toMark = item.isBaoLiu ? "unmark" : "mark";
-                              var toDigest = item.isWenZhai ? "undigest" : "digest";
-                              var toHighlight = item.isGaoLiang ? "unhighlight" : "highlight";
-                              var toNoReply = item.isLock ? "unnoreply" : "noreply";
-                              var opt = await getOptOptions(context, [
-                                SimpleTuple2(name: getActionName(toTop), action: toTop),
-                                SimpleTuple2(name: getActionName(toMark), action: toMark),
-                                SimpleTuple2(name: getActionName(toDigest), action: toDigest),
-                                SimpleTuple2(name: getActionName(toHighlight), action: toHighlight),
-                                SimpleTuple2(name: getActionName(toNoReply), action: toNoReply),
-                              ]);
-                              if (opt == null) { return; }
-                              var optRes = await bdwmAdminBoardOperatePost(bid: widget.bid, postid: item.postID, action: opt);
-                              if (optRes.success) {
-                                widget.refreshCallBack();
-                              } else {
-                                var confirmText = optRes.errorMessage ?? "${getActionName(opt)}失败~请稍后重试";
-                                if (!mounted) { return; }
-                                showInformDialog(context, "操作失败", confirmText);
-                              }
-                            },
-                            color: bdwmPrimaryColor,
-                            icon: const Icon(Icons.settings, size: 20,)
                           ),
                           const SizedBox(width: 8,),
                         ],

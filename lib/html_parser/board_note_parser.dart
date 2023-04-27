@@ -4,11 +4,13 @@ import './utils.dart';
 
 class BoardNoteInfo {
   String note = "";
+  String? boardName = "";
   String? errorMessage;
 
   BoardNoteInfo.empty();
   BoardNoteInfo({
     required this.note,
+    this.boardName,
   });
   BoardNoteInfo.error({
     required this.errorMessage,
@@ -26,5 +28,11 @@ BoardNoteInfo parseBoardNoteInfo(String htmlStr) {
   if (noteDom != null) {
     note = noteDom.innerHtml;
   }
-  return BoardNoteInfo(note: note);
+
+  String? boardName;
+  var headDom = document.querySelector("#board-head");
+  if (headDom != null) {
+    boardName = getTrimmedString(headDom.querySelector('#title .black'));
+  }
+  return BoardNoteInfo(note: note, boardName: boardName);
 }
