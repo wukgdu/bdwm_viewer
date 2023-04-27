@@ -333,6 +333,15 @@ class _BoardSingleAppState extends State<BoardSingleApp> {
     super.dispose();
   }
 
+  void refresh() {
+    setState(() {
+      page = page;
+      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+        debugPrint("cancel it");
+      },);
+    });
+  }
+
   Future<BoardSingleInfo> getData() async {
     var url = "$v2Host/thread.php?bid=${widget.bid}&mode=single";
     if (widget.stype != null) {
@@ -408,7 +417,7 @@ class _BoardSingleAppState extends State<BoardSingleApp> {
           //   },
           // ),
           // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-          body: BoardSinglePage(bid: widget.bid, page: page, boardInfo: boardInfo, stype: widget.stype, smode: widget.smode),
+          body: BoardSinglePage(bid: widget.bid, page: page, boardInfo: boardInfo, stype: widget.stype, smode: widget.smode, refresh: () { refresh(); },),
           bottomNavigationBar: BottomAppBar(
             shape: const CircularNotchedRectangle(),
             // color: Colors.blue,
@@ -422,12 +431,7 @@ class _BoardSingleAppState extends State<BoardSingleApp> {
                   icon: const Icon(Icons.refresh),
                   onPressed: () {
                     if (!mounted) { return; }
-                    setState(() {
-                      page = page;
-                      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
-                        debugPrint("cancel it");
-                      },);
-                    });
+                    refresh();
                   },
                 ),
                 IconButton(

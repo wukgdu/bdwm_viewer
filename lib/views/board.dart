@@ -399,19 +399,6 @@ class OneThreadInBoard extends StatefulWidget {
 }
 
 class _OneThreadInBoardState extends State<OneThreadInBoard> {
-  static const action2Name = {
-    "top": "置顶", "untop": "取消置顶",
-    "mark": "保留", "unmark": "取消保留",
-    "digest": "文摘", "undigest": "取消文摘",
-    "mark_digest": "设置文摘区保留", "unmark_digest": "取消文摘区保留",
-    "highlight_top": "高亮置顶", "unhighlight_top": "取消高亮置顶",
-    "highlight": "高亮", "unhighlight": "取消高亮",
-    "noreply": "不可回复", "unnoreply": "取消不可回复",
-  };
-  String getActionName(String action) {
-    return action2Name[action] ?? action;
-  }
-
   @override
   Widget build(BuildContext context) {
     bool pinned = widget.boardPostInfo.bpID == "置顶";
@@ -520,7 +507,7 @@ class _OneThreadInBoardState extends State<OneThreadInBoard> {
               } else {
                 var confirmText = optRes.errorMessage ?? "$opt 失败~请稍后重试";
                 if (!mounted) { return; }
-                showConfirmDialog(context, "同主题操作失败", confirmText);
+                showInformDialog(context, "同主题操作失败", confirmText);
               }
             } else if (opt == "create-collect") {
               if (!mounted) { return; }
@@ -532,7 +519,7 @@ class _OneThreadInBoardState extends State<OneThreadInBoard> {
               } else {
                 var confirmText = optRes.errorMessage ?? "合集失败~请稍后重试";
                 if (!mounted) { return; }
-                showConfirmDialog(context, "同主题操作失败", confirmText);
+                showInformDialog(context, "同主题操作失败", confirmText);
               }
             }
           } : pinned ? () async {
@@ -562,7 +549,7 @@ class _OneThreadInBoardState extends State<OneThreadInBoard> {
               } else {
                 var confirmText = optRes.errorMessage ?? "打原创分失败~请稍后重试";
                 if (!mounted) { return; }
-                showConfirmDialog(context, "操作失败", confirmText);
+                showInformDialog(context, "操作失败", confirmText);
               }
             } else {
               var optRes = await bdwmAdminBoardOperatePost(bid: widget.bid, postid: widget.boardPostInfo.itemid, action: opt);
@@ -571,7 +558,7 @@ class _OneThreadInBoardState extends State<OneThreadInBoard> {
               } else {
                 var confirmText = optRes.errorMessage ?? "${getActionName(opt)}失败~请稍后重试";
                 if (!mounted) { return; }
-                showConfirmDialog(context, "操作失败", confirmText);
+                showInformDialog(context, "操作失败", confirmText);
               }
             }
           } : null,
@@ -736,16 +723,23 @@ class _BoardPageState extends State<BoardPage> {
   }
 }
 
-class OnePostInBoard extends StatelessWidget {
+class OnePostInBoard extends StatefulWidget {
   final BoardSinglePostInfo boardPostInfo;
   final String bid;
   final String boardName;
-  const OnePostInBoard({Key? key, required this.boardPostInfo, required this.bid, required this.boardName}) : super(key: key);
+  final bool canOpt;
+  final Function refresh;
+  const OnePostInBoard({Key? key, required this.boardPostInfo, required this.bid, required this.boardName, required this.canOpt, required this.refresh}) : super(key: key);
 
   @override
+  State<OnePostInBoard> createState() => _OnePostInBoardState();
+}
+
+class _OnePostInBoardState extends State<OnePostInBoard> {
+  @override
   Widget build(BuildContext context) {
-    bool pinned = boardPostInfo.bpID == "置顶";
-    bool ad = boardPostInfo.bpID == "推广";
+    bool pinned = widget.boardPostInfo.bpID == "置顶";
+    bool ad = widget.boardPostInfo.bpID == "推广";
     bool specialOne = pinned || ad;
     return Card(
         child: ListTile(
@@ -756,30 +750,30 @@ class OnePostInBoard extends StatelessWidget {
                 if (pinned)
                   WidgetSpan(child: Icon(Icons.pin_drop, color: bdwmPrimaryColor, size: 16), alignment: PlaceholderAlignment.middle)
                 else if (ad)
-                  TextSpan(text: boardPostInfo.bpID, style: const TextStyle(backgroundColor: Colors.amber, color: Colors.white))
-                else if (boardPostInfo.isNew) ...[
+                  TextSpan(text: widget.boardPostInfo.bpID, style: const TextStyle(backgroundColor: Colors.amber, color: Colors.white))
+                else if (widget.boardPostInfo.isNew) ...[
                   WidgetSpan(
                     child: Icon(Icons.circle, color: bdwmPrimaryColor, size: 7),
                     alignment: PlaceholderAlignment.middle,
                   )
                 ],
                 TextSpan(
-                  text: boardPostInfo.title,
-                  style: boardPostInfo.isGaoLiang ? const TextStyle(color: highlightColor) : null,
+                  text: widget.boardPostInfo.title,
+                  style: widget.boardPostInfo.isGaoLiang ? const TextStyle(color: highlightColor) : null,
                 ),
-                if (boardPostInfo.hasAttachment)
+                if (widget.boardPostInfo.hasAttachment)
                   WidgetSpan(child: Icon(Icons.attachment, color: bdwmPrimaryColor, size: 16), alignment: PlaceholderAlignment.middle),
-                if (boardPostInfo.lock)
+                if (widget.boardPostInfo.lock)
                   WidgetSpan(child: Icon(Icons.lock, color: bdwmPrimaryColor, size: 16), alignment: PlaceholderAlignment.middle),
-                if (boardPostInfo.isZhiDing)
+                if (widget.boardPostInfo.isZhiDing)
                   WidgetSpan(child: genThreadLabel("置顶"), alignment: PlaceholderAlignment.middle),
-                if (boardPostInfo.isBaoLiu)
+                if (widget.boardPostInfo.isBaoLiu)
                   WidgetSpan(child: genThreadLabel("保留"), alignment: PlaceholderAlignment.middle),
-                if (boardPostInfo.isWenZhai)
+                if (widget.boardPostInfo.isWenZhai)
                   WidgetSpan(child: genThreadLabel("文摘"), alignment: PlaceholderAlignment.middle),
-                if (boardPostInfo.isYuanChuang)
+                if (widget.boardPostInfo.isYuanChuang)
                   WidgetSpan(child: genThreadLabel("原创分"), alignment: PlaceholderAlignment.middle),
-                if (boardPostInfo.isJingHua)
+                if (widget.boardPostInfo.isJingHua)
                   WidgetSpan(child: genThreadLabel("精华"), alignment: PlaceholderAlignment.middle),
               ],
             )
@@ -788,22 +782,22 @@ class OnePostInBoard extends StatelessWidget {
             : Text.rich(
               TextSpan(
                 children: [
-                  boardPostInfo.userName=="原帖已删除"
-                  ? TextSpan(text: boardPostInfo.userName)
+                  widget.boardPostInfo.userName=="原帖已删除"
+                  ? TextSpan(text: widget.boardPostInfo.userName)
                   : TextSpan(
                     children: [
-                      TextSpan(text: boardPostInfo.userName, style: serifFont),
-                      TextSpan(text: " 发表于 ${boardPostInfo.pTime}"),
+                      TextSpan(text: widget.boardPostInfo.userName, style: serifFont),
+                      TextSpan(text: " 发表于 ${widget.boardPostInfo.pTime}"),
                     ],
                   ),
                   const TextSpan(text: "\n"),
-                  TextSpan(text: boardPostInfo.bpID, style: boardPostInfo.isOrigin ? const TextStyle(fontWeight: FontWeight.bold) : null),
+                  TextSpan(text: widget.boardPostInfo.bpID, style: widget.boardPostInfo.isOrigin ? const TextStyle(fontWeight: FontWeight.bold) : null),
                 ],
               )
             ),
           isThreeLine: specialOne ? false : true,
           onTap: () {
-            var link = boardPostInfo.link;
+            var link = widget.boardPostInfo.link;
             if (link.contains("post-read-single.php")) {
               var bid1 = getQueryValue(link, 'bid');
               var postid1 = getQueryValue(link, 'postid');
@@ -811,13 +805,58 @@ class OnePostInBoard extends StatelessWidget {
               nv2Push(context, '/singlePost', arguments: {
                 'bid': bid1,
                 'postid': postid1,
-                'boardName': boardName,
+                'boardName': widget.boardName,
                 'type': type,
               });
             } else {
               innerLinkJump(link, context);
             }
           },
+          onLongPress: !widget.canOpt ? null : ((!specialOne) || pinned) ? () async {
+            var item = widget.boardPostInfo;
+            var toTop = item.isZhiDing ? "untop" : "top";
+            var toMark = item.isBaoLiu ? "unmark" : "mark";
+            var toDigest = item.isWenZhai ? "undigest" : "digest";
+            var toHighlight = item.isGaoLiang ? "unhighlight" : "highlight";
+            var toNoReply = item.lock ? "unnoreply" : "noreply";
+            var opt = await getOptOptions(context, [
+              SimpleTuple2(name: getActionName(toTop), action: toTop),
+              SimpleTuple2(name: getActionName(toMark), action: toMark),
+              SimpleTuple2(name: getActionName(toDigest), action: toDigest),
+              SimpleTuple2(name: getActionName(toHighlight), action: toHighlight),
+              SimpleTuple2(name: getActionName(toNoReply), action: toNoReply),
+              SimpleTuple2(name: "原创分", action: "rate"),
+              if (!item.isBaoLiu) SimpleTuple2(name: "删除", action: "delete"),
+            ]);
+            if (opt == null) { return; }
+            if (opt == "rate") {
+              if (!mounted) { return; }
+              var ycf = await showRatePostDialog(context, [1, 2, 3]);
+              if (ycf == null) { return; }
+              var optRes = await bdwmAdminBoardOperatePost(bid: widget.bid, postid: widget.boardPostInfo.itemid, action: opt, rating: ycf);
+              if (optRes.success) {
+                widget.refresh();
+              } else {
+                var confirmText = optRes.errorMessage ?? "打原创分失败~请稍后重试";
+                if (!mounted) { return; }
+                showInformDialog(context, "操作失败", confirmText);
+              }
+            } else {
+              if (opt == "delete") {
+                if (!mounted) { return; }
+                var confirm = await showConfirmDialog(context, "删除", "是否确定删除帖子");
+                if (confirm != "yes") { return; }
+              }
+              var optRes = await bdwmAdminBoardOperatePost(bid: widget.bid, postid: item.itemid, action: opt);
+              if (optRes.success) {
+                widget.refresh();
+              } else {
+                var confirmText = optRes.errorMessage ?? "${getActionName(opt)}失败~请稍后重试";
+                if (!mounted) { return; }
+                showInformDialog(context, "操作失败", confirmText);
+              }
+            }
+          } : null,
         ),
     );
   }
@@ -829,7 +868,8 @@ class BoardSinglePage extends StatefulWidget {
   final int page;
   final String? stype;
   final String smode;
-  const BoardSinglePage({Key? key, required this.bid, required this.boardInfo, required this.page, this.stype, required this.smode}) : super(key: key);
+  final Function refresh;
+  const BoardSinglePage({Key? key, required this.bid, required this.boardInfo, required this.page, this.stype, required this.smode, required this.refresh}) : super(key: key);
 
   @override
   State<BoardSinglePage> createState() => _BoardSinglePageState();
@@ -967,7 +1007,7 @@ class _BoardSinglePageState extends State<BoardSinglePage> {
           shrinkWrap: true,
           itemCount: boardInfo.boardPostInfo.length,
           itemBuilder: (context, index) {
-            return OnePostInBoard(boardPostInfo: boardInfo.boardPostInfo[index], boardName: boardInfo.boardName, bid: boardInfo.bid);
+            return OnePostInBoard(boardPostInfo: boardInfo.boardPostInfo[index], boardName: boardInfo.boardName, bid: boardInfo.bid, canOpt: boardInfo.canOpt, refresh: widget.refresh,);
           },
         ),
       ],

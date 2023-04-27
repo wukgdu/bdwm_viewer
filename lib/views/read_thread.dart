@@ -560,18 +560,6 @@ class OnePostComponent extends StatefulWidget {
 }
 
 class _OnePostComponentState extends State<OnePostComponent> {
-  static const action2Name = {
-    "top": "置顶", "untop": "取消置顶",
-    "mark": "保留", "unmark": "取消保留",
-    "digest": "文摘", "undigest": "取消文摘",
-    "mark_digest": "设置文摘区保留", "unmark_digest": "取消文摘区保留",
-    "highlight_top": "高亮置顶", "unhighlight_top": "取消高亮置顶",
-    "highlight": "高亮", "unhighlight": "取消高亮",
-    "noreply": "不可回复", "unnoreply": "取消不可回复",
-  };
-  String getActionName(String action) {
-    return action2Name[action] ?? action;
-  }
   bool get simpleAttachment => false;
   final _contentFont = TextStyle(fontSize: globalConfigInfo.contentFontSize, fontWeight: FontWeight.normal);
   late bool hideIt;
@@ -709,7 +697,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                               } else {
                                 var confirmText = optRes.errorMessage ?? "${getActionName(opt)}失败~请稍后重试";
                                 if (!mounted) { return; }
-                                showConfirmDialog(context, "操作失败", confirmText);
+                                showInformDialog(context, "操作失败", confirmText);
                               }
                             },
                             color: bdwmPrimaryColor,

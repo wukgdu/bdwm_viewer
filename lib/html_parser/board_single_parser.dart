@@ -151,6 +151,9 @@ List<BoardSinglePostInfo> parseBoardSinglePost(Element? docu) {
     String avatarLink = absImgSrc(pdom.querySelector(".avatar img")?.attributes['src'] ?? defaultAvator);
     String uid = getTrimmedString(pdom.querySelector(".author a")?.attributes['href']?.split("=").last ?? "");
     String pTime = getTrimmedString(pdom.querySelector(".author .time"));
+
+    isZhiDing = isZhiDing || (pdom.querySelector(".id .pin")!=null);
+
     boardPostInfo.add(BoardSinglePostInfo(
       bpID: bpID, isNew: isNew, title: title, link: link, itemid: itemid,
       userName: userName, avatarLink: avatarLink, pTime: pTime, uid: uid, hasAttachment: hasAttachment,

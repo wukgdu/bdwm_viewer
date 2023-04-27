@@ -24,6 +24,20 @@ Color? getVipColor(int vipIdentity, {Color? defaultColor=Colors.grey}) {
     default: return defaultColor;
   }
 }
+const action2Name = {
+  "top": "置顶", "untop": "取消置顶",
+  "mark": "保留", "unmark": "取消保留",
+  "digest": "文摘", "undigest": "取消文摘",
+  "mark_digest": "设置文摘区保留", "unmark_digest": "取消文摘区保留",
+  "highlight_top": "高亮置顶", "unhighlight_top": "取消高亮置顶",
+  "highlight": "高亮", "unhighlight": "取消高亮",
+  "noreply": "不可回复", "unnoreply": "取消不可回复",
+  "delete": "删除", "rate": "打原创分",
+};
+
+String getActionName(String action) {
+  return action2Name[action] ?? action;
+}
 
 const Map<String, Object> bdwmRichText = {
   'bc': {
