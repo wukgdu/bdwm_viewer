@@ -269,10 +269,10 @@ bool validUserMention(int p1, int p2, String sourceStr) {
 }
 
 void innerLinkJump(String link, BuildContext context) {
-  if (link.startsWith("https://bbs.pku.edu.cn/v2/post-read.php")
-    || link.startsWith("https://bbs.pku.edu.cn/v2/mobile/post-read.php")) {
+  if (link.startsWith("$v2Host/post-read.php")
+    || link.startsWith("$v2Host/mobile/post-read.php")) {
     naviGotoThreadByLink(context, link, "跳转", needToBoard: true);
-  } else if (link.startsWith("https://bbs.pku.edu.cn/v2/thread.php")
+  } else if (link.startsWith("$v2Host/thread.php")
     || link.startsWith("$v2Host/mobile/thread.php")) {
     var bid = getQueryValue(link, 'bid') ?? "";
     if (bid.isNotEmpty) {
@@ -281,13 +281,13 @@ void innerLinkJump(String link, BuildContext context) {
         'boardName': "跳转",
       });
     }
-  } else if (link.startsWith("https://bbs.pku.edu.cn/v2/collection.php")
+  } else if (link.startsWith("$v2Host/collection.php")
     || link.startsWith("$v2Host/mobile/collection.php")) {
     nv2Push(context, '/collection', arguments: {
       'link': link.replaceFirst("$v2Host/mobile/", "$v2Host/"),
       'title': "目录",
     });
-  } else if (link.startsWith("https://bbs.pku.edu.cn/v2/collection-read.php")
+  } else if (link.startsWith("$v2Host/collection-read.php")
     || link.startsWith("$v2Host/mobile/collection-read.php")) {
     nv2Push(context, '/collectionArticle', arguments: {
       'link': link.replaceFirst("$v2Host/mobile/", "$v2Host/"),
@@ -298,8 +298,17 @@ void innerLinkJump(String link, BuildContext context) {
     String uid = getQueryValue(link, 'uid') ?? "";
     if (uid.isEmpty) { return; }
     nv2Push(context, '/user', arguments: uid);
-  } else if (link.startsWith("https://bbs.pku.edu.cn/v2/post-read-single.php")
-    || link.startsWith("https://bbs.pku.edu.cn/v2/mobile/post-read-single.php")) {
+  } else if (link.startsWith("$v2Host/note.php")
+    || link.startsWith("$v2Host/mobile/note.php")) {
+    String bid = getQueryValue(link, 'bid') ?? "";
+    if (bid.isNotEmpty) {
+      nv2Push(context, '/boardNote', arguments: {
+        'bid': bid,
+        'boardName': "备忘录",
+      });
+    }
+  } else if (link.startsWith("$v2Host/post-read-single.php")
+    || link.startsWith("$v2Host/mobile/post-read-single.php")) {
     bdwmClient.get(link.replaceFirst("$v2Host/mobile/", "$v2Host/"), headers: genHeaders2()).then((value) {
       if (value == null) {
         showNetWorkDialog(context);
@@ -315,7 +324,7 @@ void innerLinkJump(String link, BuildContext context) {
     });
   } else {
     var hereLink = link;
-    if (link.startsWith("https://bbs.pku.edu.cn/v2/jump-to.php")) {
+    if (link.startsWith("$v2Host/jump-to.php")) {
       var parsedUrl = Uri.parse(link);
       var rawLink = parsedUrl.queryParameters['url'] ?? "";
       // hereLink += "\n$rawLink";
