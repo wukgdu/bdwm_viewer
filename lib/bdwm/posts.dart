@@ -122,13 +122,16 @@ Future<PostRes> bdwmGetPostQuote({required String bid, required String postid, S
   return postRes;
 }
 
-Future<PostRes> bdwmOperatePost({required String bid, required String postid, required String action}) async {
+Future<PostRes> bdwmOperatePost({required String bid, required String postid, required String action, int? rating}) async {
   var actionUrl = "$v2Host/ajax/operate_post.php";
   var data = {
     "bid": bid,
     "list": '[$postid]',
     "action": action,
   };
+  if ((rating != null) && (action == "rate")) {
+    data['rating'] = rating.toString();
+  }
   var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
   if (resp == null) {
     return PostRes.error(success: false, error: -1, result: networkErrorText);

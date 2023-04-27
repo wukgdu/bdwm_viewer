@@ -60,8 +60,8 @@ Future<AdminBoardOperateRes> bdwmAdminBoardCreateThreadCollect({required String 
 
 
 // g = "ajax/operate_thread.php", x = "ajax/set_board_note.php", w = "ajax/create_thread_collect.php",
-Future<AdminBoardOperateRes> bdwmAdminBoardOperatePost({required String bid, required String postid, required String action}) async {
-  var postRes = await bdwmOperatePost(bid: bid, postid: postid, action: action);
+Future<AdminBoardOperateRes> bdwmAdminBoardOperatePost({required String bid, required String postid, required String action, int? rating}) async {
+  var postRes = await bdwmOperatePost(bid: bid, postid: postid, action: action, rating: rating);
   return AdminBoardOperateRes(success: postRes.success, error: postRes.error, errorMessage: postRes.result);
 }
 

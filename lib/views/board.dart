@@ -10,7 +10,7 @@ import './html_widget.dart' show innerLinkJump;
 import './utils.dart';
 import '../router.dart' show nv2Replace, nv2Push;
 import '../html_parser/utils.dart' show SignatureItem;
-import '../bdwm/admin_board.dart' show bdwmAdminBoardSetBoardDesc, bdwmAdminBoardOperateThread, bdwmAdminBoardCreateThreadCollect;
+import '../bdwm/admin_board.dart';
 
 class BoardIntroComponent extends StatefulWidget {
   final String intro;
@@ -364,6 +364,28 @@ Future<String?> getOptOptions(BuildContext context, List<SimpleTuple2> data, {bo
   return opt;
 }
 
+Future<int?> showRatePostDialog(BuildContext context, List<int> scores) {
+  List<SimpleDialogOption> children = scores.map((s) {
+    return SimpleDialogOption(
+      onPressed: () {
+        Navigator.pop(context, s);
+      },
+      child: Text("$s 分"),
+    );
+  }).toList();
+  var dialog = SimpleDialog(
+    title: const Text("原创分"),
+    children: children,
+  );
+
+  return showDialog<int>(
+    context: context,
+    builder: (BuildContext context) {
+      return dialog;
+    },
+  );
+}
+
 class OneThreadInBoard extends StatefulWidget {
   final BoardPostInfo boardPostInfo;
   final String bid;
@@ -377,6 +399,18 @@ class OneThreadInBoard extends StatefulWidget {
 }
 
 class _OneThreadInBoardState extends State<OneThreadInBoard> {
+  static const action2Name = {
+    "top": "置顶", "untop": "取消置顶",
+    "mark": "保留", "unmark": "取消保留",
+    "digest": "文摘", "undigest": "取消文摘",
+    "mark_digest": "设置文摘区保留", "unmark_digest": "取消文摘区保留",
+    "highlight_top": "高亮置顶", "unhighlight_top": "取消高亮置顶",
+    "noreply": "不可回复", "unnoreply": "取消不可回复",
+  };
+  String getActionName(String action) {
+    return action2Name[action] ?? action;
+  }
+
   @override
   Widget build(BuildContext context) {
     bool pinned = widget.boardPostInfo.bpID == "置顶";
@@ -500,7 +534,46 @@ class _OneThreadInBoardState extends State<OneThreadInBoard> {
                 showConfirmDialog(context, "同主题操作失败", confirmText);
               }
             }
-          } : pinned ? null : null,
+          } : pinned ? () async {
+            var toTop = "untop";
+            var toMark = widget.boardPostInfo.isBaoLiu ? "unmark" : "mark";
+            var toDigest = widget.boardPostInfo.isWenZhai ? "undigest" : "digest";
+            // var toMarkDigest = (widget.boardPostInfo.isBaoLiu && widget.boardPostInfo.isWenZhai) ? "unmark_digest" : "mark_digest";
+            var toHighlightTop = widget.boardPostInfo.isGaoLiang ? "unhighlight_top" : "highlight_top";
+            var toNoReply = widget.boardPostInfo.lock ? "unnoreply" : "noreply";
+            var opt = await getOptOptions(context, [
+              SimpleTuple2(name: getActionName(toTop), action: toTop),
+              SimpleTuple2(name: getActionName(toMark), action: toMark),
+              SimpleTuple2(name: getActionName(toDigest), action: toDigest),
+              // SimpleTuple2(name: getActionName(toMarkDigest), action: toMarkDigest),
+              SimpleTuple2(name: getActionName(toHighlightTop), action: toHighlightTop),
+              SimpleTuple2(name: getActionName(toNoReply), action: toNoReply),
+              SimpleTuple2(name: "原创分", action: "rate"),
+            ]);
+            if (opt == null) { return; }
+            if (opt == "rate") {
+              if (!mounted) { return; }
+              var ycf = await showRatePostDialog(context, [1, 2, 3]);
+              if (ycf == null) { return; }
+              var optRes = await bdwmAdminBoardOperatePost(bid: widget.bid, postid: widget.boardPostInfo.itemid, action: opt, rating: ycf);
+              if (optRes.success) {
+                widget.refresh();
+              } else {
+                var confirmText = optRes.errorMessage ?? "打原创分失败~请稍后重试";
+                if (!mounted) { return; }
+                showConfirmDialog(context, "操作失败", confirmText);
+              }
+            } else {
+              var optRes = await bdwmAdminBoardOperatePost(bid: widget.bid, postid: widget.boardPostInfo.itemid, action: opt);
+              if (optRes.success) {
+                widget.refresh();
+              } else {
+                var confirmText = optRes.errorMessage ?? "${getActionName(opt)}失败~请稍后重试";
+                if (!mounted) { return; }
+                showConfirmDialog(context, "操作失败", confirmText);
+              }
+            }
+          } : null,
         ),
     );
   }
