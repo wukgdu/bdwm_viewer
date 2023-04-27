@@ -136,15 +136,17 @@ class MainPageBuilder {
         String? boardName;
         String bid;
         String postid;
+        String? type;
         if (settings.arguments != null) {
           var settingsMap = settings.arguments as Map;
           bid = settingsMap['bid'] as String;
           postid = settingsMap['postid'] as String;
           boardName = settingsMap['boardName'] as String?;
+          type = settingsMap['type'] as String?;
         } else {
           return null;
         }
-        return SinglePostApp(bid: bid, postid: postid, boardName: boardName,);
+        return SinglePostApp(bid: bid, postid: postid, boardName: boardName, type: type,);
       case "/post":
         String? boardName;
         String? bid;

@@ -82,6 +82,10 @@ class OnePostInfo {
   bool isWenZhai = false;
   bool isJingHua = false;
   bool isYuanChuang = false;
+  bool canOpt = false;
+  bool isGaoLiang = false;
+  bool isLock = false;
+  bool isZhiDing = false;
 
   OnePostInfo.empty();
   OnePostInfo({
@@ -108,6 +112,10 @@ class OnePostInfo {
     required this.isWenZhai,
     required this.isJingHua,
     required this.isYuanChuang,
+    required this.canOpt,
+    required this.isGaoLiang,
+    required this.isLock,
+    required this.isZhiDing,
   });
 }
 
@@ -347,6 +355,13 @@ OnePostInfo parseOnePost(Element document) {
     canSetReply = true;
   }
 
+  bool canOpt = (document.querySelector("a[data-action=top-post]")!=null || document.querySelector("a[data-action=clear-top-post]")!=null);
+  bool isGaoLiang = document.querySelector("a[data-action=clear-highlight-post]")!=null;
+  bool isLock = document.querySelector("a[data-action=clear-noreply-post]")!=null;
+  bool isZhiDing = document.querySelector("a[data-action=clear-top-post]")!=null;
+  isBaoLiu = isBaoLiu || (document.querySelector("a[data-action=clear-mark-post]")!=null);
+  isWenZhai = isWenZhai || (document.querySelector("a[data-action=clear-digest-post]")!=null);
+
   return OnePostInfo(
     authorInfo: authorInfo, postTime: postTime, postID: postID, modifyTime: modifyTime,
     upCount: upCount, downCount: downCount, content: content, signature: signature,
@@ -354,6 +369,7 @@ OnePostInfo parseOnePost(Element document) {
     attachmentInfo: attachmentInfo, attachmentHtml: attachmentHtml, attachmentSlidesCount: attachmentSlidesCount,
     canReply: canReply, canDelete: canDelete, canModify: canModify, canSetReply: canSetReply,
     isBaoLiu: isBaoLiu, isWenZhai: isWenZhai, isJingHua: isJingHua, isYuanChuang: isYuanChuang,
+    canOpt: canOpt, isGaoLiang: isGaoLiang, isLock: isLock, isZhiDing: isZhiDing,
   );
 }
 

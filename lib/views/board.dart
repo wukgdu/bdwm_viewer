@@ -405,6 +405,7 @@ class _OneThreadInBoardState extends State<OneThreadInBoard> {
     "digest": "文摘", "undigest": "取消文摘",
     "mark_digest": "设置文摘区保留", "unmark_digest": "取消文摘区保留",
     "highlight_top": "高亮置顶", "unhighlight_top": "取消高亮置顶",
+    "highlight": "高亮", "unhighlight": "取消高亮",
     "noreply": "不可回复", "unnoreply": "取消不可回复",
   };
   String getActionName(String action) {
@@ -806,10 +807,12 @@ class OnePostInBoard extends StatelessWidget {
             if (link.contains("post-read-single.php")) {
               var bid1 = getQueryValue(link, 'bid');
               var postid1 = getQueryValue(link, 'postid');
+              var type = getQueryValue(link, 'type');
               nv2Push(context, '/singlePost', arguments: {
                 'bid': bid1,
                 'postid': postid1,
                 'boardName': boardName,
+                'type': type,
               });
             } else {
               innerLinkJump(link, context);

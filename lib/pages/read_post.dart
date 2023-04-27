@@ -11,7 +11,8 @@ class SinglePostApp extends StatefulWidget {
   final String bid;
   final String postid;
   final String? boardName;
-  const SinglePostApp({Key? key, required this.bid, this.boardName, required this.postid}) : super(key: key);
+  final String? type;
+  const SinglePostApp({Key? key, required this.bid, this.boardName, required this.postid, this.type}) : super(key: key);
   // ThreadApp.empty({Key? key}) : super(key: key);
 
   @override
@@ -39,6 +40,9 @@ class _SinglePostAppState extends State<SinglePostApp> {
 
   Future<SinglePostInfo> getData({bool firstTime=false}) async {
     var url = "$v2Host/post-read-single.php?bid=${widget.bid}&postid=${widget.postid}";
+    if (widget.type != null) {
+      url += "&type=${widget.type}";
+    }
     var resp = await bdwmClient.get(url, headers: genHeaders2());
     if (resp == null) {
       return SinglePostInfo.error(errorMessage: networkErrorText);

@@ -9,6 +9,8 @@ import '../bdwm/forward.dart';
 import './collection.dart';
 import './utils.dart';
 import './constants.dart';
+import './board.dart' show getOptOptions, SimpleTuple2;
+import '../bdwm/admin_board.dart';
 import '../html_parser/read_thread_parser.dart';
 import '../globalvars.dart' show globalConfigInfo;
 import '../pages/detail_image.dart';
@@ -53,7 +55,7 @@ class _OperateComponentState extends State<OperateComponent> {
   @override
   void initState() {
     super.initState();
-    canReplyNotifier.value = widget.onePostInfo.canReply;
+    canReplyNotifier.value = !widget.onePostInfo.isLock;
   }
   @override
   void dispose() {
@@ -70,7 +72,7 @@ class _OperateComponentState extends State<OperateComponent> {
         ValueListenableBuilder(
           valueListenable: canReplyNotifier,
           builder: (context, value, child) {
-            var canReply = value as bool;
+            var canReply = widget.onePostInfo.canOpt ? widget.onePostInfo.canReply : value as bool;
             return sizedTextButton(
               style: textButtonStyle,
               onPressed: !canReply ? null
@@ -558,6 +560,18 @@ class OnePostComponent extends StatefulWidget {
 }
 
 class _OnePostComponentState extends State<OnePostComponent> {
+  static const action2Name = {
+    "top": "置顶", "untop": "取消置顶",
+    "mark": "保留", "unmark": "取消保留",
+    "digest": "文摘", "undigest": "取消文摘",
+    "mark_digest": "设置文摘区保留", "unmark_digest": "取消文摘区保留",
+    "highlight_top": "高亮置顶", "unhighlight_top": "取消高亮置顶",
+    "highlight": "高亮", "unhighlight": "取消高亮",
+    "noreply": "不可回复", "unnoreply": "取消不可回复",
+  };
+  String getActionName(String action) {
+    return action2Name[action] ?? action;
+  }
   bool get simpleAttachment => false;
   final _contentFont = TextStyle(fontSize: globalConfigInfo.contentFontSize, fontWeight: FontWeight.normal);
   late bool hideIt;
@@ -669,6 +683,41 @@ class _OnePostComponentState extends State<OnePostComponent> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        if (item.canOpt) ...[
+                          IconButton(
+                            style: IconButton.styleFrom(
+                              minimumSize: const Size(20, 20),
+                              padding: const EdgeInsets.all(2.0),
+                            ),
+                            onPressed: () async {
+                              var toTop = item.isZhiDing ? "untop" : "top";
+                              var toMark = item.isBaoLiu ? "unmark" : "mark";
+                              var toDigest = item.isWenZhai ? "undigest" : "digest";
+                              var toHighlight = item.isGaoLiang ? "unhighlight" : "highlight";
+                              var toNoReply = item.isLock ? "unnoreply" : "noreply";
+                              var opt = await getOptOptions(context, [
+                                SimpleTuple2(name: getActionName(toTop), action: toTop),
+                                SimpleTuple2(name: getActionName(toMark), action: toMark),
+                                SimpleTuple2(name: getActionName(toDigest), action: toDigest),
+                                // SimpleTuple2(name: getActionName(toMarkDigest), action: toMarkDigest),
+                                SimpleTuple2(name: getActionName(toHighlight), action: toHighlight),
+                                SimpleTuple2(name: getActionName(toNoReply), action: toNoReply),
+                              ]);
+                              if (opt == null) { return; }
+                              var optRes = await bdwmAdminBoardOperatePost(bid: widget.bid, postid: item.postID, action: opt);
+                              if (optRes.success) {
+                                widget.refreshCallBack();
+                              } else {
+                                var confirmText = optRes.errorMessage ?? "${getActionName(opt)}失败~请稍后重试";
+                                if (!mounted) { return; }
+                                showConfirmDialog(context, "操作失败", confirmText);
+                              }
+                            },
+                            color: bdwmPrimaryColor,
+                            icon: const Icon(Icons.settings, size: 20,)
+                          ),
+                          const SizedBox(width: 8,),
+                        ],
                         VoteComponent(
                           iVoteUp: widget.onePostInfo.iVoteUp,
                           iVoteDown: widget.onePostInfo.iVoteDown,
