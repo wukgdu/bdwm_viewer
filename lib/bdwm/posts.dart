@@ -17,11 +17,13 @@ class PostRes {
   int error = 0;
   String? result;
   int? postid;
+  int? threadid;
 
   PostRes({
     required this.success,
     required this.error,
     this.postid,
+    this.threadid,
     this.result,
   });
   PostRes.error({
@@ -79,6 +81,7 @@ Future<PostRes> bdwmSimplePost({required String bid, required String title, requ
     success: respContent['success'],
     error: respContent['error'] ?? 0,
     postid: respContent['result']['postid'] ?? -1,
+    threadid: respContent['result']['threadid'] ?? -1,
   );
   return postRes;
 }

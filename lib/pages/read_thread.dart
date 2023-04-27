@@ -1002,7 +1002,7 @@ Widget? gotoThreadPage(Object? arguments) {
     var settingsMap = arguments as Map;
     bid = settingsMap['bid'] as String;
     threadid = settingsMap['threadid'] as String;
-    boardName = settingsMap['boardName'] as String;
+    boardName = (settingsMap['boardName'] as String?) ?? boardName;
     page = settingsMap['page'] as String;
     postid = settingsMap['postid'] as String?;
     needToBoard = settingsMap['needToBoard'] as bool?;

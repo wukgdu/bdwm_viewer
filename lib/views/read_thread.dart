@@ -699,7 +699,6 @@ class _OnePostComponentState extends State<OnePostComponent> {
                                 SimpleTuple2(name: getActionName(toTop), action: toTop),
                                 SimpleTuple2(name: getActionName(toMark), action: toMark),
                                 SimpleTuple2(name: getActionName(toDigest), action: toDigest),
-                                // SimpleTuple2(name: getActionName(toMarkDigest), action: toMarkDigest),
                                 SimpleTuple2(name: getActionName(toHighlight), action: toHighlight),
                                 SimpleTuple2(name: getActionName(toNoReply), action: toNoReply),
                               ]);

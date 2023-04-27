@@ -198,10 +198,15 @@ class _PostNewPageState extends State<PostNewPage> {
                       ).then((value2) {
                         if (widget.parentid == null && widget.postid == null) {
                           // 版面发新帖
+                          if (value.threadid == null || value.threadid == -1) { return; }
                           if (value.postid == null || value.postid == -1) { return; }
-                          nv2Replace(context, '/singlePost', arguments: {
+                          nv2Replace(context, '/thread', arguments: {
                             'bid': widget.bid,
+                            'threadid': value.threadid.toString(),
                             'postid': value.postid.toString(),
+                            'boardName': "发帖",
+                            'page': 'a',
+                            'needToBoard': false,
                           });
                           // forceRefresh(value.postid!);
                         } else {
