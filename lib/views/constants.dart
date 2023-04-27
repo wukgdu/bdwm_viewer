@@ -8,7 +8,8 @@ Color bdwmPrimaryColor = bdwmSurfaceColor;
 const textLinkStyle = TextStyle(
   color: bdwmSurfaceColor,
 );
-const Color highlightReplyColor = Color(0xfff8cea8);
+const Color highlightReplyColor = Color(0xffea6242);
+const Color highlightPostColor = Color(0xfffff8f0);
 const Color highlightColor = Color(0xffea6242);
 const Color onlineColor = Color(0xff5cae97);
 const Color vip0Color = Color(0xff45c2ee);

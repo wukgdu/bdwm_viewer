@@ -580,7 +580,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
     return Container(
       margin: widget.subIdx == null ? null : EdgeInsets.only(left: 20.0*widget.subIdx!),
       child: Card(
-        // color: item.postNumber.contains("高亮") ? hightlightColor : null,
+        color: item.postNumber.contains("高亮") ? highlightPostColor : null,
         child: hideIt
         ? Container(
           alignment: Alignment.center,
@@ -663,6 +663,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     const Divider(),
+                    // Divider(color: item.postNumber.contains("高亮") ? highlightReplyColor : null,),
                     HtmlComponent(item.content, ts: _contentFont),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
