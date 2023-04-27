@@ -699,7 +699,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                     ],
                     if (item.signature.isNotEmpty) ...[
                       const Divider(),
-                      HtmlComponent(item.signature),
+                      HtmlComponent(item.signature, ts: const TextStyle(height: 1.0),),
                     ],
                   ],
                 ),

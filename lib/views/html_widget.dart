@@ -552,7 +552,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
           res.add(const TextSpan(text: "\n"));
         }
       } else if (ele.localName == "h5") {
-        res.add(TextSpan(text: ele.text, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)));
+        res.add(TextSpan(text: ele.text, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, height: 1.5)));
         if (cdom != document.nodes.last) {
           res.add(const TextSpan(text: "\n"));
         }

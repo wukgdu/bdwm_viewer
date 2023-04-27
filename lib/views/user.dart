@@ -736,7 +736,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
               Card(child: ShowIpComponent(userName: user.bbsID),),
               // _multiLineItem("个人说明", user.signature, icon: const Icon(Icons.description)),
               // _multiHtmlLineItem("个人说明", Html(data: user.signature), icon: const Icon(Icons.description)),
-              _multiHtmlLineItem("个人说明", HtmlComponent(user.signatureHtml), icon: const Icon(Icons.description)),
+              _multiHtmlLineItem("个人说明", HtmlComponent(user.signatureHtml, ts: const TextStyle(height: 1.0),), icon: const Icon(Icons.description)),
               if (user.duty != null && user.dutyBoards != null) ...[
                 _multiLineItemForAdmin("担任版务", user.dutyBoards, user.dutyBoardLinks,)
               ],
