@@ -705,7 +705,12 @@ class _BoardPageState extends State<BoardPage> {
                 ),
                 if (boardInfo.canOpt) ...[
                   GestureDetector(
-                    onTap: () { },
+                    onTap: () {
+                      nv2Push(context, '/boardBan', arguments: {
+                        'bid': boardInfo.bid,
+                        'boardName': boardInfo.boardName,
+                      });
+                    },
                     child: Text("禁言", style: TextStyle(color: bdwmPrimaryColor),),
                   ),
                 ]
@@ -1012,7 +1017,12 @@ class _BoardSinglePageState extends State<BoardSinglePage> {
                 ),
                 if (boardInfo.canOpt) ...[
                   GestureDetector(
-                    onTap: () { },
+                    onTap: () {
+                      nv2Push(context, '/boardBan', arguments: {
+                        'bid': boardInfo.bid,
+                        'boardName': boardInfo.boardName,
+                      });
+                    },
                     child: Text("禁言", style: TextStyle(color: bdwmPrimaryColor),),
                   ),
                 ]

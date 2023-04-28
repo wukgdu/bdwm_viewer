@@ -17,29 +17,34 @@ import '../pages/detail_image.dart';
 import './html_widget.dart';
 import '../router.dart' show nv2Push;
 
-class DenyUserDialog extends StatefulWidget {
+class BanUserDialog extends StatefulWidget {
   final String boardName;
   final String bid;
   final String userName;
-  final String uid;
+  final String? uid;
   final String? postid;
-  const DenyUserDialog({super.key, required this.boardName, required this.bid, required this.userName, required this.uid, this.postid});
+  final bool showPostid;
+  final String? reason;
+  final bool isEdit;
+  const BanUserDialog({super.key, required this.boardName, required this.bid, required this.userName, this.uid, this.postid, this.showPostid=false, this.isEdit=false, this.reason});
 
   @override
-  State<DenyUserDialog> createState() => _DenyUserDialogState();
+  State<BanUserDialog> createState() => _BanUserDialogState();
 }
 
-class _DenyUserDialogState extends State<DenyUserDialog> {
+class _BanUserDialogState extends State<BanUserDialog> {
   TextEditingController userNameValue = TextEditingController();
   TextEditingController dayValue = TextEditingController();
   TextEditingController reasonValue = TextEditingController();
   TextEditingController postidValue = TextEditingController();
+  bool reclocking = false;
 
   @override
   void initState() {
     super.initState();
     userNameValue.text = widget.userName;
     postidValue.text = widget.postid ?? "";
+    reasonValue.text = widget.reason ?? "";
   }
 
   @override
@@ -67,29 +72,33 @@ class _DenyUserDialogState extends State<DenyUserDialog> {
             if (day == null) { return; }
             if (day < 0) { return; }
             var reason = reasonValue.text;
+            if (reason.isEmpty) { return; }
+            var userName = userNameValue.text;
+            if (userName.isEmpty) { return; }
             var postidText = postidValue.text.trim();
             String? postid = postidText.isEmpty ? null : postidText;
-            var optRes = await bdwmAdminBoardDenyUser(bid: widget.bid, action: "add", day: day, reason: reason, userName: widget.userName, postid: postid, uid: widget.uid);
+            var optRes = await bdwmAdminBoardBanUser(bid: widget.bid, action: widget.isEdit ? "edit" : "add", day: day, reason: reason, userName: userName, postid: postid, uid: widget.uid, reclocking: widget.isEdit ? reclocking ? 1 : 0 : null);
             if (!mounted) { return; }
+            var action = widget.isEdit ? "修改" : "封禁";
             if (optRes.success) {
-              showInformDialog(context, "封禁成功", "rt").then((_) {
-                Navigator.of(context).pop();
+              showInformDialog(context, "$action成功", "rt").then((_) {
+                Navigator.of(context).pop("success");
               });
             } else {
-              showInformDialog(context, "封禁失败", optRes.errorMessage ?? "封禁失败，请稍后重试");
+              showInformDialog(context, "$action失败", optRes.errorMessage ?? "$action失败，请稍后重试");
             }
           },
           child: const Text("确认"),
         ),
       ],
-      title: Text(widget.boardName),
+      title: Text("${widget.boardName}-${widget.isEdit ? '修改' : '封禁'}"),
       content: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
           TextFormField(
             decoration: const InputDecoration(
-              hintText: '用户',
+              hintText: '用户名',
             ),
             controller: userNameValue,
             autocorrect: false,
@@ -108,13 +117,27 @@ class _DenyUserDialogState extends State<DenyUserDialog> {
             controller: reasonValue,
             autocorrect: false,
           ),
-          TextFormField(
-            decoration: const InputDecoration(
-              hintText: '帖子postid',
+          if (widget.showPostid) ...[
+            TextFormField(
+              decoration: const InputDecoration(
+                hintText: '帖子postid（匿名id时需要）',
+              ),
+              controller: postidValue,
+              autocorrect: false,
             ),
-            controller: postidValue,
-            autocorrect: false,
-          ),
+          ],
+          if (widget.isEdit) ...[
+            CheckboxListTile(
+              title: const Text("重新计算封禁时间"),
+              value: reclocking,
+              onChanged: (value) {
+                if (value == null) { return; }
+                setState(() {
+                  reclocking = value;
+                });
+              },
+            ),
+          ]
         ],
       ),
     );
@@ -792,7 +815,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                                 var toHighlight = item.isGaoLiang ? "unhighlight" : "highlight";
                                 var toNoReply = item.isLock ? "unnoreply" : "noreply";
                                 var toDelete = "delete";
-                                var toDeny = "deny";
+                                var toBan = "ban";
                                 var opt = await getOptOptions(context, [
                                   SimpleTuple2(name: getActionName(toTop), action: toTop),
                                   SimpleTuple2(name: getActionName(toMark), action: toMark),
@@ -800,14 +823,17 @@ class _OnePostComponentState extends State<OnePostComponent> {
                                   SimpleTuple2(name: getActionName(toHighlight), action: toHighlight),
                                   SimpleTuple2(name: getActionName(toNoReply), action: toNoReply),
                                   if (!item.isBaoLiu) SimpleTuple2(name: getActionName(toDelete), action: toDelete),
-                                  SimpleTuple2(name: getActionName(toDeny), action: toDeny),
+                                  SimpleTuple2(name: getActionName(toBan), action: toBan),
                                 ]);
                                 if (opt == null) { return; }
-                                if (opt == "deny") {
+                                if (opt == "ban") {
                                   var boardName = widget.boardName ?? "封禁";
                                   boardName = boardName.split('(')[0];
                                   if (!mounted) { return; }
-                                  showAlertDialog2(context, DenyUserDialog(boardName: boardName, bid: widget.bid, userName: item.authorInfo.userName, postid: item.postID, uid: item.authorInfo.uid,));
+                                  showAlertDialog2(context, BanUserDialog(
+                                    boardName: boardName, bid: widget.bid, userName: item.authorInfo.userName, postid: item.postID, uid: item.authorInfo.uid,
+                                    showPostid: true,
+                                  ));
                                   return;
                                 }
                                 var optRes = await bdwmAdminBoardOperatePost(bid: widget.bid, postid: item.postID, action: opt);

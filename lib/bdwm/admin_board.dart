@@ -84,7 +84,7 @@ Future<AdminBoardOperateRes> bdwmAdminBoardSetBoardDesc({required String bid, re
   return res;
 }
 
-Future<AdminBoardOperateRes> bdwmAdminBoardDenyUser({required String bid, required String action, required int day, required String reason, required String userName, String? uid, String? postid, int? reclocking}) async {
+Future<AdminBoardOperateRes> bdwmAdminBoardBanUser({required String bid, required String action, required int day, required String reason, required String userName, String? uid, String? postid, int? reclocking}) async {
   var actionUrl = "$v2Host/ajax/set_board_denied_user.php";
   var nAction = action;
   if ((action == "add") && (userName.toLowerCase() == "anonymous") && (postid != null)) {
@@ -123,6 +123,11 @@ Future<AdminBoardOperateRes> bdwmAdminBoardDenyUser({required String bid, requir
       }
       data['uid'] = nUID;
     }
+  } else if (nAction == "edit") {
+    if (reclocking == null) {
+      return AdminBoardOperateRes.error(success: false, error: 2, errorMessage: "未设置是否重新计算时间");
+    }
+    data['reclocking'] = reclocking.toString();
   }
   var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
   if (resp == null) {

@@ -30,6 +30,7 @@ import './pages/recent_thread.dart';
 import './pages/marked_thread.dart';
 import './pages/user_stat.dart';
 import './pages/board_note.dart';
+import './pages/board_ban.dart';
 import './pages/read_post.dart';
 import './pages/favorite_collection.dart';
 import './pages/modify_profile.dart';
@@ -126,6 +127,17 @@ class MainPageBuilder {
           return null;
         }
         return BoardNoteApp(boardName: boardName ?? "版面", bid: bid ?? "");
+      case "/boardBan":
+        String? boardName;
+        String bid;
+        if (settings.arguments != null) {
+          var settingsMap = settings.arguments as Map;
+          bid = settingsMap['bid'] as String;
+          boardName = settingsMap['boardName'] as String?;
+        } else {
+          return null;
+        }
+        return BoardBanPage(boardName: boardName ?? "禁言", bid: bid);
       case "/thread":
         var res = gotoThreadPage(settings.arguments);
         if (res == null) {
