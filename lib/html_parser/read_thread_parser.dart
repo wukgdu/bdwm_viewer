@@ -318,11 +318,9 @@ OnePostInfo parseOnePost(Element document) {
         continue;
       }
       var canDoIt = !aDom.classes.contains("disable");
-      switch (optext) {
-        case "回帖":
-          canReply = canDoIt;
-          break;
-        default:
+      if (optext == "回帖") {
+        canReply = canDoIt;
+        break;
       }
     }
   }

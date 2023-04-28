@@ -12,7 +12,7 @@ import './constants.dart';
 import './board.dart' show getOptOptions, SimpleTuple2;
 import '../bdwm/admin_board.dart';
 import '../html_parser/read_thread_parser.dart';
-import '../globalvars.dart' show globalConfigInfo;
+import '../globalvars.dart' show globalConfigInfo, globalUInfo;
 import '../pages/detail_image.dart';
 import './html_widget.dart';
 import '../router.dart' show nv2Push;
@@ -199,7 +199,8 @@ class _OperateComponentState extends State<OperateComponent> {
         ValueListenableBuilder(
           valueListenable: canReplyNotifier,
           builder: (context, value, child) {
-            var canReply = widget.onePostInfo.canOpt ? widget.onePostInfo.canReply : value as bool;
+            var canReply = (widget.onePostInfo.canOpt || (widget.onePostInfo.canSetReply && widget.onePostInfo.authorInfo.userName.toLowerCase() != globalUInfo.username.toLowerCase()))
+              ? widget.onePostInfo.canReply : value as bool;
             return sizedTextButton(
               style: textButtonStyle,
               onPressed: !canReply ? null
