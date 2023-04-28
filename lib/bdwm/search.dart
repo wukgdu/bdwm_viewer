@@ -84,6 +84,19 @@ class UserInfoRes {
   });
 }
 
+Future<String?> bdwmUserNameToUID(String userName) async {
+  var userRes = await bdwmUserInfoSearch([userName]);
+  if (userRes.success == true) {
+    var r = userRes.users[0];
+    // only one result
+    if (r == false) {
+      return null;
+    }
+    return (r as IDandName).id;
+  }
+  return null;
+}
+
 Future<UserInfoRes> bdwmUserInfoSearch(List<String> userNames) async {
   var actionUrl = "$v2Host/ajax/get_userinfo_by_names.php";
   var data = {

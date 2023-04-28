@@ -3,6 +3,7 @@ import 'dart:convert';
 import './req.dart';
 import '../globalvars.dart' show v2Host, genHeaders2, networkErrorText;
 import './posts.dart' show bdwmOperatePost;
+import './search.dart' show bdwmUserNameToUID;
 import '../utils.dart' show isIP;
 
 class AdminBoardOperateRes {
@@ -95,7 +96,6 @@ Future<AdminBoardOperateRes> bdwmAdminBoardDenyUser({required String bid, requir
     "reason": reason,
     "day": day.toString(),
   };
-  // TODO: userName to uid
   bool userIsIP = isIP(userName);
   // add, edit
   if (userIsIP) {
@@ -103,7 +103,11 @@ Future<AdminBoardOperateRes> bdwmAdminBoardDenyUser({required String bid, requir
   } else if (userName.toLowerCase() == "anonymous") {
     data['postid'] = postid!;
   } else {
-    data['uid'] = uid ?? userName;
+    String? nUID = uid ?? await bdwmUserNameToUID(userName);
+    if (nUID == null) {
+      return AdminBoardOperateRes.error(success: false, error: 2, errorMessage: "用户$userName不存在");
+    }
+    data['uid'] = nUID;
   }
   if (nAction == "delete") {
     data = {
@@ -113,7 +117,11 @@ Future<AdminBoardOperateRes> bdwmAdminBoardDenyUser({required String bid, requir
     if (userIsIP) {
       data['ip'] = userName;
     } else {
-      data['uid'] = uid ?? userName;
+      String? nUID = uid ?? await bdwmUserNameToUID(userName);
+      if (nUID == null) {
+        return AdminBoardOperateRes.error(success: false, error: 2, errorMessage: "用户$userName不存在");
+      }
+      data['uid'] = nUID;
     }
   }
   var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
