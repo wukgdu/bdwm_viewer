@@ -536,7 +536,7 @@ class _OneThreadInBoardState extends State<OneThreadInBoard> {
               // SimpleTuple2(name: getActionName(toMarkDigest), action: toMarkDigest),
               SimpleTuple2(name: getActionName(toHighlightTop), action: toHighlightTop),
               SimpleTuple2(name: getActionName(toNoReply), action: toNoReply),
-              SimpleTuple2(name: "原创分", action: "rate"),
+              SimpleTuple2(name: getActionName("rate"), action: "rate"),
             ]);
             if (opt == null) { return; }
             if (opt == "rate") {
@@ -684,21 +684,33 @@ class _BoardPageState extends State<BoardPage> {
         if (widget.page <= 1 && boardInfo.admins.isNotEmpty)
           Container(
             margin: const EdgeInsets.only(left: _padding2, right: _padding2, bottom: 0),
-            child: Wrap(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // const Text("版务：", style: _boldFont),
-                for (var admin in boardInfo.admins)
-                  ...[
-                    GestureDetector(
-                      child: Text(admin.userName, style: textLinkStyle),
-                      onTap: () {
-                        nv2Push(context, '/user', arguments: admin.uid);
-                      },
-                    ),
-                    const SizedBox(width: 5,),
-                  ],
+                Expanded(
+                  child: Wrap(
+                    children: [
+                      // const Text("版务：", style: _boldFont),
+                      for (var admin in boardInfo.admins) ...[
+                        GestureDetector(
+                          child: Text(admin.userName, style: textLinkStyle),
+                          onTap: () {
+                            nv2Push(context, '/user', arguments: admin.uid);
+                          },
+                        ),
+                        const SizedBox(width: 5,),
+                      ],
+                    ],
+                  ),
+                ),
+                if (boardInfo.canOpt) ...[
+                  GestureDetector(
+                    onTap: () { },
+                    child: Text("禁言", style: TextStyle(color: bdwmPrimaryColor),),
+                  ),
+                ]
               ],
-            ),
+            )
           ),
         if (widget.page <= 1) ...[
           Container(
@@ -825,8 +837,8 @@ class _OnePostInBoardState extends State<OnePostInBoard> {
               SimpleTuple2(name: getActionName(toDigest), action: toDigest),
               SimpleTuple2(name: getActionName(toHighlight), action: toHighlight),
               SimpleTuple2(name: getActionName(toNoReply), action: toNoReply),
-              SimpleTuple2(name: "原创分", action: "rate"),
-              if (!item.isBaoLiu) SimpleTuple2(name: "删除", action: "delete"),
+              SimpleTuple2(name: getActionName("rate"), action: "rate"),
+              if (!item.isBaoLiu) SimpleTuple2(name: getActionName("delete"), action: "delete"),
             ]);
             if (opt == null) { return; }
             if (opt == "rate") {
@@ -979,21 +991,33 @@ class _BoardSinglePageState extends State<BoardSinglePage> {
         if (widget.page <= 1 && boardInfo.admins.isNotEmpty)
           Container(
             margin: const EdgeInsets.only(left: _padding2, right: _padding2, bottom: 0),
-            child: Wrap(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // const Text("版务：", style: _boldFont),
-                for (var admin in boardInfo.admins)
-                  ...[
-                    GestureDetector(
-                      child: Text(admin.userName, style: textLinkStyle),
-                      onTap: () {
-                        nv2Push(context, '/user', arguments: admin.uid);
-                      },
-                    ),
-                    const SizedBox(width: 5,),
-                  ],
+                Expanded(
+                  child: Wrap(
+                    children: [
+                      // const Text("版务：", style: _boldFont),
+                      for (var admin in boardInfo.admins) ...[
+                        GestureDetector(
+                          child: Text(admin.userName, style: textLinkStyle),
+                          onTap: () {
+                            nv2Push(context, '/user', arguments: admin.uid);
+                          },
+                        ),
+                        const SizedBox(width: 5,),
+                      ],
+                    ],
+                  ),
+                ),
+                if (boardInfo.canOpt) ...[
+                  GestureDetector(
+                    onTap: () { },
+                    child: Text("禁言", style: TextStyle(color: bdwmPrimaryColor),),
+                  ),
+                ]
               ],
-            ),
+            )
           ),
         if (widget.page <= 1) ...[
           Container(

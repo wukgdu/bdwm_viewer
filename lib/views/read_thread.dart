@@ -17,6 +17,110 @@ import '../pages/detail_image.dart';
 import './html_widget.dart';
 import '../router.dart' show nv2Push;
 
+class DenyUserDialog extends StatefulWidget {
+  final String boardName;
+  final String bid;
+  final String userName;
+  final String uid;
+  final String? postid;
+  const DenyUserDialog({super.key, required this.boardName, required this.bid, required this.userName, required this.uid, this.postid});
+
+  @override
+  State<DenyUserDialog> createState() => _DenyUserDialogState();
+}
+
+class _DenyUserDialogState extends State<DenyUserDialog> {
+  TextEditingController userNameValue = TextEditingController();
+  TextEditingController dayValue = TextEditingController();
+  TextEditingController reasonValue = TextEditingController();
+  TextEditingController postidValue = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    userNameValue.text = widget.userName;
+    postidValue.text = widget.postid ?? "";
+  }
+
+  @override
+  void dispose() {
+    userNameValue.dispose();
+    dayValue.dispose();
+    reasonValue.dispose();
+    postidValue.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text("取消"),
+        ),
+        TextButton(
+          onPressed: () async {
+            int? day = int.tryParse(dayValue.text);
+            if (day == null) { return; }
+            if (day < 0) { return; }
+            var reason = reasonValue.text;
+            var postidText = postidValue.text.trim();
+            String? postid = postidText.isEmpty ? null : postidText;
+            var optRes = await bdwmAdminBoardDenyUser(bid: widget.bid, action: "add", day: day, reason: reason, userName: widget.userName, postid: postid, uid: widget.uid);
+            if (!mounted) { return; }
+            if (optRes.success) {
+              showInformDialog(context, "封禁成功", "rt").then((_) {
+                Navigator.of(context).pop();
+              });
+            } else {
+              showInformDialog(context, "封禁失败", optRes.errorMessage ?? "封禁失败，请稍后重试");
+            }
+          },
+          child: const Text("确认"),
+        ),
+      ],
+      title: Text(widget.boardName),
+      content: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextFormField(
+            decoration: const InputDecoration(
+              hintText: '用户',
+            ),
+            controller: userNameValue,
+            autocorrect: false,
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+              hintText: '封禁时间（天）',
+            ),
+            controller: dayValue,
+            autocorrect: false,
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+              hintText: '禁言原因',
+            ),
+            controller: reasonValue,
+            autocorrect: false,
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+              hintText: '帖子postid',
+            ),
+            controller: postidValue,
+            autocorrect: false,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class OperateComponent extends StatefulWidget {
   final String bid;
   final String? boardName;
@@ -687,14 +791,25 @@ class _OnePostComponentState extends State<OnePostComponent> {
                                 var toDigest = item.isWenZhai ? "undigest" : "digest";
                                 var toHighlight = item.isGaoLiang ? "unhighlight" : "highlight";
                                 var toNoReply = item.isLock ? "unnoreply" : "noreply";
+                                var toDelete = "delete";
+                                var toDeny = "deny";
                                 var opt = await getOptOptions(context, [
                                   SimpleTuple2(name: getActionName(toTop), action: toTop),
                                   SimpleTuple2(name: getActionName(toMark), action: toMark),
                                   SimpleTuple2(name: getActionName(toDigest), action: toDigest),
                                   SimpleTuple2(name: getActionName(toHighlight), action: toHighlight),
                                   SimpleTuple2(name: getActionName(toNoReply), action: toNoReply),
+                                  if (!item.isBaoLiu) SimpleTuple2(name: getActionName(toDelete), action: toDelete),
+                                  SimpleTuple2(name: getActionName(toDeny), action: toDeny),
                                 ]);
                                 if (opt == null) { return; }
+                                if (opt == "deny") {
+                                  var boardName = widget.boardName ?? "封禁";
+                                  boardName = boardName.split('(')[0];
+                                  if (!mounted) { return; }
+                                  showAlertDialog2(context, DenyUserDialog(boardName: boardName, bid: widget.bid, userName: item.authorInfo.userName, postid: item.postID, uid: item.authorInfo.uid,));
+                                  return;
+                                }
                                 var optRes = await bdwmAdminBoardOperatePost(bid: widget.bid, postid: item.postID, action: opt);
                                 if (optRes.success) {
                                   widget.refreshCallBack();

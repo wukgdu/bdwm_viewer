@@ -127,3 +127,16 @@ int termStringLength(String str, {int sp=255}) {
 String breakLongText(String s) {
   return s.characters.join("\u200B");
 }
+
+bool isIP(String str) {
+  var values = str.split(".");
+  if (values.length == 4) {
+    for (int i=0; i<4; i+=1) {
+      var d = int.tryParse(values[i]);
+      if (d == null) { return false; }
+      if (d<0 || d>255) { return false; }
+    }
+    return true;
+  }
+  return false;
+}

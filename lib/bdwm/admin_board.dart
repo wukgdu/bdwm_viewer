@@ -3,6 +3,7 @@ import 'dart:convert';
 import './req.dart';
 import '../globalvars.dart' show v2Host, genHeaders2, networkErrorText;
 import './posts.dart' show bdwmOperatePost;
+import '../utils.dart' show isIP;
 
 class AdminBoardOperateRes {
   bool success = false;
@@ -70,6 +71,51 @@ Future<AdminBoardOperateRes> bdwmAdminBoardSetBoardDesc({required String bid, re
     "bid": bid,
     "content": content,
   };
+  var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
+  if (resp == null) {
+    return AdminBoardOperateRes.error(success: false, error: -1, errorMessage: networkErrorText);
+  }
+  var respContent = json.decode(resp.body);
+  var res = AdminBoardOperateRes(
+    success: respContent['success'],
+    error: respContent['error'] ?? 0,
+  );
+  return res;
+}
+
+Future<AdminBoardOperateRes> bdwmAdminBoardDenyUser({required String bid, required String action, required int day, required String reason, required String userName, String? uid, String? postid, int? reclocking}) async {
+  var actionUrl = "$v2Host/ajax/set_board_denied_user.php";
+  var nAction = action;
+  if ((action == "add") && (userName.toLowerCase() == "anonymous") && (postid != null)) {
+    nAction = "add_anony";
+  }
+  var data = {
+    "bid": bid,
+    "action": nAction,
+    "reason": reason,
+    "day": day.toString(),
+  };
+  // TODO: userName to uid
+  bool userIsIP = isIP(userName);
+  // add, edit
+  if (userIsIP) {
+    data['ip'] = userName;
+  } else if (userName.toLowerCase() == "anonymous") {
+    data['postid'] = postid!;
+  } else {
+    data['uid'] = uid ?? userName;
+  }
+  if (nAction == "delete") {
+    data = {
+      "action": nAction,
+      "bid": bid,
+    };
+    if (userIsIP) {
+      data['ip'] = userName;
+    } else {
+      data['uid'] = uid ?? userName;
+    }
+  }
   var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: data);
   if (resp == null) {
     return AdminBoardOperateRes.error(success: false, error: -1, errorMessage: networkErrorText);

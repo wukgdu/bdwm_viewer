@@ -32,7 +32,7 @@ const action2Name = {
   "highlight_top": "高亮置顶", "unhighlight_top": "取消高亮置顶",
   "highlight": "高亮", "unhighlight": "取消高亮",
   "noreply": "设为不可回复", "unnoreply": "取消不可回复",
-  "delete": "删除", "rate": "打原创分",
+  "delete": "删除", "rate": "打原创分", "deny": "封禁",
 };
 
 String getActionName(String action) {
