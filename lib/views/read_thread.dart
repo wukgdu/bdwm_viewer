@@ -12,7 +12,7 @@ import './constants.dart';
 import './board.dart' show getOptOptions, SimpleTuple2, showRatePostDialog;
 import '../bdwm/admin_board.dart';
 import '../html_parser/read_thread_parser.dart';
-import '../globalvars.dart' show globalConfigInfo, globalUInfo;
+import '../globalvars.dart' show globalConfigInfo;
 import '../pages/detail_image.dart';
 import './html_widget.dart';
 import '../router.dart' show nv2Push;
@@ -163,7 +163,6 @@ class OperateComponent extends StatefulWidget {
 }
 
 class _OperateComponentState extends State<OperateComponent> {
-  var canReplyNotifier = ValueNotifier<bool>(false);
   final textButtonStyle = TextButton.styleFrom(
     minimumSize: const Size(50, 20),
     padding: const EdgeInsets.all(6.0),
@@ -182,11 +181,9 @@ class _OperateComponentState extends State<OperateComponent> {
   @override
   void initState() {
     super.initState();
-    canReplyNotifier.value = !widget.onePostInfo.isLock;
   }
   @override
   void dispose() {
-    canReplyNotifier.dispose();
     super.dispose();
   }
   @override
@@ -196,27 +193,19 @@ class _OperateComponentState extends State<OperateComponent> {
       // alignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        ValueListenableBuilder(
-          valueListenable: canReplyNotifier,
-          builder: (context, value, child) {
-            var canReply = (widget.onePostInfo.canOpt || (widget.onePostInfo.canSetReply && widget.onePostInfo.authorInfo.userName.toLowerCase() != globalUInfo.username.toLowerCase()))
-              ? widget.onePostInfo.canReply : value as bool;
-            return sizedTextButton(
-              style: textButtonStyle,
-              onPressed: !canReply ? null
-                : () {
-                  nv2Push(context, '/post', arguments: {
-                    'bid': widget.bid,
-                    'boardName': "回帖",
-                    'parentid': widget.postid,
-                    // Anonymous's nickname
-                    'nickName': widget.onePostInfo.authorInfo.userName == "Anonymous"
-                      ? widget.onePostInfo.authorInfo.nickName : null,
-                  });
-                },
-              child: Text("回帖", style: TextStyle(color: !canReply ? Colors.grey : null),),
-            );
+        sizedTextButton(
+          style: textButtonStyle,
+          onPressed: !widget.onePostInfo.canReply ? null : () {
+            nv2Push(context, '/post', arguments: {
+              'bid': widget.bid,
+              'boardName': "回帖",
+              'parentid': widget.postid,
+              // Anonymous's nickname
+              'nickName': widget.onePostInfo.authorInfo.userName == "Anonymous"
+                ? widget.onePostInfo.authorInfo.nickName : null,
+            });
           },
+          child: Text("回帖", style: TextStyle(color: !widget.onePostInfo.canReply ? Colors.grey : null),),
         ),
         sizedTextButton(
           style: textButtonStyle,
@@ -306,7 +295,7 @@ class _OperateComponentState extends State<OperateComponent> {
           onSelected: (value) {
             if (value.contains("回复")) {
               var action = "unnoreply";
-              if (canReplyNotifier.value) {
+              if (!widget.onePostInfo.isLock) {
                 action = "noreply";
               }
               bdwmOperatePost(bid: widget.bid, postid: widget.postid, action: action)
@@ -322,9 +311,7 @@ class _OperateComponentState extends State<OperateComponent> {
                   ),
                 );
                 if (!res.success) { return; }
-                // setState(() {
-                canReplyNotifier.value = !canReplyNotifier.value;
-                // });
+                widget.refreshCallBack();
               });
             } else if (value == "收入文集") {
               showCollectionDialog(context)
@@ -392,8 +379,8 @@ class _OperateComponentState extends State<OperateComponent> {
             return <PopupMenuEntry<String>>[
               if (widget.onePostInfo.canSetReply)
                 PopupMenuItem(
-                  value: canReplyNotifier.value ? "设为不可回复" : "取消不可回复",
-                  child: Text(canReplyNotifier.value ? "设为不可回复" : "取消不可回复"),
+                  value: !widget.onePostInfo.isLock ? "设为不可回复" : "取消不可回复",
+                  child: Text(!widget.onePostInfo.isLock ? "设为不可回复" : "取消不可回复"),
                 ),
               if (widget.onePostInfo.canDelete)
                 const PopupMenuItem(
@@ -406,7 +393,7 @@ class _OperateComponentState extends State<OperateComponent> {
               ),
               PopupMenuItem(
                 value: "回站内信",
-                enabled: widget.onePostInfo.authorInfo.userName != "Anonymous",
+                enabled: widget.onePostInfo.authorInfo.userName.toLowerCase() != "anonymous",
                 child: const Text("回站内信"),
               ),
             ];
