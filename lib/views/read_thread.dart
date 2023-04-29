@@ -9,7 +9,7 @@ import '../bdwm/forward.dart';
 import './collection.dart';
 import './utils.dart';
 import './constants.dart';
-import './board.dart' show getOptOptions, SimpleTuple2;
+import './board.dart' show getOptOptions, SimpleTuple2, showRatePostDialog;
 import '../bdwm/admin_board.dart';
 import '../html_parser/read_thread_parser.dart';
 import '../globalvars.dart' show globalConfigInfo, globalUInfo;
@@ -817,6 +817,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                                 var toNoReply = item.isLock ? "unnoreply" : "noreply";
                                 var toDelete = "delete";
                                 var toBan = "ban";
+                                var toRate = "rate";
                                 var opt = await getOptOptions(context, [
                                   SimpleTuple2(name: getActionName(toTop), action: toTop),
                                   SimpleTuple2(name: getActionName(toMark), action: toMark),
@@ -824,9 +825,24 @@ class _OnePostComponentState extends State<OnePostComponent> {
                                   SimpleTuple2(name: getActionName(toHighlight), action: toHighlight),
                                   SimpleTuple2(name: getActionName(toNoReply), action: toNoReply),
                                   if (!item.isBaoLiu) SimpleTuple2(name: getActionName(toDelete), action: toDelete),
+                                  SimpleTuple2(name: getActionName(toRate), action: toRate),
                                   SimpleTuple2(name: getActionName(toBan), action: toBan),
                                 ]);
                                 if (opt == null) { return; }
+                                if (opt == "rate") {
+                                  if (!mounted) { return; }
+                                  var ycf = await showRatePostDialog(context, [1, 2, 3]);
+                                  if (ycf == null) { return; }
+                                  var optRes = await bdwmAdminBoardOperatePost(bid: widget.bid, postid: item.postID, action: opt, rating: ycf);
+                                  if (optRes.success) {
+                                    widget.refreshCallBack();
+                                  } else {
+                                    var confirmText = optRes.errorMessage ?? "打原创分失败~请稍后重试";
+                                    if (!mounted) { return; }
+                                    showInformDialog(context, "操作失败", confirmText);
+                                  }
+                                  return;
+                                }
                                 if (opt == "ban") {
                                   var boardName = widget.boardName ?? "封禁";
                                   boardName = boardName.split('(')[0];

@@ -348,6 +348,7 @@ Future<String?> getOptOptions(BuildContext context, List<SimpleTuple2> data, {bo
           children: [
             for (var datum in data) ...[
               ListTile(
+                dense: true,
                 onTap: () { Navigator.of(context).pop(datum.action); },
                 title: Center(child: Text(datum.name, style: TextStyle(color: bdwmPrimaryColor),)),
               ),
