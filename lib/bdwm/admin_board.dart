@@ -8,12 +8,14 @@ import '../utils.dart' show isIP;
 
 class AdminBoardOperateRes {
   bool success = false;
+  bool? rawSuccess;
   int error = 0;
   String? errorMessage;
 
   AdminBoardOperateRes({
     required this.success,
     required this.error,
+    this.rawSuccess,
     this.errorMessage,
   });
   AdminBoardOperateRes.error({
@@ -63,7 +65,7 @@ Future<AdminBoardOperateRes> bdwmAdminBoardCreateThreadCollect({required String 
 // x = "ajax/set_board_note.php"
 Future<AdminBoardOperateRes> bdwmAdminBoardOperatePost({required String bid, required String postid, required String action, int? rating}) async {
   var postRes = await bdwmOperatePost(bid: bid, postid: postid, action: action, rating: rating);
-  return AdminBoardOperateRes(success: postRes.success, error: postRes.error, errorMessage: postRes.result);
+  return AdminBoardOperateRes(success: postRes.success, error: postRes.error, errorMessage: postRes.result, rawSuccess: postRes.rawSuccess);
 }
 
 Future<AdminBoardOperateRes> bdwmAdminBoardSetBoardDesc({required String bid, required String content}) async {

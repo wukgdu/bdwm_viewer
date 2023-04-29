@@ -337,7 +337,7 @@ class SimpleTuple2 {
   });
 }
 
-Future<String?> getOptOptions(BuildContext context, List<SimpleTuple2> data, {bool isScrollControlled=false}) async {
+Future<String?> getOptOptions(BuildContext context, List<SimpleTuple2> data, {bool isScrollControlled=false, Widget? desc}) async {
   var opt = await showModalBottomSheet<String>(
     context: context,
     isScrollControlled: isScrollControlled,
@@ -346,6 +346,10 @@ Future<String?> getOptOptions(BuildContext context, List<SimpleTuple2> data, {bo
         margin: const EdgeInsets.all(10.0),
         child: Wrap(
           children: [
+            if (desc != null) ...[
+              desc,
+              const Divider(),
+            ],
             for (var datum in data) ...[
               ListTile(
                 dense: true,
@@ -830,7 +834,25 @@ class _OnePostInBoardState extends State<OnePostInBoard> {
               innerLinkJump(link, context);
             }
           },
-          onLongPress: !widget.canOpt ? null : ((!specialOne) || pinned) ? () async {
+          onLongPress: widget.boardPostInfo.isDelete ? () async {
+            var item = widget.boardPostInfo;
+            var toRecover = "recover";
+            var opt = await getOptOptions(context, [
+              SimpleTuple2(name: getActionName(toRecover), action: "recover"),
+            ], desc: Center(child: SelectableText("${item.deleteUser} ${item.deleteTime}")));
+            if (opt == null) { return; }
+            if (opt == toRecover) {
+              if (!mounted) { return; }
+              var optRes = await bdwmAdminBoardOperatePost(bid: widget.bid, postid: widget.boardPostInfo.itemid, action: opt);
+              if (optRes.success) {
+                widget.refresh();
+              } else {
+                var confirmText = optRes.errorMessage ?? "${getActionName(toRecover)}失败~请稍后重试";
+                if (!mounted) { return; }
+                showInformDialog(context, "操作失败", confirmText);
+              }
+            }
+          } : !widget.canOpt ? null : ((!specialOne) || pinned) ? () async {
             var item = widget.boardPostInfo;
             var toTop = item.isZhiDing ? "untop" : "top";
             var toMark = item.isBaoLiu ? "unmark" : "mark";
@@ -855,7 +877,7 @@ class _OnePostInBoardState extends State<OnePostInBoard> {
               if (optRes.success) {
                 widget.refresh();
               } else {
-                var confirmText = optRes.errorMessage ?? "打原创分失败~请稍后重试";
+                var confirmText = optRes.errorMessage ?? "${getActionName(opt)}失败~请稍后重试";
                 if (!mounted) { return; }
                 showInformDialog(context, "操作失败", confirmText);
               }

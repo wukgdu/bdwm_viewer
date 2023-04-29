@@ -24,6 +24,10 @@ class BoardSinglePostInfo {
   bool isZhiDing = false;
   bool isYuanChuang = false;
   bool isGaoLiang = false;
+  bool isDelete = false;
+  bool? isSelfDelete;
+  String? deleteUser;
+  String? deleteTime;
 
   BoardSinglePostInfo.empty();
   BoardSinglePostInfo({
@@ -45,6 +49,10 @@ class BoardSinglePostInfo {
     required this.isYuanChuang,
     required this.isGaoLiang,
     required this.isOrigin,
+    required this.isDelete,
+    this.isSelfDelete,
+    this.deleteUser,
+    this.deleteTime,
   });
 }
 
@@ -153,12 +161,20 @@ List<BoardSinglePostInfo> parseBoardSinglePost(Element? docu) {
     String pTime = getTrimmedString(pdom.querySelector(".author .time"));
 
     isZhiDing = isZhiDing || (pdom.querySelector(".id .pin")!=null);
+    bool isDelete = false;
+    bool? isSelfDelete;
+    String? deleteUser, deleteTime;
+    if (pdom.querySelector(".putback") != null) { isDelete = true; }
+    if (pdom.querySelector(".selfdel") != null) { isSelfDelete = true; }
+    if (pdom.querySelector(".deleter .name") != null) { deleteUser = getTrimmedString(pdom.querySelector(".deleter .name")); }
+    if (pdom.querySelector(".deleter .time") != null) { deleteTime = getTrimmedString(pdom.querySelector(".deleter .time")); }
 
     boardPostInfo.add(BoardSinglePostInfo(
       bpID: bpID, isNew: isNew, title: title, link: link, itemid: itemid,
       userName: userName, avatarLink: avatarLink, pTime: pTime, uid: uid, hasAttachment: hasAttachment,
       lock: lock, isBaoLiu: isBaoLiu, isWenZhai: isWenZhai, isJingHua: isJingHua,
       isZhiDing: isZhiDing, isYuanChuang: isYuanChuang, isGaoLiang: isGaoLiang, isOrigin: isOrigin,
+      isDelete: isDelete, isSelfDelete: isSelfDelete, deleteUser: deleteUser, deleteTime: deleteTime,
     ));
   }
   return boardPostInfo;

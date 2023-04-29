@@ -17,10 +17,12 @@ class PostRes {
   int error = 0;
   String? result;
   int? postid;
+  bool? rawSuccess;
   int? threadid;
 
   PostRes({
     required this.success,
+    this.rawSuccess,
     required this.error,
     this.postid,
     this.threadid,
@@ -142,6 +144,7 @@ Future<PostRes> bdwmOperatePost({required String bid, required String postid, re
   var respContent = json.decode(resp.body);
   PostRes postRes = PostRes(
     success: respContent['results'][0]==false,
+    rawSuccess: respContent['success'],
     error: respContent['error'] ?? 0,
   );
   return postRes;
