@@ -296,6 +296,8 @@ class FquillEditorToolbar extends StatelessWidget {
       showColorButton: false,
       showRedo: false,
       showUndo: false,
+      showSubscript: false,
+      showSuperscript: false,
       showBackgroundColorButton: false,
       customButtons: [
         fquill.QuillCustomButton(
