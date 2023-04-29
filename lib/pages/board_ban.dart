@@ -94,11 +94,14 @@ class _BoardBanPageState extends State<BoardBanPage> {
             title: Text("${boardBanInfo.boardName}-禁言"),
             actions: [
               IconButton(
-                onPressed: () {
-                  showAlertDialog2(context, BanUserDialog(
+                onPressed: () async {
+                  var result = await showAlertDialog2(context, BanUserDialog(
                     boardName: widget.boardName, bid: widget.bid, userName: "", postid: null, uid: null,
                     showPostid: true,
                   ));
+                  if (result == "success") {
+                    refresh();
+                  }
                 },
                 icon: const Icon(Icons.add),
               ),
