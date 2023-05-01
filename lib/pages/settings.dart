@@ -359,6 +359,17 @@ class _SettingsAppState extends State<SettingsApp> {
           ),
           const Divider(),
           SwitchListTile(
+            title: const Text("打开应用时首选guest"),
+            subtitle: const Text("询问是否使用游客浏览（不使用已有的登录账号）"),
+            activeColor: bdwmPrimaryColor,
+            value: globalConfigInfo.guestFirst,
+            onChanged: (value) {
+              globalConfigInfo.guestFirst = value;
+              refresh();
+            },
+          ),
+          const Divider(),
+          SwitchListTile(
             title: const Text("消息中使用 BBS 的图片表情"),
             subtitle: const Text("需要联网下载。否则使用 Unicode 的 Emoji（不完整）"),
             activeColor: bdwmPrimaryColor,

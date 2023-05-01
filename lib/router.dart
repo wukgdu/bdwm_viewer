@@ -365,6 +365,11 @@ class MainPageBuilder {
 
 MainRouterDelegate? mainRouterDelegate;
 
+BuildContext? getGlobalContext() {
+  var globalContext = mainRouterDelegate?.navigatorKey.currentState?.context;
+  return globalContext;
+}
+
 void nv2RawPush(String name, {Object? arguments}) {
   mainRouterDelegate?.push(name, arguments: arguments);
 }

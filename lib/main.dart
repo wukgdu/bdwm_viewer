@@ -17,6 +17,7 @@ import './services.dart';
 import './services_instance.dart';
 import './bdwm/mail.dart';
 import './utils.dart';
+import './views/utils.dart' show showConfirmDialog;
 import './check_update.dart' show checkUpdateByTime;
 import './notification.dart' show initFlnInstance;
 import './views/top10.dart' show getDataTop10, gotTop10, isTop10Valid;
@@ -28,15 +29,19 @@ void main() async {
   }
   WidgetsFlutterBinding.ensureInitialized();
   // debugPaintSizeEnabled = true;
-  await globalUInfo.init();
   await globalContactInfo.init();
   await globalConfigInfo.init();
   await globalNotConfigInfo.init();
+  if (!globalConfigInfo.getGuestFirst()) {
+    await globalUInfo.init();
+  }
   await globalThreadHistory.init();
   await globalMarkedThread.init();
   await initFlnInstance();
   initPrimaryColor();
-  checkUpdateByTime();
+  if (!globalConfigInfo.getGuestFirst()) {
+    checkUpdateByTime();
+  }
   await unreadMessage.initWorker();
   await unreadMail.initWorker();
   registerDynamicFont();
@@ -166,6 +171,7 @@ class MainPageState extends State<MainPage> {
   ValueNotifier<int> messageCount = ValueNotifier<int>(0);
   ValueNotifier<int> mailCount = ValueNotifier<int>(0);
   MessageBriefNotifier messageBrief = MessageBriefNotifier([]);
+  final navigatorKey = GlobalKey<NavigatorState>();
 
   void updateUnreadMessageData() {
     unreadMessage.updateValue((NotifyMessageInfo info) {
@@ -223,6 +229,18 @@ class MainPageState extends State<MainPage> {
 
       HomeWidget.registerBackgroundCallback(backgroundCallback);
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (globalConfigInfo.getGuestFirst()) {
+        var globalContext = getGlobalContext();
+        if (globalContext == null) { return; }
+        var useGuest = await showConfirmDialog(globalContext, "保持游客浏览", "rt");
+        if (useGuest == "no") {
+          await globalUInfo.init(letTrue: false);
+          checkUpdateByTime();
+          // setState(() { });
+        }
+      }
+    });
   }
 
   @override

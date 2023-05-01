@@ -60,7 +60,7 @@ class Uinfo {
     await update();
   }
 
-  Future<bool> init() async {
+  Future<bool> init({bool letTrue=false}) async {
     String dir = (await getApplicationDocumentsDirectory()).path;
     String filename = "$dir/$storage";
     // debugPrint(filename);
@@ -88,7 +88,10 @@ class Uinfo {
         uid = jsonContent['users'][0]['uid'];
         skey = jsonContent['users'][0]['skey'];
         username = jsonContent['users'][0]['name'];
-        login = jsonContent['users'][0]['login'];
+        login = letTrue || jsonContent['users'][0]['login'];
+        if (letTrue) {
+          await update();
+        }
       }
     } else {
       await writeInit();
@@ -112,6 +115,7 @@ class Uinfo {
   }
 
   Future<void> checkAndLogout(cookie) async {
+    if (globalConfigInfo.getGuestFirst()) { return; }
     if (login == false) {
       return;
     }
@@ -124,6 +128,9 @@ class Uinfo {
     if (newUid != uid) {
       uid = newUid;
       skey = newSkey;
+      if (newUid == "15265") {
+        username = "guest";
+      }
       login = false;
       await update();
     } else if (newSkey != skey) {
@@ -394,6 +401,7 @@ class BDWMConfig {
   bool useDynamicColor = false;
   String refreshRate = "high";
   bool autoHideBottomBar = true;
+  bool guestFirst = false;
   String boardNoteFont = simFont;
   String primaryColorString = "";
   double contentFontSize = 16.0;
@@ -428,6 +436,7 @@ class BDWMConfig {
       "useDynamicColor": useDynamicColor,
       "autoHideBottomBar": autoHideBottomBar,
       "refreshRate": refreshRate,
+      "guestFirst": guestFirst,
     };
   }
   void fromJson(Map<String, dynamic> jsonContent) {
@@ -444,6 +453,7 @@ class BDWMConfig {
     qmd = jsonContent['qmd'] ?? qmd;
     refreshRate = jsonContent['refreshRate'] ?? refreshRate;
     useMD3 = jsonContent['useMD3'] ?? useMD3;
+    guestFirst = jsonContent['guestFirst'] ?? guestFirst;
     useDynamicColor = jsonContent['useDynamicColor'] ?? useDynamicColor;
     autoHideBottomBar = jsonContent['autoHideBottomBar'] ?? autoHideBottomBar;
     boardNoteFont = jsonContent['boardNoteFont'] ?? boardNoteFont;
@@ -452,6 +462,17 @@ class BDWMConfig {
   }
   String gist() {
     return jsonEncode(toJson());
+  }
+
+  bool getGuestFirst() {
+    return guestFirst;
+  }
+
+  Future<bool> setGuestFirst(bool newValue) async {
+    return await lock.synchronized(() async {
+      guestFirst = newValue;
+      return await update();
+    });
   }
 
   String getRefreshRate() {

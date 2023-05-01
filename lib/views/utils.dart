@@ -82,7 +82,7 @@ Future<String?> showConfirmDialog(BuildContext context, String title, String con
   return showAlertDialog(context, title, SelectableText(content),
     actions1: TextButton(
       onPressed: () {
-        Navigator.of(context).pop();
+        Navigator.of(context).pop("no");
       },
       child: const Text("不了"),
     ),

@@ -346,16 +346,17 @@ class _TopHomePageState extends State<TopHomePage> {
     //   debugPrint(_scrollController.offset);
     // });
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (globalConfigInfo.getShowWelcome()==false) { return; }
-      String lastLoginTimeStr = globalNotConfigInfo.getLastLoginTime();
-      var ld = DateTime.tryParse(lastLoginTimeStr);
-      var curDT = DateTime.now();
-      // ld = null;
-      if (ld==null || "${curDT.year}-${curDT.month}-${curDT.day}" != "${ld.year}-${ld.month}-${ld.day}") {
-        if (!mounted) { return; }
-        var saveUpdate = globalNotConfigInfo.setLastLoginTime(curDT.toIso8601String());
-        showAlertDialog2(context, const EntryHomeComponent(),);
-        await saveUpdate;
+      if (globalConfigInfo.getShowWelcome()) {
+        String lastLoginTimeStr = globalNotConfigInfo.getLastLoginTime();
+        var ld = DateTime.tryParse(lastLoginTimeStr);
+        var curDT = DateTime.now();
+        // ld = null;
+        if (ld==null || "${curDT.year}-${curDT.month}-${curDT.day}" != "${ld.year}-${ld.month}-${ld.day}") {
+          if (!mounted) { return; }
+          var saveUpdate = globalNotConfigInfo.setLastLoginTime(curDT.toIso8601String());
+          showAlertDialog2(context, const EntryHomeComponent(),);
+          await saveUpdate;
+        }
       }
     });
   }
