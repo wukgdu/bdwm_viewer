@@ -17,8 +17,8 @@ import './services.dart';
 import './services_instance.dart';
 import './bdwm/mail.dart';
 import './utils.dart';
-import './views/utils.dart' show showConfirmDialog;
-import './check_update.dart' show checkUpdateByTime;
+import './views/utils.dart' show showConfirmDialog, showInformDialog;
+import './check_update.dart' show checkUpdateByTime, curVersionForBBS;
 import './notification.dart' show initFlnInstance;
 import './views/top10.dart' show getDataTop10, gotTop10, isTop10Valid;
 import './pages/read_thread.dart' show naviGotoThreadByLink;
@@ -39,9 +39,9 @@ void main() async {
   await globalMarkedThread.init();
   await initFlnInstance();
   initPrimaryColor();
-  if (!globalConfigInfo.getGuestFirst()) {
-    checkUpdateByTime();
-  }
+  // if (!globalConfigInfo.getGuestFirst()) {
+  //   checkUpdateByTime();
+  // }
   await unreadMessage.initWorker();
   await unreadMail.initWorker();
   registerDynamicFont();
@@ -236,11 +236,33 @@ class MainPageState extends State<MainPage> {
         var useGuest = await showConfirmDialog(globalContext, "保持游客浏览", "rt");
         if (useGuest == "no") {
           await globalUInfo.init(letTrue: false);
-          checkUpdateByTime();
+          // checkUpdateByTime();
+          showUpdateDialog();
           // setState(() { });
         }
+      } else {
+        showUpdateDialog();
       }
     });
+  }
+  
+  Future<void> showUpdateDialog() async {
+    var res = await checkUpdateByTime();
+    if (res.isEmpty) { return; }
+    if (!mounted) { return; }
+    var globalContext = getGlobalContext();
+    if (globalContext == null) { return; }
+    var txt = "原因未知";
+    var values = res.split("-");
+    if (values.length > 1) {
+      txt = values[1];
+    }
+    if (res.startsWith("checkfail")) {
+      txt = "失败：$txt";
+    } else if (res.startsWith("checksuccess")) {
+      txt = "最新版本：$txt\n当前版本：$curVersionForBBS";
+    }
+    showInformDialog(globalContext, "检查新版本", txt);
   }
 
   @override

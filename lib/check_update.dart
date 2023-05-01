@@ -14,35 +14,39 @@ bool isNewVersion(List<int> onlineNumbers, List<int> localNumbers) {
   return onlineNumbers[2] > localNumbers[2];
 }
 
-Future<bool> checkUpdate() async {
+Future<String> checkUpdate() async {
   var url = innerLinkForBBS;
   var resp = await bdwmClient.get(url, headers: genHeaders2());
   if (resp == null) {
-    return false;
+    return "";
   }
   var versionOnline = await checkUpdateParser(resp.body);
-  if (versionOnline.isEmpty) { return false; }
+  if (versionOnline.isEmpty) { return ""; }
   try {
     List<int> versionOnlineNumbers = versionOnline.split(".").map((e) => int.parse(e)).toList();
     List<int> versionLocalNumbers = curVersionForBBS.split(".").map((e) => int.parse(e)).toList();
     bool thereIsNewVersion = isNewVersion(versionOnlineNumbers, versionLocalNumbers);
     if (thereIsNewVersion) {
       sendNotification("新版本", versionOnline, payload: "version");
+      return "checksuccess-$versionOnline";
     }
   } catch (e) {
     sendNotification("新版本检查失败", e.toString());
+    return "checkfail-${e.toString()}";
   }
-  return true;
+  return "checkfail";
 }
 
-Future<void> checkUpdateByTime() async {
+Future<String> checkUpdateByTime() async {
   String lastTimeStr = globalNotConfigInfo.getLastCheckTime();
   var ld = DateTime.tryParse(lastTimeStr);
   var curDT = DateTime.now();
   if (ld==null || curDT.difference(ld).inDays >= 7) {
     var doCheck = await checkUpdate();
-    if (doCheck) {
+    if (doCheck.isNotEmpty) {
       await globalNotConfigInfo.setLastCheckTime(curDT.toIso8601String());
+      return doCheck;
     }
   }
+  return "";
 }
