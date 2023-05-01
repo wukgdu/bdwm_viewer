@@ -531,14 +531,12 @@ class _OneThreadInBoardState extends State<OneThreadInBoard> {
             var toTop = "untop";
             var toMark = widget.boardPostInfo.isBaoLiu ? "unmark" : "mark";
             var toDigest = widget.boardPostInfo.isWenZhai ? "undigest" : "digest";
-            // var toMarkDigest = (widget.boardPostInfo.isBaoLiu && widget.boardPostInfo.isWenZhai) ? "unmark_digest" : "mark_digest";
             var toHighlightTop = widget.boardPostInfo.isGaoLiang ? "unhighlight_top" : "highlight_top";
             var toNoReply = widget.boardPostInfo.lock ? "unnoreply" : "noreply";
             var opt = await getOptOptions(context, [
               SimpleTuple2(name: getActionName(toTop), action: toTop),
               SimpleTuple2(name: getActionName(toMark), action: toMark),
               SimpleTuple2(name: getActionName(toDigest), action: toDigest),
-              // SimpleTuple2(name: getActionName(toMarkDigest), action: toMarkDigest),
               SimpleTuple2(name: getActionName(toHighlightTop), action: toHighlightTop),
               SimpleTuple2(name: getActionName(toNoReply), action: toNoReply),
               SimpleTuple2(name: getActionName("rate"), action: "rate"),
@@ -751,7 +749,8 @@ class OnePostInBoard extends StatefulWidget {
   final String boardName;
   final bool canOpt;
   final Function refresh;
-  const OnePostInBoard({Key? key, required this.boardPostInfo, required this.bid, required this.boardName, required this.canOpt, required this.refresh}) : super(key: key);
+  final String? stype;
+  const OnePostInBoard({Key? key, required this.boardPostInfo, required this.bid, required this.boardName, required this.canOpt, required this.refresh, required this.stype}) : super(key: key);
 
   @override
   State<OnePostInBoard> createState() => _OnePostInBoardState();
@@ -859,9 +858,14 @@ class _OnePostInBoardState extends State<OnePostInBoard> {
             var toDigest = item.isWenZhai ? "undigest" : "digest";
             var toHighlight = item.isGaoLiang ? "unhighlight" : "highlight";
             var toNoReply = item.lock ? "unnoreply" : "noreply";
+            var toMarkDigest = widget.boardPostInfo.isBaoLiu ? "unmark_digest" : "mark_digest";
             var opt = await getOptOptions(context, [
               SimpleTuple2(name: getActionName(toTop), action: toTop),
-              SimpleTuple2(name: getActionName(toMark), action: toMark),
+              if (widget.stype == "2") ...[ // 文摘区
+                SimpleTuple2(name: getActionName(toMarkDigest), action: toMarkDigest),
+              ] else ...[
+                SimpleTuple2(name: getActionName(toMark), action: toMark),
+              ],
               SimpleTuple2(name: getActionName(toDigest), action: toDigest),
               SimpleTuple2(name: getActionName(toHighlight), action: toHighlight),
               SimpleTuple2(name: getActionName(toNoReply), action: toNoReply),
@@ -1064,7 +1068,10 @@ class _BoardSinglePageState extends State<BoardSinglePage> {
           shrinkWrap: true,
           itemCount: boardInfo.boardPostInfo.length,
           itemBuilder: (context, index) {
-            return OnePostInBoard(boardPostInfo: boardInfo.boardPostInfo[index], boardName: boardInfo.boardName, bid: boardInfo.bid, canOpt: boardInfo.canOpt, refresh: widget.refresh,);
+            return OnePostInBoard(
+              boardPostInfo: boardInfo.boardPostInfo[index], boardName: boardInfo.boardName, bid: boardInfo.bid, canOpt: boardInfo.canOpt, refresh: widget.refresh,
+              stype: widget.stype,
+            );
           },
         ),
       ],
