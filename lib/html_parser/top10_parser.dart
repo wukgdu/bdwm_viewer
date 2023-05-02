@@ -147,6 +147,9 @@ List<BlockItem> parseBlockItem(Element document) {
         if (infos.length >= 2) {
           itemBoard = infos.getRange(0, infos.length-1).join(" ");
           countComments = infos.last;
+        } else if (infos.length == 1) {
+          itemBoard = infos[0];
+          countComments = "";
         }
       } else {
         itemBoard = getTrimmedString(domInfoNodes[0]);
