@@ -550,7 +550,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
     }
     var kStr = item.postNumber;
     return OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack,
-      boardName: widget.threadPageInfo.board.text, threadid: widget.threadid,
+      boardName: widget.threadPageInfo.board.text, threadid: widget.threadid, title: widget.threadPageInfo.title,
       subIdx: subIdx, hideIt: hideIt, key: GlobalObjectKey(kStr),
     );
   }
@@ -1012,13 +1012,14 @@ Widget? gotoThreadPage(Object? arguments) {
   return ThreadApp(boardName: boardName, bid: bid, threadid: threadid, page: page, needToBoard: needToBoard, postid: postid);
 }
 
-void naviGotoThread(context, String bid, String threadid, String page, String boardName, {bool? needToBoard}) {
+void naviGotoThread(context, String bid, String threadid, String page, String boardName, {bool? needToBoard, String? postid}) {
   nv2Push(context, '/thread', arguments: {
     'bid': bid,
     'threadid': threadid,
     'page': page,
     'boardName': boardName,
     'needToBoard': needToBoard,
+    'postid': postid,
   });
 }
 

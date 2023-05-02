@@ -127,7 +127,7 @@ class _SinglePostAppState extends State<SinglePostApp> {
               Expanded(
                 child: SingleChildScrollView(
                   child: OnePostComponent(bid: widget.bid, onePostInfo: singlePostInfo.postInfo,
-                    threadid: singlePostInfo.threadid, boardName: boardName,
+                    threadid: singlePostInfo.threadid, boardName: boardName, title: singlePostInfo.title,
                     refreshCallBack: () {
                       refresh();
                     },

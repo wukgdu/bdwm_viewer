@@ -12,7 +12,7 @@ import './constants.dart';
 import './board.dart' show getOptOptions, SimpleTuple2, showRatePostDialog;
 import '../bdwm/admin_board.dart';
 import '../html_parser/read_thread_parser.dart';
-import '../globalvars.dart' show globalConfigInfo;
+import '../globalvars.dart' show globalConfigInfo, v2Host;
 import '../pages/detail_image.dart';
 import './html_widget.dart';
 import '../router.dart' show nv2Push;
@@ -146,7 +146,8 @@ class _BanUserDialogState extends State<BanUserDialog> {
 
 class OperateComponent extends StatefulWidget {
   final String bid;
-  final String? boardName;
+  final String boardName;
+  final String title;
   final String threadid;
   final String postid;
   final String uid;
@@ -155,7 +156,7 @@ class OperateComponent extends StatefulWidget {
   const OperateComponent({
     super.key,
     required this.bid, required this.threadid, required this.postid, required this.uid,
-    required this.refreshCallBack, this.boardName, required this.onePostInfo,
+    required this.refreshCallBack, required this.boardName, required this.onePostInfo, required this.title,
   });
 
   @override
@@ -373,6 +374,11 @@ class _OperateComponentState extends State<OperateComponent> {
                 'parentid': widget.postid,
                 'receiver': widget.onePostInfo.authorInfo.userName,
               });
+            } else if (value == "分享") {
+              var sharedText = "$v2Host/post-read.php?bid=${widget.bid}&threadid=${widget.threadid}&page=a&postid=${widget.postid}#${widget.postid}";
+              sharedText += "\n${widget.title} - ${widget.boardName}";
+              sharedText += "\n${widget.onePostInfo.postNumber} 赞${widget.onePostInfo.upCount}/踩${widget.onePostInfo.downCount}";
+              shareWithResultWrap(context, sharedText, subject: "分享帖子");
             }
           },
           itemBuilder: (context) {
@@ -395,6 +401,10 @@ class _OperateComponentState extends State<OperateComponent> {
                 value: "回站内信",
                 enabled: widget.onePostInfo.authorInfo.userName.toLowerCase() != "anonymous",
                 child: const Text("回站内信"),
+              ),
+              const PopupMenuItem(
+                value: "分享",
+                child: Text("分享"),
               ),
             ];
           },
@@ -662,13 +672,14 @@ class OnePostComponent extends StatefulWidget {
   final OnePostInfo onePostInfo;
   final String bid;
   final String threadid;
-  final String? boardName;
+  final String boardName;
+  final String title;
   final Function refreshCallBack;
   final int? subIdx;
   final bool? hideIt;
 
   const OnePostComponent({Key? key, required this.onePostInfo, required this.bid, required this.refreshCallBack,
-    this.boardName, required this.threadid, this.subIdx, this.hideIt}) : super(key: key);
+    required this.boardName, required this.threadid, this.subIdx, this.hideIt, required this.title}) : super(key: key);
 
   @override
   State<OnePostComponent> createState() => _OnePostComponentState();
@@ -831,7 +842,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                                   return;
                                 }
                                 if (opt == "ban") {
-                                  var boardName = widget.boardName ?? "封禁";
+                                  var boardName = widget.boardName;
                                   boardName = boardName.split('(')[0];
                                   if (!mounted) { return; }
                                   showAlertDialog2(context, BanUserDialog(
@@ -876,7 +887,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                     const Divider(),
                     OperateComponent(bid: widget.bid, threadid: widget.threadid, postid: widget.onePostInfo.postID,
                       uid: widget.onePostInfo.authorInfo.uid, refreshCallBack: widget.refreshCallBack,
-                      boardName: widget.boardName, onePostInfo: widget.onePostInfo,
+                      boardName: widget.boardName, onePostInfo: widget.onePostInfo, title: widget.title,
                     ),
                     if (item.attachmentInfo.isNotEmpty) ...[
                       const Divider(),
