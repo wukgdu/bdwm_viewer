@@ -120,7 +120,7 @@ class _HomeAppState extends State<HomeApp> with SingleTickerProviderStateMixin {
             },
           ),
           IconButton(
-            icon: Icon(globalUInfo.login ? Icons.account_circle : Icons.no_accounts_rounded),
+            icon: const Icon(Icons.account_circle),
             onPressed: () {
               if (globalUInfo.login) {
                 nv2Push(context, '/user', arguments: globalUInfo.uid);
