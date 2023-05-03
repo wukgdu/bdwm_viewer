@@ -14,6 +14,47 @@ import './constants.dart';
 import '../utils.dart' show checkAndRequestStoragePermission;
 import '../notification.dart' show sendNotification;
 
+class SimpleTuple2 {
+  String name;
+  String action;
+  SimpleTuple2({
+    required this.name,
+    required this.action,
+  });
+}
+
+Future<String?> getOptOptions(BuildContext context, List<SimpleTuple2> data, {bool isScrollControlled=false, Widget? desc}) async {
+  var opt = await showModalBottomSheet<String>(
+    context: context,
+    isScrollControlled: isScrollControlled,
+    builder: (BuildContext context1) {
+      return Container(
+        margin: const EdgeInsets.all(10.0),
+        child: Wrap(
+          children: [
+            if (desc != null) ...[
+              desc,
+              const Divider(),
+            ],
+            for (var datum in data) ...[
+              ListTile(
+                dense: true,
+                onTap: () { Navigator.of(context).pop(datum.action); },
+                title: Center(child: Text(datum.name, style: TextStyle(color: bdwmPrimaryColor),)),
+              ),
+            ],
+            // ListTile(
+            //   onTap: () { Navigator.of(context).pop(); },
+            //   title: Center(child: Text("取消", style: TextStyle(color: bdwmPrimaryColor),)),
+            // ),
+          ],
+        ),
+      );
+    }
+  );
+  return opt;
+}
+
 Future<String?> showAlertDialog(BuildContext context, String title, Widget content, {Widget? actions1, Widget? actions2, Widget? actions3, List<Widget>? actions, bool? barrierDismissible=true}) {
   AlertDialog alert = AlertDialog(
     title: Text(title),

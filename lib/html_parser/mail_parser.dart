@@ -16,6 +16,7 @@ class MailItemInfo {
   String id = "";
   String uid = "";
   bool unread = false;
+  bool hasStar = false;
   bool hasAttachment = false;
 
   MailItemInfo.empty();
@@ -29,6 +30,7 @@ class MailItemInfo {
     required this.unread,
     required this.id,
     required this.uid,
+    required this.hasStar,
     required this.hasAttachment,
   });
 }
@@ -98,6 +100,7 @@ MailListInfo parseMailList(String htmlStr) {
     String nickName = "";
     String time = "";
     bool unread = false;
+    bool hasStar = mdom.querySelector(".star.active") != null;
     if (mailDom != null) {
       title = getTrimmedString(mailDom.querySelector("div.title"));
       content = getTrimmedString(mailDom.querySelector("div.content"));
@@ -115,7 +118,10 @@ MailListInfo parseMailList(String htmlStr) {
         }
       }
     }
-    mailItems.add(MailItemInfo(title: title, content: content, time: time, userName: userName, nickName: nickName, avatar: avatar, unread: unread, id: id, uid: uid, hasAttachment: hasAttachment));
+    mailItems.add(MailItemInfo(
+      title: title, content: content, time: time, userName: userName, nickName: nickName, avatar: avatar, unread: unread, id: id, uid: uid, hasAttachment: hasAttachment,
+      hasStar: hasStar,
+    ));
   }
   int maxPage = 0;
   var pagingDivsDom = document.querySelectorAll(".paging div");

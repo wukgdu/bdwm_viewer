@@ -163,9 +163,9 @@ Future<MailRes> bdwmOperateMail({required String postid, required String action}
     return MailRes.error(success: false, error: -1, result: networkErrorText);
   }
   var respContent = json.decode(resp.body);
-  MailRes postRes = MailRes(
-    success: respContent['results'][0]==false,
+  MailRes res = MailRes(
+    success: (respContent['success']==true) && (respContent['results'][0]==false),
     error: respContent['error'] ?? 0,
   );
-  return postRes;
+  return res;
 }

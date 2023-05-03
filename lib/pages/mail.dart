@@ -186,7 +186,7 @@ class _MailListAppState extends State<MailListApp> {
               ),
             ],
           ),
-          body: MailListPage(mailListInfo: mailListInfo, type: type,),
+          body: MailListPage(mailListInfo: mailListInfo, type: type, refreshCallBack: () { refresh(); },),
           bottomNavigationBar: BottomAppBar(
             shape: null,
             // color: Colors.blue,

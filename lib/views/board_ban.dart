@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../bdwm/admin_board.dart';
 import '../html_parser/board_ban_parser.dart' show BoardBanInfo;
-import './board.dart' show getOptOptions, SimpleTuple2;
 import './read_thread.dart' show BanUserDialog;
 import './constants.dart' show bdwmPrimaryColor;
 

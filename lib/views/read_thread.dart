@@ -9,7 +9,7 @@ import '../bdwm/forward.dart';
 import './collection.dart';
 import './utils.dart';
 import './constants.dart';
-import './board.dart' show getOptOptions, SimpleTuple2, showRatePostDialog;
+import './board.dart' show showRatePostDialog;
 import '../bdwm/admin_board.dart';
 import '../html_parser/read_thread_parser.dart';
 import '../globalvars.dart' show globalConfigInfo, v2Host;

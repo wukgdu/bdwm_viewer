@@ -7,6 +7,7 @@ import './collection.dart' show showCollectionDialog;
 import '../bdwm/collection.dart';
 import '../bdwm/forward.dart';
 import './utils.dart';
+import './constants.dart' show bdwmPrimaryColor;
 import '../globalvars.dart' show globalConfigInfo;
 import '../bdwm/mail.dart' show bdwmOperateMail;
 import '../router.dart' show nv2Push;
@@ -14,7 +15,8 @@ import '../router.dart' show nv2Push;
 class MailListPage extends StatefulWidget {
   final MailListInfo mailListInfo;
   final String type;
-  const MailListPage({super.key, required this.mailListInfo, required this.type});
+  final Function refreshCallBack;
+  const MailListPage({super.key, required this.mailListInfo, required this.type, required this.refreshCallBack});
 
   @override
   State<MailListPage> createState() => _MailListPageState();
@@ -29,6 +31,30 @@ class _MailListPageState extends State<MailListPage> {
         var item = widget.mailListInfo.mailItems[index];
         return Card(
           child: ListTile(
+            onLongPress: widget.type == "5" ? null : () async {
+              var toStar = item.hasStar ? "unmark" : "mark";
+              var toStarName = item.hasStar ? "取消星标" : "星标";
+              var opt = await getOptOptions(context, [
+                SimpleTuple2(name: toStarName, action: toStar),
+                SimpleTuple2(name: "删除", action: "delete"),
+              ]);
+              if (opt == null) { return; }
+              var res = await bdwmOperateMail(postid: item.id, action: opt);
+              var title = "站内信";
+              var actionName = opt == "delete" ? "删除" : toStarName;
+              var content = "$actionName成功";
+              if (!res.success) {
+                content = "$actionName失败";
+                if (res.error == -1) {
+                  content = res.result!;
+                }
+              }
+              if (!mounted) { return; }
+              await showInformDialog(context, title, content);
+              if (res.success) {
+                widget.refreshCallBack();
+              }
+            },
             onTap: () {
               nv2Push(context, '/mailDetail', arguments: {
                 'postid': item.id,
@@ -55,6 +81,12 @@ class _MailListPageState extends State<MailListPage> {
             title: Text.rich(
               TextSpan(
                 children: [
+                  if (item.hasStar) ...[
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: Icon(Icons.star, color: bdwmPrimaryColor, size: 12),
+                    ),
+                  ],
                   TextSpan(text: item.userName),
                   const TextSpan(text: "  "),
                   TextSpan(text: item.time),
@@ -65,9 +97,9 @@ class _MailListPageState extends State<MailListPage> {
               TextSpan(
                 children: [
                   if (item.unread)
-                    const WidgetSpan(
+                    WidgetSpan(
                       alignment: PlaceholderAlignment.middle,
-                      child: Icon(Icons.circle, color: Colors.red, size: 8),
+                      child: Icon(Icons.circle, color: bdwmPrimaryColor, size: 8),
                     ),
                   WidgetSpan(child: Text(
                     item.title,
@@ -153,7 +185,7 @@ class _MailDetailPageState extends State<MailDetailPage> {
         Card(
           child: Wrap(
             children: [
-              if (widget.type.isEmpty) // 收件箱
+              if (widget.type.isEmpty || widget.type == "3") // 收件箱，星标
                 TextButton(
                   onPressed: () {
                     nv2Push(context, "/mailNew", arguments: {

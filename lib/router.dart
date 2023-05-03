@@ -241,16 +241,16 @@ class MainPageBuilder {
       case "/mail":
         return const MailListApp();
       case "/mailDetail":
-        String? postid;
-        String? mailType;
+        String postid;
+        String mailType;
         if (settings.arguments != null) {
           var settingsMap = settings.arguments as Map;
-          postid = settingsMap['postid'] as String?;
-          mailType = settingsMap['type'] as String?;
+          postid = settingsMap['postid'] as String;
+          mailType = settingsMap['type'] as String;
         } else {
           return null;
         }
-        return MailDetailApp(postid: postid!, type: mailType!,);
+        return MailDetailApp(postid: postid, type: mailType,);
       case "/mailNew":
         String? bid;
         String? parentid;
