@@ -126,6 +126,87 @@ class _MyFloatingActionButtonMenuState extends State<MyFloatingActionButtonMenu>
   }
 }
 
+class DragToPrevNextPageOverlay2 {
+  // simple arrow icon
+  OverlayEntry? _overlayEntry;
+  double threshold;
+  Offset initOffset = const Offset(0, 0);
+  ValueNotifier<double> dx = ValueNotifier<double>(0.0);
+  int direction=0;
+
+  DragToPrevNextPageOverlay2({
+    required this.threshold,
+  });
+
+  void dispose() {
+    dx.dispose();
+  }
+
+  void insert(BuildContext context, {required Offset initOffset}) {
+    direction = 0;
+    dx.value = 0.0;
+    final deviceSize = MediaQuery.of(context).size;
+    this.initOffset = initOffset;
+    _overlayEntry = create(deviceSize);
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  void update(Offset newOffset) {
+    dx.value = newOffset.dx - initOffset.dx;
+    // _overlayEntry?.markNeedsBuild();
+  }
+
+  void remove() {
+    direction = 0;
+    initOffset = const Offset(0, 0);
+    _overlayEntry?.remove();
+  }
+
+  OverlayEntry create(Size deviceSize) {
+    return OverlayEntry(
+      builder: (context) {
+        return ValueListenableBuilder(
+          valueListenable: dx,
+          builder: (context, value, child) {
+            var ndx = value as double;
+            var rdx = ndx.abs();
+            if (ndx == 0.0) {
+              return Container();
+            }
+            if (rdx >= threshold) {
+              rdx = threshold;
+              direction = ndx < 0 ? 1 : -1;
+            } else {
+              direction = 0;
+            }
+            double borderDistance = 12.0 + 12.0 * rdx / threshold;
+            double entrySize = 20.0 + 32.0 * rdx / threshold;
+            if (entrySize > 36.0) { entrySize = 36.0; }
+            double arrowSize = entrySize * 0.7;
+            return Positioned(
+              top: deviceSize.height / 2 - entrySize / 2,
+              left: ndx < 0.0 ?  deviceSize.width-entrySize-borderDistance : borderDistance,
+              child: Container(
+                width: entrySize,
+                height: entrySize,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: bdwmPrimaryColor.withOpacity(0.5),
+                ),
+                child: Icon(
+                  ndx < 0.0 ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded,
+                  color: direction == 0 ? Colors.white : bdwmPrimaryColor,
+                  size: arrowSize,
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
 class _ArrowPainter extends CustomPainter {
   // final Animation<double> percentage;
   final Color color;
@@ -158,6 +239,7 @@ class _ArrowPainter extends CustomPainter {
 }
 
 class DragToPrevNextPageOverlay {
+  // progress arrow
   OverlayEntry? _overlayEntry;
   double threshold;
   Offset initOffset = const Offset(0, 0);
@@ -215,7 +297,7 @@ class DragToPrevNextPageOverlay {
             }
             return Positioned(
               top: deviceSize.height / 2 - entryHeight / 2,
-              left: ndx < 0.0 ?  deviceSize.width-entryWidth-20 : 20,
+              left: ndx < 0.0 ?  deviceSize.width-entryWidth-10 : 10,
               child: Transform.scale(
                 scaleX: ndx < 0.0 ? -1 : 1,
                 child: SizedBox(
@@ -295,7 +377,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
   // double? _lastTrailingEdge;
   final ValueNotifier<bool> _showBottomAppBar = ValueNotifier<bool>(true);
   bool _ignorePrevNext = true;
-  final DragToPrevNextPageOverlay overlayController = DragToPrevNextPageOverlay(threshold: 20.0);
+  late final DragToPrevNextPageOverlay2 overlayController;
 
   @override
   void initState() {
@@ -310,6 +392,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
     }
     WidgetsBinding.instance.addPostFrameCallback((_){
       // _initScrollHeight = scrollKey.currentContext?.size?.height;
+      overlayController = DragToPrevNextPageOverlay2(threshold: MediaQuery.of(context).size.width / 4.0);
       if (widget.postid != null) {
         var i = 0;
         while (i<widget.threadPageInfo.posts.length) {
