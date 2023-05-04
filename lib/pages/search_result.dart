@@ -10,16 +10,16 @@ import '../views/search.dart';
 import '../html_parser/search_parser.dart';
 import '../views/search_result.dart';
 
-class SimpleSearchResultApp extends StatefulWidget {
+class SimpleSearchResultPage extends StatefulWidget {
   final String mode;
   final String keyWord;
-  const SimpleSearchResultApp({super.key, required this.mode, required this.keyWord});
+  const SimpleSearchResultPage({super.key, required this.mode, required this.keyWord});
 
   @override
-  State<SimpleSearchResultApp> createState() => _SimpleSearchResultAppState();
+  State<SimpleSearchResultPage> createState() => _SimpleSearchResultPageState();
 }
 
-class _SimpleSearchResultAppState extends State<SimpleSearchResultApp> {
+class _SimpleSearchResultPageState extends State<SimpleSearchResultPage> {
   int page = 1;
   late CancelableOperation getDataCancelable;
 
@@ -102,7 +102,7 @@ class _SimpleSearchResultAppState extends State<SimpleSearchResultApp> {
           appBar: AppBar(
             title: Text("搜索 ${widget.keyWord} 结果"),
           ),
-          body: SimpleResultPage(ssRes: simpleSearchRes, mode: widget.mode),
+          body: SimpleResultView(ssRes: simpleSearchRes, mode: widget.mode),
           bottomNavigationBar: BottomAppBar(
             shape: null,
             // color: Colors.blue,
@@ -166,15 +166,15 @@ class _SimpleSearchResultAppState extends State<SimpleSearchResultApp> {
     );
   }
 }
-class ComplexSearchResultApp extends StatefulWidget {
+class ComplexSearchResultPage extends StatefulWidget {
   final PostSearchSettings pss;
-  const ComplexSearchResultApp({super.key, required this.pss,});
+  const ComplexSearchResultPage({super.key, required this.pss,});
 
   @override
-  State<ComplexSearchResultApp> createState() => _ComplexSearchResultAppState();
+  State<ComplexSearchResultPage> createState() => _ComplexSearchResultPageState();
 }
 
-class _ComplexSearchResultAppState extends State<ComplexSearchResultApp> {
+class _ComplexSearchResultPageState extends State<ComplexSearchResultPage> {
   int page = 1;
   late CancelableOperation getDataCancelable;
 
@@ -276,7 +276,7 @@ class _ComplexSearchResultAppState extends State<ComplexSearchResultApp> {
           appBar: AppBar(
             title: const Text("搜索结果"),
           ),
-          body: ComplexResultPage(csRes: complexSearchRes,),
+          body: ComplexResultView(csRes: complexSearchRes,),
           bottomNavigationBar: BottomAppBar(
             shape: null,
             // color: Colors.blue,

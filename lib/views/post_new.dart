@@ -19,7 +19,7 @@ import './utils.dart';
 import '../router.dart' show nv2Pop, forceRefresh, nv2Replace;
 import './editor.dart' show FquillEditor, FquillEditorToolbar, genController;
 
-class PostNewPage extends StatefulWidget {
+class PostNewView extends StatefulWidget {
   final String bid;
   final String? postid;
   final String? parentid;
@@ -28,13 +28,13 @@ class PostNewPage extends StatefulWidget {
   final String? quoteText;
   final String? nickName;
   final FutureOrFunction<String> updateQuote;
-  const PostNewPage({Key? key, required this.bid, this.postid, this.parentid, required this.postNewInfo, this.quoteText, required this.updateQuote, this.nickName}) : super(key: key);
+  const PostNewView({Key? key, required this.bid, this.postid, this.parentid, required this.postNewInfo, this.quoteText, required this.updateQuote, this.nickName}) : super(key: key);
 
   @override
-  State<PostNewPage> createState() => _PostNewPageState();
+  State<PostNewView> createState() => _PostNewViewState();
 }
 
-class _PostNewPageState extends State<PostNewPage> {
+class _PostNewViewState extends State<PostNewView> {
   late final fquill.QuillController _controller;
   TextEditingController titleValue = TextEditingController();
   bool needNoreply = false;
@@ -397,18 +397,18 @@ class _PostNewPageState extends State<PostNewPage> {
   }
 }
 
-class PostNewFuturePage extends StatefulWidget {
+class PostNewFutureView extends StatefulWidget {
   final String bid;
   final String? postid;
   final String? parentid;
   final String? nickName;
-  const PostNewFuturePage({super.key, required this.bid, this.postid, this.parentid, this.nickName});
+  const PostNewFutureView({super.key, required this.bid, this.postid, this.parentid, this.nickName});
 
   @override
-  State<PostNewFuturePage> createState() => _PostNewFuturePageState();
+  State<PostNewFutureView> createState() => _PostNewFutureViewState();
 }
 
-class _PostNewFuturePageState extends State<PostNewFuturePage> {
+class _PostNewFutureViewState extends State<PostNewFutureView> {
   late CancelableOperation getDataCancelable;
 
   Future<PostNewInfo> getData() async {
@@ -482,7 +482,7 @@ class _PostNewFuturePageState extends State<PostNewFuturePage> {
             child: Text(postNewInfo.errorMessage!),
           );
         }
-        return PostNewPage(
+        return PostNewView(
           postNewInfo: postNewInfo, parentid: widget.parentid,
           postid: widget.postid, bid: widget.bid, quoteText: quoteText,
           nickName: widget.nickName,

@@ -9,14 +9,14 @@ import '../pages/read_thread.dart';
 import '../router.dart' show nv2Push;
 import './html_widget.dart' show genSimpleCachedImageProvider;
 
-class Top100Page extends StatefulWidget {
-  const Top100Page({Key? key}) : super(key: key);
+class Top100View extends StatefulWidget {
+  const Top100View({Key? key}) : super(key: key);
 
   @override
-  State<Top100Page> createState() => _Top100PageState();
+  State<Top100View> createState() => _Top100ViewState();
 }
 
-class _Top100PageState extends State<Top100Page> {
+class _Top100ViewState extends State<Top100View> {
   final _scrollController = ScrollController();
   late CancelableOperation getDataCancelable;
 

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../views/mail_new.dart';
 
-class MailNewApp extends StatelessWidget {
+class MailNewPage extends StatelessWidget {
   final String? bid;
   final String? parentid;
   final String? receiver;
-  const MailNewApp({Key? key, this.bid, this.parentid, this.receiver}) : super(key: key);
+  const MailNewPage({Key? key, this.bid, this.parentid, this.receiver}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class MailNewApp extends StatelessWidget {
       appBar: AppBar(
         title: const Text("站内信/新建"),
       ),
-      body: MailNewFuturePage(bid: bid, parentid: parentid, receiver: receiver),
+      body: MailNewFutureView(bid: bid, parentid: parentid, receiver: receiver),
     );
   }
 }

@@ -4,15 +4,15 @@ import './constants.dart';
 import '../html_parser/zone_parser.dart';
 import '../router.dart' show nv2Push;
 
-class ZonePage extends StatefulWidget {
+class ZoneView extends StatefulWidget {
   final ZoneInfo zoneInfo;
-  const ZonePage({super.key, required this.zoneInfo});
+  const ZoneView({super.key, required this.zoneInfo});
 
   @override
-  State<ZonePage> createState() => _ZonePageState();
+  State<ZoneView> createState() => _ZoneViewState();
 }
 
-class _ZonePageState extends State<ZonePage> {
+class _ZoneViewState extends State<ZoneView> {
   Widget oneItem(ZoneItemInfo ziInfo) {
     var size = MediaQuery.of(context).size;
     var itemWidth = size.width / 2;

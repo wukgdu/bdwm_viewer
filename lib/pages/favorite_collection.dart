@@ -10,14 +10,14 @@ import '../html_parser/favorite_collection_parser.dart';
 import '../bdwm/req.dart' show bdwmClient;
 import '../utils.dart' show breakLongText;
 
-class FavoriteCollectionApp extends StatefulWidget {
-  const FavoriteCollectionApp({super.key});
+class FavoriteCollectionPage extends StatefulWidget {
+  const FavoriteCollectionPage({super.key});
 
   @override
-  State<FavoriteCollectionApp> createState() => _FavoriteCollectionAppState();
+  State<FavoriteCollectionPage> createState() => _FavoriteCollectionPageState();
 }
 
-class _FavoriteCollectionAppState extends State<FavoriteCollectionApp> {
+class _FavoriteCollectionPageState extends State<FavoriteCollectionPage> {
   late CancelableOperation getDataCancelable;
   static const String title = "精华区收藏夹";
   static const drawer = MyDrawer(selectedIdx: 5);

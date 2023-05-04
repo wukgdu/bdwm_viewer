@@ -317,11 +317,11 @@ class TensComponent extends StatelessWidget {
   }
 }
 
-class TopHomePage extends StatefulWidget {
-  const TopHomePage({Key? key}) : super(key: key);
+class TopHomeView extends StatefulWidget {
+  const TopHomeView({Key? key}) : super(key: key);
 
   @override
-  State<TopHomePage> createState() => _TopHomePageState();
+  State<TopHomeView> createState() => _TopHomeViewState();
 }
 
 Future<HomeInfo> getDataTop10() async {
@@ -332,7 +332,7 @@ Future<HomeInfo> getDataTop10() async {
   return parseHome(resp.body);
 }
 
-class _TopHomePageState extends State<TopHomePage> {
+class _TopHomeViewState extends State<TopHomeView> {
   final _titleFont = const TextStyle(fontSize: 20, fontWeight: FontWeight.normal);
   final _scrollController = ScrollController();
   late CancelableOperation getDataCancelable;

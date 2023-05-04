@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import '../views/favorite.dart';
 import '../views/drawer.dart';
 
-class FavoriteApp extends StatefulWidget {
-  const FavoriteApp({super.key});
+class FavoritePage extends StatefulWidget {
+  const FavoritePage({super.key});
 
   @override
-  State<FavoriteApp> createState() => _FavoriteAppState();
+  State<FavoritePage> createState() => _FavoritePageState();
 }
 
-class _FavoriteAppState extends State<FavoriteApp> {
+class _FavoritePageState extends State<FavoritePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +19,7 @@ class _FavoriteAppState extends State<FavoriteApp> {
       appBar: AppBar(
         title: const Text("版面收藏夹"),
       ),
-      body: const FavoriteFuturePage(),
+      body: const FavoriteFutureView(),
     );
   }
 }

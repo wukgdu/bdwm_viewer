@@ -7,20 +7,20 @@ import '../globalvars.dart';
 import '../views/read_thread.dart' show OnePostComponent;
 import './read_thread.dart' show naviGotoThreadByLink;
 
-class SinglePostApp extends StatefulWidget {
+class SinglePostPage extends StatefulWidget {
   final String bid;
   final String postid;
   final String? boardName;
   final String? type;
-  const SinglePostApp({Key? key, required this.bid, this.boardName, required this.postid, this.type}) : super(key: key);
+  const SinglePostPage({Key? key, required this.bid, this.boardName, required this.postid, this.type}) : super(key: key);
   // ThreadApp.empty({Key? key}) : super(key: key);
 
   @override
   // State<ThreadApp> createState() => _ThreadAppState();
-  State<SinglePostApp> createState() => _SinglePostAppState();
+  State<SinglePostPage> createState() => _SinglePostPageState();
 }
 
-class _SinglePostAppState extends State<SinglePostApp> {
+class _SinglePostPageState extends State<SinglePostPage> {
   static const _titleFont = TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
   late CancelableOperation getDataCancelable;
 

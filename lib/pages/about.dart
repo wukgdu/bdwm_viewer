@@ -6,8 +6,8 @@ import '../views/constants.dart' show textLinkStyle;
 import '../check_update.dart' show innerLinkForBBS, curVersionForBBS;
 import '../router.dart' show nv2Push;
 
-class AboutApp extends StatelessWidget {
-  const AboutApp({Key? key}) : super(key: key);
+class AboutPage extends StatelessWidget {
+  const AboutPage({Key? key}) : super(key: key);
   final _titleStyle = const TextStyle(fontSize: 20, fontWeight: FontWeight.normal);
   final _contentStyle = const TextStyle(fontSize: 16);
 

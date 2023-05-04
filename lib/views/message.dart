@@ -130,16 +130,16 @@ class _UserJumpByNameComponentState extends State<UserJumpByNameComponent> {
   }
 }
 
-class MessageListPage extends StatefulWidget {
+class MessageListView extends StatefulWidget {
   final MessageBriefNotifier users;
   final String filterName;
-  const MessageListPage({super.key, required this.users, required this.filterName});
+  const MessageListView({super.key, required this.users, required this.filterName});
 
   @override
-  State<MessageListPage> createState() => _MessageListPageState();
+  State<MessageListView> createState() => _MessageListViewState();
 }
 
-class _MessageListPageState extends State<MessageListPage> {
+class _MessageListViewState extends State<MessageListView> {
   final _controller = ScrollController();
   Map<String, String> uName2ID = {};
 
@@ -240,16 +240,16 @@ class _MessageListPageState extends State<MessageListPage> {
   }
 }
 
-class MessagePersonPage extends StatefulWidget {
+class MessagePersonView extends StatefulWidget {
   final String withWho;
   final int count;
-  const MessagePersonPage({super.key, required this.withWho, this.count=50});
+  const MessagePersonView({super.key, required this.withWho, this.count=50});
 
   @override
-  State<MessagePersonPage> createState() => _MessagePersonPageState();
+  State<MessagePersonView> createState() => _MessagePersonViewState();
 }
 
-class _MessagePersonPageState extends State<MessagePersonPage> {
+class _MessagePersonViewState extends State<MessagePersonView> {
   late CancelableOperation getDataCancelable;
   final ScrollController _controller = ScrollController();
   TextEditingController contentController = TextEditingController();
@@ -284,7 +284,7 @@ class _MessagePersonPageState extends State<MessagePersonPage> {
   }
 
   @override
-  void didUpdateWidget(covariant MessagePersonPage oldWidget) {
+  void didUpdateWidget(covariant MessagePersonView oldWidget) {
     super.didUpdateWidget(oldWidget);
     update();
   }

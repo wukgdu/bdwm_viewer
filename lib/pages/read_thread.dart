@@ -334,7 +334,7 @@ class DragToPrevNextPageOverlay {
   }
 }
 
-class ThreadDetailApp extends StatefulWidget {
+class ThreadDetailPage extends StatefulWidget {
   final Function refreshCallBack;
   final Function goPage;
   final ThreadPageInfo threadPageInfo;
@@ -348,7 +348,7 @@ class ThreadDetailApp extends StatefulWidget {
   final bool tiebaForm;
   final Function toggleTiebaForm;
   final bool showFAB;
-  const ThreadDetailApp({super.key,
+  const ThreadDetailPage({super.key,
     required this.refreshCallBack, required this.threadPageInfo, required this.threadLink,
     required this.page, required this.goPage, required this.userName,
     required this.bid, required this.threadid, this.postid, this.needToBoard,
@@ -357,7 +357,7 @@ class ThreadDetailApp extends StatefulWidget {
   });
 
   @override
-  State<ThreadDetailApp> createState() => _ThreadDetailAppState();
+  State<ThreadDetailPage> createState() => _ThreadDetailPageState();
 }
 
 // double? _initScrollHeight;
@@ -366,7 +366,7 @@ class ThreadDetailApp extends StatefulWidget {
 // }
 // 回复帖子主题帖重新刷新后，class内state的initScrollHeight会变化，可能因为输入法占了屏幕？
 // 因此一开始保留这个变量用作之后的判断
-class _ThreadDetailAppState extends State<ThreadDetailApp> {
+class _ThreadDetailPageState extends State<ThreadDetailPage> {
   final _titleFont = const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<bool> marked = ValueNotifier<bool>(false);
@@ -418,7 +418,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
   }
 
   @override
-  void didUpdateWidget(covariant ThreadDetailApp oldWidget) {
+  void didUpdateWidget(covariant ThreadDetailPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     _ignorePrevNext = true;
     if (globalConfigInfo.getAutoHideBottomBar()) {
@@ -978,20 +978,20 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
   }
 }
 
-class ThreadApp extends StatefulWidget {
+class ThreadPage extends StatefulWidget {
   final String bid;
   final String threadid;
   final String page;
   final String? boardName;
   final bool? needToBoard;
   final String? postid;
-  const ThreadApp({Key? key, required this.bid, required this.threadid, this.boardName, required this.page, this.needToBoard, this.postid}) : super(key: key);
+  const ThreadPage({Key? key, required this.bid, required this.threadid, this.boardName, required this.page, this.needToBoard, this.postid}) : super(key: key);
 
   @override
-  State <ThreadApp> createState() =>  ThreadAppState();
+  State <ThreadPage> createState() =>  ThreadPageState();
 }
 
-class  ThreadAppState extends State <ThreadApp> {
+class  ThreadPageState extends State <ThreadPage> {
   int page = 1;
   late CancelableOperation getDataCancelable;
   bool firstTime = true;
@@ -1131,7 +1131,7 @@ class  ThreadAppState extends State <ThreadApp> {
           userName = threadPageInfo.posts.first.authorInfo.userName;
         }
         addHistory(link: threadLink, title: threadPageInfo.title, userName: userName, boardName: threadPageInfo.board.text);
-        return ThreadDetailApp(
+        return ThreadDetailPage(
           threadPageInfo: threadPageInfo,
           page: page,
           userName: userName,
@@ -1186,7 +1186,7 @@ Widget? gotoThreadPage(Object? arguments) {
   } else {
     return null;
   }
-  return ThreadApp(boardName: boardName, bid: bid, threadid: threadid, page: page, needToBoard: needToBoard, postid: postid);
+  return ThreadPage(boardName: boardName, bid: bid, threadid: threadid, page: page, needToBoard: needToBoard, postid: postid);
 }
 
 void naviGotoThread(context, String bid, String threadid, String page, String boardName, {bool? needToBoard, String? postid}) {

@@ -294,8 +294,8 @@ class _ImageCacheComponentState extends State<ImageCacheComponent> {
   }
 }
 
-class FunFunFunPage extends StatelessWidget {
-  const FunFunFunPage({super.key});
+class FunFunFunView extends StatelessWidget {
+  const FunFunFunView({super.key});
 
   @override
   Widget build(BuildContext context) {

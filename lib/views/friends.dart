@@ -10,15 +10,15 @@ import '../router.dart' show nv2Push;
 import './utils.dart' show showPageDialog;
 import './html_widget.dart' show genSimpleCachedImageProvider;
 
-class FriendPage extends StatefulWidget {
+class FriendView extends StatefulWidget {
   final String mode;
-  const FriendPage({super.key, required this.mode});
+  const FriendView({super.key, required this.mode});
 
   @override
-  State<FriendPage> createState() => _FriendPageState();
+  State<FriendView> createState() => _FriendViewState();
 }
 
-class _FriendPageState extends State<FriendPage> {
+class _FriendViewState extends State<FriendView> {
   final _scrollController = ScrollController();
   late CancelableOperation getDataCancelable;
   int page = 1;

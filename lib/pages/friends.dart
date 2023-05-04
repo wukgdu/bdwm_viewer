@@ -5,14 +5,9 @@ import '../views/drawer.dart';
 import '../views/friends.dart';
 import '../router.dart' show nv2Push;
 
-class FriendsApp extends StatefulWidget {
-  const FriendsApp({super.key});
+class FriendsPage extends StatelessWidget {
+  const FriendsPage({super.key});
 
-  @override
-  State<FriendsApp> createState() => _FriendsAppState();
-}
-
-class _FriendsAppState extends State<FriendsApp> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -41,9 +36,9 @@ class _FriendsAppState extends State<FriendsApp> {
         ),
         body: const TabBarView(
           children: [
-            FriendPage(mode: ""),
-            FriendPage(mode: "fan"),
-            FriendPage(mode: "reject"),
+            FriendView(mode: ""),
+            FriendView(mode: "fan"),
+            FriendView(mode: "reject"),
           ],
         ),
       ),

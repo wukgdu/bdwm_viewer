@@ -64,17 +64,17 @@ void reorderCollectionWrap(String httpPath, int index, BuildContext context, {Fu
   });
 }
 
-class CollectionPage extends StatefulWidget {
+class CollectionView extends StatefulWidget {
   final CollectionList collectionList;
   final String title;
   final Function? refresh;
-  const CollectionPage({super.key, required this.collectionList, required this.title, this.refresh});
+  const CollectionView({super.key, required this.collectionList, required this.title, this.refresh});
 
   @override
-  State<CollectionPage> createState() => _CollectionPageState();
+  State<CollectionView> createState() => _CollectionViewState();
 }
 
-class _CollectionPageState extends State<CollectionPage> {
+class _CollectionViewState extends State<CollectionView> {
   final _controller = ScrollController();
   String oPath = "";
   int oIndex = -1;
@@ -91,7 +91,7 @@ class _CollectionPageState extends State<CollectionPage> {
   }
 
   @override
-  void didUpdateWidget(covariant CollectionPage oldWidget) {
+  void didUpdateWidget(covariant CollectionView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.collectionList.collectionItems.isNotEmpty) {
       firstIndex = widget.collectionList.collectionItems.first.id - 1;
@@ -473,17 +473,17 @@ class _CollectionPageState extends State<CollectionPage> {
   }
 }
 
-class CollectionArticlePage extends StatefulWidget {
+class CollectionArticleView extends StatefulWidget {
   final CollectionArticle collectionArticle;
   final Function refreshCallBack;
   final String title;
-  const CollectionArticlePage({super.key, required this.collectionArticle, required this.refreshCallBack, required this.title});
+  const CollectionArticleView({super.key, required this.collectionArticle, required this.refreshCallBack, required this.title});
 
   @override
-  State<CollectionArticlePage> createState() => _CollectionArticlePageState();
+  State<CollectionArticleView> createState() => _CollectionArticleViewState();
 }
 
-class _CollectionArticlePageState extends State<CollectionArticlePage> {
+class _CollectionArticleViewState extends State<CollectionArticleView> {
   final _contentFont = TextStyle(fontSize: globalConfigInfo.contentFontSize, fontWeight: FontWeight.normal);
   @override
   Widget build(BuildContext context) {

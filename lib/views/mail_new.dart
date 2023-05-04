@@ -20,7 +20,7 @@ import './upload.dart';
 import '../router.dart' show nv2Pop;
 import './editor.dart' show FquillEditor, FquillEditorToolbar, genController;
 
-class MailNewPage extends StatefulWidget {
+class MailNewView extends StatefulWidget {
   final String? bid;
   final String? parentid;
   final String? content;
@@ -29,13 +29,13 @@ class MailNewPage extends StatefulWidget {
   final String? title;
   final String? receivers;
   final FutureOrFunction<String> updateQuote;
-  const MailNewPage({super.key, this.bid, this.parentid, this.content, this.quote, required this.mailNewInfo, this.title, this.receivers, required this.updateQuote});
+  const MailNewView({super.key, this.bid, this.parentid, this.content, this.quote, required this.mailNewInfo, this.title, this.receivers, required this.updateQuote});
 
   @override
-  State<MailNewPage> createState() => _MailNewPageState();
+  State<MailNewView> createState() => _MailNewViewState();
 }
 
-class _MailNewPageState extends State<MailNewPage> {
+class _MailNewViewState extends State<MailNewView> {
   late final fquill.QuillController _controller;
   TextEditingController titleValue = TextEditingController();
   TextEditingController receiveValue = TextEditingController();
@@ -350,17 +350,17 @@ class _MailNewPageState extends State<MailNewPage> {
   }
 }
 
-class MailNewFuturePage extends StatefulWidget {
+class MailNewFutureView extends StatefulWidget {
   final String? bid;
   final String? parentid;
   final String? receiver;
-  const MailNewFuturePage({super.key, this.bid, this.parentid, this.receiver});
+  const MailNewFutureView({super.key, this.bid, this.parentid, this.receiver});
 
   @override
-  State<MailNewFuturePage> createState() => _MailNewFuturePageState();
+  State<MailNewFutureView> createState() => _MailNewFutureViewState();
 }
 
-class _MailNewFuturePageState extends State<MailNewFuturePage> {
+class _MailNewFutureViewState extends State<MailNewFutureView> {
   late CancelableOperation getDataCancelable;
 
   Future<MailNewInfo> getData() async {
@@ -442,7 +442,7 @@ class _MailNewFuturePageState extends State<MailNewFuturePage> {
             child: Text(mailNewInfo.errorMessage!),
           );
         }
-        return MailNewPage(
+        return MailNewView(
           mailNewInfo: mailNewInfo, parentid: widget.parentid,
           title: mailNewInfo.title, receivers: widget.receiver ?? mailNewInfo.receivers,
           content: null, quote: quoteText, bid: widget.bid,

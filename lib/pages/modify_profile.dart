@@ -11,15 +11,15 @@ import '../views/user.dart' show RankSelectComponent;
 import '../globalvars.dart' show globalConfigInfo;
 import '../router.dart' show nv2Pop;
 
-class ModifyProfileApp extends StatefulWidget {
+class ModifyProfilePage extends StatefulWidget {
   final SelfProfileInfo selfProfileInfo;
-  const ModifyProfileApp({super.key, required this.selfProfileInfo});
+  const ModifyProfilePage({super.key, required this.selfProfileInfo});
 
   @override
-  State<ModifyProfileApp> createState() => _ModifyProfileAppState();
+  State<ModifyProfilePage> createState() => _ModifyProfilePageState();
 }
 
-class _ModifyProfileAppState extends State<ModifyProfileApp> {
+class _ModifyProfilePageState extends State<ModifyProfilePage> {
   static const hSpace = SizedBox(width: 8.0,);
   static const escChar = "[";
   TextEditingController nickNameTextController = TextEditingController();

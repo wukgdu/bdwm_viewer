@@ -77,15 +77,15 @@ class FriendsPostsInfo {
   });
 }
 
-class FriendsPostsPage extends StatefulWidget {
+class FriendsPostsView extends StatefulWidget {
   final UserInfoRes friendsInfo;
-  const FriendsPostsPage({super.key, required this.friendsInfo});
+  const FriendsPostsView({super.key, required this.friendsInfo});
 
   @override
-  State<FriendsPostsPage> createState() => _FriendsPostsPageState();
+  State<FriendsPostsView> createState() => _FriendsPostsViewState();
 }
 
-class _FriendsPostsPageState extends State<FriendsPostsPage> {
+class _FriendsPostsViewState extends State<FriendsPostsView> {
   late Stream<FriendsPostsInfo> _stream;
   late FriendsPostsInfo lastFriendsPostsInfo;
 

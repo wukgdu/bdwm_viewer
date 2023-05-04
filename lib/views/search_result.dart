@@ -5,16 +5,16 @@ import './constants.dart';
 import '../pages/read_thread.dart';
 import '../router.dart' show nv2Push;
 
-class SimpleResultPage extends StatefulWidget {
+class SimpleResultView extends StatefulWidget {
   final SimpleSearchRes ssRes;
   final String mode;
-  const SimpleResultPage({super.key, required this.ssRes, required this.mode});
+  const SimpleResultView({super.key, required this.ssRes, required this.mode});
 
   @override
-  State<SimpleResultPage> createState() => _SimpleResultPageState();
+  State<SimpleResultView> createState() => _SimpleResultViewState();
 }
 
-class _SimpleResultPageState extends State<SimpleResultPage> {
+class _SimpleResultViewState extends State<SimpleResultView> {
   Widget oneItem(SimpleSearchResItem ssri) {
     return Card(
       child: ListTile(
@@ -47,15 +47,15 @@ class _SimpleResultPageState extends State<SimpleResultPage> {
   }
 }
 
-class ComplexResultPage extends StatefulWidget {
+class ComplexResultView extends StatefulWidget {
   final ComplexSearchRes csRes;
-  const ComplexResultPage({super.key, required this.csRes});
+  const ComplexResultView({super.key, required this.csRes});
 
   @override
-  State<ComplexResultPage> createState() => _ComplexResultPageState();
+  State<ComplexResultView> createState() => _ComplexResultViewState();
 }
 
-class _ComplexResultPageState extends State<ComplexResultPage> {
+class _ComplexResultViewState extends State<ComplexResultView> {
   final _ts1 = const TextStyle(fontSize: 12, color: Colors.grey, height: 2);
   final _ts2 = const TextStyle(fontSize: 16);
   final _ts3 = const TextStyle(fontSize: 12);

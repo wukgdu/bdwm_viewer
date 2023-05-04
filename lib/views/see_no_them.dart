@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class SeeNoThemPage extends StatelessWidget {
+class SeeNoThemView extends StatelessWidget {
   final List<String> seeNoThemList;
   final Function removeOne;
-  const SeeNoThemPage({super.key, required this.seeNoThemList, required this.removeOne});
+  const SeeNoThemView({super.key, required this.seeNoThemList, required this.removeOne});
 
   @override
   Widget build(BuildContext context) {

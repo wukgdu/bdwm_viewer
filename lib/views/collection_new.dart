@@ -13,18 +13,18 @@ import './upload.dart';
 import '../router.dart' show nv2Replace, nv2Pop;
 import './editor.dart' show FquillEditor, FquillEditorToolbar, genController;
 
-class CollectionNewPage extends StatefulWidget {
+class CollectionNewView extends StatefulWidget {
   final String mode;
   final String baseOrPath;
   final CollectionNewInfo collectionNewInfo;
   final String baseName;
-  const CollectionNewPage({super.key, required this.mode, required this.baseOrPath, required this.collectionNewInfo, required this.baseName});
+  const CollectionNewView({super.key, required this.mode, required this.baseOrPath, required this.collectionNewInfo, required this.baseName});
 
   @override
-  State<CollectionNewPage> createState() => _CollectionNewPageState();
+  State<CollectionNewView> createState() => _CollectionNewViewState();
 }
 
-class _CollectionNewPageState extends State<CollectionNewPage> {
+class _CollectionNewViewState extends State<CollectionNewView> {
   late final fquill.QuillController _controller;
   TextEditingController titleValue = TextEditingController();
   bool useHtmlContent = true;

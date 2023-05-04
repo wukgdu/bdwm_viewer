@@ -4,13 +4,13 @@ import 'package:async/async.dart';
 import '../html_parser/collectionnew_parser.dart';
 import '../globalvars.dart' show genHeaders2, networkErrorText, v2Host;
 import '../bdwm/req.dart' show bdwmClient;
-import '../views/collection_new.dart' show CollectionNewPage;
+import '../views/collection_new.dart' show CollectionNewView;
 
-class CollectionNewApp extends StatefulWidget {
+class CollectionNewPage extends StatefulWidget {
   final String mode;
   final String baseOrPath;
   final String title;
-  const CollectionNewApp({
+  const CollectionNewPage({
     super.key,
     required this.mode,
     required this.baseOrPath,
@@ -18,10 +18,10 @@ class CollectionNewApp extends StatefulWidget {
   });
 
   @override
-  State<CollectionNewApp> createState() => _CollectionNewAppState();
+  State<CollectionNewPage> createState() => _CollectionNewPageState();
 }
 
-class _CollectionNewAppState extends State<CollectionNewApp> {
+class _CollectionNewPageState extends State<CollectionNewPage> {
   late CancelableOperation getDataCancelable;
 
   Future<CollectionNewInfo> getData() async {
@@ -76,7 +76,7 @@ class _CollectionNewAppState extends State<CollectionNewApp> {
               child: Text(collectionNewInfo.errorMessage!),
             );
           }
-          return CollectionNewPage(mode: widget.mode, baseOrPath: widget.baseOrPath, collectionNewInfo: collectionNewInfo, baseName: widget.title,);
+          return CollectionNewView(mode: widget.mode, baseOrPath: widget.baseOrPath, collectionNewInfo: collectionNewInfo, baseName: widget.title,);
         }
       ),
     );

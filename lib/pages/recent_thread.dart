@@ -5,14 +5,14 @@ import './read_thread.dart';
 import '../views/utils.dart' show showConfirmDialog;
 import '../utils.dart' show breakLongText;
 
-class RecentThreadApp extends StatefulWidget {
-  const RecentThreadApp({super.key});
+class RecentThreadPage extends StatefulWidget {
+  const RecentThreadPage({super.key});
 
   @override
-  State<RecentThreadApp> createState() => _RecentThreadAppState();
+  State<RecentThreadPage> createState() => _RecentThreadPageState();
 }
 
-class _RecentThreadAppState extends State<RecentThreadApp> {
+class _RecentThreadPageState extends State<RecentThreadPage> {
   @override
   Widget build(BuildContext context) {
     var itemCount = globalThreadHistory.count;

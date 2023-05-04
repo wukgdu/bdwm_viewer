@@ -136,16 +136,16 @@ class CollectionCreateComponent extends StatelessWidget {
   }
 }
 
-class CollectionApp extends StatefulWidget {
+class CollectionPage extends StatefulWidget {
   final String link;
   final String title;
-  const CollectionApp({super.key, required this.link, required this.title});
+  const CollectionPage({super.key, required this.link, required this.title});
 
   @override
-  State<CollectionApp> createState() => _CollectionAppState();
+  State<CollectionPage> createState() => _CollectionPageState();
 }
 
-class _CollectionAppState extends State<CollectionApp> {
+class _CollectionPageState extends State<CollectionPage> {
   int page = 1;
   late CancelableOperation getDataCancelable;
 
@@ -273,7 +273,7 @@ class _CollectionAppState extends State<CollectionApp> {
               ),
             ],
           ),
-          body: CollectionPage(collectionList: collectionList, title: collectionList.title, refresh: () { refresh(); },),
+          body: CollectionView(collectionList: collectionList, title: collectionList.title, refresh: () { refresh(); },),
           bottomNavigationBar: BottomAppBar(
             // shape: const CircularNotchedRectangle(),
             // color: Colors.blue,
@@ -366,16 +366,16 @@ class _CollectionAppState extends State<CollectionApp> {
   }
 }
 
-class CollectionArticleApp extends StatefulWidget {
+class CollectionArticlePage extends StatefulWidget {
   final String link;
   final String title;
-  const CollectionArticleApp({super.key, required this.link, required this.title});
+  const CollectionArticlePage({super.key, required this.link, required this.title});
 
   @override
-  State<CollectionArticleApp> createState() => _CollectionArticleAppState();
+  State<CollectionArticlePage> createState() => _CollectionArticlePageState();
 }
 
-class _CollectionArticleAppState extends State<CollectionArticleApp> {
+class _CollectionArticlePageState extends State<CollectionArticlePage> {
   late CancelableOperation getDataCancelable;
 
   Future<CollectionArticle> getData() async {
@@ -482,7 +482,7 @@ class _CollectionArticleAppState extends State<CollectionArticleApp> {
               ),
             ],
           ),
-          body: CollectionArticlePage(collectionArticle: collectionArticle, refreshCallBack: () { refresh(); }, title: widget.title),
+          body: CollectionArticleView(collectionArticle: collectionArticle, refreshCallBack: () { refresh(); }, title: widget.title),
         );
       },
     );

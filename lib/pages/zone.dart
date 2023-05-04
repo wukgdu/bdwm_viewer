@@ -7,15 +7,15 @@ import '../views/drawer.dart';
 import '../globalvars.dart';
 import '../html_parser/zone_parser.dart';
 
-class ZoneApp extends StatefulWidget {
+class ZonePage extends StatefulWidget {
   final bool? needBack;
-  const ZoneApp({super.key, this.needBack});
+  const ZonePage({super.key, this.needBack});
 
   @override
-  State<ZoneApp> createState() => _ZoneAppState();
+  State<ZonePage> createState() => _ZonePageState();
 }
 
-class _ZoneAppState extends State<ZoneApp> {
+class _ZonePageState extends State<ZonePage> {
   late CancelableOperation getDataCancelable;
   Widget? zoneDrawer;
 
@@ -96,7 +96,7 @@ class _ZoneAppState extends State<ZoneApp> {
           appBar: AppBar(
             title: const Text("版面目录"),
           ),
-          body: ZonePage(zoneInfo: zoneInfo),
+          body: ZoneView(zoneInfo: zoneInfo),
         );
       },
     );

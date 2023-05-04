@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import '../views/login.dart';
 import '../views/drawer.dart';
 
-class LoginApp extends StatelessWidget {
+class LoginPage extends StatelessWidget {
   final bool? needBack; 
-  const LoginApp({Key? key, this.needBack}) : super(key: key);
+  const LoginPage({Key? key, this.needBack}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class LoginApp extends StatelessWidget {
       appBar: AppBar(
         title: const Text("登录"),
       ),
-      body: const LoginPage(),
+      body: const LoginView(),
     );
   }
 }

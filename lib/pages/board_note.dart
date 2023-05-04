@@ -38,16 +38,16 @@ Future<bool> isDownloadNotoSansMonoCJKscOK() async {
   return file.existsSync() && file.lengthSync() == 16393784;
 }
 
-class BoardNoteApp extends StatefulWidget {
+class BoardNotePage extends StatefulWidget {
   final String bid;
   final String boardName;
-  const BoardNoteApp({super.key, required this.bid, required this.boardName});
+  const BoardNotePage({super.key, required this.bid, required this.boardName});
 
   @override
-  State<BoardNoteApp> createState() => _BoardNoteAppState();
+  State<BoardNotePage> createState() => _BoardNotePageState();
 }
 
-class _BoardNoteAppState extends State<BoardNoteApp> {
+class _BoardNotePageState extends State<BoardNotePage> {
   late CancelableOperation getDataCancelable;
   static const ts = TextStyle(fontFamily: "SimSun", fontFamilyFallback: ['monospace', 'roboto', 'serif'], height: 1.0, fontSize: 14,);
   String curFont = avaiFonts[0];

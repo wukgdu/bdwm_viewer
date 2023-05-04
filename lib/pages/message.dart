@@ -8,15 +8,15 @@ import '../services_instance.dart';
 import '../views/constants.dart' show bdwmPrimaryColor;
 import '../globalvars.dart' show globalContactInfo, globalUInfo, globalConfigInfo;
 
-class MessagelistApp extends StatefulWidget {
+class MessagelistPage extends StatefulWidget {
   final MessageBriefNotifier brief;
-  const MessagelistApp({Key? key, required this.brief}) : super(key: key);
+  const MessagelistPage({Key? key, required this.brief}) : super(key: key);
 
   @override
-  State<MessagelistApp> createState() => _MessagelistAppState();
+  State<MessagelistPage> createState() => _MessagelistPageState();
 }
 
-class _MessagelistAppState extends State<MessagelistApp> {
+class _MessagelistPageState extends State<MessagelistPage> {
   TextEditingController contentController = TextEditingController();
   String filterName = "";
   // Set<String> extraUsers = {};
@@ -136,7 +136,7 @@ class _MessagelistAppState extends State<MessagelistApp> {
               onTap: () {
                 FocusManager.instance.primaryFocus?.unfocus();
               },
-              child: MessageListPage(users: widget.brief, filterName: filterName),
+              child: MessageListView(users: widget.brief, filterName: filterName),
             ),
           ),
         ],
@@ -145,15 +145,15 @@ class _MessagelistAppState extends State<MessagelistApp> {
   }
 }
 
-class MessagePersonApp extends StatefulWidget {
+class MessagePersonPage extends StatefulWidget {
   final String userName;
-  const MessagePersonApp({super.key, required this.userName});
+  const MessagePersonPage({super.key, required this.userName});
 
   @override
-  State<MessagePersonApp> createState() => _MessagePersonAppState();
+  State<MessagePersonPage> createState() => _MessagePersonPageState();
 }
 
-class _MessagePersonAppState extends State<MessagePersonApp> {
+class _MessagePersonPageState extends State<MessagePersonPage> {
   int count = 50;
   @override
   Widget build(BuildContext context) {
@@ -173,7 +173,7 @@ class _MessagePersonAppState extends State<MessagePersonApp> {
           ),
         ],
       ),
-      body: MessagePersonPage(withWho: widget.userName, count: count,),
+      body: MessagePersonView(withWho: widget.userName, count: count,),
     );
   }
 }

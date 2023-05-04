@@ -10,7 +10,7 @@ import './pages/user.dart';
 import './pages/about.dart';
 import './pages/read_thread.dart';
 import './pages/post_new.dart';
-import './pages/collection_new.dart' show CollectionNewApp;
+import './pages/collection_new.dart' show CollectionNewPage;
 import './pages/collection.dart';
 import './pages/block.dart';
 import './pages/zone.dart';
@@ -100,7 +100,7 @@ class MainPageBuilder {
         } else {
           return null;
         }
-        return BoardApp(boardName: boardName ?? "版面", bid: bid ?? "");
+        return BoardPage(boardName: boardName ?? "版面", bid: bid ?? "");
       case "/boardSingle":
         String? boardName;
         String? bid;
@@ -115,7 +115,7 @@ class MainPageBuilder {
         } else {
           return null;
         }
-        return BoardSingleApp(boardName: boardName ?? "版面", bid: bid ?? "", stype: stype, smode: smode);
+        return BoardSinglePage(boardName: boardName ?? "版面", bid: bid ?? "", stype: stype, smode: smode);
       case "/boardNote":
         String? boardName;
         String? bid;
@@ -126,7 +126,7 @@ class MainPageBuilder {
         } else {
           return null;
         }
-        return BoardNoteApp(boardName: boardName ?? "版面", bid: bid ?? "");
+        return BoardNotePage(boardName: boardName ?? "版面", bid: bid ?? "");
       case "/boardBan":
         String? boardName;
         String bid;
@@ -158,7 +158,7 @@ class MainPageBuilder {
         } else {
           return null;
         }
-        return SinglePostApp(bid: bid, postid: postid, boardName: boardName, type: type,);
+        return SinglePostPage(bid: bid, postid: postid, boardName: boardName, type: type,);
       case "/post":
         String? boardName;
         String? bid;
@@ -175,15 +175,15 @@ class MainPageBuilder {
         } else {
           return null;
         }
-        return PostNewApp(boardName: boardName ?? "版面", bid: bid ?? "", postid: postid, parentid: parentid, nickName: nickName);
+        return PostNewPage(boardName: boardName ?? "版面", bid: bid ?? "", postid: postid, parentid: parentid, nickName: nickName);
       case "/zone":
         bool needBack = false;
         if (settings.arguments != null) {
           needBack = (settings.arguments as Map)['needBack'] ?? false;
         }
-        return ZoneApp(needBack: needBack);
+        return ZonePage(needBack: needBack);
       case "/favorite":
-        return const FavoriteApp();
+        return const FavoritePage();
       case "/block":
         String? bid;
         String? title;
@@ -194,7 +194,7 @@ class MainPageBuilder {
         } else {
           return null;
         }
-        return BlockApp(bid: bid!, title: title!,);
+        return BlockPage(bid: bid!, title: title!,);
       case "/collection":
         String? link;
         String? title;
@@ -205,7 +205,7 @@ class MainPageBuilder {
         } else {
           return null;
         }
-        return CollectionApp(link: link!, title: title!,);
+        return CollectionPage(link: link!, title: title!,);
       case "/collectionArticle":
         String? link;
         String? title;
@@ -216,7 +216,7 @@ class MainPageBuilder {
         } else {
           return null;
         }
-        return CollectionArticleApp(link: link!, title: title!,);
+        return CollectionArticlePage(link: link!, title: title!,);
       case "/collectionNew":
         String mode;
         String baseOrPath;
@@ -229,17 +229,17 @@ class MainPageBuilder {
         } else {
           return null;
         }
-        return CollectionNewApp(mode: mode, baseOrPath: baseOrPath, title: title,);
+        return CollectionNewPage(mode: mode, baseOrPath: baseOrPath, title: title,);
       case "/login":
         bool needBack = false;
         if (settings.arguments != null) {
           needBack = (settings.arguments as Map)['needBack'] ?? false;
         }
-        return LoginApp(needBack: needBack);
+        return LoginPage(needBack: needBack);
       case "/about":
-        return const AboutApp();
+        return const AboutPage();
       case "/mail":
-        return const MailListApp();
+        return const MailListPage();
       case "/mailDetail":
         String postid;
         String mailType;
@@ -250,7 +250,7 @@ class MainPageBuilder {
         } else {
           return null;
         }
-        return MailDetailApp(postid: postid, type: mailType,);
+        return MailDetailPage(postid: postid, type: mailType,);
       case "/mailNew":
         String? bid;
         String? parentid;
@@ -261,13 +261,13 @@ class MainPageBuilder {
           parentid = settingsMap['parentid'] as String?;
           receiver = settingsMap['receiver'] as String?;
         }
-        return MailNewApp(bid: bid, parentid: parentid, receiver: receiver);
+        return MailNewPage(bid: bid, parentid: parentid, receiver: receiver);
       case "/friend":
-        return const FriendsApp();
+        return const FriendsPage();
       case "/favoriteCollection":
-        return const FavoriteCollectionApp();
+        return const FavoriteCollectionPage();
       case "/search":
-        return const SearchApp();
+        return const SearchPage();
       case "/simpleSearchResult":
         String? mode;
         String? keyWord;
@@ -278,7 +278,7 @@ class MainPageBuilder {
         } else {
           return null;
         }
-        return SimpleSearchResultApp(mode: mode!, keyWord: keyWord!,);
+        return SimpleSearchResultPage(mode: mode!, keyWord: keyWord!,);
       case "/complexSearchResult":
         PostSearchSettings? pss;
         if (settings.arguments != null) {
@@ -287,42 +287,42 @@ class MainPageBuilder {
         } else {
           return null;
         }
-        return ComplexSearchResultApp(pss: pss!);
+        return ComplexSearchResultPage(pss: pss!);
       case "/me":
         if (globalUInfo.login) {
-          return UserApp(uid: globalUInfo.uid);
+          return UserPage(uid: globalUInfo.uid);
         }
-        return const LoginApp();
+        return const LoginPage();
       case "/user":
         String userID = settings.arguments as String? ?? "15265";
-        return UserApp(uid: userID, needBack: true,);
+        return UserPage(uid: userID, needBack: true,);
       case "/message":
         if (messageBrief == null) { return null; }
-        return MessagelistApp(brief: messageBrief!);
+        return MessagelistPage(brief: messageBrief!);
       case "/messagePerson":
         String userName = settings.arguments as String? ?? "deliver";
-        return MessagePersonApp(userName: userName);
+        return MessagePersonPage(userName: userName);
       case "/funfunfun":
-        return const FunFunFunApp();
+        return const FunFunFunPage();
       case "/recentThread":
-        return const RecentThreadApp();
+        return const RecentThreadPage();
       case "/markedThread":
-        return const MarkedThreadApp();
+        return const MarkedThreadPage();
       case "/seeNoThem":
-        return const SeeNoThemApp();
+        return const SeeNoThemPage();
       case "/friendsPosts":
-        return const FriendsPostsApp();
+        return const FriendsPostsPage();
       case "/settings":
-        return const SettingsApp();
+        return const SettingsPage();
       case "/userStat":
-        return const UserStatApp();
+        return const UserStatPage();
       case "/modifyProfile":
         SelfProfileInfo selfProfileInfo = SelfProfileInfo.empty();
         if (settings.arguments != null) {
           var settingsMap = settings.arguments as Map;
           selfProfileInfo = settingsMap['selfProfileInfo'] as SelfProfileInfo;
         }
-        return ModifyProfileApp(selfProfileInfo: selfProfileInfo,);
+        return ModifyProfilePage(selfProfileInfo: selfProfileInfo,);
       case "/detailImage":
         String? imgLink;
         String? imgName;
@@ -349,7 +349,7 @@ class MainPageBuilder {
         );
       case "/home":
         if (messageCount == null || mailCount == null) { return null; }
-        return HomeApp(messageCount: messageCount!, mailCount: mailCount!,);
+        return HomePage(messageCount: messageCount!, mailCount: mailCount!,);
       default:
         return Scaffold(
           appBar: AppBar(

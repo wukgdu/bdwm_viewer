@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import '../views/friends_posts.dart';
 import '../bdwm/search.dart';
 
-class FriendsPostsApp extends StatefulWidget {
-  const FriendsPostsApp({super.key});
+class FriendsPostsPage extends StatefulWidget {
+  const FriendsPostsPage({super.key});
 
   @override
-  State<FriendsPostsApp> createState() => _FriendsPostsAppState();
+  State<FriendsPostsPage> createState() => _FriendsPostsPageState();
 }
 
-class _FriendsPostsAppState extends State<FriendsPostsApp> {
+class _FriendsPostsPageState extends State<FriendsPostsPage> {
   final _getData = bdwmGetFriends();
 
   @override
@@ -49,7 +49,7 @@ class _FriendsPostsAppState extends State<FriendsPostsApp> {
           appBar: AppBar(
             title: const Text("朋友动态"),
           ),
-          body: FriendsPostsPage(friendsInfo: friendsInfo),
+          body: FriendsPostsView(friendsInfo: friendsInfo),
         );
       }
     );

@@ -391,7 +391,7 @@ class _RankSysComponentState extends State<RankSysComponent> {
               ],
               genSizedIconButton(
                 onPressed: () {
-                  var userFuturePageState = context.findAncestorStateOfType<_UserFuturePageState>();
+                  var userFuturePageState = context.findAncestorStateOfType<_UserFutureViewState>();
                   if (userFuturePageState == null) { return; }
                   userFuturePageState.refresh();
                 },
@@ -457,16 +457,16 @@ class _RankSysComponentState extends State<RankSysComponent> {
   }
 }
 
-class UserInfoPage extends StatefulWidget {
+class UserInfoView extends StatefulWidget {
   final String uid;
   final UserProfile user;
-  const UserInfoPage({Key? key, required this.uid, required this.user}) : super(key: key);
+  const UserInfoView({Key? key, required this.uid, required this.user}) : super(key: key);
 
   @override
-  State<UserInfoPage> createState() => _UserInfoPageState();
+  State<UserInfoView> createState() => _UserInfoViewState();
 }
 
-class _UserInfoPageState extends State<UserInfoPage> {
+class _UserInfoViewState extends State<UserInfoView> {
   late UserProfile user;
   final ScrollController _scrollController = ScrollController();
 
@@ -483,7 +483,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
   }
 
   @override
-  void didUpdateWidget(covariant UserInfoPage oldWidget) {
+  void didUpdateWidget(covariant UserInfoView oldWidget) {
     super.didUpdateWidget(oldWidget);
     user = widget.user;
   }
@@ -780,15 +780,15 @@ class _UserInfoPageState extends State<UserInfoPage> {
   }
 }
 
-class UserFuturePage extends StatefulWidget {
+class UserFutureView extends StatefulWidget {
   final String uid;
-  const UserFuturePage({super.key, required this.uid});
+  const UserFutureView({super.key, required this.uid});
 
   @override
-  State<UserFuturePage> createState() => _UserFuturePageState();
+  State<UserFutureView> createState() => _UserFutureViewState();
 }
 
-class _UserFuturePageState extends State<UserFuturePage> {
+class _UserFutureViewState extends State<UserFutureView> {
   late CancelableOperation getDataCancelable;
 
   Future<UserProfile> getData() async {
@@ -834,7 +834,7 @@ class _UserFuturePageState extends State<UserFuturePage> {
           return const Center(child: Text("错误：未获取数据"),);
         }
         UserProfile userInfo = snapshot.data as UserProfile;
-        return UserInfoPage(uid: widget.uid, user: userInfo);
+        return UserInfoView(uid: widget.uid, user: userInfo);
       },
     );
   }

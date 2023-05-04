@@ -5,18 +5,18 @@ import '../views/utils.dart';
 import '../bdwm/search.dart';
 import '../globalvars.dart' show globalConfigInfo;
 
-class SeeNoThemApp extends StatefulWidget {
-  const SeeNoThemApp({super.key});
+class SeeNoThemPage extends StatefulWidget {
+  const SeeNoThemPage({super.key});
 
   @override
-  State<SeeNoThemApp> createState() => SeeNoThemAppState();
+  State<SeeNoThemPage> createState() => SeeNoThemPageState();
 
-  static SeeNoThemAppState? of(BuildContext context) {
-    return context.findRootAncestorStateOfType<SeeNoThemAppState>();
+  static SeeNoThemPageState? of(BuildContext context) {
+    return context.findRootAncestorStateOfType<SeeNoThemPageState>();
   }
 }
 
-class SeeNoThemAppState extends State<SeeNoThemApp> {
+class SeeNoThemPageState extends State<SeeNoThemPage> {
   late List<String> seeNoThemList;
 
   @override
@@ -93,7 +93,7 @@ class SeeNoThemAppState extends State<SeeNoThemApp> {
           ),
         ],
       ),
-      body: SeeNoThemPage(seeNoThemList: seeNoThemList, removeOne: (String userName) { removeOne(userName); },),
+      body: SeeNoThemView(seeNoThemList: seeNoThemList, removeOne: (String userName) { removeOne(userName); },),
     );
   }
 }

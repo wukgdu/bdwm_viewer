@@ -529,18 +529,18 @@ class _OneThreadInBoardState extends State<OneThreadInBoard> {
   }
 }
 
-class BoardPage extends StatefulWidget {
+class BoardView extends StatefulWidget {
   final String bid;
   final BoardInfo boardInfo;
   final int page;
   final Function refresh;
-  const BoardPage({Key? key, required this.bid, required this.boardInfo, required this.page, required this.refresh}) : super(key: key);
+  const BoardView({Key? key, required this.bid, required this.boardInfo, required this.page, required this.refresh}) : super(key: key);
 
   @override
-  State<BoardPage> createState() => _BoardPageState();
+  State<BoardView> createState() => _BoardViewState();
 }
 
-class _BoardPageState extends State<BoardPage> {
+class _BoardViewState extends State<BoardView> {
   BoardInfo boardInfo = BoardInfo.empty();
   bool updateToggle = false;
   final _titleFont = const TextStyle(fontWeight: FontWeight.bold, fontSize: 18);
@@ -865,20 +865,20 @@ class _OnePostInBoardState extends State<OnePostInBoard> {
   }
 }
 
-class BoardSinglePage extends StatefulWidget {
+class BoardSingleView extends StatefulWidget {
   final String bid;
   final BoardSingleInfo boardInfo;
   final int page;
   final String? stype;
   final String smode;
   final Function refresh;
-  const BoardSinglePage({Key? key, required this.bid, required this.boardInfo, required this.page, this.stype, required this.smode, required this.refresh}) : super(key: key);
+  const BoardSingleView({Key? key, required this.bid, required this.boardInfo, required this.page, this.stype, required this.smode, required this.refresh}) : super(key: key);
 
   @override
-  State<BoardSinglePage> createState() => _BoardSinglePageState();
+  State<BoardSingleView> createState() => _BoardSingleViewState();
 }
 
-class _BoardSinglePageState extends State<BoardSinglePage> {
+class _BoardSingleViewState extends State<BoardSingleView> {
   BoardSingleInfo boardInfo = BoardSingleInfo.empty();
   bool updateToggle = false;
   final _titleFont = const TextStyle(fontWeight: FontWeight.bold, fontSize: 18);

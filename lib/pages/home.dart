@@ -50,16 +50,16 @@ class StackIcon extends StatelessWidget {
   }
 }
 
-class HomeApp extends StatefulWidget {
+class HomePage extends StatefulWidget {
   final ValueNotifier<int> messageCount;
   final ValueNotifier<int> mailCount;
-  const HomeApp({Key? key, required this.messageCount, required this.mailCount}) : super(key: key);
+  const HomePage({Key? key, required this.messageCount, required this.mailCount}) : super(key: key);
 
   @override
-  State<HomeApp> createState() => _HomeAppState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _HomeAppState extends State<HomeApp> with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   Widget _oneTab(Icon icon, Text text) {
     return Tab(
@@ -144,9 +144,9 @@ class _HomeAppState extends State<HomeApp> with SingleTickerProviderStateMixin {
       body: TabBarView(
         controller: _tabController,
         children: const [
-          TopHomePage(),
-          Top100Page(),
-          FavoriteFuturePage(),
+          TopHomeView(),
+          Top100View(),
+          FavoriteFutureView(),
         ],
       ),
     );

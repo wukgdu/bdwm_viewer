@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../views/user_stat.dart';
 import '../views/utils.dart' show showInformDialog;
 
-class UserStatApp extends StatelessWidget {
-  const UserStatApp({super.key});
+class UserStatPage extends StatelessWidget {
+  const UserStatPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class UserStatApp extends StatelessWidget {
           ),
         ],
       ),
-      body: const UserStatFuturePage(),
+      body: const UserStatFutureView(),
     );
   }
 }

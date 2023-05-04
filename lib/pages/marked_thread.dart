@@ -5,14 +5,14 @@ import './read_thread.dart';
 import '../views/utils.dart' show showConfirmDialog;
 import '../utils.dart' show breakLongText;
 
-class MarkedThreadApp extends StatefulWidget {
-  const MarkedThreadApp({super.key});
+class MarkedThreadPage extends StatefulWidget {
+  const MarkedThreadPage({super.key});
 
   @override
-  State<MarkedThreadApp> createState() => _MarkedThreadAppState();
+  State<MarkedThreadPage> createState() => _MarkedThreadPageState();
 }
 
-class _MarkedThreadAppState extends State<MarkedThreadApp> {
+class _MarkedThreadPageState extends State<MarkedThreadPage> {
   @override
   Widget build(BuildContext context) {
     var itemCount = globalMarkedThread.count;

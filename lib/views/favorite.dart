@@ -8,14 +8,14 @@ import '../router.dart';
 import './constants.dart' show bdwmPrimaryColor;
 import '../html_parser/favorite_parser.dart';
 
-class FavoriteFuturePage extends StatefulWidget {
-  const FavoriteFuturePage({Key? key}) : super(key: key);
+class FavoriteFutureView extends StatefulWidget {
+  const FavoriteFutureView({Key? key}) : super(key: key);
 
   @override
-  State<FavoriteFuturePage> createState() => _FavoriteFuturePageState();
+  State<FavoriteFutureView> createState() => _FavoriteFutureViewState();
 }
 
-class _FavoriteFuturePageState extends State<FavoriteFuturePage> {
+class _FavoriteFutureViewState extends State<FavoriteFutureView> {
   late CancelableOperation getDataCancelable;
 
   Future<FavoriteBoardInfo> getData() async {
@@ -40,7 +40,7 @@ class _FavoriteFuturePageState extends State<FavoriteFuturePage> {
   }
 
   @override
-  void didUpdateWidget(covariant FavoriteFuturePage oldWidget) {
+  void didUpdateWidget(covariant FavoriteFutureView oldWidget) {
     super.didUpdateWidget(oldWidget);
   }
 
@@ -68,22 +68,22 @@ class _FavoriteFuturePageState extends State<FavoriteFuturePage> {
             return const Center(child: Text("错误：未获取数据"),);
           }
           FavoriteBoardInfo favoriteBoardInfo = snapshot.data as FavoriteBoardInfo;
-          return FavoritePage(favoriteBoardInfo: favoriteBoardInfo);
+          return FavoriteView(favoriteBoardInfo: favoriteBoardInfo);
         }
       )
     );
   }
 }
 
-class FavoritePage extends StatefulWidget {
+class FavoriteView extends StatefulWidget {
   final FavoriteBoardInfo favoriteBoardInfo;
-  const FavoritePage({super.key, required this.favoriteBoardInfo});
+  const FavoriteView({super.key, required this.favoriteBoardInfo});
 
   @override
-  State<FavoritePage> createState() => FavoritePageState();
+  State<FavoriteView> createState() => FavoriteViewState();
 }
 
-class FavoritePageState extends State<FavoritePage> {
+class FavoriteViewState extends State<FavoriteView> {
   late FavoriteBoardInfo favoriteBoardInfo;
   final _scrollController = ScrollController();
 
@@ -94,7 +94,7 @@ class FavoritePageState extends State<FavoritePage> {
   }
 
   @override
-  void didUpdateWidget(covariant FavoritePage oldWidget) {
+  void didUpdateWidget(covariant FavoriteView oldWidget) {
     super.didUpdateWidget(oldWidget);
     favoriteBoardInfo = widget.favoriteBoardInfo;
   }

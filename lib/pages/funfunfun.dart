@@ -5,8 +5,8 @@ import '../views/funfunfun.dart';
 import '../views/constants.dart';
 import '../router.dart' show nv2PushAndRemoveAll;
 
-class FunFunFunApp extends StatelessWidget {
-  const FunFunFunApp({super.key});
+class FunFunFunPage extends StatelessWidget {
+  const FunFunFunPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class FunFunFunApp extends StatelessWidget {
       appBar: AppBar(
         title: const Text("玩"),
       ),
-      body: const FunFunFunPage(),
+      body: const FunFunFunView(),
       floatingActionButton: IconButton(
         icon: Icon(Icons.home, color: bdwmPrimaryColor),
         onPressed: () {

@@ -7,14 +7,14 @@ import '../globalvars.dart' show v2Host, networkErrorText, genHeaders2;
 import "../bdwm/req.dart";
 import '../html_parser/userstat_parser.dart';
 
-class UserStatFuturePage extends StatefulWidget {
-  const UserStatFuturePage({super.key});
+class UserStatFutureView extends StatefulWidget {
+  const UserStatFutureView({super.key});
 
   @override
-  State<UserStatFuturePage> createState() => _UserStatFuturePageState();
+  State<UserStatFutureView> createState() => _UserStatFutureViewState();
 }
 
-class _UserStatFuturePageState extends State<UserStatFuturePage> {
+class _UserStatFutureViewState extends State<UserStatFutureView> {
   late CancelableOperation getDataCancelable;
 
   Future<TableDataInfo> getData() async {
@@ -56,7 +56,7 @@ class _UserStatFuturePageState extends State<UserStatFuturePage> {
         if (tableDataInfo.errorMessage != null) {
           return Center(child: Text(tableDataInfo.errorMessage!),);
         }
-        return UserStatPage(tableDataInfo: tableDataInfo,);
+        return UserStatView(tableDataInfo: tableDataInfo,);
       },
     );
   }
@@ -118,9 +118,9 @@ class _UserStatTableComponentState extends State<UserStatTableComponent> {
   }
 }
 
-class UserStatPage extends StatelessWidget {
+class UserStatView extends StatelessWidget {
   final TableDataInfo tableDataInfo;
-  const UserStatPage({super.key, required this.tableDataInfo});
+  const UserStatView({super.key, required this.tableDataInfo});
 
   @override
   Widget build(BuildContext context) {

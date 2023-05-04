@@ -6,16 +6,16 @@ import '../views/block.dart';
 import '../globalvars.dart';
 import '../html_parser/block_parser.dart';
 
-class BlockApp extends StatefulWidget {
+class BlockPage extends StatefulWidget {
   final String bid;
   final String title;
-  const BlockApp({super.key, required this.bid, required this.title});
+  const BlockPage({super.key, required this.bid, required this.title});
 
   @override
-  State<BlockApp> createState() => _BlockAppState();
+  State<BlockPage> createState() => _BlockPageState();
 }
 
-class _BlockAppState extends State<BlockApp> {
+class _BlockPageState extends State<BlockPage> {
   late CancelableOperation getDataCancelable;
 
   Future<BlockInfo> getData() async {
@@ -87,7 +87,7 @@ class _BlockAppState extends State<BlockApp> {
           appBar: AppBar(
             title: Text(blockInfo.name),
           ),
-          body: BlockPage(blockInfo: blockInfo, bid: widget.bid, name: blockInfo.name,),
+          body: BlockView(blockInfo: blockInfo, bid: widget.bid, name: blockInfo.name,),
         );
       },
     );

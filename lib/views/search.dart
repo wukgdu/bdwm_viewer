@@ -302,14 +302,14 @@ class _SimpleSearchComponentState extends State<SimpleSearchComponent> {
   }
 }
 
-class JumpThreadSearch extends StatefulWidget {
-  const JumpThreadSearch({super.key});
+class JumpThreadSearchComponent extends StatefulWidget {
+  const JumpThreadSearchComponent({super.key});
 
   @override
-  State<JumpThreadSearch> createState() => _JumpThreadSearchState();
+  State<JumpThreadSearchComponent> createState() => _JumpThreadSearchComponentState();
 }
 
-class _JumpThreadSearchState extends State<JumpThreadSearch> {
+class _JumpThreadSearchComponentState extends State<JumpThreadSearchComponent> {
   TextEditingController textController = TextEditingController();
 
   void startSearch() {
@@ -352,14 +352,8 @@ class _JumpThreadSearchState extends State<JumpThreadSearch> {
   }
 }
 
-class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
-
-  @override
-  State<SearchPage> createState() => _SearchPageState();
-}
-
-class _SearchPageState extends State<SearchPage> {
+class SearchView extends StatelessWidget {
+  const SearchView({super.key});
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -369,7 +363,7 @@ class _SearchPageState extends State<SearchPage> {
         Center(child: Text("搜索用户")),
         SimpleSearchComponent(mode: "user", hintText: "模糊ID或精确UID",),
         Center(child: Text("跳转帖子")),
-        JumpThreadSearch(),
+        JumpThreadSearchComponent(),
         Center(child: Text("搜索帖子")),
         ComplexSearchComponent(),
       ],

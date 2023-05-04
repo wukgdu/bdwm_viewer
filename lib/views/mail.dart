@@ -12,17 +12,17 @@ import '../globalvars.dart' show globalConfigInfo;
 import '../bdwm/mail.dart' show bdwmOperateMail;
 import '../router.dart' show nv2Push;
 
-class MailListPage extends StatefulWidget {
+class MailListView extends StatefulWidget {
   final MailListInfo mailListInfo;
   final String type;
   final Function refreshCallBack;
-  const MailListPage({super.key, required this.mailListInfo, required this.type, required this.refreshCallBack});
+  const MailListView({super.key, required this.mailListInfo, required this.type, required this.refreshCallBack});
 
   @override
-  State<MailListPage> createState() => _MailListPageState();
+  State<MailListView> createState() => _MailListViewState();
 }
 
-class _MailListPageState extends State<MailListPage> {
+class _MailListViewState extends State<MailListView> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -126,18 +126,18 @@ class _MailListPageState extends State<MailListPage> {
   }
 }
 
-class MailDetailPage extends StatefulWidget {
+class MailDetailView extends StatefulWidget {
   final MailDetailInfo mailDetailInfo;
   final String postid;
   final String type;
   final Function refreshCallBack;
-  const MailDetailPage({super.key, required this.mailDetailInfo, required this.postid, required this.type, required this.refreshCallBack});
+  const MailDetailView({super.key, required this.mailDetailInfo, required this.postid, required this.type, required this.refreshCallBack});
 
   @override
-  State<MailDetailPage> createState() => _MailDetailPageState();
+  State<MailDetailView> createState() => _MailDetailViewState();
 }
 
-class _MailDetailPageState extends State<MailDetailPage> {
+class _MailDetailViewState extends State<MailDetailView> {
   final _contentFont = TextStyle(fontSize: globalConfigInfo.contentFontSize, fontWeight: FontWeight.normal);
   @override
   Widget build(BuildContext context) {

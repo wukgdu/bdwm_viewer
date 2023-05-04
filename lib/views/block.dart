@@ -4,17 +4,17 @@ import './constants.dart';
 import '../router.dart';
 import '../html_parser/block_parser.dart';
 
-class BlockPage extends StatefulWidget {
+class BlockView extends StatefulWidget {
   final String bid;
   final String name;
   final BlockInfo blockInfo;
-  const BlockPage({super.key, required this.bid, required this.name, required this.blockInfo});
+  const BlockView({super.key, required this.bid, required this.name, required this.blockInfo});
 
   @override
-  State<BlockPage> createState() => _BlockPageState();
+  State<BlockView> createState() => _BlockViewState();
 }
 
-class _BlockPageState extends State<BlockPage> {
+class _BlockViewState extends State<BlockView> {
   Widget oneItem(BlockBoardSet bbsItem) {
     return Card(
       child: ListView(

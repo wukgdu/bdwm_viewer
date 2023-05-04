@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../views/search.dart';
 // import '../views/drawer.dart';
 
-class SearchApp extends StatelessWidget {
-  const SearchApp({Key? key}) : super(key: key);
+class SearchPage extends StatelessWidget {
+  const SearchPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class SearchApp extends StatelessWidget {
       appBar: AppBar(
         title: const Text("搜索"),
       ),
-      body: const SearchPage(),
+      body: const SearchView(),
     );
   }
 }

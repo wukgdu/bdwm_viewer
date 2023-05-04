@@ -297,14 +297,14 @@ class _RefreshRateComponentState extends State<RefreshRateComponent> {
   }
 }
 
-class SettingsApp extends StatefulWidget {
-  const SettingsApp({super.key});
+class SettingsPage extends StatefulWidget {
+  const SettingsPage({super.key});
 
   @override
-  State<SettingsApp> createState() => _SettingsAppState();
+  State<SettingsPage> createState() => _SettingsPageState();
 }
 
-class _SettingsAppState extends State<SettingsApp> {
+class _SettingsPageState extends State<SettingsPage> {
   void refresh() {
     setState(() { });
   }

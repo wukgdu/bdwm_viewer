@@ -77,16 +77,16 @@ class _BoardSearchAlertState extends State<BoardSearchAlert> {
   }
 }
 
-class BoardApp extends StatefulWidget {
+class BoardPage extends StatefulWidget {
   final String boardName;
   final String bid;
-  const BoardApp({Key? key, required this.boardName, required this.bid}) : super(key: key);
+  const BoardPage({Key? key, required this.boardName, required this.bid}) : super(key: key);
 
   @override
-  State<BoardApp> createState() => _BoardAppState();
+  State<BoardPage> createState() => _BoardPageState();
 }
 
-class _BoardAppState extends State<BoardApp> {
+class _BoardPageState extends State<BoardPage> {
   int page = 1;
   late CancelableOperation getDataCancelable;
 
@@ -213,7 +213,7 @@ class _BoardAppState extends State<BoardApp> {
           //   },
           // ),
           // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-          body: BoardPage(bid: widget.bid, page: page, boardInfo: boardInfo, refresh: () { refresh(); },),
+          body: BoardView(bid: widget.bid, page: page, boardInfo: boardInfo, refresh: () { refresh(); },),
           bottomNavigationBar: BottomAppBar(
             shape: const CircularNotchedRectangle(),
             // color: Colors.blue,
@@ -302,18 +302,18 @@ class _BoardAppState extends State<BoardApp> {
   }
 }
 
-class BoardSingleApp extends StatefulWidget {
+class BoardSinglePage extends StatefulWidget {
   final String boardName;
   final String bid;
   final String? stype;
   final String smode;
-  const BoardSingleApp({Key? key, required this.boardName, required this.bid, this.stype, required this.smode}) : super(key: key);
+  const BoardSinglePage({Key? key, required this.boardName, required this.bid, this.stype, required this.smode}) : super(key: key);
 
   @override
-  State<BoardSingleApp> createState() => _BoardSingleAppState();
+  State<BoardSinglePage> createState() => _BoardSinglePageState();
 }
 
-class _BoardSingleAppState extends State<BoardSingleApp> {
+class _BoardSinglePageState extends State<BoardSinglePage> {
   int page = 1;
   late CancelableOperation getDataCancelable;
 
@@ -417,7 +417,7 @@ class _BoardSingleAppState extends State<BoardSingleApp> {
           //   },
           // ),
           // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-          body: BoardSinglePage(bid: widget.bid, page: page, boardInfo: boardInfo, stype: widget.stype, smode: widget.smode, refresh: () { refresh(); },),
+          body: BoardSingleView(bid: widget.bid, page: page, boardInfo: boardInfo, stype: widget.stype, smode: widget.smode, refresh: () { refresh(); },),
           bottomNavigationBar: BottomAppBar(
             shape: const CircularNotchedRectangle(),
             // color: Colors.blue,

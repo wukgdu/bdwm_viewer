@@ -9,14 +9,14 @@ import '../views/utils.dart' show showPageDialog, showComplexInformDialog;
 import '../router.dart' show nv2Push;
 import '../views/constants.dart' show bdwmPrimaryColor;
 
-class MailListApp extends StatefulWidget {
-  const MailListApp({super.key});
+class MailListPage extends StatefulWidget {
+  const MailListPage({super.key});
 
   @override
-  State<MailListApp> createState() => _MailListAppState();
+  State<MailListPage> createState() => _MailListPageState();
 }
 
-class _MailListAppState extends State<MailListApp> {
+class _MailListPageState extends State<MailListPage> {
   String appTitle = "站内信";
   int page = 1;
   String type = "";
@@ -186,7 +186,7 @@ class _MailListAppState extends State<MailListApp> {
               ),
             ],
           ),
-          body: MailListPage(mailListInfo: mailListInfo, type: type, refreshCallBack: () { refresh(); },),
+          body: MailListView(mailListInfo: mailListInfo, type: type, refreshCallBack: () { refresh(); },),
           bottomNavigationBar: BottomAppBar(
             shape: null,
             // color: Colors.blue,
@@ -260,16 +260,16 @@ class _MailListAppState extends State<MailListApp> {
   }
 }
 
-class MailDetailApp extends StatefulWidget {
+class MailDetailPage extends StatefulWidget {
   final String postid;
   final String type;
-  const MailDetailApp({super.key, required this.postid, required this.type});
+  const MailDetailPage({super.key, required this.postid, required this.type});
 
   @override
-  State<MailDetailApp> createState() => _MailDetailAppState();
+  State<MailDetailPage> createState() => _MailDetailPageState();
 }
 
-class _MailDetailAppState extends State<MailDetailApp> {
+class _MailDetailPageState extends State<MailDetailPage> {
   String appTitle = "站内信";
   late CancelableOperation getDataCancelable;
 
@@ -364,7 +364,7 @@ class _MailDetailAppState extends State<MailDetailApp> {
           appBar: AppBar(
               title: Text(appTitle),
           ),
-          body: MailDetailPage(mailDetailInfo: mailDetailInfo, postid: widget.postid, type: widget.type, refreshCallBack: () { refresh(); },),
+          body: MailDetailView(mailDetailInfo: mailDetailInfo, postid: widget.postid, type: widget.type, refreshCallBack: () { refresh(); },),
         );
       },
     );

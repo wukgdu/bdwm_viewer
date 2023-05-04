@@ -4,10 +4,10 @@ import '../globalvars.dart';
 import '../views/user.dart';
 import '../views/drawer.dart';
 
-class UserApp extends StatelessWidget {
+class UserPage extends StatelessWidget {
   final String uid;
   final bool? needBack;
-  const UserApp({Key? key, required this.uid, this.needBack}) : super(key: key);
+  const UserPage({Key? key, required this.uid, this.needBack}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class UserApp extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
       ),
-      body: UserFuturePage(uid: uid),
+      body: UserFutureView(uid: uid),
     );
   }
 }
