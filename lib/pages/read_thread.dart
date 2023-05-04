@@ -204,6 +204,9 @@ class DragToPrevNextPageOverlay {
           builder: (context, value, child) {
             var ndx = value as double;
             var rdx = ndx.abs();
+            if (ndx == 0.0) {
+              return Container();
+            }
             if (rdx >= threshold) {
               rdx = threshold;
               direction = ndx < 0 ? 1 : -1;
