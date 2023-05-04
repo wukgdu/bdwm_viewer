@@ -29,12 +29,13 @@ Future<String> checkUpdate() async {
     if (thereIsNewVersion) {
       sendNotification("新版本", versionOnline, payload: "version");
       return "checksuccess-$versionOnline";
+    } else {
+      return "checked";
     }
   } catch (e) {
     sendNotification("新版本检查失败", e.toString());
     return "checkfail-${e.toString()}";
   }
-  return "checkfail";
 }
 
 Future<String> checkUpdateByTime() async {

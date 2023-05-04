@@ -249,6 +249,9 @@ class MainPageState extends State<MainPage> {
   Future<void> showUpdateDialog() async {
     var res = await checkUpdateByTime();
     if (res.isEmpty) { return; }
+    if (res.startsWith("checked")) {
+      return;
+    }
     if (!mounted) { return; }
     var globalContext = getGlobalContext();
     if (globalContext == null) { return; }

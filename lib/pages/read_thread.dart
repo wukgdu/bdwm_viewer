@@ -126,40 +126,124 @@ class _MyFloatingActionButtonMenuState extends State<MyFloatingActionButtonMenu>
   }
 }
 
-class LongPressIconButton extends StatelessWidget {
-  final bool enabled;
-  final Color primaryColor;
-  final VoidCallback? onTap;
-  final VoidCallback? onLongPress;
-  final double? iconSize;
-  final IconData iconData;
-  final Color? disabledColor;
+class _ArrowPainter extends CustomPainter {
+  // final Animation<double> percentage;
+  final Color color;
 
-  const LongPressIconButton({
-    super.key,
-    required this.primaryColor,
-    required this.iconData,
-    required this.enabled,
-    this.iconSize,
-    this.onTap,
-    this.onLongPress,
-    this.disabledColor,
+  _ArrowPainter({
+    // required this.percentage,
+    required this.color,
   });
+  // : super(repaint: percentage);
 
   @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: enabled ? onTap : null,
-      onLongPress: enabled ? onLongPress : null,
-      borderRadius: BorderRadius.circular((iconSize ?? 24.0) / 2.0 + 8.0),
-      hoverColor: primaryColor.withOpacity(0.08),
-      focusColor: primaryColor.withOpacity(0.08),
-      highlightColor: primaryColor.withOpacity(0.12),
-      splashColor: primaryColor.withOpacity(0.12),
-      child: Container(
-        padding: const EdgeInsets.all(8.0),
-        child: Icon(iconData, color: enabled ? primaryColor : disabledColor, size: iconSize,),
-      ),
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..style = PaintingStyle.fill
+      ..color = color;
+
+    var path = Path();
+    path.moveTo(0, size.height/2);
+    path.lineTo(size.width, 0);
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height/2);
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _ArrowPainter oldDelegate) {
+    return false;
+    // return percentage.value != oldDelegate.percentage.value;
+  }
+}
+
+class DragToPrevNextPageOverlay {
+  OverlayEntry? _overlayEntry;
+  double threshold;
+  Offset initOffset = const Offset(0, 0);
+  ValueNotifier<double> dx = ValueNotifier<double>(0.0);
+  int direction=0;
+
+  DragToPrevNextPageOverlay({
+    required this.threshold,
+  });
+
+  void dispose() {
+    dx.dispose();
+  }
+
+  void insert(BuildContext context, {required Offset initOffset}) {
+    direction = 0;
+    dx.value = 0.0;
+    final deviceSize = MediaQuery.of(context).size;
+    this.initOffset = initOffset;
+    _overlayEntry = create(deviceSize);
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  void update(Offset newOffset) {
+    dx.value = newOffset.dx - initOffset.dx;
+    // _overlayEntry?.markNeedsBuild();
+  }
+
+  void remove() {
+    direction = 0;
+    initOffset = const Offset(0, 0);
+    _overlayEntry?.remove();
+  }
+
+  OverlayEntry create(Size deviceSize) {
+    double entryWidth = deviceSize.width / 4;
+    double entryHeight = entryWidth * 0.3;
+    double barWidth = entryWidth * 0.8;
+    double barHeight = entryHeight * 0.5;
+    return OverlayEntry(
+      builder: (context) {
+        return ValueListenableBuilder(
+          valueListenable: dx,
+          builder: (context, value, child) {
+            var ndx = value as double;
+            var rdx = ndx.abs();
+            if (rdx >= threshold) {
+              rdx = threshold;
+              direction = ndx < 0 ? 1 : -1;
+            } else {
+              direction = 0;
+            }
+            return Positioned(
+              top: deviceSize.height / 2 - entryHeight / 2,
+              left: ndx < 0.0 ?  deviceSize.width-entryWidth-20 : 20,
+              child: Transform.scale(
+                scaleX: ndx < 0.0 ? -1 : 1,
+                child: SizedBox(
+                  width: entryWidth,
+                  height: entryHeight,
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: entryWidth - barWidth,
+                        height: entryHeight,
+                        child: child,
+                      ),
+                      SizedBox(
+                        width: barWidth,
+                        height: barHeight,
+                        child: LinearProgressIndicator(
+                          value: rdx/threshold, color: bdwmPrimaryColor, backgroundColor: bdwmPrimaryColor.withOpacity(0.5),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+          child: CustomPaint(
+            size: Size(entryWidth-barWidth, entryWidth),
+            painter: _ArrowPainter(color: bdwmPrimaryColor),
+          ),
+        );
+      },
     );
   }
 }
@@ -208,6 +292,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
   // double? _lastTrailingEdge;
   final ValueNotifier<bool> _showBottomAppBar = ValueNotifier<bool>(true);
   bool _ignorePrevNext = true;
+  final DragToPrevNextPageOverlay overlayController = DragToPrevNextPageOverlay(threshold: 20.0);
 
   @override
   void initState() {
@@ -271,6 +356,7 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
     marked.dispose();
     _showBottomAppBar.dispose();
     _scrollController.dispose();
+    overlayController.dispose();
     super.dispose();
   }
 
@@ -636,14 +722,21 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
           ),
           Expanded(
             child: GestureDetector(
+              onHorizontalDragStart: (details) {
+                overlayController.insert(context, initOffset: details.globalPosition);
+              },
+              onHorizontalDragUpdate: (details) {
+                overlayController.update(details.globalPosition);
+              },
               onHorizontalDragEnd: (details) {
-                var dx = details.velocity.pixelsPerSecond.dx;
-                if (dx < 10) {
+                var direction = overlayController.direction;
+                overlayController.remove();
+                if (direction == 1) {
                   // 向左滑动
                   if (widget.page < widget.threadPageInfo.pageNum) {
                     widget.goPage(widget.page+1);
                   }
-                } else if (dx > 10) {
+                } else if (direction == -1) {
                   if (widget.page > 1) {
                     widget.goPage(widget.page-1);
                   }
