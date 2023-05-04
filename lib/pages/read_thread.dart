@@ -165,6 +165,7 @@ class DragToPrevNextPageOverlay2 {
   OverlayEntry create(Size deviceSize) {
     return OverlayEntry(
       builder: (context) {
+        var backgroundColor = ElevationOverlay.applySurfaceTint(Theme.of(context).canvasColor, bdwmPrimaryColor, BottomAppBarTheme.of(context).elevation ?? 20.0);
         return ValueListenableBuilder(
           valueListenable: dx,
           builder: (context, value, child) {
@@ -182,7 +183,7 @@ class DragToPrevNextPageOverlay2 {
             double borderDistance = 12.0 + 12.0 * rdx / threshold;
             double entrySize = 20.0 + 32.0 * rdx / threshold;
             if (entrySize > 36.0) { entrySize = 36.0; }
-            double arrowSize = entrySize * 0.7;
+            double arrowSize = entrySize * 0.6;
             return Positioned(
               top: deviceSize.height / 2 - entrySize / 2,
               left: ndx < 0.0 ?  deviceSize.width-entrySize-borderDistance : borderDistance,
@@ -191,11 +192,11 @@ class DragToPrevNextPageOverlay2 {
                 height: entrySize,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: bdwmPrimaryColor.withOpacity(0.5),
+                  color: backgroundColor,
                 ),
                 child: Icon(
                   ndx < 0.0 ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded,
-                  color: direction == 0 ? Colors.white : bdwmPrimaryColor,
+                  color: direction == 0 ? Colors.grey : bdwmPrimaryColor,
                   size: arrowSize,
                 ),
               ),
@@ -880,80 +881,77 @@ class _ThreadDetailAppState extends State<ThreadDetailApp> {
           shape: null,
           // color: Colors.blue,
           // height: _showBottomAppBar ? null : 0.0,
-          child: IconTheme(
-            data: const IconThemeData(color: Colors.redAccent),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              IconButton(
+                color: bdwmPrimaryColor,
+                disabledColor: Colors.grey,
+                tooltip: '刷新',
+                icon: const Icon(Icons.refresh),
+                onPressed: () {
+                  widget.refreshCallBack();
+                },
+              ),
+              if (widget.needToBoard != null && widget.needToBoard == true)
                 IconButton(
                   color: bdwmPrimaryColor,
                   disabledColor: Colors.grey,
-                  tooltip: '刷新',
-                  icon: const Icon(Icons.refresh),
+                  tooltip: '返回本版',
+                  icon: const Icon(Icons.list),
                   onPressed: () {
-                    widget.refreshCallBack();
+                    nv2Push(context, '/board', arguments: {
+                      'boardName': widget.threadPageInfo.board.text.split('(').first,
+                      'bid': widget.threadPageInfo.boardid,
+                    },);
                   },
                 ),
-                if (widget.needToBoard != null && widget.needToBoard == true)
-                  IconButton(
-                    color: bdwmPrimaryColor,
-                    disabledColor: Colors.grey,
-                    tooltip: '返回本版',
-                    icon: const Icon(Icons.list),
-                    onPressed: () {
-                      nv2Push(context, '/board', arguments: {
-                        'boardName': widget.threadPageInfo.board.text.split('(').first,
-                        'bid': widget.threadPageInfo.boardid,
-                      },);
-                    },
-                  ),
-                LongPressIconButton(
-                  primaryColor: bdwmPrimaryColor,
-                  iconData: Icons.arrow_back,
-                  enabled: widget.page > 1,
-                  disabledColor: Colors.grey,
-                  onTap: () {
-                    widget.goPage(widget.page-1);
-                  },
-                  onLongPress: () {
-                    widget.goPage(1);
-                  },
-                ),
-                TextButton(
-                  child: Text("${widget.page}/${widget.threadPageInfo.pageNum}"),
-                  onPressed: () async {
-                    var nPageStr = await showPageDialog(context, widget.page, widget.threadPageInfo.pageNum);
-                    if (nPageStr == null) { return; }
-                    if (nPageStr.isEmpty) { return; }
-                    var nPage = int.parse(nPageStr);
-                    widget.goPage(nPage);
-                  },
-                  onLongPress: () {
-                    var newPage = widget.page;
-                    if (widget.page == widget.threadPageInfo.pageNum) {
-                      newPage = 1;
-                    } else {
-                      newPage = widget.threadPageInfo.pageNum;
-                    }
-                    if (newPage == widget.page) { return; }
-                    widget.goPage(newPage);
-                  },
-                ),
-                IconButton(
-                  color: bdwmPrimaryColor,
-                  disabledColor: Colors.grey,
-                  tooltip: '下一页',
-                  icon: const Icon(Icons.arrow_forward),
-                  onPressed: widget.page == widget.threadPageInfo.pageNum ? null : () {
-                    // if (page == threadPageInfo.pageNum) {
-                    //   return;
-                    // }
-                    if (!mounted) { return; }
-                    widget.goPage(widget.page+1);
-                  },
-                ),
-              ],
-            ),
+              LongPressIconButton(
+                primaryColor: bdwmPrimaryColor,
+                iconData: Icons.arrow_back,
+                enabled: widget.page > 1,
+                disabledColor: Colors.grey,
+                onTap: () {
+                  widget.goPage(widget.page-1);
+                },
+                onLongPress: () {
+                  widget.goPage(1);
+                },
+              ),
+              TextButton(
+                child: Text("${widget.page}/${widget.threadPageInfo.pageNum}"),
+                onPressed: () async {
+                  var nPageStr = await showPageDialog(context, widget.page, widget.threadPageInfo.pageNum);
+                  if (nPageStr == null) { return; }
+                  if (nPageStr.isEmpty) { return; }
+                  var nPage = int.parse(nPageStr);
+                  widget.goPage(nPage);
+                },
+                onLongPress: () {
+                  var newPage = widget.page;
+                  if (widget.page == widget.threadPageInfo.pageNum) {
+                    newPage = 1;
+                  } else {
+                    newPage = widget.threadPageInfo.pageNum;
+                  }
+                  if (newPage == widget.page) { return; }
+                  widget.goPage(newPage);
+                },
+              ),
+              IconButton(
+                color: bdwmPrimaryColor,
+                disabledColor: Colors.grey,
+                tooltip: '下一页',
+                icon: const Icon(Icons.arrow_forward),
+                onPressed: widget.page == widget.threadPageInfo.pageNum ? null : () {
+                  // if (page == threadPageInfo.pageNum) {
+                  //   return;
+                  // }
+                  if (!mounted) { return; }
+                  widget.goPage(widget.page+1);
+                },
+              ),
+            ],
           ),
         ),
         builder: (context, value, child) {
