@@ -39,14 +39,15 @@ class _BlockViewState extends State<BlockView> {
                       alignment: PlaceholderAlignment.middle,
                       child: Icon(item.likeIt ? Icons.star : Icons.star_outline, size: 20, color: bdwmPrimaryColor),
                     ),
+                    const TextSpan(text: " "),
                     TextSpan(text: item.boardName, style: TextStyle(color: item.readOnly ? Colors.grey : null)),
                     const TextSpan(text: " "),
                     TextSpan(text: item.engName, style: TextStyle(color: item.readOnly ? Colors.grey : null)),
                     const TextSpan(text: " "),
                     for (var _ in item.admin) ...[
-                      WidgetSpan(
+                      const WidgetSpan(
                         alignment: PlaceholderAlignment.middle,
-                        child: Icon(Icons.person, size: 16, color: bdwmPrimaryColor),
+                        child: Icon(Icons.person, size: 16),
                       ),
                     ]
                   ],

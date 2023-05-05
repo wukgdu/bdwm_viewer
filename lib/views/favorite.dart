@@ -144,9 +144,9 @@ class FavoriteViewState extends State<FavoriteView> {
               ),
               const TextSpan(text: "  "),
               for (var _ in item.admin) ...[
-                WidgetSpan(
+                const WidgetSpan(
                   alignment: PlaceholderAlignment.middle,
-                  child: Icon(Icons.person, size: 16, color: bdwmPrimaryColor),
+                  child: Icon(Icons.person, size: 16),
                 ),
               ]
             ],
