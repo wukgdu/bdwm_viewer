@@ -115,7 +115,6 @@ class Uinfo {
   }
 
   Future<void> checkAndLogout(cookie) async {
-    if (globalConfigInfo.getGuestFirst()) { return; }
     if (login == false) {
       return;
     }
