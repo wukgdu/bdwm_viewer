@@ -953,17 +953,16 @@ class _ThreadDetailPageState extends State<ThreadDetailPage> {
                   widget.goPage(newPage);
                 },
               ),
-              IconButton(
-                color: bdwmPrimaryColor,
+              LongPressIconButton(
+                primaryColor: bdwmPrimaryColor,
+                iconData: Icons.arrow_forward,
+                enabled: widget.page < widget.threadPageInfo.pageNum,
                 disabledColor: Colors.grey,
-                tooltip: '下一页',
-                icon: const Icon(Icons.arrow_forward),
-                onPressed: widget.page == widget.threadPageInfo.pageNum ? null : () {
-                  // if (page == threadPageInfo.pageNum) {
-                  //   return;
-                  // }
-                  if (!mounted) { return; }
+                onTap: () {
                   widget.goPage(widget.page+1);
+                },
+                onLongPress: () {
+                  widget.goPage(widget.threadPageInfo.pageNum);
                 },
               ),
             ],
