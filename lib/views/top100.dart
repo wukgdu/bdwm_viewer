@@ -8,7 +8,27 @@ import '../globalvars.dart';
 import '../html_parser/top100_parser.dart';
 import '../pages/read_thread.dart';
 import '../router.dart' show nv2Push;
+import './constants.dart' show bdwmPrimaryColor;
 import './html_widget.dart' show genSimpleCachedImageProvider;
+
+class Top100RankLabelComponent extends StatelessWidget {
+  final int itemID;
+  const Top100RankLabelComponent({super.key, required this.itemID});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 30,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        // border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
+        color: bdwmPrimaryColor.withOpacity(0.8),
+      ),
+      child: Text("$itemID", style: const TextStyle(color: Colors.white, fontSize: 10, height: null),),
+    );
+  }
+}
 
 class Top100View extends StatefulWidget {
   const Top100View({Key? key}) : super(key: key);
@@ -59,8 +79,18 @@ class _Top100ViewState extends State<Top100View> {
           textAlign: TextAlign.start,
           overflow: TextOverflow.ellipsis,
         ),
-        subtitle: Text(
-          "${item.author} ${item.postTime}\n${item.board}",
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text("${item.author} ${item.postTime} "),
+                const Spacer(),
+                Top100RankLabelComponent(itemID: item.id,),
+              ],
+            ),
+            Text(item.board),
+          ],
         ),
         isThreeLine: true,
         leading: GestureDetector(
@@ -82,11 +112,11 @@ class _Top100ViewState extends State<Top100View> {
           },
         ),
         minLeadingWidth: 20,
-        trailing: Container(
-          alignment: Alignment.center,
-          width: 30,
-          child: Text("${item.id}")
-        ),
+        // trailing: Container(
+        //   alignment: Alignment.center,
+        //   width: 30,
+        //   child: Text("${item.id}")
+        // ),
         // dense: true,
         onTap: () { naviGotoThreadByLink(context, item.contentLink, item.board.split("(").first, needToBoard: true); }
       )

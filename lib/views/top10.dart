@@ -234,38 +234,36 @@ class BlocksComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          GestureDetector(
-            onTap: () {
-              var bid = getQueryValue(blockOne.blockLink, 'bid');
-              if (bid == null) { return; }
-              nv2Push(context, '/block', arguments: {
-                'bid': bid,
-                'title': blockOne.blockName,
-              },);
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(blockOne.blockName, style: titleFont),
-                const Icon(Icons.arrow_right),
-              ],
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Divider(),
+        GestureDetector(
+          onTap: () {
+            var bid = getQueryValue(blockOne.blockLink, 'bid');
+            if (bid == null) { return; }
+            nv2Push(context, '/block', arguments: {
+              'bid': bid,
+              'title': blockOne.blockName,
+            },);
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(blockOne.blockName, style: titleFont),
+              const Icon(Icons.arrow_right),
+            ],
           ),
-          const Divider(),
-          if (blockOne.blockItems.isNotEmpty)
-            ...blockOne.blockItems.map((item) {
-              return RepaintBoundary(
-                child: OneBlockComponent(item: item),
-              );
-            }).toList()
-          else
-            const Text("该分区暂无热门主题帖"),
-        ],
-      ),
+        ),
+        if (blockOne.blockItems.isNotEmpty)
+          ...blockOne.blockItems.map((item) {
+            return RepaintBoundary(
+              child: OneBlockComponent(item: item),
+            );
+          }).toList()
+        else
+          const Text("该分区暂无热门主题帖"),
+      ],
     );
   }
 }
@@ -295,32 +293,30 @@ class TensComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Column(
-        // mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text("全站十大", style: titleFont),
-          const Divider(),
-          if (gotTop10(homeInfo.top10Info) && isTop10Valid(homeInfo.top10Info!))
-            ...homeInfo.top10Info!.map((item) {
-              return RepaintBoundary(
-                child: OneTenComponent(item: item),
-              );
-            }).toList()
-          else if (gotTop10(homeInfo.top10Info) && !isTop10Valid(homeInfo.top10Info!)) ...[
-            ListTile(
-              // title: Text("全站十大", style: _titleFont),
-              title: Text(homeInfo.top10Info![0].title),
-              // isThreeLine: true,
-              trailing: IconButton(
-                icon: const Icon(Icons.login),
-                onPressed: () { nv2Replace(context, '/login', arguments: {'needBack': false}); },
-              )
-            ),
-          ],
-        ]
-      ),
+    return Column(
+      // mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text("全站十大", style: titleFont),
+        // const Divider(),
+        if (gotTop10(homeInfo.top10Info) && isTop10Valid(homeInfo.top10Info!))
+          ...homeInfo.top10Info!.map((item) {
+            return RepaintBoundary(
+              child: OneTenComponent(item: item),
+            );
+          }).toList()
+        else if (gotTop10(homeInfo.top10Info) && !isTop10Valid(homeInfo.top10Info!)) ...[
+          ListTile(
+            // title: Text("全站十大", style: _titleFont),
+            title: Text(homeInfo.top10Info![0].title),
+            // isThreeLine: true,
+            trailing: IconButton(
+              icon: const Icon(Icons.login),
+              onPressed: () { nv2Replace(context, '/login', arguments: {'needBack': false}); },
+            )
+          ),
+        ],
+      ]
     );
   }
 }

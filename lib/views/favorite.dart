@@ -132,42 +132,45 @@ class FavoriteViewState extends State<FavoriteView> {
   final _biggerFont = const TextStyle(fontSize: 16);
   Widget _onepost(FavoriteBoard item) {
     return Card(
-      child: SizedBox(
-        height: 40,
-        child: InkWell(
-          child: Row(
-            // crossAxisAlignment: CrossAxisAlignment.center,
+      child: ListTile(
+        title: Text.rich(
+          TextSpan(
             children: [
-              // const Spacer(flex: 1),
-              const SizedBox(width: 10,),
-              Icon(Icons.circle, size: 10, color: item.unread ? bdwmPrimaryColor : const Color.fromRGBO(255, 255, 255, 0),),
-              const SizedBox(width: 10,),
-              // const Spacer(flex: 1),
-              Text.rich(
-                TextSpan(
-                  text: item.boardName,
-                  children: <TextSpan>[
-                    const TextSpan(text: "  "),
-                    TextSpan(
-                      text: item.engName,
-                      style: const TextStyle(color: Colors.grey, fontSize: 14),
-                    )
-                  ],
-                ),
-                textAlign: TextAlign.start,
-                style: _biggerFont,
-                overflow: TextOverflow.ellipsis,
+              TextSpan(text: item.boardName),
+              const TextSpan(text: "  "),
+              TextSpan(
+                text: item.engName,
+                style: const TextStyle(color: Colors.grey, fontSize: 14),
               ),
-              const Spacer(flex: 50),
+              const TextSpan(text: "  "),
+              for (var _ in item.admin) ...[
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.middle,
+                  child: Icon(Icons.person, size: 16, color: bdwmPrimaryColor),
+                ),
+              ]
             ],
           ),
-          onTap: () {
-            nv2Push(context, "/board", arguments: {
-              'boardName': item.boardName,
-              'bid': item.boardLink.split("=").last,
-          });
-          },
+          textAlign: TextAlign.start,
+          style: _biggerFont,
+          overflow: TextOverflow.ellipsis,
         ),
+        subtitle: Row(
+          children: [
+            // Icon(Icons.circle, size: 10, color: item.unread ? bdwmPrimaryColor : const Color.fromRGBO(255, 255, 255, 0),),
+            if (item.unread) ... [
+              Icon(Icons.circle, size: 10, color: bdwmPrimaryColor),
+              const SizedBox(width: 5,),
+            ],
+            Text(item.lastUpdate.text),
+          ],
+        ),
+        onTap: () {
+          nv2Push(context, "/board", arguments: {
+            'boardName': item.boardName,
+            'bid': item.boardLink.split("=").last,
+          });
+        },
       ),
     );
   }
