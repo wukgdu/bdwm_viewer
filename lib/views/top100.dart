@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 
+import './utils.dart' show genScrollableWidgetForPullRefresh;
 import '../bdwm/req.dart';
 import '../utils.dart' show breakLongText;
 import '../globalvars.dart';
@@ -112,17 +113,11 @@ class _Top100ViewState extends State<Top100View> {
           }
           Top100Info top100Info = snapshot.data as Top100Info;
           if (top100Info.errorMessage != null) {
-            return LayoutBuilder(builder: (context, constraints) {
-              return SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: Center(
-                    child: Text(top100Info.errorMessage!),
-                  ),
-                )
-              );
-            },);
+            return genScrollableWidgetForPullRefresh(
+              Center(
+                child: Text(top100Info.errorMessage!),
+              ),
+            );
           }
           return ListView.builder(
             controller: _scrollController,

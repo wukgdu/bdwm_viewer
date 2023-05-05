@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 
-import './utils.dart';
+import './utils.dart' show showConfirmDialog, showAlertDialog2, genScrollableWidgetForPullRefresh;
 import './html_widget.dart' show WrapImageNetwork, innerLinkJump;
 import '../bdwm/req.dart';
 import '../globalvars.dart';
@@ -396,17 +396,11 @@ class _TopHomeViewState extends State<TopHomeView> {
           }
           HomeInfo homeInfo = snapshot.data as HomeInfo;
           if (homeInfo.errorMessage != null) {
-            return LayoutBuilder(builder: (context, constraints) {
-              return SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: Center(
-                    child: Text(homeInfo.errorMessage!),
-                  ),
-                )
-              );
-            },);
+            return genScrollableWidgetForPullRefresh(
+              Center(
+                child: Text(homeInfo.errorMessage!),
+              ),
+            );
           }
           return ListView.builder(
             controller: _scrollController,

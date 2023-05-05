@@ -421,6 +421,18 @@ class LongPressIconButton extends StatelessWidget {
   }
 }
 
+LayoutBuilder genScrollableWidgetForPullRefresh(Widget child)  {
+  return LayoutBuilder(builder: (context, constraints) {
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: constraints.maxHeight),
+        child: child,
+      ),
+    );
+  },);
+}
+
 class SaveRes {
   bool success = false;
   String reason = "";

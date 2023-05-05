@@ -393,7 +393,9 @@ class _ThreadDetailPageState extends State<ThreadDetailPage> {
     }
     WidgetsBinding.instance.addPostFrameCallback((_){
       // _initScrollHeight = scrollKey.currentContext?.size?.height;
-      overlayController = DragToPrevNextPageOverlay2(threshold: MediaQuery.of(context).size.width / 4.0);
+      var threshold = MediaQuery.of(context).size.width / 4.0;
+      if (threshold > 108.0) { threshold = 108.0; }
+      overlayController = DragToPrevNextPageOverlay2(threshold: threshold);
       if (widget.postid != null) {
         var i = 0;
         while (i<widget.threadPageInfo.posts.length) {
@@ -822,10 +824,18 @@ class _ThreadDetailPageState extends State<ThreadDetailPage> {
                   // 向左滑动
                   if (widget.page < widget.threadPageInfo.pageNum) {
                     widget.goPage(widget.page+1);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("已是最后一页"), duration: Duration(milliseconds: 600),),
+                    );
                   }
                 } else if (direction == -1) {
                   if (widget.page > 1) {
                     widget.goPage(widget.page-1);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("已是第一页"), duration: Duration(milliseconds: 600),),
+                    );
                   }
                 }
               },
@@ -1066,6 +1076,10 @@ class  ThreadPageState extends State <ThreadPage> {
     return parseThread(resp.body);
   }
 
+  Future<void> updateDataAsync() async {
+    refresh();
+  }
+
   void refresh() {
     goPage(page);
   }
@@ -1117,8 +1131,13 @@ class  ThreadPageState extends State <ThreadPage> {
             appBar: AppBar(
               title: Text(widget.boardName ?? ""),
             ),
-            body: Center(
-              child: Text(threadPageInfo.errorMessage!),
+            body: RefreshIndicator(
+              onRefresh: updateDataAsync,
+              child: genScrollableWidgetForPullRefresh(
+                Center(
+                  child: Text(threadPageInfo.errorMessage!),
+                ),
+              ),
             ),
           );
         }
@@ -1126,7 +1145,7 @@ class  ThreadPageState extends State <ThreadPage> {
           page = threadPageInfo.page;
         }
         // String userName = "未知";
-        String userName = "未知+$needReloadID";
+        String userName = "未知+$needReloadID"; // 为了 changedependencies 能刷新
         if (threadPageInfo.posts.isNotEmpty) {
           userName = threadPageInfo.posts.first.authorInfo.userName;
         }

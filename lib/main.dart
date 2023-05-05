@@ -231,6 +231,8 @@ class MainPageState extends State<MainPage> {
     }
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (globalConfigInfo.getGuestFirst()) {
+        await Future<void>.delayed(const Duration(milliseconds: 1000));
+        if (!mounted) { return; }
         var globalContext = getGlobalContext();
         if (globalContext == null) { return; }
         var useGuest = await showConfirmDialog(globalContext, "保持游客浏览", "选“不了”后需要下拉刷新，不需要登录");

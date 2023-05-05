@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 
+import './utils.dart' show genScrollableWidgetForPullRefresh;
 import '../bdwm/req.dart';
 import '../bdwm/set_read.dart';
 import '../globalvars.dart';
@@ -175,17 +176,11 @@ class FavoriteViewState extends State<FavoriteView> {
   Widget build(BuildContext context) {
     if (favoriteBoardInfo.errorMessage != null) {
       // for RefreshIndicator
-      return LayoutBuilder(builder: (context, constraints) {
-        return SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: constraints.maxHeight),
-            child: Center(
-              child: Text(favoriteBoardInfo.errorMessage!),
-            ),
-          )
-        );
-      },);
+      return genScrollableWidgetForPullRefresh(
+        Center(
+          child: Text(favoriteBoardInfo.errorMessage!),
+        ),
+      );
     }
     return Column(
       children: [

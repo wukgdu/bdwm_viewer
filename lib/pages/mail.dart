@@ -5,7 +5,7 @@ import '../bdwm/req.dart';
 import '../views/mail.dart';
 import '../html_parser/mail_parser.dart';
 import '../globalvars.dart';
-import '../views/utils.dart' show showPageDialog, showComplexInformDialog;
+import '../views/utils.dart' show showPageDialog, showComplexInformDialog, genScrollableWidgetForPullRefresh;
 import '../router.dart' show nv2Push;
 import '../views/constants.dart' show bdwmPrimaryColor;
 
@@ -37,6 +37,10 @@ class _MailListPageState extends State<MailListPage> {
       return MailListInfo.error(errorMessage: networkErrorText);
     }
     return parseMailList(resp.body);
+  }
+
+  Future<void> updateDataAsync() async {
+    refresh();
   }
 
   void refresh() {
@@ -121,8 +125,13 @@ class _MailListPageState extends State<MailListPage> {
             appBar: AppBar(
               title: Text(appTitle),
             ),
-            body: Center(
-              child: Text(mailListInfo.errorMessage!),
+            body: RefreshIndicator(
+              onRefresh: updateDataAsync,
+              child: genScrollableWidgetForPullRefresh(
+                Center(
+                  child: Text(mailListInfo.errorMessage!),
+                ),
+              ),
             ),
           );
         }
