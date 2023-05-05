@@ -150,9 +150,17 @@ class _EntryHomeComponentState extends State<EntryHomeComponent> {
     );
   }
 }
+
 class OneTenComponent extends StatelessWidget {
   final Top10Item item;
   const OneTenComponent({super.key, required this.item});
+
+  Color genTenColor(int itemID) {
+    if (itemID == 1) { return const Color(0xffea6242); }
+    else if (itemID == 2) { return const Color(0xfff7a95e); }
+    else if (itemID == 3) { return const Color(0xfff8d0ab); }
+    return Colors.grey;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -177,7 +185,7 @@ class OneTenComponent extends StatelessWidget {
           width: 30,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: item.id <= 3 ? Colors.redAccent : Colors.grey,
+            color: genTenColor(item.id),
             borderRadius: const BorderRadius.all(Radius.circular(10.0)),
             // border: Border.all(width: 1, color: Colors.red),
           ),

@@ -724,9 +724,14 @@ class _ThreadDetailPageState extends State<ThreadDetailPage> {
       hideIt = true;
     }
     var kStr = item.postNumber;
+    int? newSubIdx = subIdx;
+    if (newSubIdx != null) {
+      // if ((widget.page <= 1) && (newSubIdx >= 1)) { newSubIdx -= 1; }
+      if (newSubIdx > 5) { newSubIdx = 5; }
+    }
     return OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack,
       boardName: widget.threadPageInfo.board.text, threadid: widget.threadid, title: widget.threadPageInfo.title,
-      subIdx: subIdx, hideIt: hideIt, key: GlobalObjectKey(kStr),
+      subIdx: newSubIdx, hideIt: hideIt, key: GlobalObjectKey(kStr),
     );
   }
 
@@ -848,7 +853,7 @@ class _ThreadDetailPageState extends State<ThreadDetailPage> {
                     if (widget.tiebaForm) {
                       var oriIdx = newOrder[index].oriIdx;
                       var subIdx = newOrder[index].subIdx;
-                      return _onepost(widget.threadPageInfo.posts[oriIdx], subIdx: subIdx > 5 ? 5 : subIdx);
+                      return _onepost(widget.threadPageInfo.posts[oriIdx], subIdx: subIdx);
                     }
                     return _onepost(widget.threadPageInfo.posts[index]);
                   }).toList(),
