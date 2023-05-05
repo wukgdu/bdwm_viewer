@@ -4,6 +4,7 @@ import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as hdom;
 
 import './utils.dart';
+import '../utils.dart' show TextAndLink;
 
 class BlockBoardItem {
   String boardName = "";
@@ -13,6 +14,7 @@ class BlockBoardItem {
   bool isSub = false;
   bool readOnly = false;
   bool likeIt = false;
+  List<TextAndLink> admin = <TextAndLink>[];
 
   BlockBoardItem.empty();
   BlockBoardItem({
@@ -23,6 +25,7 @@ class BlockBoardItem {
     required this.isSub,
     required this.readOnly,
     required this.likeIt,
+    required this.admin,
   });
 }
 
@@ -97,6 +100,15 @@ BlockInfo parseBlock(String htmlStr) {
       if (bbdom.querySelectorAll(".admin .inline-link").isNotEmpty) {
         thereIsAdmin = true;
       }
+      var adminDom = bbdom.querySelector(".admin")?.querySelectorAll(".inline-link");
+      var adminTL = <TextAndLink>[];
+      if ((adminDom != null) && (adminDom.isNotEmpty)) {
+        for (var ad in adminDom) {
+          var adminName = getTrimmedString(ad);
+          var adminLink = absThreadLink(ad.attributes['href'] ?? "");
+          adminTL.add(TextAndLink(adminName, adminLink));
+        }
+      }
       var isSub = false;
       if (bbdom.classes.contains("sub-block")) {
         isSub = true;
@@ -109,7 +121,7 @@ BlockInfo parseBlock(String htmlStr) {
       if (bbdom.querySelector(".readonly") != null) {
         readOnly = true;
       }
-      blockBoardItems.add(BlockBoardItem(boardName: boardName, engName: engName, bid: subbid, thereIsAdmin: thereIsAdmin, isSub: isSub, readOnly: readOnly, likeIt: likeIt));
+      blockBoardItems.add(BlockBoardItem(boardName: boardName, engName: engName, bid: subbid, thereIsAdmin: thereIsAdmin, isSub: isSub, readOnly: readOnly, likeIt: likeIt, admin: adminTL));
     }
     blockBoardSets.add(BlockBoardSet(title: title, blockBoardItems: blockBoardItems));
   }
@@ -134,6 +146,15 @@ BlockInfo parseBlock(String htmlStr) {
         if (bbdom.querySelectorAll(".admin .inline-link").isNotEmpty) {
           thereIsAdmin = true;
         }
+        var adminDom = bbdom.querySelector(".admin")?.querySelectorAll(".inline-link");
+        var adminTL = <TextAndLink>[];
+        if ((adminDom != null) && (adminDom.isNotEmpty)) {
+          for (var ad in adminDom) {
+            var adminName = getTrimmedString(ad);
+            var adminLink = absThreadLink(ad.attributes['href'] ?? "");
+            adminTL.add(TextAndLink(adminName, adminLink));
+          }
+        }
         var isSub = false;
         if (bbdom.classes.contains("sub-block")) {
           isSub = true;
@@ -146,7 +167,7 @@ BlockInfo parseBlock(String htmlStr) {
         if (bbdom.querySelector(".readonly") != null) {
           readOnly = true;
         }
-        blockBoardItems.add(BlockBoardItem(boardName: boardName, engName: engName, bid: subbid, thereIsAdmin: thereIsAdmin, isSub: isSub, readOnly: readOnly, likeIt: likeIt));
+        blockBoardItems.add(BlockBoardItem(boardName: boardName, engName: engName, bid: subbid, thereIsAdmin: thereIsAdmin, isSub: isSub, readOnly: readOnly, likeIt: likeIt, admin: adminTL));
       }
       blockBoardSets.add(BlockBoardSet(title: title, blockBoardItems: blockBoardItems));
     }

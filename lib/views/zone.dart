@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import './constants.dart';
 import '../html_parser/zone_parser.dart';
 import '../router.dart' show nv2Push;
+import '../utils.dart' show breakLongText;
 
 class ZoneView extends StatefulWidget {
   final ZoneInfo zoneInfo;
@@ -75,7 +76,11 @@ class _ZoneViewState extends State<ZoneView> {
                     },);
                   },
                   child: Center(
-                    child: Text(e.text, style: textLinkStyle),
+                    child: Text(
+                      breakLongText(e.text),
+                      overflow: TextOverflow.ellipsis,
+                      style: textLinkStyle
+                    ),
                   ),
                 );
               }).toList(),
