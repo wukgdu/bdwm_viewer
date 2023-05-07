@@ -5,10 +5,10 @@ packages:
     dependency: transitive
     description:
       name: args
-      sha256: "4cab82a83ffef80b262ddedf47a0a8e56ee6fbf7fe21e6e768b02792034dd440"
+      sha256: c372bb384f273f0c2a8aaaa226dad84dc27c8519a691b888725dec59518ad53a
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.4.0"
+    version: "2.4.1"
   async:
     dependency: "direct main"
     description:
@@ -69,10 +69,10 @@ packages:
     dependency: "direct main"
     description:
       name: crypto
-      sha256: aa274aa7774f8964e4f4f38cc994db7b6158dd36e9187aaceaddc994b35c6c67
+      sha256: ff625774173754681d66daaf4a448684fb04b78f902da9cb3d308c19cc5e8bab
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "3.0.2"
+    version: "3.0.3"
   csslib:
     dependency: transitive
     description:
@@ -320,24 +320,24 @@ packages:
     dependency: transitive
     description:
       name: flutter_plugin_android_lifecycle
-      sha256: "8ffe990dac54a4a5492747added38571a5ab474c8e5d196809ea08849c69b1bb"
+      sha256: "96af49aa6b57c10a312106ad6f71deed5a754029c24789bbf620ba784f0bd0b0"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.0.13"
+    version: "2.0.14"
   flutter_quill:
     dependency: "direct main"
     description:
       name: flutter_quill
-      sha256: b6e48dd5e0e40ee740ac926338f8ab36a038a4c3037429c2a8491b603c250bc1
+      sha256: "803d39a210f5aaa7b9d1a999ef1dac5fef4931916483f23a196fcc6e5cd75ee1"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "7.1.13"
+    version: "7.1.14"
   flutter_quill_extensions:
     dependency: "direct main"
     description:
       path: flutter_quill_extensions
       ref: HEAD
-      resolved-ref: f4c2449f8650faa28f40adc900e0245484bc04cc
+      resolved-ref: d4aaea239f5827307181647fcbf1fd4d5357edd2
       url: "https://github.com/singerdmx/flutter-quill"
     source: git
     version: "0.3.1"
@@ -403,10 +403,10 @@ packages:
     dependency: "direct main"
     description:
       name: html
-      sha256: "79d498e6d6761925a34ee5ea8fa6dfef38607781d2fa91e37523474282af55cb"
+      sha256: "58e3491f7bf0b6a4ea5110c0c688877460d1a6366731155c4a4580e7ded773e8"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.15.2"
+    version: "0.15.3"
   html_unescape:
     dependency: "direct main"
     description:
@@ -419,18 +419,18 @@ packages:
     dependency: "direct main"
     description:
       name: http
-      sha256: "6aa2946395183537c8b880962d935877325d6a09a2867c3970c05c0fed6ac482"
+      sha256: "5895291c13fa8a3bd82e76d5627f69e0d85ca6a30dcac95c4ea19a5d555879c2"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.13.5"
+    version: "0.13.6"
   http_client_helper:
     dependency: transitive
     description:
       name: http_client_helper
-      sha256: "1f32359bd07a064ad256d1f84ae5f973f69bc972e7287223fa198abe1d969c28"
+      sha256: "14c6e756644339f561321dab021215475ba4779aa962466f59ccb3ecf66b36c3"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.0.3"
+    version: "2.0.4"
   http_parser:
     dependency: "direct main"
     description:
@@ -459,10 +459,10 @@ packages:
     dependency: transitive
     description:
       name: image_picker_android
-      sha256: "7d2b25e0aec884495d782bb60cd09f779a92370035374c5ec622d09782ac68fe"
+      sha256: "271e0448e82268b3fa1cb2a48e4a911cbc2135587123d7df8e7ca703c5b10da2"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.8.6+10"
+    version: "0.8.6+11"
   image_picker_for_web:
     dependency: transitive
     description:
@@ -763,10 +763,10 @@ packages:
     dependency: transitive
     description:
       name: quick_actions_android
-      sha256: dbf1393fd8cfeb890bb42e0b0f83f98833b0788625e01dcad2f0e3309004ab06
+      sha256: "89bfe29909b192eecb9b1769f319159627fbdb6349969c98aa83a3bc885b0107"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.0.4"
+    version: "1.0.5"
   quick_actions_ios:
     dependency: transitive
     description:
@@ -864,18 +864,18 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_charts
-      sha256: afc6ddd660c898a3af3f4fe47cfc9219407bcea497c992854e102aa9dcd5a477
+      sha256: bac14684b62e990bd44436f5ce2ff5506be4df9add6f17f1cefd217819bdd0a7
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "21.1.41"
+    version: "21.2.3"
   syncfusion_flutter_core:
     dependency: transitive
     description:
       name: syncfusion_flutter_core
-      sha256: "05b079cb1be26a8d5c1afe714172d2eed9178049f4a7dc773b2cbb8b053eff8d"
+      sha256: c1c65f1fc377ff101ab5f840b9013c5267658e1185abb32df1a23c0aa0508974
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "21.1.41"
+    version: "21.2.3"
   synchronized:
     dependency: "direct main"
     description:
@@ -940,14 +940,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.2.0"
-  universal_ui:
-    dependency: transitive
-    description:
-      name: universal_ui
-      sha256: f4edbb07a44dfb7d1895b6d42506fd1537bbb92f025c8e42da6ba2b4d3d73871
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.0.8"
   url_launcher:
     dependency: "direct main"
     description:
@@ -1040,18 +1032,18 @@ packages:
     dependency: transitive
     description:
       name: video_player_android
-      sha256: "318c83a6329032eee2a90eafedf88da94dd0cd8bb2c2d0d5117764da25c697ff"
+      sha256: b608c320ab1a5fd373987c9c3c9ddbd6bda04d209f2a9f0bf197c5b02082201e
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.4.6"
+    version: "2.4.7"
   video_player_avfoundation:
     dependency: transitive
     description:
       name: video_player_avfoundation
-      sha256: "75c6d68cd479a25f34d635149ba6887bc8f1b2b2921841121fd44ea0c5bc1927"
+      sha256: "824dad3e2986a13766fcccfd1c48c83eef9f896c220a53292e3019b9e98615bb"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.4.4"
+    version: "2.4.5"
   video_player_platform_interface:
     dependency: transitive
     description:
@@ -1101,5 +1093,5 @@ packages:
     source: hosted
     version: "8.1.2"
 sdks:
-  dart: ">=2.18.0 <3.0.0"
+  dart: ">=2.19.0 <3.0.0"
   flutter: ">=3.7.0"
