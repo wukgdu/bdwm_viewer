@@ -225,7 +225,7 @@ class _CollectionViewState extends State<CollectionView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Center(child: SelectableText("${item.name}（位置：${item.id}）"),),
+                    Center(child: SelectableText("${item.name}（位置：${index-firstIndex+1}）"),),
                     const Divider(),
                     Wrap(
                       spacing: 10.0,
