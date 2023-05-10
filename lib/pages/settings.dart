@@ -359,8 +359,8 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           const Divider(),
           SwitchListTile(
-            title: const Text("打开应用时首选guest"),
-            subtitle: const Text("询问是否使用游客浏览（不使用已有的登录账号）"),
+            title: const Text("打开应用时选择$accountChinese"),
+            subtitle: const Text("默认为游客（guest）"),
             activeColor: bdwmPrimaryColor,
             value: globalConfigInfo.guestFirst,
             onChanged: (value) {

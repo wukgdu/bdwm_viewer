@@ -139,9 +139,9 @@ class Uinfo {
 
   Uinfo({required String skey, required String uid, required String username});
   Uinfo.empty();
-  Uinfo.initFromFile() {
-    init();
-  }
+  // Uinfo.initFromFile() {
+  //   init();
+  // }
 
   String gist() {
     return "$username($uid): $skey ${login == true? 'online' : 'offline'}";
@@ -207,7 +207,7 @@ class Uinfo {
     await file.close();
   }
 
-  Future<bool> init() async {
+  Future<bool> init({bool useGuest=false}) async {
     String dir = (await getApplicationDocumentsDirectory()).path;
     String filename = "$dir/$storage";
     // debugPrint(filename);
@@ -224,7 +224,11 @@ class Uinfo {
           var login0 = u['login'] as bool;
           users.add(Uitem(skey: skey0, uid: uid0, username: username0, login: login0));
         }
-        primary = jsonContent['primary'] as int;
+        if (useGuest) {
+          primary = -1;
+        } else {
+          primary = jsonContent['primary'] as int;
+        }
       }
     } else {
       await writeInit(filename);

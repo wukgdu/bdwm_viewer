@@ -139,7 +139,7 @@ class NotifyMessage {
     if (content.length > 30) {
       content = content.substring(0, 30);
     }
-    sendNotification("$count条消息", content, payload: "/message");
+    sendNotification("${globalUInfo.username}：$count条消息", content, payload: "/message");
   }
 }
 
@@ -241,7 +241,7 @@ class NotifyMail {
     if (!notifyIt) {
       return;
     }
-    String title = "站内信 ${unreadMailInfo.count} 封未读";
+    String title = "${globalUInfo.username}：站内信 ${unreadMailInfo.count} 封未读";
     var newestItem = unreadMailInfo.unreadMailList.first;
     String content = "${newestItem.owner} ${newestItem.title} ${newestItem.content}";
     if (content.length > 40) {

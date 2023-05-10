@@ -17,11 +17,12 @@ import './services.dart';
 import './services_instance.dart';
 import './bdwm/mail.dart';
 import './utils.dart';
-import './views/utils.dart' show showConfirmDialog, showInformDialog;
+import './views/utils.dart' show showInformDialog;
 import './check_update.dart' show checkUpdateByTime, curVersionForBBS;
 import './notification.dart' show initFlnInstance;
 import './views/top10.dart' show getDataTop10, gotTop10, isTop10Valid;
 import './pages/read_thread.dart' show naviGotoThreadByLink;
+import './views/multi_users.dart' show processSwitchUsersDialog, showSwitchUsersDialog;
 
 void main() async {
   if (isAndroid()) {
@@ -32,9 +33,7 @@ void main() async {
   await globalContactInfo.init();
   await globalConfigInfo.init();
   await globalNotConfigInfo.init();
-  if (!globalConfigInfo.getGuestFirst()) {
-    await globalUInfo.init();
-  }
+  await globalUInfo.init(useGuest: globalConfigInfo.getGuestFirst());
   await globalThreadHistory.init();
   await globalMarkedThread.init();
   await initFlnInstance();
@@ -235,9 +234,10 @@ class MainPageState extends State<MainPage> {
         if (!mounted) { return; }
         var globalContext = getGlobalContext();
         if (globalContext == null) { return; }
-        var useGuest = await showConfirmDialog(globalContext, "保持游客浏览", "选“不了”后需要下拉刷新，不需要登录");
-        if (useGuest == "no") {
-          await globalUInfo.init();
+        var switchRes = await showSwitchUsersDialog(globalContext, showLogin: false, desc: "选择非游客需要下拉刷新，不需要重新登录");
+        await processSwitchUsersDialog(switchRes);
+        if (globalUInfo.uid != guestUitem.uid) {
+          // await globalUInfo.init();
           // checkUpdateByTime();
           showUpdateDialog();
           // setState(() { });

@@ -50,7 +50,8 @@ class _SwitchUsersComponentState extends State<SwitchUsersComponent> {
 }
 
 class SwitchUsersDialogContent extends StatefulWidget {
-  const SwitchUsersDialogContent({super.key});
+  final String? desc;
+  const SwitchUsersDialogContent({super.key, this.desc});
 
   @override
   State<SwitchUsersDialogContent> createState() => _SwitchUsersDialogContentState();
@@ -76,43 +77,49 @@ class _SwitchUsersDialogContentState extends State<SwitchUsersDialogContent> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
-        children: users.map((e) {
-          return ListTile(
-            title: Text(e.briefInfo()),
-            onTap: () {
-              Navigator.of(context).pop(e.uid);
-            },
-            trailing: IconButton(
-              onPressed: () async {
-                var yes = await showConfirmDialog(context, "移除该$accountChinese的登录", "退出登录并移除");
-                if (yes != "yes") { return; }
-                if (e.username == guestUitem.username) {
-                  await globalUInfo.removeUser(guestUitem.uid, save: true, force: true, updateP: true);
-                } else if (e.login==false) {
-                  await globalUInfo.removeUser(e.uid, save: true, force: true, updateP: true);
-                } else {
-                  await bdwmLogout(skey: e.skey, uid: e.uid);
-                }
-                genUsers();
-                setState(() { });
+        children: [
+          if (widget.desc != null) ...[
+            Text(widget.desc!),
+          ],
+          ...users.map((e) {
+            return ListTile(
+              dense: true,
+              title: Text(e.briefInfo()),
+              onTap: () {
+                Navigator.of(context).pop(e.uid);
               },
-              icon: const Icon(Icons.remove),
-            ),
-          );
-        }).toList(),
+              trailing: IconButton(
+                onPressed: () async {
+                  var yes = await showConfirmDialog(context, "移除该$accountChinese的登录", "退出登录并移除");
+                  if (yes != "yes") { return; }
+                  if (e.username == guestUitem.username) {
+                    await globalUInfo.removeUser(guestUitem.uid, save: true, force: true, updateP: true);
+                  } else if (e.login==false) {
+                    await globalUInfo.removeUser(e.uid, save: true, force: true, updateP: true);
+                  } else {
+                    await bdwmLogout(skey: e.skey, uid: e.uid);
+                  }
+                  genUsers();
+                  setState(() { });
+                },
+                icon: const Icon(Icons.remove),
+              ),
+            );
+          }).toList(),
+        ],
       ),
     );
   }
 }
 
-Future<String?> showSwitchUsersDialog(BuildContext context, {bool showLogin=false}) {
+Future<String?> showSwitchUsersDialog(BuildContext context, {bool showLogin=false, String? desc}) {
   return showDialog<String>(
     context: context,
     barrierDismissible: true,
     builder: (BuildContext context) {
       return AlertDialog(
         title: const Text("切换$accountChinese"),
-        content: const SwitchUsersDialogContent(),
+        content: SwitchUsersDialogContent(desc: desc,),
         actions: [
           TextButton(
             onPressed: () { Navigator.of(context).pop(); },
