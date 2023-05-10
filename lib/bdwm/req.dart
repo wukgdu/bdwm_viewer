@@ -15,7 +15,8 @@ class BdwmClient {
       // debugPrint(cookie);
       await globalUInfo.checkAndLogout(cookie);
       if (globalUInfo.login == false) {
-        sendNotification("OBViewer", "${globalUInfo.username}登录已失效", payload: "/login");
+        sendNotification("OBViewer", "该$accountChinese登录已失效", payload: "/login");
+        debugPrint("该$accountChinese登录已失效");
       }
     }
   }

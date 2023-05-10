@@ -95,7 +95,7 @@ class _LoginViewState extends State<LoginView> {
                       case 5:
                         content = "您输入的密码有误，请重新输入"; break;
                       default:
-                        content = "其他错误发生，错误码 ${res.error}";
+                        content = res.desc ?? "其他错误发生，错误码 ${res.error}";
                     }
                     showInformDialog(context, title, content);
                   } else {
