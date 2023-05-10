@@ -41,7 +41,7 @@ class _SwitchUsersComponentState extends State<SwitchUsersComponent> {
         }
       },
       child: Text.rich(TextSpan(children: [
-        const WidgetSpan(child: Icon(Icons.switch_account), alignment: PlaceholderAlignment.middle),
+        const WidgetSpan(child: Icon(Icons.switch_account, size: 16,), alignment: PlaceholderAlignment.middle),
         const TextSpan(text: " "),
         TextSpan(text: globalUInfo.username),
       ])),
@@ -87,7 +87,9 @@ class _SwitchUsersDialogContentState extends State<SwitchUsersDialogContent> {
                 var yes = await showConfirmDialog(context, "移除该$accountChinese的登录", "退出登录并移除");
                 if (yes != "yes") { return; }
                 if (e.username == guestUitem.username) {
-                  await globalUInfo.removeUser(guestUitem.uid, guestUitem.username, save: true, force: true, updateP: true);
+                  await globalUInfo.removeUser(guestUitem.uid, save: true, force: true, updateP: true);
+                } else if (e.login==false) {
+                  await globalUInfo.removeUser(e.uid, save: true, force: true, updateP: true);
                 } else {
                   await bdwmLogout(skey: e.skey, uid: e.uid);
                 }
@@ -119,7 +121,7 @@ Future<String?> showSwitchUsersDialog(BuildContext context, {bool showLogin=fals
           if (showLogin == true) ...[
             TextButton(
               onPressed: globalUInfo.isFull() ? null : () { Navigator.of(context).pop(""); },
-              child: const Text("去登录新$accountChinese"),
+              child: const Text("登录新$accountChinese"),
             ),
           ],
         ],

@@ -169,8 +169,7 @@ class Uinfo {
     await update();
   }
 
-  void updatePrimary() {
-    var curUid = uid;
+  void updatePrimary(String curUid) {
     primary = -1;
     for (var i=0; i<users.length; i+=1) {
       if (users[i].uid == curUid) {
@@ -179,10 +178,11 @@ class Uinfo {
     }
   }
 
-  Future<void> removeUser(String uid, String username, {required bool save, bool force=false, bool updateP=false}) async {
+  Future<void> removeUser(String uid, {required bool save, bool force=false, bool updateP=false}) async {
     if ((force==false) && (uid == this.uid)) { return; }
-    users.removeWhere((element) => (element.uid == uid) && (element.username == username));
-    if (updateP) { updatePrimary(); }
+    var curUid = this.uid;
+    users.removeWhere((element) => element.uid == uid);
+    if (updateP) { updatePrimary(curUid); }
     if (save) { await update(); }
   }
 
@@ -273,9 +273,10 @@ class Uinfo {
     }
   }
 
-  Future<void> setLogout() async {
-    await removeUser(uid, username, save: false, force: true, updateP: false);
-    updatePrimary();
+  Future<void> setLogout({String? uid}) async {
+    var curUid = this.uid;
+    await removeUser(uid ?? this.uid, save: false, force: true, updateP: false);
+    updatePrimary(curUid);
     await unreadMail.reInitWorker();
     await unreadMessage.reInitWorker();
     await update();
