@@ -18,11 +18,11 @@ import "../pages/detail_image.dart";
 import './html_widget.dart';
 import '../html_parser/modify_profile_parser.dart';
 import '../router.dart' show nv2Push, nv2PushAndRemoveAll;
+import './multi_users.dart' show SwitchUsersComponent;
 
 class UserOperationCombinedComponent extends StatefulWidget {
   final UserProfile user;
-  final String uid;
-  const UserOperationCombinedComponent({required this.user, required this.uid, super.key});
+  const UserOperationCombinedComponent({required this.user, super.key});
 
   @override
   State<UserOperationCombinedComponent> createState() => _UserOperationCombinedComponentState();
@@ -54,14 +54,14 @@ class _UserOperationCombinedComponentState extends State<UserOperationCombinedCo
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          UserOperationComponent(exist: useradd, uid: widget.uid, userName: widget.user.bbsID, mode: "add",
+          UserOperationComponent(exist: useradd, uid: widget.user.uid, userName: widget.user.bbsID, mode: "add",
             callBack: () {
               setState(() {
                 useradd = !useradd;
               });
             },
           ),
-          UserOperationComponent(exist: userreject, uid: widget.uid, userName: widget.user.bbsID, mode: "reject",
+          UserOperationComponent(exist: userreject, uid: widget.user.uid, userName: widget.user.bbsID, mode: "reject",
             callBack: () {
               if (userreject == false) {
                 setState(() {
@@ -458,9 +458,9 @@ class _RankSysComponentState extends State<RankSysComponent> {
 }
 
 class UserInfoView extends StatefulWidget {
-  final String uid;
   final UserProfile user;
-  const UserInfoView({Key? key, required this.uid, required this.user}) : super(key: key);
+  final void Function(String?) refresh;
+  const UserInfoView({Key? key, required this.user, required this.refresh}) : super(key: key);
 
   @override
   State<UserInfoView> createState() => _UserInfoViewState();
@@ -486,6 +486,28 @@ class _UserInfoViewState extends State<UserInfoView> {
   void didUpdateWidget(covariant UserInfoView oldWidget) {
     super.didUpdateWidget(oldWidget);
     user = widget.user;
+  }
+
+  Widget _oneLineForUid(String label, String value, {Icon? icon, bool selectable=false}) {
+    return Card(
+      child: Container(
+        height: 40,
+        padding: const EdgeInsets.only(left: 10),
+        child: Row(
+          children: [
+            if (icon != null)
+              ...[icon],
+            Text(label),
+            const Text("："),
+            selectable ? SelectionArea(child: Text(value)) : Text(value),
+            if (globalUInfo.uid == user.uid) ...[
+              const Text(" "),
+              SwitchUsersComponent(showLogin: true, refresh: widget.refresh),
+            ],
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _oneLineItem(String label, String value, {Icon? icon, bool selectable=false}) {
@@ -696,7 +718,7 @@ class _UserInfoViewState extends State<UserInfoView> {
               ),
             ),
             isThreeLine: true,
-            trailing: (globalUInfo.login && (globalUInfo.uid == widget.uid))
+            trailing: globalUInfo.uid == guestUitem.uid ? null : (globalUInfo.login && (globalUInfo.uid == user.uid))
               ? SizedBox(
                 width: 48,
                 child:  IconButton(
@@ -711,14 +733,14 @@ class _UserInfoViewState extends State<UserInfoView> {
                   },
                 ),
               )
-              : UserOperationCombinedComponent(user: user, uid: widget.uid),
+              : UserOperationCombinedComponent(user: user),
             ),
           ),
         Expanded(
           child: ListView(
             controller: _scrollController,
             children: [
-              _oneLineItem("UID", widget.uid, selectable: true),
+              _oneLineForUid("UID", user.uid, selectable: true),
               _oneLineItem("性别", user.gender, icon: genderIcon),
               _oneLineItem("星座", user.constellation),
               _oneLineItem("生命力", user.value),
@@ -791,8 +813,8 @@ class UserFutureView extends StatefulWidget {
 class _UserFutureViewState extends State<UserFutureView> {
   late CancelableOperation getDataCancelable;
 
-  Future<UserProfile> getData() async {
-    var resp = await bdwmClient.get("$v2Host/user.php?uid=${widget.uid}", headers: genHeaders());
+  Future<UserProfile> getData({String? uid}) async {
+    var resp = await bdwmClient.get("$v2Host/user.php?uid=${uid ?? widget.uid}", headers: genHeaders());
     if (resp == null) {
       return UserProfile.error(errorMessage: networkErrorText);
     }
@@ -811,9 +833,9 @@ class _UserFutureViewState extends State<UserFutureView> {
     super.dispose();
   }
 
-  void refresh() {
+  void refresh({String? uid}) {
     setState(() {
-      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {});
+      getDataCancelable = CancelableOperation.fromFuture(getData(uid: uid), onCancel: () {});
     });
   }
 
@@ -834,7 +856,9 @@ class _UserFutureViewState extends State<UserFutureView> {
           return const Center(child: Text("错误：未获取数据"),);
         }
         UserProfile userInfo = snapshot.data as UserProfile;
-        return UserInfoView(uid: widget.uid, user: userInfo);
+        return UserInfoView(user: userInfo, refresh: (String? uid) {
+          refresh(uid: uid);
+        });
       },
     );
   }

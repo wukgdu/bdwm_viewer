@@ -18,6 +18,8 @@ const simFont = "SimSun, monospace, roboto, serif";
 const notoSansMonoCJKscFont= "Noto Sans Mono CJK SC";
 const avaiFonts = [simFont, notoSansMonoCJKscFont];
 
+const accountChinese = "帐号";
+
 List<String> parseCookie(String cookie) {
   var pattern1 = "skey=";
   var pattern2 = "uid=";
@@ -51,6 +53,9 @@ class Uitem {
       "uid": uid,
       "login": login,
     };
+  }
+  String briefInfo() {
+    return "$username ($uid)";
   }
 }
 
@@ -87,14 +92,49 @@ class Uinfo {
     return users[primary].login;
   }
 
-  bool switchByUsername(String username) {
+  Future<bool> switchByUsername(String username) async {
     for (var i=0; i<users.length; i+=1) {
       if (users[i].username == username) {
         primary = i;
+        await update();
+        return true;
+      }
+    }
+    if (username == guestUitem.username) {
+      primary = -1;
+      await update();
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> switchByUid(String uid) async {
+    for (var i=0; i<users.length; i+=1) {
+      if (users[i].uid == uid) {
+        primary = i;
+        await update();
+        return true;
+      }
+    }
+    if (uid == guestUitem.uid) {
+      primary = -1;
+      await update();
+      return true;
+    }
+    return false;
+  }
+
+  bool containsGuest() {
+    for (var i=0; i<users.length; i+=1) {
+      if (users[i].username == guestUitem.username) {
         return true;
       }
     }
     return false;
+  }
+
+  bool isFull() {
+    return users.length >= 3;
   }
 
   Uinfo({required String skey, required String uid, required String username});
@@ -108,7 +148,7 @@ class Uinfo {
   }
 
   CheckUserStat checkUserCanLogin(String username) {
-    if (users.length >= 3) { return CheckUserStat.full; }
+    if (isFull()) { return CheckUserStat.full; }
     for (var i=0; i<users.length; i+=1) {
       if (users[i].username == username) {
         if (users[i].login) {
@@ -129,9 +169,20 @@ class Uinfo {
     await update();
   }
 
-  Future<void> removeUser(String uid, String username, {bool save=false, bool force=false}) async {
+  void updatePrimary() {
+    var curUid = uid;
+    primary = -1;
+    for (var i=0; i<users.length; i+=1) {
+      if (users[i].uid == curUid) {
+        primary = i;
+      }
+    }
+  }
+
+  Future<void> removeUser(String uid, String username, {required bool save, bool force=false, bool updateP=false}) async {
     if ((force==false) && (uid == this.uid)) { return; }
     users.removeWhere((element) => (element.uid == uid) && (element.username == username));
+    if (updateP) { updatePrimary(); }
     if (save) { await update(); }
   }
 
@@ -205,7 +256,9 @@ class Uinfo {
     String newUid = res[0];
     String newSkey = res[1];
     if (newUid != uid) {
-      await setLogout();
+      if (newUid == guestUitem.uid) {
+        await setLogout();
+      }
     } else if (newSkey != skey) {
       for (var i=0; i<users.length; i+=1) {
         if (users[i].uid == newUid) {
@@ -221,8 +274,8 @@ class Uinfo {
   }
 
   Future<void> setLogout() async {
-    await removeUser(uid, username, save: false, force: true);
-    primary = -1;
+    await removeUser(uid, username, save: false, force: true, updateP: false);
+    updatePrimary();
     await unreadMail.reInitWorker();
     await unreadMessage.reInitWorker();
     await update();
@@ -248,7 +301,7 @@ Map<String, String> genHeaders() {
   };
 }
 
-Map<String, String> genHeaders2() {
+Map<String, String> genHeaders2({String? skey, String? uid}) {
   return <String, String>{
     "accept": "*/*",
     "accept-language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
@@ -259,7 +312,7 @@ Map<String, String> genHeaders2() {
     "sec-fetch-mode": "cors",
     "sec-fetch-site": "same-origin",
     "x-requested-with": "XMLHttpRequest",
-    "cookie": "mode=topic; mode=topic; ; favorite_mode=list; favorite_mode=list; skey=${globalUInfo.skey}; uid=${globalUInfo.uid}",
+    "cookie": "mode=topic; mode=topic; ; favorite_mode=list; favorite_mode=list; skey=${skey ?? globalUInfo.skey}; uid=${uid ?? globalUInfo.uid}",
     "Referer": "https://bbs.pku.edu.cn/",
     "Referrer-Policy": "strict-origin-when-cross-origin"
   };

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 
 import './req.dart';
-import '../globalvars.dart' show globalUInfo, networkErrorText, v2Host, parseCookie, CheckUserStat;
+import '../globalvars.dart' show globalUInfo, networkErrorText, v2Host, parseCookie, CheckUserStat, accountChinese;
 
 String genMD5(String s) {
   var content = const Utf8Encoder().convert(s);
@@ -40,9 +40,9 @@ class LoginRes {
 Future<LoginRes> bdwmLogin(String username, String password) async {
   var checkRes = globalUInfo.checkUserCanLogin(username);
   if (checkRes == CheckUserStat.full) {
-    return LoginRes.error(success: false, error: 1, desc: "已登录帐号数已达上限");
+    return LoginRes.error(success: false, error: 1, desc: "已登录$accountChinese数已达上限");
   } else if ((checkRes == CheckUserStat.exist) || (checkRes == CheckUserStat.logout)) {
-    return LoginRes.error(success: false, error: 1, desc: "该帐号已存在");
+    return LoginRes.error(success: false, error: 1, desc: "该$accountChinese已存在");
   }
   var loginUrl = "$v2Host/ajax/login.php";
   var data = genLoginInfo(username, password);

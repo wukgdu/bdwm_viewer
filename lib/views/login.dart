@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../bdwm/login.dart';
-import '../router.dart';
-import '../globalvars.dart';
+import '../bdwm/login.dart' show bdwmLogin;
+import '../router.dart' show nv2PushAndRemoveAll;
+import '../globalvars.dart' show globalUInfo;
 import '../services_instance.dart';
-import './utils.dart';
+import './utils.dart' show showInformDialog;
+import './multi_users.dart' show SwitchUsersComponent;
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -96,23 +97,19 @@ class _LoginViewState extends State<LoginView> {
                       default:
                         content = "其他错误发生，错误码 ${res.error}";
                     }
-                    showAlertDialog(
-                      context, title, Text(content),
-                      actions1: TextButton(
-                        child: const Text("知道了"),
-                        onPressed: () { Navigator.pop(context, 'OK'); },
-                      ),
-                    );
+                    showInformDialog(context, title, content);
                   } else {
                     debugPrint(globalUInfo.gist());
                     unreadMail.clearAll();
                     unreadMessage.clearAll();
-                    nv2Replace(context, '/home');
+                    nv2PushAndRemoveAll(context, '/home');
                   }
                 });
               },
               child: const Text("登录"),
             ),
+            const SizedBox(height: 15,),
+            const SwitchUsersComponent(showLogin: false,),
           ],
         ),
       ),
