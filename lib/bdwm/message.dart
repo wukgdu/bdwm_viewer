@@ -24,10 +24,6 @@ Future<List<UnreadMessageInfo>?> bdwmGetUnreadMessageCount() async {
   for (var element in resContent['result']) {
     unreadMessageList.add(UnreadMessageInfo(element['with'], element['count']));
   }
-  // List<String> res = parseCookie(resp.headers['set-cookie'] ?? "");
-  // if (res.isNotEmpty) {
-  //   globalUInfo.setInfo(res[1], res[0], username);
-  // }
   return unreadMessageList;
 }
 

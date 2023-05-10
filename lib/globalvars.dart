@@ -33,14 +33,71 @@ List<String> parseCookie(String cookie) {
   return <String>[uid, skey];
 }
 
-class Uinfo {
-  String skey = "a946e957f047df88";
-  String uid = "15265";
-  String username = "guest";
-  bool login = false;
-  String storage = "bdwmusers.json";
+class Uitem {
+  String skey;
+  String uid;
+  String username;
+  bool login;
+  Uitem({
+    required this.skey,
+    required this.uid,
+    required this.username,
+    required this.login,
+  });
+  Map<String, Object> toMap() {
+    return {
+      "name": username,
+      "skey": skey,
+      "uid": uid,
+      "login": login,
+    };
+  }
+}
 
-  Uinfo({required this.skey, required this.uid, required this.username});
+enum CheckUserStat {
+  ok, full, exist, logout,
+}
+
+var guestUitem = Uitem(
+  skey: "a946e957f047df88",
+  uid: "15265",
+  username: "guest",
+  login: false,
+);
+
+class Uinfo {
+  String storage = "bdwmusers.json";
+  int primary = -1;
+  List<Uitem> users = [];
+
+  String get username {
+    if (primary == -1) { return guestUitem.username; }
+    return users[primary].username;
+  }
+  String get skey {
+    if (primary == -1) { return guestUitem.skey; }
+    return users[primary].skey;
+  }
+  String get uid {
+    if (primary == -1) { return guestUitem.uid; }
+    return users[primary].uid;
+  }
+  bool get login {
+    if (primary == -1) { return guestUitem.login; }
+    return users[primary].login;
+  }
+
+  bool switchByUsername(String username) {
+    for (var i=0; i<users.length; i+=1) {
+      if (users[i].username == username) {
+        primary = i;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Uinfo({required String skey, required String uid, required String username});
   Uinfo.empty();
   Uinfo.initFromFile() {
     init();
@@ -50,51 +107,76 @@ class Uinfo {
     return "$username($uid): $skey ${login == true? 'online' : 'offline'}";
   }
 
-  Future<void> setInfo(String skey, String uid, String username) async {
-    this.skey = skey;
-    this.uid = uid;
-    this.username = username;
+  CheckUserStat checkUserCanLogin(String username) {
+    if (users.length >= 3) { return CheckUserStat.full; }
+    for (var i=0; i<users.length; i+=1) {
+      if (users[i].username == username) {
+        if (users[i].login) {
+          return CheckUserStat.exist;
+        }
+        return CheckUserStat.logout;
+      }
+    }
+    return CheckUserStat.ok;
+  }
+
+  Future<void> addUser(String skey, String uid, String username) async {
+    var curUser = Uitem(skey: skey, uid: uid, username: username, login: true);
+    users.add(curUser);
+    primary = users.length - 1;
     await unreadMail.reInitWorker();
     await unreadMessage.reInitWorker();
-    login = true;
     await update();
   }
 
-  Future<bool> init({bool letTrue=false}) async {
+  Future<void> removeUser(String uid, String username, {bool save=false, bool force=false}) async {
+    if ((force==false) && (uid == this.uid)) { return; }
+    users.removeWhere((element) => (element.uid == uid) && (element.username == username));
+    if (save) { await update(); }
+  }
+
+  // Future<void> setInfo(String skey, String uid, String username) async {
+  //   this.skey = skey;
+  //   this.uid = uid;
+  //   this.username = username;
+  //   await unreadMail.reInitWorker();
+  //   await unreadMessage.reInitWorker();
+  //   login = true;
+  //   await update();
+  // }
+
+  Future<void> writeInit(String filename) async {
+    var file = File(filename).openWrite();
+    Map<String, Object> content = <String, Object>{
+      "users": [],
+      "primary": -1
+    };
+    file.write(jsonEncode(content));
+    await file.flush();
+    await file.close();
+  }
+
+  Future<bool> init() async {
     String dir = (await getApplicationDocumentsDirectory()).path;
     String filename = "$dir/$storage";
     // debugPrint(filename);
-    Future<void> writeInit() async {
-      var file = File(filename).openWrite();
-      Map<String, Object> content = <String, Object>{
-        "users": [{
-            "name": "guest",
-            "skey": "a946e957f047df88",
-            "uid": "15265",
-            "login": false
-        }],
-        "primary": 0
-      };
-      file.write(jsonEncode(content));
-      await file.flush();
-      await file.close();
-    }
     if (File(filename).existsSync()) {
       var content = File(filename).readAsStringSync();
       if (content.isEmpty) {
-        await writeInit();
+        await writeInit(filename);
       } else {
         var jsonContent = jsonDecode(content);
-        uid = jsonContent['users'][0]['uid'];
-        skey = jsonContent['users'][0]['skey'];
-        username = jsonContent['users'][0]['name'];
-        login = letTrue || jsonContent['users'][0]['login'];
-        if (letTrue) {
-          await update();
+        for (var u in jsonContent['users']) {
+          var uid0 = u['uid'] as String;
+          var skey0 = u['skey'] as String;
+          var username0 = u['name'] as String;
+          var login0 = u['login'] as bool;
+          users.add(Uitem(skey: skey0, uid: uid0, username: username0, login: login0));
         }
+        primary = jsonContent['primary'] as int;
       }
     } else {
-      await writeInit();
+      await writeInit(filename);
     }
     return true;
   }
@@ -102,14 +184,12 @@ class Uinfo {
   Future<void> update() async {
     String dir = (await getApplicationDocumentsDirectory()).path;
     String filename = "$dir/$storage";
-    var content = File(filename).readAsStringSync();
-    var jsonContent = jsonDecode(content);
-    jsonContent['users'][0]['uid'] = uid;
-    jsonContent['users'][0]['skey'] = skey;
-    jsonContent['users'][0]['name'] = username;
-    jsonContent['users'][0]['login'] = login;
     var file = File(filename).openWrite();
-    file.write(jsonEncode(jsonContent));
+    Map<String, Object> content = <String, Object>{
+      "users": users.map((e) => e.toMap()).toList(),
+      "primary": primary,
+    };
+    file.write(jsonEncode(content));
     await file.flush();
     await file.close();
   }
@@ -125,24 +205,26 @@ class Uinfo {
     String newUid = res[0];
     String newSkey = res[1];
     if (newUid != uid) {
-      uid = newUid;
-      skey = newSkey;
-      if (newUid == "15265") {
-        username = "guest";
-      }
-      login = false;
-      await update();
+      await setLogout();
     } else if (newSkey != skey) {
-      uid = newUid;
-      skey = newSkey;
-      login = true;
-      await update();
+      for (var i=0; i<users.length; i+=1) {
+        if (users[i].uid == newUid) {
+          users[i].skey = newSkey;
+          users[i].login = true;
+          await unreadMail.reInitWorker();
+          await unreadMessage.reInitWorker();
+          await update();
+          break;
+        }
+      }
     }
   }
 
   Future<void> setLogout() async {
-    login = false;
-    username = "guest";
+    await removeUser(uid, username, save: false, force: true);
+    primary = -1;
+    await unreadMail.reInitWorker();
+    await unreadMessage.reInitWorker();
     await update();
   }
 }

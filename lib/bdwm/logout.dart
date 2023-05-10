@@ -1,7 +1,7 @@
-import 'dart:convert';
+import 'dart:convert' show json;
 
-import './req.dart';
-import '../globalvars.dart';
+import './req.dart' show bdwmClient;
+import '../globalvars.dart' show genHeaders2, v2Host, globalUInfo;
 
 Future<bool> bdwmLogout() async {
   var logoutUrl = "$v2Host/ajax/logout.php";
@@ -14,9 +14,5 @@ Future<bool> bdwmLogout() async {
     return false;
   }
   await globalUInfo.setLogout();
-  // List<String> res = parseCookie(resp.headers['set-cookie'] ?? "");
-  // if (res.isNotEmpty) {
-  //   globalUInfo.setInfo(res[1], res[0], username);
-  // }
   return true;
 }

@@ -55,10 +55,6 @@ Future<UnreadMailInfo?> bdwmGetUnreadMailCount() async {
       filename: element['filename'],
     ));
   }
-  // List<String> res = parseCookie(resp.headers['set-cookie'] ?? "");
-  // if (res.isNotEmpty) {
-  //   globalUInfo.setInfo(res[1], res[0], username);
-  // }
   return UnreadMailInfo(success: resContent['success'], count: resContent['count'] ?? 0, unreadMailList: unreadMailList);
 }
 

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 
 import './req.dart';
-import '../globalvars.dart';
+import '../globalvars.dart' show globalUInfo, networkErrorText, v2Host, parseCookie, CheckUserStat;
 
 String genMD5(String s) {
   var content = const Utf8Encoder().convert(s);
@@ -38,6 +38,12 @@ class LoginRes {
 }
 
 Future<LoginRes> bdwmLogin(String username, String password) async {
+  var checkRes = globalUInfo.checkUserCanLogin(username);
+  if (checkRes == CheckUserStat.full) {
+    return LoginRes.error(success: false, error: 1, desc: "已登录帐号数已达上限");
+  } else if ((checkRes == CheckUserStat.exist) || (checkRes == CheckUserStat.logout)) {
+    return LoginRes.error(success: false, error: 1, desc: "该帐号已存在");
+  }
   var loginUrl = "$v2Host/ajax/login.php";
   var data = genLoginInfo(username, password);
   var resp = await bdwmClient.post(loginUrl, headers: <String, String>{}, data: data);
@@ -50,7 +56,7 @@ Future<LoginRes> bdwmLogin(String username, String password) async {
   }
   List<String> res = parseCookie(resp.headers['set-cookie'] ?? "");
   if (res.isNotEmpty) {
-    await globalUInfo.setInfo(res[1], res[0], username);
+    await globalUInfo.addUser(res[1], res[0], username);
   }
   return LoginRes(true, 0);
 }

@@ -237,7 +237,7 @@ class MainPageState extends State<MainPage> {
         if (globalContext == null) { return; }
         var useGuest = await showConfirmDialog(globalContext, "保持游客浏览", "选“不了”后需要下拉刷新，不需要登录");
         if (useGuest == "no") {
-          await globalUInfo.init(letTrue: false);
+          await globalUInfo.init();
           // checkUpdateByTime();
           showUpdateDialog();
           // setState(() { });
