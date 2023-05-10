@@ -18,6 +18,7 @@ import './upload.dart';
 import './utils.dart';
 import '../router.dart' show nv2Pop, forceRefresh, nv2Replace;
 import './editor.dart' show FquillEditor, FquillEditorToolbar, genController;
+import './multi_users.dart' show SwitchUsersComponent;
 
 class PostNewView extends StatefulWidget {
   final String bid;
@@ -28,7 +29,8 @@ class PostNewView extends StatefulWidget {
   final String? quoteText;
   final String? nickName;
   final FutureOrFunction<String> updateQuote;
-  const PostNewView({Key? key, required this.bid, this.postid, this.parentid, required this.postNewInfo, this.quoteText, required this.updateQuote, this.nickName}) : super(key: key);
+  final void Function(String?)? refresh;
+  const PostNewView({Key? key, required this.bid, this.postid, this.parentid, required this.postNewInfo, this.quoteText, required this.updateQuote, this.nickName, this.refresh}) : super(key: key);
 
   @override
   State<PostNewView> createState() => _PostNewViewState();
@@ -391,7 +393,11 @@ class _PostNewViewState extends State<PostNewView> {
               ),
             ],
           ),
-        )
+        ),
+        Container(
+          margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
+          child: Center(child: SwitchUsersComponent(showLogin: false, refresh: widget.refresh,)),
+        ),
       ],
     );
   }
@@ -431,6 +437,19 @@ class _PostNewFutureViewState extends State<PostNewFutureView> {
       return networkErrorText;
     }
     return resp.result!;
+  }
+
+  void refresh() {
+    if (widget.parentid == null) {
+      getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
+        // debugPrint("cancel it");
+      },);
+    } else {
+      getDataCancelable = CancelableOperation.fromFuture(Future.wait([getData(), getPostQuote()]), onCancel: () {
+        // debugPrint("cancel it");
+      },);
+    }
+    setState(() { });
   }
 
   @override
@@ -487,6 +506,9 @@ class _PostNewFutureViewState extends State<PostNewFutureView> {
           postid: widget.postid, bid: widget.bid, quoteText: quoteText,
           nickName: widget.nickName,
           updateQuote: (String mode) { return getPostQuote(mode: mode); },
+          refresh: (String? uid) {
+            refresh();
+          },
         );
       }
     );
