@@ -10,6 +10,7 @@ const textLinkStyle = TextStyle(
 );
 const Color highlightReplyColor = Color(0xffea6242);
 const Color highlightPostColor = Color(0xfffff8f0);
+const Color highlightPostDarkColor = Color.fromARGB(255, 235, 190, 139);
 const Color highlightColor = Color(0xffea6242);
 const Color onlineColor = Color(0xff5cae97);
 const Color vip0Color = Color(0xff45c2ee);

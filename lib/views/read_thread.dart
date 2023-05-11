@@ -705,10 +705,11 @@ class _OnePostComponentState extends State<OnePostComponent> {
   Widget build(BuildContext context) {
     var item = widget.onePostInfo;
     // double deviceWidth = MediaQuery.of(context).size.width;
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: widget.subIdx == null ? null : EdgeInsets.only(left: 20.0*widget.subIdx!),
       child: Card(
-        color: item.postNumber.contains("高亮") ? highlightPostColor : null,
+        color: item.postNumber.contains("高亮") ? isDark ? highlightPostDarkColor : highlightPostColor : null,
         child: hideIt
         ? Container(
           alignment: Alignment.center,
