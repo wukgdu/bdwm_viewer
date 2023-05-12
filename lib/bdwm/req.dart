@@ -10,10 +10,10 @@ import '../notification.dart' show sendNotification;
 class BdwmClient {
   final http.Client client = http.Client();
 
-  Future<void> checkStatus(String cookie) async {
+  Future<void> checkStatus(String cookie, {required String reqUid}) async {
     if (globalUInfo.login) {
       // debugPrint(cookie);
-      await globalUInfo.checkAndLogout(cookie);
+      await globalUInfo.checkAndLogout(cookie, reqUid: reqUid);
       if (globalUInfo.login == false) {
         sendNotification("OBViewer", "该$accountChinese登录已失效", payload: "/login");
         debugPrint("该$accountChinese登录已失效");
@@ -23,11 +23,12 @@ class BdwmClient {
 
   Future<http.Response?> post(String url, {Map<String, String> headers=const {}, Object data=const <String, String>{}}) async {
     debugPrint("post");
+    var reqUid = globalUInfo.uid;
     var timeout = false;
     try {
       var resp = await client.post(Uri.parse(url), body: data, headers: headers)
         .timeout(const Duration(seconds: 10));
-      await checkStatus(resp.headers['set-cookie'] ?? "");
+      await checkStatus(resp.headers['set-cookie'] ?? "", reqUid: reqUid);
       return resp;
     } on TimeoutException catch (_) {
       timeout = true;
@@ -48,11 +49,12 @@ class BdwmClient {
 
   Future<http.Response?> get(String url, {Map<String, String> headers=const {}}) async {
     debugPrint("get");
+    var reqUid = globalUInfo.uid;
     var timeout = false;
     try {
       var resp =  await client.get(Uri.parse(url), headers: headers)
         .timeout(const Duration(seconds: 10));
-      await checkStatus(resp.headers['set-cookie'] ?? "");
+      await checkStatus(resp.headers['set-cookie'] ?? "", reqUid: reqUid);
       return resp;
     } on TimeoutException catch (_) {
       timeout = true;

@@ -57,14 +57,17 @@ class Uitem {
   String briefInfo() {
     return "$username ($uid)";
   }
+  String info() {
+    return "$username ($uid): $skey $login";
+  }
 }
 
 enum CheckUserStat {
   ok, full, exist, logout,
 }
 
-var guestUitem = Uitem(
-  skey: "a946e957f047df88",
+final guestUitem = Uitem(
+  skey: "43ba4d206559d3a9",
   uid: "15265",
   username: "guest",
   login: false,
@@ -161,6 +164,7 @@ class Uinfo {
   }
 
   Future<void> addUser(String skey, String uid, String username) async {
+    users.removeWhere((element) => element.uid == guestUitem.uid);
     var curUser = Uitem(skey: skey, uid: uid, username: username, login: true);
     users.add(curUser);
     primary = users.length - 1;
@@ -174,6 +178,7 @@ class Uinfo {
     for (var i=0; i<users.length; i+=1) {
       if (users[i].uid == curUid) {
         primary = i;
+        break;
       }
     }
   }
@@ -249,7 +254,7 @@ class Uinfo {
     await file.close();
   }
 
-  Future<void> checkAndLogout(cookie) async {
+  Future<void> checkAndLogout(cookie, {required String reqUid}) async {
     if (login == false) {
       return;
     }
@@ -259,9 +264,9 @@ class Uinfo {
     }
     String newUid = res[0];
     String newSkey = res[1];
-    if (newUid != uid) {
+    if (newUid != reqUid) {
       if (newUid == guestUitem.uid) {
-        await setLogout();
+        await setLogout(uid: reqUid);
       }
     } else if (newSkey != skey) {
       for (var i=0; i<users.length; i+=1) {
