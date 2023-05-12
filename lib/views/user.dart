@@ -774,8 +774,8 @@ class _UserInfoViewState extends State<UserInfoView> {
                 onPressed: () {
                   nv2Push(context, '/messagePerson', arguments: user.bbsID);
                 },
-                child: Row(
-                  children: const [
+                child: const Row(
+                  children: [
                     Icon(Icons.message_outlined, size: 14,),
                     Text("发消息"),
                   ],
@@ -787,8 +787,8 @@ class _UserInfoViewState extends State<UserInfoView> {
                     'receiver': user.bbsID,
                   });
                 },
-                child: Row(
-                  children: const [
+                child: const Row(
+                  children: [
                     Icon(Icons.mail_outline, size: 14),
                     Text("发站内信"),
                   ],

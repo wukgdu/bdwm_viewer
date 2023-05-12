@@ -3,7 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as fquill;
-import 'package:flutter_quill_extensions/embeds/builders.dart' show ImageEmbedBuilder;
+// import 'package:flutter_quill_extensions/embeds/builders.dart' show ImageEmbedBuilder;
 import 'package:async/async.dart';
 
 import './constants.dart';
@@ -256,7 +256,7 @@ class _FquillEditorState extends State<FquillEditor> {
       padding: const EdgeInsets.all(5.0),
       keyboardAppearance: Theme.of(context).brightness,
       locale: const Locale('zh'),
-      embedBuilders: [ImageEmbedBuilder()],
+      // embedBuilders: [ImageEmbedBuilder()],
     );
   }
 }
