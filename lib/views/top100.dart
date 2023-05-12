@@ -93,11 +93,13 @@ class _Top100ViewState extends State<Top100View> {
           ],
         ),
         isThreeLine: true,
+        dense: false,
         leading: GestureDetector(
           child: Container(
             alignment: Alignment.center,
             width: 30,
             height: 30,
+            margin: globalConfigInfo.getUseMD3() ? const EdgeInsets.only(top: 4) : null,
             child: CircleAvatar(
               // radius: 100,
               backgroundColor: Colors.white,
@@ -112,12 +114,6 @@ class _Top100ViewState extends State<Top100View> {
           },
         ),
         minLeadingWidth: 20,
-        // trailing: Container(
-        //   alignment: Alignment.center,
-        //   width: 30,
-        //   child: Text("${item.id}")
-        // ),
-        // dense: true,
         onTap: () { naviGotoThreadByLink(context, item.contentLink, item.board.split("(").first, needToBoard: true); }
       )
     );

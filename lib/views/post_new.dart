@@ -108,7 +108,7 @@ class _PostNewViewState extends State<PostNewView> {
     return ListView(
       children: [
         Container(
-          margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 10),
+          margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
           child: Row(
             children: [
               // const Text("标题"),
@@ -238,11 +238,20 @@ class _PostNewViewState extends State<PostNewView> {
           ),
         ),
         Container(
+          margin: const EdgeInsets.only(top: 0, left: 10, right: 10, bottom: 0),
+          child: Row(
+            children: [
+              const Text("当前$accountChinese："),
+              SwitchUsersComponent(showLogin: false, refresh: widget.refresh,),
+            ],
+          )
+        ),
+        Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
             borderRadius: const BorderRadius.all(Radius.circular(5)),
           ),
-          margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
+          margin: const EdgeInsets.only(left: 10, right: 10, top: 0),
           height: 200,
           child: FquillEditor(controller: _controller, autoFocus: widget.parentid != null,),
         ),
@@ -393,10 +402,6 @@ class _PostNewViewState extends State<PostNewView> {
               ),
             ],
           ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
-          child: Center(child: SwitchUsersComponent(showLogin: false, refresh: widget.refresh,)),
         ),
       ],
     );
