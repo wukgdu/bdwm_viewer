@@ -197,11 +197,11 @@ class MainPageState extends State<MainPage> {
 
     updateUnreadMessageData();
     updateUnreadMailData();
-    timerMessage = Timer.periodic(const Duration(seconds: 15), (timer) {
+    timerMessage = Timer.periodic(const Duration(seconds: 20), (timer) {
       updateUnreadMessageData();
       timerMessage = timer;
     });
-    timerMail = Timer.periodic(const Duration(seconds: 15), (timer) {
+    timerMail = Timer.periodic(const Duration(seconds: 20), (timer) {
       updateUnreadMailData();
       timerMail = timer;
     });

@@ -11,12 +11,12 @@ class BdwmClient {
   final http.Client client = http.Client();
 
   Future<void> checkStatus(String cookie, {required String reqUid}) async {
-    if (globalUInfo.login) {
+    if (reqUid != guestUitem.uid) {
       // debugPrint(cookie);
-      await globalUInfo.checkAndLogout(cookie, reqUid: reqUid);
-      if (globalUInfo.login == false) {
-        sendNotification("OBViewer", "该$accountChinese登录已失效", payload: "/login");
-        debugPrint("该$accountChinese登录已失效");
+      var res = await globalUInfo.checkAndLogout(cookie, reqUid: reqUid);
+      if (res == true) {
+        sendNotification("OBViewer", "该$accountChinese（$reqUid）登录已失效", payload: "/login");
+        debugPrint("该$accountChinese（$reqUid）登录已失效");
       }
     }
   }

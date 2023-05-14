@@ -254,21 +254,22 @@ class Uinfo {
     await file.close();
   }
 
-  Future<void> checkAndLogout(cookie, {required String reqUid}) async {
-    if (login == false) {
-      return;
+  Future<bool> checkAndLogout(cookie, {required String reqUid}) async {
+    if (reqUid == guestUitem.uid) {
+      return false;
     }
     List<String> res = parseCookie(cookie);
     if (res.isEmpty) {
-      return;
+      return false;
     }
     String newUid = res[0];
     String newSkey = res[1];
     if (newUid != reqUid) {
       if (newUid == guestUitem.uid) {
         await setLogout(uid: reqUid);
+        return true;
       }
-    } else if (newSkey != skey) {
+    } else {
       for (var i=0; i<users.length; i+=1) {
         if (users[i].uid == newUid) {
           users[i].skey = newSkey;
@@ -280,6 +281,7 @@ class Uinfo {
         }
       }
     }
+    return false;
   }
 
   Future<void> setLogout({String? uid}) async {
