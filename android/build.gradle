@@ -1,18 +1,18 @@
 buildscript {
-    ext.kotlin_version = '1.7.20'
+    ext.kotlin_version = '1.8.0'
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
+        classpath 'com.android.tools.build:gradle:7.4.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 
     for (p in project.subprojects) {
         p.buildscript.configurations.classpath.resolutionStrategy {
-            force 'com.android.tools.build:gradle:7.3.1'
+            force 'com.android.tools.build:gradle:7.4.2'
             force "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         }
     }

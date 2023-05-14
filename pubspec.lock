@@ -338,7 +338,7 @@ packages:
     description:
       path: flutter_quill_extensions
       ref: HEAD
-      resolved-ref: "3b43baf229e4db8fe72bb7a7faa82773c8cca5b0"
+      resolved-ref: c35170dcd45a4976237c3f2136a5c4e51049e240
       url: "https://github.com/singerdmx/flutter-quill"
     source: git
     version: "0.3.1"
@@ -396,10 +396,10 @@ packages:
     dependency: "direct main"
     description:
       name: home_widget
-      sha256: c7a57566606ce702454f074a0b933ee156f05ea6ef1f79f4cb680a171afe59dd
+      sha256: "2ef64c73c7cf3b7cbfdf8233a0a46055a66d6289de58ae40912f9801f9282d79"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.2.0+1"
+    version: "0.2.1"
   html:
     dependency: "direct main"
     description:
@@ -953,10 +953,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_android
-      sha256: "22f8db4a72be26e9e3a4aa3f194b1f7afbc76d20ec141f84be1d787db2155cbd"
+      sha256: "7aac14be5f4731b923cc697ae2d42043945076cd0dbb8806baecc92c1dc88891"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "6.0.31"
+    version: "6.0.33"
   url_launcher_ios:
     dependency: transitive
     description:
