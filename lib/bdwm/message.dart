@@ -3,15 +3,26 @@ import 'dart:convert';
 import './req.dart';
 import '../globalvars.dart';
 
-class UnreadMessageInfo {
+class UnreadMessageItem {
   String withWho = "";
   int count = 0;
 
-  UnreadMessageInfo(this.withWho, this.count);
+  UnreadMessageItem(this.withWho, this.count);
+}
+class UnreadMessageInfo {
+  String userName = "";
+  List<UnreadMessageItem> unreadMessageItem = [];
+
+  UnreadMessageInfo({
+    required this.userName,
+    required this.unreadMessageItem
+  });
+  UnreadMessageInfo.empty();
 }
 
-Future<List<UnreadMessageInfo>?> bdwmGetUnreadMessageCount() async {
+Future<UnreadMessageInfo?> bdwmGetUnreadMessageCount() async {
   var actionUrl = "$v2Host/ajax/get_unread_message_counts.php";
+  var userName = globalUInfo.username;
   var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: {});
   if (resp == null) {
     return null;
@@ -20,11 +31,11 @@ Future<List<UnreadMessageInfo>?> bdwmGetUnreadMessageCount() async {
   if (!resContent['success']) {
     return null;
   }
-  var unreadMessageList = <UnreadMessageInfo>[];
+  var unreadMessageList = <UnreadMessageItem>[];
   for (var element in resContent['result']) {
-    unreadMessageList.add(UnreadMessageInfo(element['with'], element['count']));
+    unreadMessageList.add(UnreadMessageItem(element['with'], element['count']));
   }
-  return unreadMessageList;
+  return UnreadMessageInfo(userName: userName, unreadMessageItem: unreadMessageList);
 }
 
 class MessageItem {

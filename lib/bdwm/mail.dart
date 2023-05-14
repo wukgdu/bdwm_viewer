@@ -24,6 +24,7 @@ class UnreadMailItemSimple {
 class UnreadMailInfo {
   bool success = true;
   int count = 0;
+  String userName = "";
   List<UnreadMailItemSimple> unreadMailList = <UnreadMailItemSimple>[];
 
   UnreadMailInfo.empty();
@@ -31,11 +32,13 @@ class UnreadMailInfo {
     required this.success,
     required this.count,
     required this.unreadMailList,
+    required this.userName,
   });
 }
 
 Future<UnreadMailInfo?> bdwmGetUnreadMailCount() async {
   var actionUrl = "$v2Host/ajax/get_new_mails.php";
+  var userName = globalUInfo.username;
   var resp = await bdwmClient.post(actionUrl, headers: genHeaders2(), data: {});
   if (resp==null) {
     return null;
@@ -55,7 +58,7 @@ Future<UnreadMailInfo?> bdwmGetUnreadMailCount() async {
       filename: element['filename'],
     ));
   }
-  return UnreadMailInfo(success: resContent['success'], count: resContent['count'] ?? 0, unreadMailList: unreadMailList);
+  return UnreadMailInfo(success: resContent['success'], count: resContent['count'] ?? 0, unreadMailList: unreadMailList, userName: userName);
 }
 
 class MailRes {
