@@ -718,7 +718,7 @@ class _ThreadDetailPageState extends State<ThreadDetailPage> {
 
   Widget _onepost(OnePostInfo item, {int? subIdx}) {
     var userName = item.authorInfo.userName;
-    Set<String> seeNoHimHer = globalConfigInfo.getSeeNoThem();
+    Set<String> seeNoHimHer = globalImmConfigInfo.getSeeNoThem();
     var hideIt = false;
     if (seeNoHimHer.contains(userName.toLowerCase())) {
       hideIt = true;

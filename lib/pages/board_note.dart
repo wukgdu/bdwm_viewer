@@ -66,7 +66,7 @@ class _BoardNotePageState extends State<BoardNotePage> {
     getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
       debugPrint("cancel it");
     },);
-    curFont = globalConfigInfo.getBoardNoteFont();
+    curFont = globalImmConfigInfo.getBoardNoteFont();
   }
 
   @override
@@ -143,7 +143,7 @@ class _BoardNotePageState extends State<BoardNotePage> {
                   var f = await showFontDialog(context, avaiFonts, defaultFont: curFont);
                   if (f==null) { return; }
                   if (!mounted) { return; }
-                  await globalConfigInfo.setBoardNoteFont(f);
+                  await globalImmConfigInfo.setBoardNoteFont(f);
                   setState(() {
                     curFont = f;
                   });

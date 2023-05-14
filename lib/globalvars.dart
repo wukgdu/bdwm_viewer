@@ -449,6 +449,7 @@ class TmpContactInfo {
 var globalContactInfo = TmpContactInfo.empty();
 
 class BDWMNotConfig {
+  // 程序自动修改的设置
   String lastCheckTime = "";
   String lastLoginTime = "";
 
@@ -533,7 +534,120 @@ class BDWMNotConfig {
 
 var globalNotConfigInfo = BDWMNotConfig.empty();
 
+class BDWMImmConfig {
+  // 修改后自动保存的设置
+  String _boardNoteFont = simFont;
+  Set<String> _seeNoThem = {};
+  Map<String, String> _qmd = {};
+
+  Lock lock = Lock();
+  String storage = "bdwmimmconfig.json";
+
+  BDWMImmConfig.empty();
+  BDWMImmConfig.initFromFile() {
+    init();
+  }
+
+  Map toJson() {
+    return {
+      "boardNoteFont": _boardNoteFont,
+      "seeNoThem": _seeNoThem.toList(),
+      "qmd": _qmd,
+    };
+  }
+  void fromJson(Map<String, dynamic> jsonContent) {
+    _boardNoteFont = jsonContent['boardNoteFont'] ?? _boardNoteFont;
+    List seeNoHimHerList = jsonContent['seeNoThem'] ?? _seeNoThem.toList();
+    _seeNoThem = Set<String>.from(seeNoHimHerList.map((e) => e as String));
+    var savedQmd = jsonContent['qmd'] ?? _qmd;
+    _qmd = (savedQmd as Map<String, dynamic>).cast<String, String>();
+  }
+  String gist() {
+    return jsonEncode(toJson());
+  }
+
+  String getQmd() {
+    return _qmd[globalUInfo.uid] ?? "";
+  }
+
+  Future<bool> setQmd(String newValue) async {
+    return await lock.synchronized(() async {
+      var curUid = globalUInfo.uid;
+      _qmd[curUid] = newValue;
+      return await update();
+    });
+  }
+
+  String getBoardNoteFont() {
+    return _boardNoteFont;
+  }
+
+  Future<bool> setBoardNoteFont(String newValue) async {
+    return await lock.synchronized(() async {
+      _boardNoteFont = newValue;
+      return await update();
+    });
+  }
+
+  Set<String> getSeeNoThem() {
+    return _seeNoThem;
+  }
+
+  Future<bool> addOneSeeNo(String userName) async {
+    return await lock.synchronized(() async {
+      _seeNoThem.add(userName);
+      return await update();
+    });
+  }
+
+  Future<bool> removeOneSeeNo(String userName) async {
+    return await lock.synchronized(() async {
+      _seeNoThem.remove(userName);
+      return await update();
+    });
+  }
+
+  Future<bool> init() async {
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    String filename = "$dir/$storage";
+    // debugPrint(filename);
+    Future<void> writeInit() async {
+      // 1.9.2 修改了设置文件，读取之前的设置
+      _seeNoThem.addAll(globalConfigInfo.seeNoThem);
+      var file = File(filename).openWrite();
+      file.write(jsonEncode(toJson()));
+      await file.flush();
+      await file.close();
+    }
+    if (File(filename).existsSync()) {
+      var content = File(filename).readAsStringSync();
+      if (content.isEmpty) {
+        await writeInit();
+      } else {
+        Map<String, dynamic> jsonContent = jsonDecode(content);
+        fromJson(jsonContent);
+      }
+    } else {
+      await writeInit();
+    }
+    return true;
+  }
+
+  Future<bool> update() async {
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    String filename = "$dir/$storage";
+    var file = File(filename).openWrite();
+    file.write(jsonEncode(toJson()));
+    await file.flush();
+    await file.close();
+    return true;
+  }
+}
+
+var globalImmConfigInfo = BDWMImmConfig.empty();
+
 class BDWMConfig {
+  // 可以临时修改的设置，需要手动保存
   bool showWelcome = true;
   bool useImgInMessage = true;
   bool autoClearImageCache = false;
@@ -546,12 +660,10 @@ class BDWMConfig {
   String refreshRate = "high";
   bool autoHideBottomBar = true;
   bool guestFirst = false;
-  String boardNoteFont = simFont;
   String primaryColorString = "";
   double contentFontSize = 16.0;
   String maxPageNum = "8";
   Set<String> seeNoThem = {};
-  String qmd = "";
 
   Lock lock = Lock();
   String storage = "bdwmconfig.json";
@@ -565,7 +677,7 @@ class BDWMConfig {
     return {
       "showWelcome": showWelcome,
       "useImgInMessage": useImgInMessage,
-      "seeNoThem": seeNoThem.toList(),
+      // "seeNoThem": seeNoThem.toList(),
       "autoClearImageCache_1": autoClearImageCache,
       "maxPageNum": maxPageNum,
       "extraThread": extraThread,
@@ -574,8 +686,6 @@ class BDWMConfig {
       "primaryColorString": primaryColorString,
       "suggestUser": suggestUser,
       "showFAB": showFAB,
-      "boardNoteFont": boardNoteFont,
-      "qmd": qmd,
       "useMD3": useMD3,
       "useDynamicColor": useDynamicColor,
       "autoHideBottomBar": autoHideBottomBar,
@@ -594,13 +704,11 @@ class BDWMConfig {
     maxPageNum = jsonContent['maxPageNum'] ?? maxPageNum;
     contentFontSize = jsonContent['contentFontSize'] ?? contentFontSize;
     primaryColorString = jsonContent['primaryColorString'] ?? primaryColorString;
-    qmd = jsonContent['qmd'] ?? qmd;
     refreshRate = jsonContent['refreshRate'] ?? refreshRate;
     useMD3 = jsonContent['useMD3'] ?? useMD3;
     guestFirst = jsonContent['guestFirst'] ?? guestFirst;
     useDynamicColor = jsonContent['useDynamicColor'] ?? useDynamicColor;
     autoHideBottomBar = jsonContent['autoHideBottomBar'] ?? autoHideBottomBar;
-    boardNoteFont = jsonContent['boardNoteFont'] ?? boardNoteFont;
     List seeNoHimHerList = jsonContent['seeNoThem'] ?? seeNoThem.toList();
     seeNoThem = Set<String>.from(seeNoHimHerList.map((e) => e as String));
   }
@@ -663,17 +771,6 @@ class BDWMConfig {
     });
   }
 
-  String getQmd() {
-    return qmd;
-  }
-
-  Future<bool> setQmd(String newValue) async {
-    return await lock.synchronized(() async {
-      qmd = newValue;
-      return await update();
-    });
-  }
-
   String getPrimaryColorString() {
     return primaryColorString;
   }
@@ -681,17 +778,6 @@ class BDWMConfig {
   Future<bool> setPrimaryColorString(String newValue) async {
     return await lock.synchronized(() async {
       primaryColorString = newValue;
-      return await update();
-    });
-  }
-
-  String getBoardNoteFont() {
-    return boardNoteFont;
-  }
-
-  Future<bool> setBoardNoteFont(String newValue) async {
-    return await lock.synchronized(() async {
-      boardNoteFont = newValue;
       return await update();
     });
   }
@@ -791,24 +877,6 @@ class BDWMConfig {
   Future<bool> setMaxPageNum(String newTime) async {
     return await lock.synchronized(() async {
       maxPageNum = newTime;
-      return await update();
-    });
-  }
-
-  Set<String> getSeeNoThem() {
-    return seeNoThem;
-  }
-
-  Future<bool> addOneSeeNo(String userName) async {
-    return await lock.synchronized(() async {
-      seeNoThem.add(userName);
-      return await update();
-    });
-  }
-
-  Future<bool> removeOneSeeNo(String userName) async {
-    return await lock.synchronized(() async {
-      seeNoThem.remove(userName);
       return await update();
     });
   }

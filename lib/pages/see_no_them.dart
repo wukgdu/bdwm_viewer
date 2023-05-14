@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../views/see_no_them.dart';
 import '../views/utils.dart';
 import '../bdwm/search.dart';
-import '../globalvars.dart' show globalConfigInfo;
+import '../globalvars.dart' show globalImmConfigInfo;
 
 class SeeNoThemPage extends StatefulWidget {
   const SeeNoThemPage({super.key});
@@ -22,18 +22,18 @@ class SeeNoThemPageState extends State<SeeNoThemPage> {
   @override
   void initState() {
     super.initState();
-    seeNoThemList = globalConfigInfo.getSeeNoThem().toList();
+    seeNoThemList = globalImmConfigInfo.getSeeNoThem().toList();
     seeNoThemList.sort();
   }
   void updateData() {
-    seeNoThemList = globalConfigInfo.getSeeNoThem().toList();
+    seeNoThemList = globalImmConfigInfo.getSeeNoThem().toList();
     seeNoThemList.sort();
     if (!mounted) { return; }
     setState(() { });
   }
 
   void removeOne(String userName) async {
-    await globalConfigInfo.removeOneSeeNo(userName.toLowerCase());
+    await globalImmConfigInfo.removeOneSeeNo(userName.toLowerCase());
     updateData();
   }
 
@@ -80,12 +80,12 @@ class SeeNoThemPageState extends State<SeeNoThemPage> {
                 }
               }
               userNew = userNew.toLowerCase();
-              var seeNoThemSet = globalConfigInfo.getSeeNoThem();
+              var seeNoThemSet = globalImmConfigInfo.getSeeNoThem();
               if (seeNoThemSet.contains(userNew)) {
                 return;
               }
               // widget.callBack(userNew);
-              globalConfigInfo.addOneSeeNo(userNew).then((value) {
+              globalImmConfigInfo.addOneSeeNo(userNew).then((value) {
                 updateData();
               },);
             },

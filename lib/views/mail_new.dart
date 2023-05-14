@@ -63,12 +63,12 @@ class _MailNewViewState extends State<MailNewView> {
 
     if (signature == null) {
       for (var item in widget.mailNewInfo.signatureInfo) {
-        if (item.value == globalConfigInfo.getQmd()) {
+        if (item.value == globalImmConfigInfo.getQmd()) {
           signature = item;
           break;
         }
       }
-      if (signatureOB.value == globalConfigInfo.getQmd()) {
+      if (signatureOB.value == globalImmConfigInfo.getQmd()) {
         signature = signatureOB;
       }
     }
@@ -336,7 +336,7 @@ class _MailNewViewState extends State<MailNewView> {
                 ],
                 onChanged: (SignatureItem? value) async {
                   if (value == null) { return; }
-                  await globalConfigInfo.setQmd(value.value);
+                  await globalImmConfigInfo.setQmd(value.value);
                   setState(() {
                     signature = value;
                   });

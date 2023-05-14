@@ -81,12 +81,12 @@ class _PostNewViewState extends State<PostNewView> {
 
     if (signature == null && widget.postid == null) {
       for (var item in widget.postNewInfo.signatureInfo) {
-        if (item.value == globalConfigInfo.getQmd()) {
+        if (item.value == globalImmConfigInfo.getQmd()) {
           signature = item;
           break;
         }
       }
-      if (signatureOB.value == globalConfigInfo.getQmd()) {
+      if (signatureOB.value == globalImmConfigInfo.getQmd()) {
         signature = signatureOB;
       }
     }
@@ -393,7 +393,7 @@ class _PostNewViewState extends State<PostNewView> {
                 onChanged: (SignatureItem? value) async {
                   if (value == null) { return; }
                   if (widget.postid == null) {
-                    await globalConfigInfo.setQmd(value.value);
+                    await globalImmConfigInfo.setQmd(value.value);
                   }
                   setState(() {
                     signature = value;

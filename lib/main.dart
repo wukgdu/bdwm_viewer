@@ -34,6 +34,7 @@ void main() async {
   await globalConfigInfo.init();
   await globalNotConfigInfo.init();
   await globalUInfo.init(useGuest: globalConfigInfo.getGuestFirst());
+  await globalImmConfigInfo.init();
   await globalThreadHistory.init();
   await globalMarkedThread.init();
   await initFlnInstance();

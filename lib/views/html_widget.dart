@@ -15,7 +15,7 @@ import '../bdwm/req.dart';
 import '../bdwm/search.dart' show bdwmUserInfoSearch, IDandName;
 import '../pages/read_thread.dart';
 import '../html_parser/utils.dart';
-import '../globalvars.dart' show genHeaders2, globalConfigInfo, v2Host, notoSansMonoCJKscFont;
+import '../globalvars.dart' show genHeaders2, globalConfigInfo, v2Host, notoSansMonoCJKscFont, globalImmConfigInfo;
 import '../html_parser/board_parser.dart' show directToThread;
 import '../pages/detail_image.dart';
 import '../utils.dart' show getQueryValue, isAndroid;
@@ -376,7 +376,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
       // https://stackoverflow.com/questions/51999816/how-does-flutters-text-widget-let-it-display-all-spaces-that-end-with-a-space
       // text = text.replaceAll("\u0020", "\u00a0");
       if (isBoardNote ?? false) {
-        if (globalConfigInfo.getBoardNoteFont() == notoSansMonoCJKscFont) {
+        if (globalImmConfigInfo.getBoardNoteFont() == notoSansMonoCJKscFont) {
           text = text.replaceAll("ο", "o ");
           text = text.replaceAll("ˋ", " `");
           text = text.replaceAll("′", "′ ");

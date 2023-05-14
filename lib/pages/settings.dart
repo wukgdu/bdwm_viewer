@@ -7,7 +7,6 @@ import '../views/constants.dart';
 import '../views/utils.dart';
 import '../utils.dart' show isAndroid;
 import '../main.dart' show MainPage, initPrimaryColor, setHighRefreshRate;
-import './board_note.dart' show showFontDialog;
 import 'package:flutter_displaymode/flutter_displaymode.dart' show FlutterDisplayMode, DisplayMode;
 // import './read_thread.dart' show resetInitScrollHeight;
 
@@ -360,7 +359,7 @@ class _SettingsPageState extends State<SettingsPage> {
           const Divider(),
           SwitchListTile(
             title: const Text("打开应用时选择$accountChinese"),
-            subtitle: const Text("默认为游客（guest）"),
+            subtitle: const Text("默认为游客（guest）。如果出现登录无故失效的情况，就把这个关掉"),
             activeColor: bdwmPrimaryColor,
             value: globalConfigInfo.guestFirst,
             onChanged: (value) {
@@ -415,17 +414,6 @@ class _SettingsPageState extends State<SettingsPage> {
               width: 40,
               child: Text("字", style: TextStyle(fontSize: globalConfigInfo.contentFontSize)),
             ),
-          ),
-          const Divider(),
-          ListTile(
-            onTap: () async {
-              var f = await showFontDialog(context, avaiFonts, defaultFont: globalConfigInfo.getBoardNoteFont());
-              if (f==null) { return; }
-              globalConfigInfo.boardNoteFont = f;
-              refresh();
-            },
-            title: const Text("备忘录字体"),
-            subtitle: Text(globalConfigInfo.getBoardNoteFont()),
           ),
           const Divider(),
           SwitchListTile(
