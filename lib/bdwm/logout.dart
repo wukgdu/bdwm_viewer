@@ -13,6 +13,6 @@ Future<bool> bdwmLogout({String? skey, String? uid}) async {
   if (!status['success']) {
     return false;
   }
-  await globalUInfo.setLogout(uid: uid);
+  await globalUInfo.setLogout(uid: uid, skey: skey);
   return true;
 }

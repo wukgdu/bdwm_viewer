@@ -183,10 +183,10 @@ class Uinfo {
     }
   }
 
-  Future<void> removeUser(String uid, {required bool save, bool force=false, bool updateP=false}) async {
+  Future<void> removeUser(String uid, String skey, {required bool save, bool force=false, bool updateP=false}) async {
     if ((force==false) && (uid == this.uid)) { return; }
     var curUid = this.uid;
-    users.removeWhere((element) => element.uid == uid);
+    users.removeWhere((element) => (element.uid == uid) && ((uid==guestUitem.uid) || (element.skey == skey)));
     if (updateP) { updatePrimary(curUid); }
     if (save) { await update(); }
   }
@@ -254,7 +254,7 @@ class Uinfo {
     await file.close();
   }
 
-  Future<bool> checkAndLogout(cookie, {required String reqUid}) async {
+  Future<bool> checkAndLogout(cookie, {required String reqUid, required String reqSkey}) async {
     if (reqUid == guestUitem.uid) {
       return false;
     }
@@ -266,12 +266,12 @@ class Uinfo {
     String newSkey = res[1];
     if (newUid != reqUid) {
       if (newUid == guestUitem.uid) {
-        await setLogout(uid: reqUid);
+        await setLogout(uid: reqUid, skey: reqSkey);
         return true;
       }
-    } else {
+    } else if (newSkey != reqSkey) {
       for (var i=0; i<users.length; i+=1) {
-        if (users[i].uid == newUid) {
+        if ((users[i].uid == reqUid) && (users[i].skey == reqSkey)) {
           users[i].skey = newSkey;
           users[i].login = true;
           await unreadMail.reInitWorker();
@@ -284,9 +284,9 @@ class Uinfo {
     return false;
   }
 
-  Future<void> setLogout({String? uid}) async {
+  Future<void> setLogout({String? uid, String? skey}) async {
     var curUid = this.uid;
-    await removeUser(uid ?? this.uid, save: false, force: true, updateP: false);
+    await removeUser(uid ?? this.uid, skey ?? this.skey, save: false, force: true, updateP: false);
     updatePrimary(curUid);
     await unreadMail.reInitWorker();
     await unreadMessage.reInitWorker();
