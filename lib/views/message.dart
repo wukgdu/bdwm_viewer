@@ -2,20 +2,18 @@ import 'dart:async';
 
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart' show Linkify, UrlElement, LinkifyOptions;
 
 import '../views/constants.dart';
-import '../html_parser/board_parser.dart';
-import '../pages/read_thread.dart';
 import '../views/utils.dart';
 import '../bdwm/message.dart';
 import "../bdwm/search.dart";
-import '../bdwm/req.dart';
 import '../globalvars.dart';
 import '../utils.dart';
 import '../services_instance.dart';
 import '../services.dart' show MessageBriefNotifier;
 import '../router.dart' show nv2Push;
-import './html_widget.dart' show SimpleCachedImage;
+import './html_widget.dart' show SimpleCachedImage, innerLinkJump;
 
 class UserJumpByNameComponent extends StatefulWidget {
   final String userName;
@@ -312,9 +310,23 @@ class _MessagePersonViewState extends State<MessagePersonView> {
     });
   }
 
-  TextSpan genContentTextSpan(String rawContent) {
+  Linkify genLinkify(String text) {
+    return Linkify(
+      onOpen: (link) {
+        if (link is UrlElement) {
+          innerLinkJump(link.url, context);
+        }
+      },
+      text: text,
+      linkStyle: TextStyle(color: bdwmPrimaryColor, decoration: TextDecoration.none),
+      options: const LinkifyOptions(humanize: false),
+    );
+  }
+
+  InlineSpan genContentTextSpan(String rawContent) {
     if (!globalConfigInfo.getUseImgInMessage()) {
-      return TextSpan(text: replaceWithEmoji(rawContent));
+      // return TextSpan(text: replaceWithEmoji(rawContent));
+      return WidgetSpan(child: genLinkify(replaceWithEmoji(rawContent)), alignment: PlaceholderAlignment.middle);
     }
     String tmpK = UniqueKey().toString();
     String tmpK2 = UniqueKey().toString();
@@ -331,7 +343,7 @@ class _MessagePersonViewState extends State<MessagePersonView> {
           String emojiIdx = arr[1];
           return WidgetSpan(child: SimpleCachedImage(imgLink: "$v2Host/images/emoji/Expression_$emojiIdx.png", height: Theme.of(context).textTheme.bodyMedium?.fontSize ?? 16,));
         }
-        return TextSpan(text: e);
+        return WidgetSpan(child: genLinkify(e), alignment: PlaceholderAlignment.middle);
       },).toList(),
     );
   }
@@ -377,40 +389,18 @@ class _MessagePersonViewState extends State<MessagePersonView> {
                 text: "${DateTime.fromMillisecondsSinceEpoch(mi.time*1000).toString().split('.').first}\n",
                 children: [
                   genContentTextSpan(rawContent),
-                  if (link.isNotEmpty)
+                  if (link.isNotEmpty) ...[
+                    const TextSpan(text: "\n"),
                     WidgetSpan(
                       alignment: PlaceholderAlignment.middle,
                       child: GestureDetector(
                         onTap: () {
-                          if (link.startsWith("https://bbs.pku.edu.cn/v2/user.php")) {
-                            var uid = link.split("=").last;
-                            nv2Push(context, "/user", arguments: uid);
-                          } else if (link.startsWith("https://bbs.pku.edu.cn/v2/post-read-single.php")) {
-                            bdwmClient.get(link, headers: genHeaders2()).then((value) {
-                              if (value == null) {
-                                showNetWorkDialog(context);
-                              } else {
-                                var link2 = directToThread(value.body, needLink: true);
-                                if (link2.isEmpty) { return; }
-                                int? link2Int = int.tryParse(link2);
-                                if (link2Int == null && link2.startsWith("post-read.php")==false) {
-                                  if (!mounted) { return; }
-                                  showAlertDialog(context, "跳转失败", Text(link2),
-                                    actions1: TextButton(
-                                      onPressed: () { Navigator.of(context).pop(); },
-                                      child: const Text("知道了"),
-                                    ),
-                                  );
-                                }
-                                if (!mounted) { return; }
-                                naviGotoThreadByLink(context, link2, "", pageDefault: "a", needToBoard: true);
-                              }
-                            });
-                          }
+                          innerLinkJump(link, context);
                         },
                         child: const Text("[点击查看]", style: textLinkStyle),
                       ),
                     ),
+                  ],
                 ]
               ),
             ),

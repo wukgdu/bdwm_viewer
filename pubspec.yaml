@@ -87,6 +87,7 @@ dependencies:
       path: flutter_highlight
   # csslib: ^0.17.2
   flutter_displaymode: ^0.6.0
+  flutter_linkify: ^5.0.2
 
 dependency_overrides:
   intl: ^0.18.0
