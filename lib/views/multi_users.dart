@@ -88,11 +88,11 @@ class _SwitchUsersDialogContentState extends State<SwitchUsersDialogContent> {
               onTap: () {
                 Navigator.of(context).pop(e.uid);
               },
-              trailing: IconButton(
+              trailing: e.uid == guestUitem.uid ? null : IconButton(
                 onPressed: () async {
                   var yes = await showConfirmDialog(context, "移除该$accountChinese的登录", "退出登录并移除");
                   if (yes != "yes") { return; }
-                  if (e.username == guestUitem.username) {
+                  if (e.uid == guestUitem.uid) {
                     await globalUInfo.removeUser(guestUitem.uid, save: true, force: true, updateP: true);
                   } else if (e.login==false) {
                     await globalUInfo.removeUser(e.uid, save: true, force: true, updateP: true);
