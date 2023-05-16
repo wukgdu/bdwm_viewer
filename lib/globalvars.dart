@@ -99,12 +99,16 @@ class Uinfo {
     for (var i=0; i<users.length; i+=1) {
       if (users[i].username == username) {
         primary = i;
+        await unreadMail.reInitWorker();
+        await unreadMessage.reInitWorker();
         await update();
         return true;
       }
     }
     if (username == guestUitem.username) {
       primary = -1;
+      await unreadMail.reInitWorker();
+      await unreadMessage.reInitWorker();
       await update();
       return true;
     }
@@ -115,12 +119,16 @@ class Uinfo {
     for (var i=0; i<users.length; i+=1) {
       if (users[i].uid == uid) {
         primary = i;
+        await unreadMail.reInitWorker();
+        await unreadMessage.reInitWorker();
         await update();
         return true;
       }
     }
     if (uid == guestUitem.uid) {
       primary = -1;
+      await unreadMail.reInitWorker();
+      await unreadMessage.reInitWorker();
       await update();
       return true;
     }
