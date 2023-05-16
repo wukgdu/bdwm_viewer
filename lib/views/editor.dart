@@ -3,7 +3,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as fquill;
-import 'package:flutter_quill_extensions/embeds/builders.dart' show ImageEmbedBuilder;
+// import 'package:flutter_quill_extensions/embeds/builders.dart' show ImageEmbedBuilder;
+import './fq_image.dart' show ImageEmbedBuilder;
 import 'package:async/async.dart';
 
 import './constants.dart';
