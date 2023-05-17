@@ -971,7 +971,7 @@ class _ThreadDetailPageState extends State<ThreadDetailPage> {
         builder: (context, value, child) {
           return AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            height: _showBottomAppBar.value ? (globalConfigInfo.useMD3 ? md3BottomAppBarHeight : null) : 0,
+            height: _showBottomAppBar.value ? (globalConfigInfo.useMD3 ? md3BottomAppBarHeight : globalConfigInfo.autoHideBottomBar ? 40 : null) : 0,
             child: child,
           );
         },

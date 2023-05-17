@@ -95,21 +95,23 @@ class Uinfo {
     return users[primary].login;
   }
 
+  Future<void> doAfterChangeUser() async {
+    await unreadMail.reInitWorker();
+    await unreadMessage.reInitWorker();
+    await update();
+  }
+
   Future<bool> switchByUsername(String username) async {
     for (var i=0; i<users.length; i+=1) {
       if (users[i].username == username) {
         primary = i;
-        await unreadMail.reInitWorker();
-        await unreadMessage.reInitWorker();
-        await update();
+        await doAfterChangeUser();
         return true;
       }
     }
     if (username == guestUitem.username) {
       primary = -1;
-      await unreadMail.reInitWorker();
-      await unreadMessage.reInitWorker();
-      await update();
+      await doAfterChangeUser();
       return true;
     }
     return false;
@@ -119,17 +121,13 @@ class Uinfo {
     for (var i=0; i<users.length; i+=1) {
       if (users[i].uid == uid) {
         primary = i;
-        await unreadMail.reInitWorker();
-        await unreadMessage.reInitWorker();
-        await update();
+        await doAfterChangeUser();
         return true;
       }
     }
     if (uid == guestUitem.uid) {
       primary = -1;
-      await unreadMail.reInitWorker();
-      await unreadMessage.reInitWorker();
-      await update();
+      await doAfterChangeUser();
       return true;
     }
     return false;
@@ -176,9 +174,7 @@ class Uinfo {
     var curUser = Uitem(skey: skey, uid: uid, username: username, login: true);
     users.add(curUser);
     primary = users.length - 1;
-    await unreadMail.reInitWorker();
-    await unreadMessage.reInitWorker();
-    await update();
+    await doAfterChangeUser();
   }
 
   void updatePrimary(String curUid) {
@@ -282,9 +278,7 @@ class Uinfo {
         if ((users[i].uid == reqUid) && (users[i].skey == reqSkey)) {
           users[i].skey = newSkey;
           users[i].login = true;
-          await unreadMail.reInitWorker();
-          await unreadMessage.reInitWorker();
-          await update();
+          await doAfterChangeUser();
           break;
         }
       }
@@ -296,9 +290,7 @@ class Uinfo {
     var curUid = this.uid;
     await removeUser(uid ?? this.uid, skey ?? this.skey, save: false, force: true, updateP: false);
     updatePrimary(curUid);
-    await unreadMail.reInitWorker();
-    await unreadMessage.reInitWorker();
-    await update();
+    await doAfterChangeUser();
   }
 }
 

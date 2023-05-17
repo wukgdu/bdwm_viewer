@@ -230,7 +230,7 @@ class ImageEmbedBuilder extends EmbedBuilder {
   ) {
     assert(!kIsWeb, 'Please provide image EmbedBuilder for Web');
 
-    var image;
+    late Widget image;
     final imageUrl = standardizeImageUrl(node.value.data);
     OptionalSize? imageSize;
     final style = node.style.attributes['style'];
