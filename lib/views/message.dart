@@ -373,36 +373,35 @@ class _MessagePersonViewState extends State<MessagePersonView> {
     link = link.trim();
     return Align(
       alignment: mi.dir == 0 ? Alignment.centerLeft : Alignment.centerRight,
-      child: Card(
-        child: Container(
-          padding: const EdgeInsets.all(5.0),
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(5)),
-            border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
-          ),
-          constraints: BoxConstraints(
-            maxWidth: dWidth*0.7,
-          ),
-          child: SelectionArea(
-            child: Text.rich(
-              TextSpan(
-                text: "${DateTime.fromMillisecondsSinceEpoch(mi.time*1000).toString().split('.').first}\n",
-                children: [
-                  genContentTextSpan(rawContent),
-                  if (link.isNotEmpty) ...[
-                    const TextSpan(text: "\n"),
-                    WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: GestureDetector(
-                        onTap: () {
-                          innerLinkJump(link, context);
-                        },
-                        child: const Text("[点击查看]", style: textLinkStyle),
-                      ),
+      child: Container(
+        margin: const EdgeInsets.all(2.5),
+        padding: const EdgeInsets.all(5.0),
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(5)),
+          border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
+        ),
+        constraints: BoxConstraints(
+          maxWidth: dWidth*0.7,
+        ),
+        child: SelectionArea(
+          child: Text.rich(
+            TextSpan(
+              text: "${DateTime.fromMillisecondsSinceEpoch(mi.time*1000).toString().split('.').first}\n",
+              children: [
+                genContentTextSpan(rawContent),
+                if (link.isNotEmpty) ...[
+                  const TextSpan(text: "\n"),
+                  WidgetSpan(
+                    alignment: PlaceholderAlignment.middle,
+                    child: GestureDetector(
+                      onTap: () {
+                        innerLinkJump(link, context);
+                      },
+                      child: const Text("[点击查看]", style: textLinkStyle),
                     ),
-                  ],
-                ]
-              ),
+                  ),
+                ],
+              ]
             ),
           ),
         ),
@@ -477,6 +476,51 @@ class _MessagePersonViewState extends State<MessagePersonView> {
                   ),
                 ),
               ),
+              SizedBox(
+                width: 24,
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () async {
+                    if (!contentController.selection.isValid) {
+                      contentController.selection = const TextSelection(
+                        baseOffset: 0,
+                        extentOffset: 0,
+                      );
+                    }
+                    var emojiIdx = await showModalBottomSheet<int?>(
+                      context: context,
+                      showDragHandle: true,
+                      isScrollControlled: true,
+                      builder: (context1) {
+                        return SafeArea(child: Wrap(
+                          children: [
+                            for (int i=0; i<emojiKeyList.length; i+=1) ...[
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).pop(i);
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: SimpleCachedImage(imgLink: "$v2Host/images/emoji/Expression_${i+1}.png", height: 32,)
+                                )
+                              ),
+                            ],
+                          ],
+                        ),);
+                      },
+                    );
+                    if (emojiIdx == null) { return; }
+                    var curIdx = contentController.selection.base.offset;
+                    var curText = contentController.text;
+                    contentController.text = "${curText.substring(0, curIdx)}${emojiKeyList[emojiIdx]}${curText.substring(curIdx)}";
+                    contentController.selection = TextSelection(
+                      baseOffset: curIdx + emojiKeyList[emojiIdx].length,
+                      extentOffset: curIdx + emojiKeyList[emojiIdx].length,
+                    );
+                  },
+                  icon: Icon(Icons.emoji_emotions, size: 16, color: bdwmPrimaryColor,),
+                ),
+              ),
               TextButton(
                 onPressed: () {
                   var txt = contentController.text;
@@ -495,7 +539,7 @@ class _MessagePersonViewState extends State<MessagePersonView> {
                     update();
                   },);
                 },
-                child: const Text("发送"),
+                child: const Text("发送", style: TextStyle(fontSize: 16),),
               ),
             ],
           ),
