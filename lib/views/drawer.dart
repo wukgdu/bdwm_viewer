@@ -2,9 +2,36 @@ import 'dart:math' show min;
 
 import 'package:flutter/material.dart';
 
-import '../globalvars.dart' show globalUInfo;
+import '../globalvars.dart' show globalUInfo, globalConfigInfo;
 import './constants.dart' show bdwmPrimaryColor;
 import '../router.dart' show nv2Replace;
+
+class DrawerDestination {
+  const DrawerDestination({
+    required this.label,
+    required this.icon,
+    required this.selectedIcon,
+    required this.index,
+    required this.pageName
+  });
+
+  final String label;
+  final Icon icon;
+  final Icon selectedIcon;
+  final int index;
+  final String pageName;
+}
+
+const drawerPages = [
+  DrawerDestination(label: '首页', icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), index: 0, pageName: "/home"),
+  DrawerDestination(label: '版面目录', icon: Icon(Icons.list_outlined), selectedIcon: Icon(Icons.list), index: 1, pageName: "/zone"),
+  DrawerDestination(label: '版面收藏夹', icon: Icon(Icons.star_outline_outlined), selectedIcon: Icon(Icons.star), index: 2, pageName: "/favorite"),
+  DrawerDestination(label: '我', icon: Icon(Icons.person_outlined), selectedIcon: Icon(Icons.person), index: 3, pageName: "/me"),
+  DrawerDestination(label: '关注/粉丝', icon: Icon(Icons.people_outlined), selectedIcon: Icon(Icons.people), index: 4, pageName: "/friend"),
+  DrawerDestination(label: '精华区收藏夹', icon: Icon(Icons.folder_outlined), selectedIcon: Icon(Icons.folder), index: 5, pageName: "/favoriteCollection"),
+  DrawerDestination(label: '小工具', icon: Icon(Icons.celebration_outlined), selectedIcon: Icon(Icons.celebration), index: 6, pageName: "/funfunfun"),
+  DrawerDestination(label: '关于', icon: Icon(Icons.info_outlined), selectedIcon: Icon(Icons.info), index: 7, pageName: "/about"),
+];
 
 class MyDrawer extends StatelessWidget {
   final int selectedIdx;
@@ -29,42 +56,59 @@ class MyDrawer extends StatelessWidget {
     );
   }
 
+  Widget genBGI(BuildContext context) {
+    return Stack(
+      alignment: Alignment.bottomLeft,
+      children: [
+        Image.asset(Theme.of(context).brightness == Brightness.dark ? 'assets/image/wei_grey.jpg' : 'assets/image/wei.jpg'),
+        Container(
+          margin: const EdgeInsets.only(left: 10.0, bottom: 10.0),
+          child: CircleAvatar(
+            radius: 25,
+            backgroundColor: globalUInfo.login ? bdwmPrimaryColor : Colors.grey,
+            child: Text(globalUInfo.username[0].toUpperCase(), style: const TextStyle(fontSize: 30, height: null, color: Colors.white),),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     var deviceWidth = size.width;
     double dWidth = min(280, deviceWidth*0.7);
+    if (globalConfigInfo.useMD3) {
+      return NavigationDrawer(
+        indicatorColor: bdwmPrimaryColor.withOpacity(0.8),
+        onDestinationSelected: (idx) {
+          _gotoPage(drawerPages[idx].pageName, context);
+        },
+        selectedIndex: selectedIdx,
+        children: <Widget>[
+          genBGI(context),
+          for (int i=0; i<drawerPages.length; i+=1) ...[
+            NavigationDrawerDestination(
+              // backgroundColor: bdwmPrimaryColor,
+              label: Text(drawerPages[i].label),
+              icon: drawerPages[i].icon,
+              selectedIcon: drawerPages[i].selectedIcon,
+            ),
+          ],
+        ],
+      );
+    }
     return Drawer(
       width: dWidth,
       child: Column(
         children: [
-          Stack(
-            alignment: Alignment.bottomLeft,
-            children: [
-              Image.asset(Theme.of(context).brightness == Brightness.dark ? 'assets/image/wei_grey.jpg' : 'assets/image/wei.jpg'),
-              Container(
-                margin: const EdgeInsets.only(left: 10.0, bottom: 10.0),
-                child: CircleAvatar(
-                  radius: 25,
-                  backgroundColor: globalUInfo.login ? bdwmPrimaryColor : Colors.grey,
-                  child: Text(globalUInfo.username[0].toUpperCase(), style: const TextStyle(fontSize: 30, height: null, color: Colors.white),),
-                ),
-              ),
-            ],
-          ),
+          genBGI(context),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.all(0.0),
-              children: <Widget>[
-                _oneItem(context, "/home", icon: const Icon(Icons.home), text: const Text('首页'), idx: 0),
-                _oneItem(context, "/zone", icon: const Icon(Icons.list), text: const Text('版面目录'), idx: 1),
-                _oneItem(context, "/favorite", icon: const Icon(Icons.star), text: const Text('版面收藏夹'), idx: 2),
-                _oneItem(context, "/me", icon: const Icon(Icons.person), text: const Text('我'), idx: 3),
-                _oneItem(context, "/friend", icon: const Icon(Icons.people), text: const Text('关注/粉丝'), idx: 4),
-                _oneItem(context, "/favoriteCollection", icon: const Icon(Icons.folder), text: const Text('精华区收藏夹'), idx: 5),
-                _oneItem(context, "/funfunfun", icon: const Icon(Icons.celebration), text: const Text('小工具'), idx: 6),
-                _oneItem(context, "/about", icon: const Icon(Icons.info), text: const Text('关于'), idx: 7),
-              ],
+              children: drawerPages.map((e) {
+                return _oneItem(context, e.pageName, icon: e.selectedIcon, text: Text(e.label), idx: e.index);
+              }).toList()
             ),
           ),
         ],

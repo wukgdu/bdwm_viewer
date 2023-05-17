@@ -151,7 +151,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
   }
 }
 
-const _brandBlue = Color(0xFF1E88E5);
+// const _brandBlue = Color(0xFF1E88E5);
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -341,7 +341,7 @@ class MainPageState extends State<MainPage> {
           lightColorScheme = lightDynamic.harmonized();
           // (Optional) Customize the scheme as desired. For example, one might
           // want to use a brand color to override the dynamic [ColorScheme.secondary].
-          lightColorScheme = lightColorScheme.copyWith(secondary: _brandBlue);
+          // lightColorScheme = lightColorScheme.copyWith(secondary: _brandBlue);
           if (useDynamicColor) {
             bdwmPrimaryColor = lightColorScheme.primary;
           }
@@ -350,7 +350,7 @@ class MainPageState extends State<MainPage> {
 
           // Repeat for the dark color scheme.
           darkColorScheme = darkDynamic.harmonized();
-          darkColorScheme = darkColorScheme.copyWith(secondary: _brandBlue);
+          // darkColorScheme = darkColorScheme.copyWith(secondary: _brandBlue);
           darkCustomColors = darkCustomColors.harmonized(darkColorScheme);
         } else {
           // Otherwise, use fallback schemes.
@@ -380,7 +380,7 @@ class MainPageState extends State<MainPage> {
             colorScheme: !globalConfigInfo.useMD3 ? const ColorScheme.light().copyWith(primary: bdwmPrimaryColor)
             : ColorScheme(brightness: Brightness.light,
               primary: bdwmPrimaryColor, onPrimary: Colors.white,
-              secondary: const Color(0xff03dac6), onSecondary: Colors.black,
+              secondary: bdwmPrimaryColor.withOpacity(0.8), onSecondary: Colors.black,
               error: const Color(0xffb00020), onError: Colors.white,
               surface: Colors.white, onSurface: Colors.black,
               background: Colors.white, onBackground: Colors.black,
@@ -400,7 +400,7 @@ class MainPageState extends State<MainPage> {
             colorScheme: !globalConfigInfo.useMD3 ? const ColorScheme.dark().copyWith(primary: bdwmPrimaryColor, surface: Colors.grey[800])
             : ColorScheme(brightness: Brightness.dark,
               primary: bdwmPrimaryColor, onPrimary: Colors.black,
-              secondary: const Color(0xff03dac6), onSecondary: Colors.black,
+              secondary: bdwmPrimaryColor.withOpacity(0.8), onSecondary: Colors.black,
               error: const Color(0xffcf6679), onError: Colors.black,
               surface: const Color(0xff424242), onSurface: Colors.white,
               background: const Color(0xff323232), onBackground: Colors.white,
