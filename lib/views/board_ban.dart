@@ -1,10 +1,10 @@
-import 'package:bdwm_viewer/views/utils.dart';
 import 'package:flutter/material.dart';
 
 import '../bdwm/admin_board.dart';
 import '../html_parser/board_ban_parser.dart' show BoardBanInfo;
 import './read_thread.dart' show BanUserDialog;
 import './constants.dart' show bdwmPrimaryColor;
+import './utils.dart' show showAlertDialog2, showInformDialog, SimpleTuple2, getOptOptions, showConfirmDialog;
 
 class BoardBanView extends StatefulWidget {
   final String bid;
@@ -48,6 +48,9 @@ class _BoardBanViewState extends State<BoardBanView> {
             ]);
             if (opt == null) { return; }
             if (opt == "delete") {
+              if (!mounted) { return; }
+              var doIt = await showConfirmDialog(context, "解封", "解封${e.userName}");
+              if (doIt != "yes") { return; }
               var optRes = await bdwmAdminBoardBanUser(bid: widget.bid, action: opt, day: 0, reason: "", userName: e.userName, uid: e.uid);
               if (!mounted) { return; }
               if (optRes.success) {
