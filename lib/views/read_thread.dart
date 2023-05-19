@@ -1,3 +1,4 @@
+import 'package:bdwm_viewer/views/show_ip.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:extended_image/extended_image.dart';
@@ -375,10 +376,16 @@ class _OperateComponentState extends State<OperateComponent> {
                 'receiver': widget.onePostInfo.authorInfo.userName,
               });
             } else if (value == "分享") {
-              var sharedText = "$v2Host/post-read.php?bid=${widget.bid}&threadid=${widget.threadid}&page=a&postid=${widget.postid}#${widget.postid}";
+              var sharedText = "$v2Host/post-read.php?bid=${widget.bid}&threadid=${widget.threadid}&page=a&postid=${widget.postid}#${widget.postid} ";
               sharedText += "\n${widget.title} - ${widget.boardName}";
               sharedText += "\n${widget.onePostInfo.postNumber} 赞${widget.onePostInfo.upCount}/踩${widget.onePostInfo.downCount}";
               shareWithResultWrap(context, sharedText, subject: "分享帖子");
+            } else if (value == "单帖") {
+              nv2Push(context, '/singlePost', arguments: {
+                'bid': widget.bid,
+                'postid': widget.postid,
+                'boardName': widget.boardName,
+              });
             }
           },
           itemBuilder: (context) {
@@ -401,6 +408,10 @@ class _OperateComponentState extends State<OperateComponent> {
                 value: "回站内信",
                 enabled: widget.onePostInfo.authorInfo.userName.toLowerCase() != "anonymous",
                 child: const Text("回站内信"),
+              ),
+              const PopupMenuItem(
+                value: "单帖",
+                child: Text("到单帖"),
               ),
               const PopupMenuItem(
                 value: "分享",
@@ -795,9 +806,13 @@ class _OnePostComponentState extends State<OnePostComponent> {
                     // Divider(color: item.postNumber.contains("高亮") ? highlightReplyColor : null,),
                     HtmlComponent(item.content, ts: _contentFont),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        if (item.postNumber.startsWith('#') && int.tryParse(item.postNumber.substring(1))!=null) ...[
+                          ShowPostIpComponent(userName: item.authorInfo.userName, uid: item.authorInfo.uid, part: 2, bid: widget.bid, num: item.postNumber.substring(1)),
+                        ],
+                        const Spacer(),
                         if (item.canOpt) ...[
                           SizedBox(
                             width: 26,

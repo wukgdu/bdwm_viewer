@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:async/async.dart';
@@ -7,12 +5,12 @@ import 'package:url_launcher/url_launcher.dart';
 
 import "../html_parser/user_parser.dart";
 import "../bdwm/req.dart";
-import "../bdwm/search.dart";
 // import "../bdwm/settings.dart";
 import "../globalvars.dart";
 import '../bdwm/users.dart';
 import "../bdwm/logout.dart";
 import "./utils.dart";
+import './show_ip.dart';
 import "./constants.dart";
 import "../pages/detail_image.dart";
 import './html_widget.dart';
@@ -151,86 +149,6 @@ class _UserOperationComponentState extends State<UserOperationComponent> {
           });
         });
       },
-    );
-  }
-}
-
-class ShowIpComponent extends StatefulWidget {
-  final String userName;
-  const ShowIpComponent({required this.userName, super.key});
-
-  @override
-  State<ShowIpComponent> createState() => _ShowIpComponentState();
-}
-
-class _ShowIpComponentState extends State<ShowIpComponent> {
-  bool showIp = false;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 40,
-      padding: const EdgeInsets.only(left: 10),
-      child: Row(
-        children: [
-          const Text("IP："),
-          if (showIp) ...[
-            widget.userName.toLowerCase() == "onepiece"
-            ? const Text("当然不能查我啦")
-            : FutureBuilder(
-              future: bdwmUserInfoSearch([widget.userName]),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState != ConnectionState.done) {
-                  // return const Center(child: CircularProgressIndicator());
-                  return const Text("查询中");
-                }
-                if (snapshot.hasError) {
-                  return Text("错误：${snapshot.error}");
-                }
-                if (!snapshot.hasData || snapshot.data == null) {
-                  return const Text("错误：未获取数据");
-                }
-                var userRes = snapshot.data as UserInfoRes;
-                if (userRes.success == false) {
-                  return const Text("查询失败");
-                }
-                if (userRes.users.isEmpty) {
-                  return const Text("查询失败");
-                }
-                if (userRes.users[0] is bool) {
-                  return const Text("查询失败");
-                }
-                String ipStr = "";
-                try {
-                  Map jsonObject = jsonDecode(userRes.jsonStr);
-                  Map result = jsonObject['result'][0];
-                  int ipInt = result['ip'];
-                  String ipHexStr = ipInt.toRadixString(16).padLeft(8, '0');
-                  int ip1 = int.parse("0x${ipHexStr.substring(0, 2)}");
-                  int ip2 = int.parse("0x${ipHexStr.substring(2, 4)}");
-                  int ip3 = int.parse("0x${ipHexStr.substring(4, 6)}");
-                  int ip4 = int.parse("0x${ipHexStr.substring(6, 8)}");
-                  if (globalUInfo.uid == "22776" && globalUInfo.login == true && globalUInfo.username.toLowerCase() == "onepiece") {
-                    ipStr = "$ip4.$ip3.$ip2.$ip1";
-                  } else {
-                    ipStr = "$ip4.$ip3.$ip2.*";
-                  }
-                } catch (_) {
-                  ipStr = "查询失败";
-                }
-                return SelectionArea(child: Text(ipStr));
-              },
-            ),
-          ],
-          TextButton(
-            onPressed: () {
-              setState(() {
-                showIp = !showIp;
-              });
-            },
-            child: Text(showIp ? "隐藏" : "点击查看"),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -755,7 +673,7 @@ class _UserInfoViewState extends State<UserInfoView> {
                 _oneLineItem("注册时间", user.timeReg!),
               if (user.timeOnline != null)
                 _oneLineItem("在线总时长", user.timeOnline!),
-              Card(child: ShowIpComponent(userName: user.bbsID),),
+              Card(child: ShowIpComponent(userName: user.bbsID, uid: user.uid,),),
               // _multiLineItem("个人说明", user.signature, icon: const Icon(Icons.description)),
               // _multiHtmlLineItem("个人说明", Html(data: user.signature), icon: const Icon(Icons.description)),
               _multiHtmlLineItem("个人说明", HtmlComponent(user.signatureHtml, ts: const TextStyle(height: 1.0),), icon: const Icon(Icons.description)),

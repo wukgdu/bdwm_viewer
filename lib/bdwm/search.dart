@@ -201,7 +201,7 @@ Future<NumToPostInfoRes> bdwmGetPostByNum({required String bid, required String 
   if (content['success'] == true) {
     for (var p in content['list']) {
       String owner = p['owner'];
-      int ip = p['ip'];
+      int ip = p['ip'] ?? 0;
       int threadid = p['threadid'];
       int postid = p['postid'];
       posts.add(PostInfoResItem(owner: owner, ip: ip, threadid: threadid, postid: postid));
