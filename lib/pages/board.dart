@@ -6,22 +6,30 @@ import '../html_parser/board_parser.dart';
 import '../html_parser/board_single_parser.dart';
 import '../views/constants.dart' show bdwmPrimaryColor;
 import '../bdwm/req.dart';
+import '../bdwm/search.dart' show bdwmGetPostByNum;
+import '../utils.dart' show isValidUserName;
 import '../views/board.dart';
 import '../globalvars.dart';
 import '../views/utils.dart';
 // import '../views/constants.dart';
-import '../router.dart' show nv2Push;
+import '../router.dart' show nv2Push, nv2RawPush;
 
-class BoardSearchAlert extends StatefulWidget {
-  final String boardEngName;
-  const BoardSearchAlert({super.key, required this.boardEngName});
-
-  @override
-  State<BoardSearchAlert> createState() => _BoardSearchAlertState();
+enum BoardSearchType {
+  user, str, number,
 }
 
-class _BoardSearchAlertState extends State<BoardSearchAlert> {
+class BoardSearchDialog extends StatefulWidget {
+  final String boardEngName;
+  final String bid;
+  const BoardSearchDialog({super.key, required this.boardEngName, required this.bid});
+
+  @override
+  State<BoardSearchDialog> createState() => _BoardSearchDialogState();
+}
+
+class _BoardSearchDialogState extends State<BoardSearchDialog> {
   TextEditingController textController = TextEditingController();
+  BoardSearchType curType = BoardSearchType.str;
 
   @override
   void dispose() {
@@ -35,6 +43,22 @@ class _BoardSearchAlertState extends State<BoardSearchAlert> {
       title: const Text("版内搜索"),
       content: TextField(
         controller: textController,
+        onChanged: (value) {
+          String txt = textController.text.trim();
+          if (isValidUserName(txt)) {
+            setState(() {
+              curType = BoardSearchType.user;
+            });
+          } else if (int.tryParse(txt) != null) {
+            setState(() {
+              curType = BoardSearchType.number;
+            });
+          } else {
+            setState(() {
+              curType = BoardSearchType.str;
+            });
+          }
+        },
         // keyboardType: const TextInputType.numberWithOptions(),
       ),
       actions: [
@@ -44,20 +68,46 @@ class _BoardSearchAlertState extends State<BoardSearchAlert> {
           },
           child: const Text("取消"),
         ),
-        TextButton(
-          onPressed: () {
-            String txt = textController.text.trim();
-            if (txt.isEmpty) { return; }
-            PostSearchSettings pss = PostSearchSettings.empty();
-            pss.days = "24855";
-            pss.owner = txt;
-            pss.board = widget.boardEngName;
-            nv2Push(context, "/complexSearchResult", arguments: {
-              "settings": pss,
-            });
-          },
-          child: const Text("搜索用户")
-        ),
+        if (curType == BoardSearchType.number) ...[
+          TextButton(
+            onPressed: () async {
+              String txt = textController.text.trim();
+              if (txt.isEmpty) { return; }
+              var num = int.tryParse(txt);
+              if (num == null) { return; }
+              var res = await bdwmGetPostByNum(bid: widget.bid, num: num.toString());
+              if (res.success && res.postInfoItem.isNotEmpty) {
+                var resPost = res.postInfoItem.first;
+                var postid = resPost.postid;
+                if (postid == -1) { return; }
+                nv2RawPush('/singlePost', arguments: {
+                  'bid': widget.bid,
+                  'postid': postid.toString(),
+                  'boardName': "",
+                });
+              } else {
+                if (!mounted) { return; }
+                showInformDialog(context, "跳转失败", res.errorMessage ?? "错误码：${res.error}");
+              }
+            },
+            child: const Text("帖子序号")
+          ),
+        ] else if (curType == BoardSearchType.user) ...[
+          TextButton(
+            onPressed: () {
+              String txt = textController.text.trim();
+              if (txt.isEmpty) { return; }
+              PostSearchSettings pss = PostSearchSettings.empty();
+              pss.days = "24855";
+              pss.owner = txt;
+              pss.board = widget.boardEngName;
+              nv2Push(context, "/complexSearchResult", arguments: {
+                "settings": pss,
+              });
+            },
+            child: const Text("搜索用户")
+          ),
+        ],
         TextButton(
           onPressed: () {
             String txt = textController.text.trim();
@@ -201,7 +251,7 @@ class _BoardPageState extends State<BoardPage> {
               ),
               IconButton(
                 onPressed: () {
-                  showAlertDialog2(context, BoardSearchAlert(boardEngName: boardInfo.engName,));
+                  showAlertDialog2(context, BoardSearchDialog(boardEngName: boardInfo.engName, bid: widget.bid,));
                 },
                 icon: const Icon(Icons.search),
               ),
@@ -405,7 +455,7 @@ class _BoardSinglePageState extends State<BoardSinglePage> {
             actions: [
               IconButton(
                 onPressed: () {
-                  showAlertDialog2(context, BoardSearchAlert(boardEngName: boardInfo.engName,));
+                  showAlertDialog2(context, BoardSearchDialog(boardEngName: boardInfo.engName, bid: widget.bid,));
                 },
                 icon: const Icon(Icons.search),
               ),

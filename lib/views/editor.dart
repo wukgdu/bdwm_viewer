@@ -4,7 +4,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as fquill;
 // import 'package:flutter_quill_extensions/embeds/builders.dart' show ImageEmbedBuilder;
-import './fq_image.dart' show ImageEmbedBuilder;
 import 'package:async/async.dart';
 
 import './constants.dart';
@@ -12,6 +11,8 @@ import './utils.dart' show showColorDialog, showTextDialog;
 import './quill_utils.dart' show html2Quill;
 import '../globalvars.dart' show globalConfigInfo;
 import '../bdwm/search.dart';
+import './fq_image.dart' show ImageEmbedBuilder;
+import '../utils.dart' show isValidUserName;
 
 fquill.QuillController genController(String? content) {
   late fquill.QuillController controller;
@@ -86,7 +87,7 @@ class _FquillEditorState extends State<FquillEditor> {
             if (curChar == '@') {
               if (newOffset == 0 || rawText[newOffset-1]==" " || rawText[newOffset-1]=="\n") {
                 partUserName = rawText.substring(newOffset+1, baseOffset);
-                if (isValidUserName(partUserName)) {
+                if (isValidUserName(partUserName, whenEmpty: true)) {
                   waitUserList = true;
                   selection1 = newOffset+1;
                 }
@@ -116,13 +117,6 @@ class _FquillEditorState extends State<FquillEditor> {
         showOverlaidTag(context, partUserName, selection1, cursorOffset.dx, cursorOffset.dy - (renderEditor.offset?.pixels ?? 0));
       });
     };
-  }
-
-  bool isValidUserName(String userName) {
-    if (userName.isEmpty) { return true; }
-    var matchRes = RegExp(r"[a-zA-Z_]+").stringMatch(userName);
-    if (matchRes == null) { return false; }
-    return matchRes.length == userName.length;
   }
 
   void removeSuggestionNow() {

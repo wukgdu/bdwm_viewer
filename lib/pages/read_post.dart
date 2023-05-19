@@ -107,7 +107,7 @@ class _SinglePostPageState extends State<SinglePostPage> {
             actions: [
               IconButton(
                 onPressed: () {
-                  naviGotoThreadByLink(context, singlePostInfo.threadLink, widget.boardName ?? "", needToBoard: true, replaceIt: true);
+                  naviGotoThreadByLink(context, singlePostInfo.threadLink, widget.boardName ?? "", needToBoard: true, replaceIt: false);
                 },
                 icon: const Icon(Icons.width_full_outlined)
               ),

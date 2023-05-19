@@ -21,7 +21,7 @@ class BdwmClient {
     }
   }
 
-  Future<http.Response?> post(String url, {Map<String, String> headers=const {}, Object data=const <String, String>{}}) async {
+  Future<http.Response?> post(String url, {Map<String, String> headers=const {}, Object data=const <String, String>{}, Duration waitTime=const Duration(seconds: 15)}) async {
     debugPrint("post");
     var reqUid = globalUInfo.uid;
     var reqSkey = globalUInfo.skey;
@@ -29,7 +29,7 @@ class BdwmClient {
     var timeout = false;
     try {
       var resp = await client.post(Uri.parse(url), body: data, headers: headers)
-        .timeout(const Duration(seconds: 10));
+        .timeout(waitTime);
       await checkStatus(resp.headers['set-cookie'] ?? "", reqUid: reqUid, userName: userName, reqSkey: reqSkey);
       return resp;
     } on TimeoutException catch (_) {
@@ -49,7 +49,7 @@ class BdwmClient {
     return null;
   }
 
-  Future<http.Response?> get(String url, {Map<String, String> headers=const {}}) async {
+  Future<http.Response?> get(String url, {Map<String, String> headers=const {}, Duration waitTime=const Duration(seconds: 15)}) async {
     debugPrint("get");
     var reqUid = globalUInfo.uid;
     var reqSkey = globalUInfo.skey;
@@ -57,7 +57,7 @@ class BdwmClient {
     var timeout = false;
     try {
       var resp =  await client.get(Uri.parse(url), headers: headers)
-        .timeout(const Duration(seconds: 10));
+        .timeout(waitTime);
       await checkStatus(resp.headers['set-cookie'] ?? "", reqUid: reqUid, userName: userName, reqSkey: reqSkey);
       return resp;
     } on TimeoutException catch (_) {

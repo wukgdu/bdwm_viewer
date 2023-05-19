@@ -140,3 +140,10 @@ bool isIP(String str) {
   }
   return false;
 }
+
+bool isValidUserName(String userName, {bool whenEmpty=false}) {
+  if (userName.isEmpty) { return whenEmpty; }
+  var matchRes = RegExp(r"[a-zA-Z_]+").stringMatch(userName);
+  if (matchRes == null) { return false; }
+  return matchRes.length == userName.length;
+}
