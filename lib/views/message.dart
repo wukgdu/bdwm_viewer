@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_linkify/flutter_linkify.dart' show Linkify, UrlElement, LinkifyOptions;
+import 'package:flutter_linkify/flutter_linkify.dart' show UrlElement, LinkifyOptions, LinkifySpan;
 
 import '../views/constants.dart';
 import '../views/utils.dart';
@@ -310,8 +310,8 @@ class _MessagePersonViewState extends State<MessagePersonView> {
     });
   }
 
-  Linkify genLinkify(String text) {
-    return Linkify(
+  LinkifySpan genLinkify(String text) {
+    return LinkifySpan(
       onOpen: (link) {
         if (link is UrlElement) {
           innerLinkJump(link.url, context);
@@ -323,10 +323,10 @@ class _MessagePersonViewState extends State<MessagePersonView> {
     );
   }
 
-  InlineSpan genContentTextSpan(String rawContent) {
+  TextSpan genContentTextSpan(String rawContent) {
     if (!globalConfigInfo.getUseImgInMessage()) {
       // return TextSpan(text: replaceWithEmoji(rawContent));
-      return WidgetSpan(child: genLinkify(replaceWithEmoji(rawContent)), alignment: PlaceholderAlignment.middle);
+      return genLinkify(replaceWithEmoji(rawContent));
     }
     String tmpK = UniqueKey().toString();
     String tmpK2 = UniqueKey().toString();
@@ -343,7 +343,7 @@ class _MessagePersonViewState extends State<MessagePersonView> {
           String emojiIdx = arr[1];
           return WidgetSpan(child: SimpleCachedImage(imgLink: "$v2Host/images/emoji/Expression_$emojiIdx.png", height: Theme.of(context).textTheme.bodyMedium?.fontSize ?? 16,));
         }
-        return WidgetSpan(child: genLinkify(e), alignment: PlaceholderAlignment.middle);
+        return genLinkify(e);
       },).toList(),
     );
   }
