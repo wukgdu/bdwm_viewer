@@ -93,30 +93,30 @@ class _MailListViewState extends State<MailListView> {
                 ]
               ),
             ),
-            subtitle: Text.rich(
-              TextSpan(
-                children: [
-                  if (item.unread)
-                    WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: Icon(Icons.circle, color: bdwmPrimaryColor, size: 8),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    if (item.unread) ...[
+                      Icon(Icons.circle, color: bdwmPrimaryColor, size: 8),
+                    ],
+                    Expanded(
+                      child: Text(
+                        item.title,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  WidgetSpan(child: Text(
-                    item.title,
-                    overflow: TextOverflow.ellipsis,
-                  )),
-                  if (item.hasAttachment)
-                    const WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: Icon(Icons.attachment),
-                    ),
-                  const TextSpan(text: "\n"),
-                  WidgetSpan(child: Text(
-                    item.content,
-                    overflow: TextOverflow.ellipsis,
-                  )),
-                ],
-              ),
+                    if (item.hasAttachment) ...[
+                      const Icon(Icons.attachment),
+                    ]
+                  ],
+                ),
+                Text(
+                  item.content,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
             isThreeLine: true,
           ),
