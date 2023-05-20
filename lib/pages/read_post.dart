@@ -7,6 +7,18 @@ import '../globalvars.dart';
 import '../views/read_thread.dart' show OnePostComponent;
 import './read_thread.dart' show naviGotoThreadByLink;
 
+Future<SinglePostInfo> getSinglePostData(String bid, String postid, {String? type}) async {
+  var url = "$v2Host/post-read-single.php?bid=$bid&postid=$postid";
+  if (type != null) {
+    url += "&type=$type";
+  }
+  var resp = await bdwmClient.get(url, headers: genHeaders2());
+  if (resp == null) {
+    return SinglePostInfo.error(errorMessage: networkErrorText);
+  }
+  return parseSinglePost(resp.body);
+}
+
 class SinglePostPage extends StatefulWidget {
   final String bid;
   final String postid;
@@ -27,7 +39,7 @@ class _SinglePostPageState extends State<SinglePostPage> {
   @override
   void initState() {
     super.initState();
-    getDataCancelable = CancelableOperation.fromFuture(getData(firstTime: true), onCancel: () {
+    getDataCancelable = CancelableOperation.fromFuture(getData(), onCancel: () {
       debugPrint("cancel it");
     },);
   }
@@ -38,16 +50,8 @@ class _SinglePostPageState extends State<SinglePostPage> {
     super.dispose();
   }
 
-  Future<SinglePostInfo> getData({bool firstTime=false}) async {
-    var url = "$v2Host/post-read-single.php?bid=${widget.bid}&postid=${widget.postid}";
-    if (widget.type != null) {
-      url += "&type=${widget.type}";
-    }
-    var resp = await bdwmClient.get(url, headers: genHeaders2());
-    if (resp == null) {
-      return SinglePostInfo.error(errorMessage: networkErrorText);
-    }
-    return parseSinglePost(resp.body);
+  Future<SinglePostInfo> getData() async {
+    return await getSinglePostData(widget.bid, widget.postid, type: widget.type,);
   }
 
   void refresh() {

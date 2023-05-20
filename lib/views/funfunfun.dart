@@ -366,6 +366,15 @@ class FunFunFunView extends StatelessWidget {
             trailing: const Icon(Icons.arrow_right),
           )
         ),
+        Card(
+          child: ListTile(
+            onTap: () {
+              nv2Push(context, '/compareIP');
+            },
+            title: const Text("对比IP"),
+            trailing: const Icon(Icons.arrow_right),
+          )
+        ),
         const Card(
           child: ImageCacheComponent(),
         ),

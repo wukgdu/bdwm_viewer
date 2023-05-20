@@ -34,6 +34,7 @@ import './pages/board_ban.dart';
 import './pages/read_post.dart';
 import './pages/favorite_collection.dart';
 import './pages/modify_profile.dart';
+import './pages/compare_ip.dart';
 import './html_parser/modify_profile_parser.dart' show SelfProfileInfo;
 import './views/search.dart' show PostSearchSettings;
 import './services.dart';
@@ -296,6 +297,8 @@ class MainPageBuilder {
       case "/user":
         String userID = settings.arguments as String? ?? "15265";
         return UserPage(uid: userID, needBack: true,);
+      case "/compareIP":
+        return const CompareIpPage();
       case "/message":
         if (messageBrief == null) { return null; }
         return MessagelistPage(brief: messageBrief!);
