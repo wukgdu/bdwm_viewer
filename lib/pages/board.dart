@@ -49,7 +49,7 @@ class _BoardSearchDialogState extends State<BoardSearchDialog> {
             setState(() {
               curType = BoardSearchType.user;
             });
-          } else if (int.tryParse(txt) != null) {
+          } else if (int.tryParse(txt) != null && int.tryParse(txt) != 0) {
             setState(() {
               curType = BoardSearchType.number;
             });

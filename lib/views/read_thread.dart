@@ -1,4 +1,3 @@
-import 'package:bdwm_viewer/views/show_ip.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:extended_image/extended_image.dart';
@@ -16,6 +15,7 @@ import '../html_parser/read_thread_parser.dart';
 import '../globalvars.dart' show globalConfigInfo, v2Host;
 import '../pages/detail_image.dart';
 import './html_widget.dart';
+import './show_ip.dart';
 import '../router.dart' show nv2Push;
 
 class BanUserDialog extends StatefulWidget {

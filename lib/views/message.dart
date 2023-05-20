@@ -390,7 +390,7 @@ class _MessagePersonViewState extends State<MessagePersonView> {
               children: [
                 genContentTextSpan(rawContent),
                 if (link.isNotEmpty) ...[
-                  const TextSpan(text: "\n"),
+                  // const TextSpan(text: "\n"),
                   WidgetSpan(
                     alignment: PlaceholderAlignment.middle,
                     child: GestureDetector(

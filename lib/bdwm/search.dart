@@ -161,10 +161,10 @@ class PostInfoResItem {
   int threadid = -1;
   int postid = -1;
   PostInfoResItem({
-  required this.owner,
-  required this.ip,
-  required this.threadid,
-  required this.postid,
+    required this.owner,
+    required this.ip,
+    required this.threadid,
+    required this.postid,
   });
 }
 
