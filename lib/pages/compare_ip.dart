@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import "../bdwm/search.dart";
 import '../utils.dart' show isValidUserName, getQueryValueImproved;
 import './read_post.dart' show getSinglePostData;
-import '../globalvars.dart' show globalUInfo;
+import '../views/show_ip.dart' show genIPStr, canSeeAllIP;
 
 class UsernameAndIP {
   final String userName;
@@ -32,6 +32,7 @@ class _CompareIpPageState extends State<CompareIpPage> {
   UsernameAndIP uip2 = const UsernameAndIP.empty();
   TextEditingController text1Controller = TextEditingController();
   TextEditingController text2Controller = TextEditingController();
+  static const int part=2;
 
   Future<List<String>?> getBidAndNum(String link) async {
     var bid = getQueryValueImproved(link, 'bid');
@@ -124,6 +125,34 @@ class _CompareIpPageState extends State<CompareIpPage> {
     }
   }
 
+  String judge3() {
+    var ip1 = uip1.ip & 0x00ffffff;
+    var ip2 = uip2.ip & 0x00ffffff;
+    if (ip1 == ip2) {
+      if (ip1 == 0) {
+        return "= 0 =";
+      } else {
+        return "=";
+      }
+    } else {
+      return "≠";
+    }
+  }
+
+  String judge2() {
+    var ip1 = uip1.ip & 0x0000ffff;
+    var ip2 = uip2.ip & 0x0000ffff;
+    if (ip1 == ip2) {
+      if (ip1 == 0) {
+        return "= 0 =";
+      } else {
+        return "=";
+      }
+    } else {
+      return "≠";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -154,26 +183,63 @@ class _CompareIpPageState extends State<CompareIpPage> {
           Column(
             children: [
               TextButton(
-                onPressed: (globalUInfo.uid == "22776" && globalUInfo.login == true && globalUInfo.username.toLowerCase() == "onepiece") ? () {
+                onPressed: () {
                   startSearch();
-                } : null,
+                },
                 child: const Text("对比IP"),
               ),
+              if (canSeeAllIP() || (part==4)) ...[
+                Center(
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(text: "IP(${uip1.userName})"),
+                        TextSpan(text: " ${judge()} "),
+                        TextSpan(text: "IP(${uip2.userName})"),
+                      ]
+                    )
+                  )
+                ),
+              ] else if (part==3) ...[
+                Center(
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(text: "IP3/4(${uip1.userName})"),
+                        TextSpan(text: " ${judge3()} "),
+                        TextSpan(text: "IP3/4(${uip2.userName})"),
+                      ]
+                    )
+                  )
+                ),
+              ] else if (part==2) ...[
+                Center(
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(text: "IP2/4(${uip1.userName})"),
+                        TextSpan(text: " ${judge2()} "),
+                        TextSpan(text: "IP2/4(${uip2.userName})"),
+                      ]
+                    )
+                  )
+                ),
+              ],
               Center(
-                child: Text.rich(
+                child: SelectionArea(child: Text.rich(
                   TextSpan(
                     children: [
-                      TextSpan(text: "IP(${uip1.userName})"),
-                      TextSpan(text: " ${judge()} "),
-                      TextSpan(text: "IP(${uip2.userName})"),
+                      TextSpan(text: genIPStr(uip1.ip, part)),
+                      const TextSpan(text: "   "),
+                      TextSpan(text: genIPStr(uip2.ip, part)),
                     ]
                   )
-                )
-              )
+                ),),
+              ),
             ],
           ),
           const Divider(thickness: 1, height: 1,),
-          const SelectableText('''  输入用户id或者单帖链接进行IP对比。例如
+          const SelectableText('''  输入用户id或者单帖链接进行IP不完整对比。例如
   onepiece
   https://bbs.pku.edu.cn/v2/post-read-single.php?bid=338&postid=26867579
   单帖链接可从该贴的分享操作中获得。'''),

@@ -18,7 +18,7 @@ String genIPStr(int ipInt, int part) {
   String ipStr = "";
   var ipArray = parseIP(ipInt);
   int ip1 = ipArray[0], ip2 = ipArray[1], ip3 = ipArray[2], ip4 = ipArray[3];
-  if (globalUInfo.uid == "22776" && globalUInfo.login == true && globalUInfo.username.toLowerCase() == "onepiece") {
+  if (canSeeAllIP()) {
     ipStr = "$ip4.$ip3.$ip2.$ip1";
   } else if (part == 4) {
     ipStr = "$ip4.$ip3.$ip2.$ip1";
@@ -32,6 +32,10 @@ String genIPStr(int ipInt, int part) {
     ipStr = "*.*.*.*";
   }
   return ipStr;
+}
+
+bool canSeeAllIP() {
+  return (globalUInfo.uid == "22776") && (globalUInfo.login == true) && (globalUInfo.username.toLowerCase() == "onepiece");
 }
 
 class ShowIpComponent extends StatefulWidget {
