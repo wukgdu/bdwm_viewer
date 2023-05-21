@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../pages/read_thread.dart';
 import './constants.dart';
 import './utils.dart';
 import '../router.dart' show nv2Push;
+import './html_widget.dart' show innerLinkJump;
 
 class PostSearchSettings {
   String keyWord = "";
@@ -314,7 +314,7 @@ class _JumpThreadSearchComponentState extends State<JumpThreadSearchComponent> {
 
   void startSearch() {
     if (textController.text.isEmpty) { return; }
-    naviGotoThreadByLink(context, textController.text.trim(), "", needToBoard: true);
+    innerLinkJump(textController.text.trim(), context);
   }
 
   @override
