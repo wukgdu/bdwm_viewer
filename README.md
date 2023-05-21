@@ -71,6 +71,7 @@ https://github.com/wukgdu/bdwm_viewer/releases
     - [x] 看其他人新到消息
     - [ ] 看历史联系人
     - [x] 发消息
+    - [x] 选择表情发送
     - [x] 新到提醒
 - 站内信
     - [x] 看
@@ -107,6 +108,7 @@ https://github.com/wukgdu/bdwm_viewer/releases
 - 收藏主题帖（本地）
 - 发帖时@自动提示用户，正文高亮符合规则的@用户
 - 登录时支持游客浏览
+- 多账号切换
 
 ### 应用功能
 - Material Design 2、3切换
