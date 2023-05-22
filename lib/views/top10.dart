@@ -237,7 +237,8 @@ class BlocksComponent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Divider(),
+        // const Divider(),
+        const SizedBox(height: 5,),
         GestureDetector(
           onTap: () {
             var bid = getQueryValue(blockOne.blockLink, 'bid');
@@ -261,8 +262,9 @@ class BlocksComponent extends StatelessWidget {
               child: OneBlockComponent(item: item),
             );
           }).toList()
-        else
-          const Text("该分区暂无热门主题帖"),
+        else ...[
+          const Card(child: Center(child: Text("该分区暂无热门主题帖"),),),
+        ],
       ],
     );
   }
@@ -306,14 +308,16 @@ class TensComponent extends StatelessWidget {
             );
           }).toList()
         else if (gotTop10(homeInfo.top10Info) && !isTop10Valid(homeInfo.top10Info!)) ...[
-          ListTile(
-            // title: Text("全站十大", style: _titleFont),
-            title: Text(homeInfo.top10Info![0].title),
-            // isThreeLine: true,
-            trailing: IconButton(
-              icon: const Icon(Icons.login),
-              onPressed: () { nv2Replace(context, '/login', arguments: {'needBack': false}); },
-            )
+          Card(
+            child: ListTile(
+              onTap: () {
+                nv2Replace(context, '/login', arguments: {'needBack': false});
+              },
+              // title: Text("全站十大", style: _titleFont),
+              title: Text(homeInfo.top10Info![0].title),
+              // isThreeLine: true,
+              trailing: const Icon(Icons.login),
+            ),
           ),
         ],
       ]

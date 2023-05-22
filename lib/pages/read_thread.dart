@@ -729,9 +729,11 @@ class _ThreadDetailPageState extends State<ThreadDetailPage> {
       // if ((widget.page <= 1) && (newSubIdx >= 1)) { newSubIdx -= 1; }
       if (newSubIdx > 5) { newSubIdx = 5; }
     }
-    return OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack,
-      boardName: widget.threadPageInfo.board.text, threadid: widget.threadid, title: widget.threadPageInfo.title,
-      subIdx: newSubIdx, hideIt: hideIt, key: GlobalObjectKey(kStr),
+    return RepaintBoundary(
+      child: OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack,
+        boardName: widget.threadPageInfo.board.text, threadid: widget.threadid, title: widget.threadPageInfo.title,
+        subIdx: newSubIdx, hideIt: hideIt, key: GlobalObjectKey(kStr),
+      ),
     );
   }
 
