@@ -97,7 +97,7 @@ class _MailNewViewState extends State<MailNewView> {
           ),
         ),
         Container(
-          margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
+          margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 10),
           child: Row(
             children: [
               // const Text("标题"),
@@ -253,15 +253,7 @@ class _MailNewViewState extends State<MailNewView> {
             ],
           ),
         ),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
-            borderRadius: const BorderRadius.all(Radius.circular(5)),
-          ),
-          margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
-          height: 200,
-          child: FquillEditor(controller: _controller, autoFocus: false),
-        ),
+        FquillEditor(controller: _controller, autoFocus: false, height: 200.0,),
         Container(
           padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
           child: FquillEditorToolbar(controller: _controller),

@@ -45,7 +45,7 @@ class _PostNewViewState extends State<PostNewView> {
   bool needAnony = false;
   SignatureItem? signature;
   final signatureOB = SignatureItem(key: "OBViewer", value: "OBViewer");
-  static const vDivider = VerticalDivider();
+  static const vDivider = SizedBox(width: 8,);
   final quoteModes = <SignatureItem>[SignatureItem(key: "精简引文", value: "simple"), SignatureItem(key: "完整引文", value: "full")];
   late SignatureItem quoteMode;
   int attachCount = 0;
@@ -246,15 +246,16 @@ class _PostNewViewState extends State<PostNewView> {
             ],
           )
         ),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
-            borderRadius: const BorderRadius.all(Radius.circular(5)),
-          ),
-          margin: const EdgeInsets.only(left: 10, right: 10, top: 0),
-          height: 200,
-          child: FquillEditor(controller: _controller, autoFocus: widget.parentid != null,),
-        ),
+        // Container(
+        //   decoration: BoxDecoration(
+        //     border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
+        //     borderRadius: const BorderRadius.all(Radius.circular(5)),
+        //   ),
+        //   margin: const EdgeInsets.only(left: 10, right: 10, top: 0),
+        //   height: 200,
+        //   child: FquillEditor(controller: _controller, autoFocus: widget.parentid != null,),
+        // ),
+        FquillEditor(controller: _controller, autoFocus: widget.parentid != null, height: 200.0,),
         Container(
           padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
           child: FquillEditorToolbar(controller: _controller,)
@@ -262,35 +263,44 @@ class _PostNewViewState extends State<PostNewView> {
         Container(
           margin: const EdgeInsets.only(top: 0, left: 10, right: 10, bottom: 0),
           child: Wrap(
-            // alignment: WrapAlignment.center,
             alignment: WrapAlignment.center,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Checkbox(
-                value: needNoreply,
-                activeColor: bdwmPrimaryColor,
-                onChanged: widget.postNewInfo.canNoreply
-                  ? (value) {
-                    setState(() {
-                      needNoreply = value!;
-                    });
-                  }
-                  : null,
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Checkbox(
+                    value: needNoreply,
+                    activeColor: bdwmPrimaryColor,
+                    onChanged: widget.postNewInfo.canNoreply
+                      ? (value) {
+                        setState(() {
+                          needNoreply = value!;
+                        });
+                      }
+                      : null,
+                  ),
+                  const Text("不可回复"),
+                ],
               ),
-              const Text("不可回复"),
               vDivider,
-              Checkbox(
-                value: needRemind,
-                activeColor: bdwmPrimaryColor,
-                onChanged: widget.postNewInfo.canRemind
-                  ? (value) {
-                    setState(() {
-                      needRemind = value!;
-                    });
-                  }
-                  : null,
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Checkbox(
+                    value: needRemind,
+                    activeColor: bdwmPrimaryColor,
+                    onChanged: widget.postNewInfo.canRemind
+                      ? (value) {
+                        setState(() {
+                          needRemind = value!;
+                        });
+                      }
+                      : null,
+                  ),
+                  const Text("回复提醒"),
+                ],
               ),
-              const Text("回复提醒"),
               vDivider,
               // Checkbox(
               //   value: needForward,
@@ -304,19 +314,24 @@ class _PostNewViewState extends State<PostNewView> {
               //     : null,
               // ),
               // const Text("抄送给原作者"),
-              vDivider,
-              Checkbox(
-                value: needAnony,
-                activeColor: bdwmPrimaryColor,
-                onChanged: widget.postNewInfo.canAnony
-                  ? (value) {
-                    setState(() {
-                      needAnony = value!;
-                    });
-                  }
-                  : null,
+              // vDivider,
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Checkbox(
+                    value: needAnony,
+                    activeColor: bdwmPrimaryColor,
+                    onChanged: widget.postNewInfo.canAnony
+                      ? (value) {
+                        setState(() {
+                          needAnony = value!;
+                        });
+                      }
+                      : null,
+                  ),
+                  const Text("匿名"),
+                ],
               ),
-              const Text("匿名"),
             ],
           ),
         ),

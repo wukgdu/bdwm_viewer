@@ -31,10 +31,12 @@ fquill.QuillController genController(String? content) {
 class FquillEditor extends StatefulWidget {
   final fquill.QuillController controller;
   final bool autoFocus;
+  final double? height;
   const FquillEditor({
     super.key,
     required this.controller,
     required this.autoFocus,
+    this.height,
   });
 
   @override
@@ -48,6 +50,7 @@ class _FquillEditorState extends State<FquillEditor> {
   Timer? removeOverlayTimer;
   OverlayEntry? suggestionTagoverlayEntry;
   CancelableOperation? getUserSuggestionCancelable;
+  final ValueNotifier<bool> _showBorder = ValueNotifier<bool>(false);
 
   @override
   void initState() {
@@ -55,12 +58,23 @@ class _FquillEditorState extends State<FquillEditor> {
     if (globalConfigInfo.getSuggestUser()==true) {
       addUserSuggest();
     }
+    if (widget.height != null) {
+      _focusNode.addListener(changeBorder);
+    }
+  }
+
+  void changeBorder() {
+    _showBorder.value = !_showBorder.value;
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    if (widget.height != null) {
+      _focusNode.removeListener(changeBorder);
+    }
     _focusNode.dispose();
+    _showBorder.dispose();
     removeSuggestionNow();
     if (suggestionTagoverlayEntry != null) {
       suggestionTagoverlayEntry!.dispose();
@@ -239,7 +253,7 @@ class _FquillEditorState extends State<FquillEditor> {
 
   @override
   Widget build(BuildContext context) {
-    return fquill.QuillEditor(
+    var editor =  fquill.QuillEditor(
       key: editorKey,
       controller: widget.controller,
       scrollController: _scrollController,
@@ -248,10 +262,35 @@ class _FquillEditorState extends State<FquillEditor> {
       autoFocus: widget.autoFocus, // 回帖
       readOnly: false,
       expands: false,
-      padding: const EdgeInsets.all(5.0),
+      padding: const EdgeInsets.all(0.0),
       keyboardAppearance: Theme.of(context).brightness,
       locale: const Locale('zh'),
       embedBuilders: [ImageEmbedBuilder()],
+    );
+    if (widget.height == null) {
+      return editor;
+    }
+    var isDark = Theme.of(context).brightness == Brightness.dark;
+    return ValueListenableBuilder(
+      valueListenable: _showBorder,
+      builder: (context, value, child) {
+        return Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: _focusNode.hasFocus ? bdwmPrimaryColor : isDark ? Colors.white : Colors.black,
+              width: _focusNode.hasFocus ? 2.0 : 1.0,
+              style: BorderStyle.solid,
+              strokeAlign: BorderSide.strokeAlignInside,
+            ),
+            borderRadius: const BorderRadius.all(Radius.circular(5)),
+          ),
+          padding: EdgeInsets.all(_focusNode.hasFocus ? 4.0 : 5.0),
+          margin: const EdgeInsets.only(left: 10, right: 10, top: 0),
+          height: widget.height,
+          child: child,
+        );
+      },
+      child: editor,
     );
   }
 }
