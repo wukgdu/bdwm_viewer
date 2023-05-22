@@ -179,7 +179,7 @@ class _CompareIpPageState extends State<CompareIpPage> {
                 ),
               ),
           ),
-          const Divider(thickness: 1, height: 1,),
+          const Divider(),
           Column(
             children: [
               TextButton(
@@ -238,7 +238,7 @@ class _CompareIpPageState extends State<CompareIpPage> {
               ),
             ],
           ),
-          const Divider(thickness: 1, height: 1,),
+          const Divider(),
           const SelectableText('''  输入用户id或者单帖链接进行IP不完整对比。例如
   onepiece
   https://bbs.pku.edu.cn/v2/post-read-single.php?bid=338&postid=26867579

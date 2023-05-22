@@ -336,7 +336,7 @@ class _JumpThreadSearchComponentState extends State<JumpThreadSearchComponent> {
                 startSearch();
               },
               decoration: const InputDecoration(
-                hintText: "帖子链接",
+                hintText: "帖子、文集或其他链接",
               ),
             ),
           ),
@@ -362,7 +362,7 @@ class SearchView extends StatelessWidget {
         SimpleSearchComponent(mode: "board", hintText: "中文或英文模糊名称",),
         Center(child: Text("搜索用户")),
         SimpleSearchComponent(mode: "user", hintText: "模糊ID或精确UID",),
-        Center(child: Text("跳转帖子")),
+        Center(child: Text("链接跳转")),
         JumpThreadSearchComponent(),
         Center(child: Text("搜索帖子")),
         ComplexSearchComponent(),
