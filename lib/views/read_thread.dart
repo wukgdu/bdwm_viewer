@@ -409,10 +409,12 @@ class _OperateComponentState extends State<OperateComponent> {
                 enabled: widget.onePostInfo.authorInfo.userName.toLowerCase() != "anonymous",
                 child: const Text("回站内信"),
               ),
-              const PopupMenuItem(
-                value: "单帖",
-                child: Text("到单帖"),
-              ),
+              if (!widget.onePostInfo.postNumber.startsWith('#')) ...[
+                const PopupMenuItem(
+                  value: "单帖",
+                  child: Text("到单帖"),
+                ),
+              ],
               const PopupMenuItem(
                 value: "分享",
                 child: Text("分享"),
