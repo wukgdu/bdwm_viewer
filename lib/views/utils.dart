@@ -23,7 +23,7 @@ class SimpleTuple2 {
   });
 }
 
-Future<String?> getOptOptions(BuildContext context, List<SimpleTuple2> data, {bool isScrollControlled=false, Widget? desc}) async {
+Future<String?> getOptOptions(BuildContext context, List<SimpleTuple2> data, {bool isScrollControlled=true, Widget? desc}) async {
   var opt = await showModalBottomSheet<String>(
     context: context,
     isScrollControlled: isScrollControlled,
@@ -38,7 +38,7 @@ Future<String?> getOptOptions(BuildContext context, List<SimpleTuple2> data, {bo
             ],
             for (var datum in data) ...[
               ListTile(
-                dense: true,
+                // dense: true,
                 onTap: () { Navigator.of(context).pop(datum.action); },
                 title: Center(child: Text(datum.name, style: TextStyle(color: bdwmPrimaryColor),)),
               ),
