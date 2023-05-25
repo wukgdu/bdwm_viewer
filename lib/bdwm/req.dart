@@ -21,57 +21,57 @@ class BdwmClient {
     }
   }
 
-  Future<http.Response?> post(String url, {Map<String, String> headers=const {}, Object data=const <String, String>{}, Duration waitTime=const Duration(seconds: 15)}) async {
+  Future<http.Response?> post(String url, {Map<String, String> headers=const {}, Object data=const <String, String>{}, Duration timeout=const Duration(seconds: 15)}) async {
     debugPrint("post");
     var reqUid = globalUInfo.uid;
     var reqSkey = globalUInfo.skey;
     var userName = globalUInfo.username;
-    var timeout = false;
+    var isTimeout = false;
     try {
       var resp = await client.post(Uri.parse(url), body: data, headers: headers)
-        .timeout(waitTime);
+        .timeout(timeout);
       await checkStatus(resp.headers['set-cookie'] ?? "", reqUid: reqUid, userName: userName, reqSkey: reqSkey);
       return resp;
     } on TimeoutException catch (_) {
-      timeout = true;
+      isTimeout = true;
     } on SocketException catch (_) {
-      timeout = true;
+      isTimeout = true;
     } on HttpException catch (_) {
-      timeout = true;
+      isTimeout = true;
     } on Exception catch (_) {
-      timeout = true;
+      isTimeout = true;
     } catch (e) {
-      timeout = true;
+      isTimeout = true;
     }
-    if (timeout) {
+    if (isTimeout) {
       return null;
     }
     return null;
   }
 
-  Future<http.Response?> get(String url, {Map<String, String> headers=const {}, Duration waitTime=const Duration(seconds: 15)}) async {
+  Future<http.Response?> get(String url, {Map<String, String> headers=const {}, Duration timeout=const Duration(seconds: 15)}) async {
     debugPrint("get");
     var reqUid = globalUInfo.uid;
     var reqSkey = globalUInfo.skey;
     var userName = globalUInfo.username;
-    var timeout = false;
+    var isTimeout = false;
     try {
       var resp =  await client.get(Uri.parse(url), headers: headers)
-        .timeout(waitTime);
+        .timeout(timeout);
       await checkStatus(resp.headers['set-cookie'] ?? "", reqUid: reqUid, userName: userName, reqSkey: reqSkey);
       return resp;
     } on TimeoutException catch (_) {
-      timeout = true;
+      isTimeout = true;
     } on SocketException catch (_) {
-      timeout = true;
+      isTimeout = true;
     } on HttpException catch (_) {
-      timeout = true;
+      isTimeout = true;
     } on Exception catch (_) {
-      timeout = true;
+      isTimeout = true;
     } catch (e) {
-      timeout = true;
+      isTimeout = true;
     }
-    if (timeout) {
+    if (isTimeout) {
       return null;
     }
     return null;

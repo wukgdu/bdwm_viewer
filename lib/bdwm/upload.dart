@@ -53,7 +53,7 @@ Future<UploadRes> bdwmUpload(String dir, String path, {Duration? timeout}) async
   ),);
   var isTimeout = false;
   try {
-    var resp = await request.send().timeout(timeout ?? const Duration(seconds: 20));
+    var resp = await request.send().timeout(timeout ?? const Duration(seconds: 60));
     if (resp.statusCode == 200) {
       var str = await resp.stream.bytesToString();
       var content = jsonDecode(str);
