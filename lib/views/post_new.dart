@@ -43,6 +43,7 @@ class _PostNewViewState extends State<PostNewView> {
   bool needRemind = true;
   bool needForward = false;
   bool needAnony = false;
+  bool needAttachLink = true;
   SignatureItem? signature;
   final signatureOB = SignatureItem(key: "OBViewer", value: "OBViewer");
   static const vDivider = SizedBox(width: 8,);
@@ -78,8 +79,7 @@ class _PostNewViewState extends State<PostNewView> {
         }
       }
     }
-
-    if (signature == null && widget.postid == null) {
+    if (signature == null) {
       for (var item in widget.postNewInfo.signatureInfo) {
         if (item.value == globalImmConfigInfo.getQmd()) {
           signature = item;
@@ -90,6 +90,7 @@ class _PostNewViewState extends State<PostNewView> {
         signature = signatureOB;
       }
     }
+    signature ??= signatureOB;
 
     attachFiles = widget.postNewInfo.attachFiles;
     attachCount = attachFiles.length;
@@ -374,21 +375,6 @@ class _PostNewViewState extends State<PostNewView> {
                     });
                   },
                 ),
-              TextButton(
-                onPressed: () {
-                  showUploadDialog(context, widget.postNewInfo.attachpath, attachFiles)
-                  .then((value) {
-                    if (value == null) { return; }
-                    var content = jsonDecode(value);
-                    attachCount = content['count'];
-                    attachFiles = [];
-                    for (var f in content['files']) {
-                      attachFiles.add(f);
-                    }
-                  },);
-                },
-                child: const Text("管理附件"),
-              ),
               DropdownButton<SignatureItem>(
                 hint: const Text("签名档"),
                 icon: const Icon(Icons.arrow_drop_down),
@@ -401,7 +387,7 @@ class _PostNewViewState extends State<PostNewView> {
                   ...widget.postNewInfo.signatureInfo.map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
                     return DropdownMenuItem<SignatureItem>(
                       value: item,
-                      child: Text(item.key),
+                      child: item.value.isEmpty ? Text("签名档：${item.key}") : Text(item.key),
                     );
                   }).toList(),
                 ],
@@ -414,6 +400,45 @@ class _PostNewViewState extends State<PostNewView> {
                     signature = value;
                   });
                 },
+              ),
+            ],
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
+          child: Wrap(
+            alignment: WrapAlignment.spaceEvenly,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              TextButton(
+                onPressed: () {
+                  showUploadDialog(context, widget.postNewInfo.attachpath, attachFiles, showAttachLink: needAttachLink)
+                  .then((value) {
+                    if (value == null) { return; }
+                    var content = jsonDecode(value);
+                    attachCount = content['count'];
+                    attachFiles = [];
+                    for (var f in content['files']) {
+                      attachFiles.add(f);
+                    }
+                  },);
+                },
+                child: const Text("管理附件"),
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Checkbox(
+                    value: needAttachLink,
+                    activeColor: bdwmPrimaryColor,
+                    onChanged: (value) {
+                      setState(() {
+                        needAttachLink = value!;
+                      });
+                    }
+                  ),
+                  const Text("上传后弹出链接"),
+                ],
               ),
             ],
           ),

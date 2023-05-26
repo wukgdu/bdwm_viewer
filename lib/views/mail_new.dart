@@ -43,6 +43,7 @@ class _MailNewViewState extends State<MailNewView> {
   SignatureItem? signature;
   int attachCount = 0;
   List<String> attachFiles = [];
+  bool needAttachLink = true;
   final quoteModes = <SignatureItem>[SignatureItem(key: "精简引文", value: "simple"), SignatureItem(key: "完整引文", value: "full")];
   late SignatureItem quoteMode;
   String? quoteText;
@@ -72,6 +73,7 @@ class _MailNewViewState extends State<MailNewView> {
         signature = signatureOB;
       }
     }
+    signature ??= signatureOB;
   }
 
   @override
@@ -295,21 +297,6 @@ class _MailNewViewState extends State<MailNewView> {
                     });
                   },
                 ),
-              TextButton(
-                onPressed: () {
-                  showUploadDialog(context, widget.mailNewInfo.attachpath, attachFiles)
-                  .then((value) {
-                    if (value == null) { return; }
-                    var content = jsonDecode(value);
-                    attachCount = content['count'];
-                    attachFiles = [];
-                    for (var f in content['files']) {
-                      attachFiles.add(f);
-                    }
-                  },);
-                },
-                child: const Text("管理附件"),
-              ),
               DropdownButton<SignatureItem>(
                 hint: const Text("签名档"),
                 icon: const Icon(Icons.arrow_drop_down),
@@ -322,7 +309,7 @@ class _MailNewViewState extends State<MailNewView> {
                   ...widget.mailNewInfo.signatureInfo.map<DropdownMenuItem<SignatureItem>>((SignatureItem item) {
                     return DropdownMenuItem<SignatureItem>(
                       value: item,
-                      child: Text(item.key),
+                      child: item.value.isEmpty ? Text("签名档：${item.key}") : Text(item.key),
                     );
                   }).toList(),
                 ],
@@ -336,7 +323,46 @@ class _MailNewViewState extends State<MailNewView> {
               ),
             ],
           ),
-        )
+        ),
+        Container(
+          margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
+          child: Wrap(
+            alignment: WrapAlignment.spaceEvenly,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              TextButton(
+                onPressed: () {
+                  showUploadDialog(context, widget.mailNewInfo.attachpath, attachFiles, showAttachLink: needAttachLink)
+                  .then((value) {
+                    if (value == null) { return; }
+                    var content = jsonDecode(value);
+                    attachCount = content['count'];
+                    attachFiles = [];
+                    for (var f in content['files']) {
+                      attachFiles.add(f);
+                    }
+                  },);
+                },
+                child: const Text("管理附件"),
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Checkbox(
+                    value: needAttachLink,
+                    activeColor: bdwmPrimaryColor,
+                    onChanged: (value) {
+                      setState(() {
+                        needAttachLink = value!;
+                      });
+                    }
+                  ),
+                  const Text("上传后弹出链接"),
+                ],
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }

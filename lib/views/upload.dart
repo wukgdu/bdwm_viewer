@@ -24,7 +24,8 @@ class UploadFileStatus {
 class UploadDialogBody extends StatefulWidget {
   final String attachpath;
   final List<String> attachFiles;
-  const UploadDialogBody({super.key, required this.attachpath, required this.attachFiles});
+  final bool showAttachLink;
+  const UploadDialogBody({super.key, required this.attachpath, required this.attachFiles, required this.showAttachLink});
 
   @override
   State<UploadDialogBody> createState() => _UploadDialogBodyState();
@@ -86,6 +87,16 @@ class _UploadDialogBodyState extends State<UploadDialogBody> {
                       if (uploadRes.success == true) {
                         debugPrint(uploadRes.name);
                         debugPrint(uploadRes.url);
+                        if (widget.showAttachLink) {
+                          showComplexInformDialog(context, "附件链接", SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SelectableText(uploadRes.url ?? "未知"),
+                              ],
+                            ),
+                          ));
+                        }
                         bool hasIt = false;
                         for (var fn in filenames) {
                           if (fn.name == f.name) {
@@ -116,7 +127,7 @@ class _UploadDialogBodyState extends State<UploadDialogBody> {
                 });
               });
             },
-            child: const Text("选取文件"),
+            child: const Text("选取上传文件"),
           ),
           Expanded(
             child: ListView.builder(
@@ -156,9 +167,9 @@ class _UploadDialogBodyState extends State<UploadDialogBody> {
   }
 }
 
-Future<String?> showUploadDialog(BuildContext context, String attachpath, List<String> attachFiles) {
+Future<String?> showUploadDialog(BuildContext context, String attachpath, List<String> attachFiles, {bool showAttachLink=false}) {
   var key = GlobalKey<_UploadDialogBodyState>();
-  return showAlertDialog(context, "管理附件", UploadDialogBody(key: key, attachpath: attachpath, attachFiles: attachFiles),
+  return showAlertDialog(context, "管理附件", UploadDialogBody(key: key, attachpath: attachpath, attachFiles: attachFiles, showAttachLink: showAttachLink,),
     barrierDismissible: false,
     actions1: TextButton(
       onPressed: () {
