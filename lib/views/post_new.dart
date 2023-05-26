@@ -43,7 +43,6 @@ class _PostNewViewState extends State<PostNewView> {
   bool needRemind = true;
   bool needForward = false;
   bool needAnony = false;
-  bool needAttachLink = true;
   SignatureItem? signature;
   final signatureOB = SignatureItem(key: "OBViewer", value: "OBViewer");
   static const vDivider = SizedBox(width: 8,);
@@ -412,7 +411,7 @@ class _PostNewViewState extends State<PostNewView> {
             children: [
               TextButton(
                 onPressed: () {
-                  showUploadDialog(context, widget.postNewInfo.attachpath, attachFiles, showAttachLink: needAttachLink)
+                  showUploadDialog(context, widget.postNewInfo.attachpath, attachFiles, showAttachLink: globalImmConfigInfo.getShowAttachLink())
                   .then((value) {
                     if (value == null) { return; }
                     var content = jsonDecode(value);
@@ -429,12 +428,12 @@ class _PostNewViewState extends State<PostNewView> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Checkbox(
-                    value: needAttachLink,
+                    value: globalImmConfigInfo.getShowAttachLink(),
                     activeColor: bdwmPrimaryColor,
-                    onChanged: (value) {
-                      setState(() {
-                        needAttachLink = value!;
-                      });
+                    onChanged: (value) async {
+                      if (value == null) { return; }
+                      await globalImmConfigInfo.setShowAttachLink(value);
+                      setState(() { });
                     }
                   ),
                   const Text("上传后弹出链接"),

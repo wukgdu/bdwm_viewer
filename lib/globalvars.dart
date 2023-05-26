@@ -539,6 +539,7 @@ var globalNotConfigInfo = BDWMNotConfig.empty();
 class BDWMImmConfig {
   // 修改后自动保存的设置
   String _boardNoteFont = simFont;
+  bool _showAttachLink = true;
   Set<String> _seeNoThem = {};
   Map<String, String> _qmd = {};
 
@@ -555,10 +556,12 @@ class BDWMImmConfig {
       "boardNoteFont": _boardNoteFont,
       "seeNoThem": _seeNoThem.toList(),
       "qmd": _qmd,
+      "showAttachLink": _showAttachLink,
     };
   }
   void fromJson(Map<String, dynamic> jsonContent) {
     _boardNoteFont = jsonContent['boardNoteFont'] ?? _boardNoteFont;
+    _showAttachLink = jsonContent['showAttachLink'] ?? _showAttachLink;
     List seeNoHimHerList = jsonContent['seeNoThem'] ?? _seeNoThem.toList();
     _seeNoThem = Set<String>.from(seeNoHimHerList.map((e) => e as String));
     var savedQmd = jsonContent['qmd'] ?? _qmd;
@@ -566,6 +569,17 @@ class BDWMImmConfig {
   }
   String gist() {
     return jsonEncode(toJson());
+  }
+
+  bool getShowAttachLink() {
+    return _showAttachLink;
+  }
+
+  Future<bool> setShowAttachLink(bool newValue) async {
+    return await lock.synchronized(() async {
+      _showAttachLink = newValue;
+      return await update();
+    });
   }
 
   String getQmd() {

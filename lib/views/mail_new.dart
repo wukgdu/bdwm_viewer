@@ -43,7 +43,6 @@ class _MailNewViewState extends State<MailNewView> {
   SignatureItem? signature;
   int attachCount = 0;
   List<String> attachFiles = [];
-  bool needAttachLink = true;
   final quoteModes = <SignatureItem>[SignatureItem(key: "精简引文", value: "simple"), SignatureItem(key: "完整引文", value: "full")];
   late SignatureItem quoteMode;
   String? quoteText;
@@ -332,7 +331,7 @@ class _MailNewViewState extends State<MailNewView> {
             children: [
               TextButton(
                 onPressed: () {
-                  showUploadDialog(context, widget.mailNewInfo.attachpath, attachFiles, showAttachLink: needAttachLink)
+                  showUploadDialog(context, widget.mailNewInfo.attachpath, attachFiles, showAttachLink: globalImmConfigInfo.getShowAttachLink())
                   .then((value) {
                     if (value == null) { return; }
                     var content = jsonDecode(value);
@@ -349,12 +348,12 @@ class _MailNewViewState extends State<MailNewView> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Checkbox(
-                    value: needAttachLink,
+                    value: globalImmConfigInfo.getShowAttachLink(),
                     activeColor: bdwmPrimaryColor,
-                    onChanged: (value) {
-                      setState(() {
-                        needAttachLink = value!;
-                      });
+                    onChanged: (value) async {
+                      if (value == null) { return; }
+                      await globalImmConfigInfo.setShowAttachLink(value);
+                      setState(() { });
                     }
                   ),
                   const Text("上传后弹出链接"),
