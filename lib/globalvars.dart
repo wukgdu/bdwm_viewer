@@ -668,7 +668,7 @@ class BDWMConfig {
   bool useImgInMessage = true;
   bool autoClearImageCache = false;
   bool extraThread = false;
-  bool highQualityPreview = false;
+  bool highQualityPreview = true;
   bool suggestUser = true;
   bool showFAB = true;
   bool useMD3 = false;
@@ -698,7 +698,7 @@ class BDWMConfig {
       "maxPageNum": maxPageNum,
       "extraThread": extraThread,
       "contentFontSize": contentFontSize,
-      "highQualityPreview": highQualityPreview,
+      "highQualityPreview_1": highQualityPreview,
       "primaryColorString": primaryColorString,
       "suggestUser": suggestUser,
       "showFAB": showFAB,
@@ -714,7 +714,7 @@ class BDWMConfig {
     useImgInMessage = jsonContent['useImgInMessage'] ?? useImgInMessage;
     autoClearImageCache = jsonContent['autoClearImageCache_1'] ?? autoClearImageCache;
     extraThread = jsonContent['extraThread'] ?? extraThread;
-    highQualityPreview = jsonContent['highQualityPreview'] ?? highQualityPreview;
+    highQualityPreview = jsonContent['highQualityPreview_1'] ?? highQualityPreview;
     suggestUser = jsonContent['suggestUser'] ?? suggestUser;
     showFAB = jsonContent['showFAB'] ?? showFAB;
     maxPageNum = jsonContent['maxPageNum'] ?? maxPageNum;
