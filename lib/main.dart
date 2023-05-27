@@ -12,7 +12,7 @@ import 'package:flutter_displaymode/flutter_displaymode.dart' show FlutterDispla
 
 import './router.dart';
 import './globalvars.dart';
-import './views/constants.dart' show bdwmPrimaryColor;
+import './views/constants.dart' show bdwmPrimaryColor, bdwmSurfaceColor;
 import './services.dart';
 import './services_instance.dart';
 import './bdwm/mail.dart';
@@ -98,6 +98,8 @@ void initPrimaryColor() {
   var colorValue = int.tryParse(globalConfigInfo.getPrimaryColorString());
   if (colorValue != null) {
     bdwmPrimaryColor = Color(colorValue);
+  } else {
+    bdwmPrimaryColor = bdwmSurfaceColor;
   }
 }
 
