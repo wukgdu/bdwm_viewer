@@ -1,4 +1,5 @@
 import 'dart:convert';
+// import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -176,7 +177,8 @@ class HtmlComponent extends StatefulWidget {
   final TextStyle? ts;
   final String? nickName;
   final bool? isBoardNote;
-  const HtmlComponent(this.htmlStr, {Key? key, this.needSelect, this.ts, this.nickName, this.isBoardNote}) : super(key: key);
+  final bool needBox;
+  const HtmlComponent(this.htmlStr, {Key? key, this.needSelect, this.ts, this.nickName, this.isBoardNote, this.needBox=true}) : super(key: key);
 
   @override
   State<HtmlComponent> createState() => _HtmlComponentState();
@@ -212,7 +214,8 @@ class _HtmlComponentState extends State<HtmlComponent> {
     var document = parse(htmlStr);
     var res = travelHtml(document.querySelector("body"), context: context, ts: ts, nickName: nickName, isBoardNote: widget.isBoardNote);
     var tspan = TextSpan(
-      children: res,
+      children: preprocessTextSpan(res, ts: ts, needBox: widget.needBox),
+      // children: res,
       style: ts,
     );
     if (needSelect != null && needSelect == false) {
@@ -229,7 +232,88 @@ class _HtmlComponentState extends State<HtmlComponent> {
   }
 }
 
-TextSpan html2TextSpan(String htmlStr, {TextStyle? ts}) {
+// void initFontForCache() {
+//   // https://github.com/flutter/flutter/issues/42586#issuecomment-541870382
+//   // not work
+//   ParagraphBuilder pb = ParagraphBuilder(ParagraphStyle());
+//   pb.addText('\ud83d\ude01');  // smiley face emoji
+//   pb.addText('哦');
+//   pb.build().layout(const ParagraphConstraints(width: 100));
+// }
+
+class GetTextWidth {
+  final Map<String, double> _widthMap = {};
+
+  Size _getTextSize(String text, TextStyle? style) {
+    final TextPainter textPainter = TextPainter(
+        text: TextSpan(text: text, style: style), maxLines: 1, textDirection: TextDirection.ltr)
+      ..layout(minWidth: 0, maxWidth: double.infinity);
+    return textPainter.size;
+  }
+
+  String _genUniqueKey(String text, TextStyle? style) {
+    var fontFamily = style?.fontFamily;
+    var fontFamilyFallBack = style?.fontFamilyFallback;
+    var fontSize = style?.fontSize;
+    return "$text-$fontSize-$fontFamily-$fontFamilyFallBack-${style?.hashCode}";
+  }
+
+  double getTextWidth(String text, TextStyle? style) {
+    var k = _genUniqueKey(text, style);
+    if (_widthMap.containsKey(k)) {
+      return _widthMap[k]!;
+    }
+    var s = _getTextSize(text, style);
+    _widthMap[k] = s.width;
+    return s.width;
+  }
+}
+
+final getTextWidthObject = GetTextWidth();
+
+List<InlineSpan>? preprocessTextSpan(List<InlineSpan>? res, {TextStyle? ts, bool needBox=false}) {
+  // https://bbs.pku.edu.cn/v2/post-read.php?bid=414&threadid=18560606
+  // emoji at start of line will not display correctly
+  // https://github.com/flutter/flutter/issues/45947
+  // https://github.com/flutter/flutter/issues/82785
+  if (res == null) return res;
+  if (res.isEmpty) return res;
+  // var firstTextSpan = res.first;
+  // var firstText = firstTextSpan.toPlainText();
+  // // if (firstText.isEmpty) return res;
+  // if (firstText.isNotEmpty) {
+  //   var firstCharCode = firstText.runes.first;
+  //   if (firstCharCode <= 0xffff) {
+  //     return res;
+  //   }
+  // }
+  // var txt = '\u{1f60a}';
+  var txt = 'a';
+  // var txt = '\ud83d\ude01';
+  var w = getTextWidthObject.getTextWidth(txt, ts);
+  // print('${ts?.fontSize} $w');
+  var newTs = TextStyle(
+    color: Colors.transparent, height: null, fontSize: ts?.fontSize, letterSpacing: -w,
+  );
+  return [
+    if (needBox) ...[
+      WidgetSpan(child: SizedBox(width: w/2,), alignment: PlaceholderAlignment.middle),
+    ],
+    // WidgetSpan(
+    //   child: SelectionContainer.disabled(
+    //     child: Text(txt, style: ts?.merge(newTs) ?? newTs),
+    //   ),
+    //   alignment: PlaceholderAlignment.middle
+    // ),
+    TextSpan(
+      text: txt,
+      style: ts?.merge(newTs) ?? newTs,
+    ),
+    ...res,
+  ];
+}
+
+TextSpan html2TextSpan(String htmlStr, {TextStyle? ts, bool needBox=false}) {
   hdom.Document? document;
   try {
     document = parse(htmlStr);
@@ -241,7 +325,8 @@ TextSpan html2TextSpan(String htmlStr, {TextStyle? ts}) {
   }
   var res = travelHtml(document.querySelector("body"), context: null, ts: ts);
   var tspan = TextSpan(
-    children: res,
+    children: preprocessTextSpan(res, ts: ts, needBox: needBox),
+    // children: res,
     style: ts,
   );
   return tspan;
@@ -432,12 +517,13 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
           return mStr;
         },
         onNonMatch: (m) {
-          if ((isBoardNote ?? false) && isAndroid()) {
-            res.add(TextSpan(text: m));
-            // res.add(WidgetSpan(child: SizedBox(height: 15, width: termStringLength(m, sp: 127)*8.0, child: Text(m, style: ts),)));
-          } else {
-            res.add(TextSpan(text: m));
-          }
+          // if ((isBoardNote ?? false) && isAndroid()) {
+          //   res.add(TextSpan(text: m));
+          //   // res.add(WidgetSpan(child: SizedBox(height: 15, width: termStringLength(m, sp: 127)*8.0, child: Text(m, style: ts),)));
+          // } else {
+          //   res.add(TextSpan(text: m));
+          // }
+          res.add(TextSpan(text: m));
           return m;
         },
       );
