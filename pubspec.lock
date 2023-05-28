@@ -69,10 +69,10 @@ packages:
     dependency: transitive
     description:
       name: csslib
-      sha256: b36c7f7e24c0bdf1bf9a3da461c837d1de64b9f8beb190c9011d8c72a3dfd745
+      sha256: "831883fb353c8bdc1d71979e5b342c7d88acfbc643113c14ae51e2442ea0f20f"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.17.2"
+    version: "0.17.3"
   dbus:
     dependency: transitive
     description:
@@ -174,10 +174,10 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: c7a8e25ca60e7f331b153b0cb3d405828f18d3e72a6fa1d9440c86556fffc877
+      sha256: "9d6e95ec73abbd31ec54d0e0df8a961017e165aba1395e462e5b31ea0c165daf"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "5.3.0"
+    version: "5.3.1"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -313,10 +313,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_quill
-      sha256: f3c8e09dff02cab1e74714e16d96cd562c3476ae6269617851c9e2d75b86c128
+      sha256: c6ceba58f8f63e26b69162c99b0d835e92abd92844209f50683d1d4a0e9b0b2b
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "7.1.19"
+    version: "7.2.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -515,10 +515,10 @@ packages:
     dependency: transitive
     description:
       name: path_provider_linux
-      sha256: "2ae08f2216225427e64ad224a24354221c2c7907e448e6e0e8b57b1eb9f10ad1"
+      sha256: ffbb8cc9ed2c9ec0e4b7a541e56fd79b138e8f47d2fb86815f15358a349b3b57
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.1.10"
+    version: "2.1.11"
   path_provider_platform_interface:
     dependency: transitive
     description:
@@ -619,26 +619,26 @@ packages:
     dependency: "direct main"
     description:
       name: quick_actions
-      sha256: d3de3100c5659ae559ca8b9e863d2739ef766edb71681d507b90a0f2ac81d330
+      sha256: "0562d78b8d6a87576fb8fe55bc655bda6ebe3c61a5904df56d20bd88f98cf3a3"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.0.3"
+    version: "1.0.5"
   quick_actions_android:
     dependency: transitive
     description:
       name: quick_actions_android
-      sha256: "89bfe29909b192eecb9b1769f319159627fbdb6349969c98aa83a3bc885b0107"
+      sha256: "1a5e0498ab531b446b2b0b762ed0997f2dbb3d580e0af9009f87f621a278778e"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.0.5"
+    version: "1.0.6"
   quick_actions_ios:
     dependency: transitive
     description:
       name: quick_actions_ios
-      sha256: a2920cfbcf62055d38b596b6dee1857cef7db49fa6ead00fdd7834ddc0ba4035
+      sha256: "9ed8b003a65034de9f36a7f593026bf114c8796a38011b23240f8bf7e4668e2b"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.0.5"
+    version: "1.0.6"
   quick_actions_platform_interface:
     dependency: transitive
     description:
@@ -728,18 +728,18 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_charts
-      sha256: a3694508b7a7bc366a5ce27b6ab3be60a32bc994d1fd806f6d57e81ed9ca637c
+      sha256: a70aa0b2608c5b11bfe549c13572e87d929553703f6987497589217d106b2ad7
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "21.2.5"
+    version: "21.2.6"
   syncfusion_flutter_core:
     dependency: transitive
     description:
       name: syncfusion_flutter_core
-      sha256: b2ad1c93239b094d6de1b4679c1835b1bc4332e6c6548bd2da44bd2594e6cdc5
+      sha256: "998d242c1f022eccf53f414a4343af34ab980700fee36cef8f78d94538ca749f"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "21.2.5"
+    version: "21.2.6"
   synchronized:
     dependency: "direct main"
     description:
@@ -792,10 +792,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_android
-      sha256: "1a5848f598acc5b7d8f7c18b8cb834ab667e59a13edc3c93e9d09cf38cc6bc87"
+      sha256: eed4e6a1164aa9794409325c3b707ff424d4d1c2a785e7db67f8bbda00e36e51
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "6.0.34"
+    version: "6.0.35"
   url_launcher_ios:
     dependency: transitive
     description:
@@ -832,10 +832,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_web
-      sha256: "81fe91b6c4f84f222d186a9d23c73157dc4c8e1c71489c4d08be1ad3b228f1aa"
+      sha256: "6bb1e5d7fe53daf02a8fee85352432a40b1f868a81880e99ec7440113d5cfcab"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.0.16"
+    version: "2.0.17"
   url_launcher_windows:
     dependency: transitive
     description:
