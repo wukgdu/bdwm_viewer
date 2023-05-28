@@ -227,6 +227,7 @@ class ImageEmbedBuilder extends EmbedBuilder {
     base.Embed node,
     bool readOnly,
     bool inline,
+    TextStyle textStyle,
   ) {
     assert(!kIsWeb, 'Please provide image EmbedBuilder for Web');
 
@@ -342,5 +343,7 @@ class ImageEmbedBuilder extends EmbedBuilder {
       return image;
     // }
 
+    // We provide option menu for mobile platform excluding base64 image
+    // return _menuOptionsForReadonlyImage(context, imageUrl, image);
   }
 }
