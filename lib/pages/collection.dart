@@ -252,11 +252,17 @@ class _CollectionPageState extends State<CollectionPage> {
               ),
               IconButton(
                 onPressed: (widget.link.contains("?")) ? () {
-                  var p1 = widget.link.lastIndexOf("%2F");
-                  if (p1 == -1) {
-                    p1 = Uri.parse(widget.link).query.lastIndexOf("/");
+                  var newLink = "$v2Host/collection.php";
+                  var queryStr = Uri.parse(widget.link).query;
+                  if (queryStr.contains("/") || queryStr.contains("%2F")) {
+                    var p1 = widget.link.lastIndexOf("%2F");
+                    if (p1 == -1) {
+                      p1 = widget.link.lastIndexOf("/");
+                    }
+                    if (p1 != -1) {
+                      newLink = widget.link.substring(0, p1);
+                    }
                   }
-                  var newLink = p1 == -1 ? "$v2Host/collection.php" : widget.link.substring(0, p1);
                   nv2Push(context, '/collection', arguments: {
                     'link': newLink,
                     'title': "获取目录中",
