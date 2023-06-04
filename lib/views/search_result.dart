@@ -66,6 +66,7 @@ class _ComplexResultViewState extends State<ComplexResultView> {
       'threadid': csri.threadid,
       'boardName': csri.boardName,
       'page': '1',
+      'needToBoard': true,
     },);
   }
 
@@ -99,7 +100,7 @@ class _ComplexResultViewState extends State<ComplexResultView> {
               ...csri.shortTexts.map((st) {
                 return GestureDetector(
                   onTap: () {
-                    naviGotoThreadByLink(context, st.link, csri.boardName, pageDefault: "a");
+                    naviGotoThreadByLink(context, st.link, csri.boardName, pageDefault: "a", needToBoard: true);
                   },
                   child: Text("${st.time} - ${st.text}", style: _ts1.copyWith(height: 1.5),),
                 );
