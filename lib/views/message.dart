@@ -310,6 +310,10 @@ class _MessagePersonViewState extends State<MessagePersonView> {
     });
   }
 
+  bool isDeliver() {
+    return widget.withWho == "deliver";
+  }
+
   LinkifySpan genLinkify(String text) {
     return LinkifySpan(
       onOpen: (link) {
@@ -469,7 +473,7 @@ class _MessagePersonViewState extends State<MessagePersonView> {
                   focusNode: _focusNode,
                   minLines: 1,
                   maxLines: 3,
-                  readOnly: widget.withWho == "deliver" ? true : false,
+                  readOnly: isDeliver() ? true : false,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     contentPadding: EdgeInsets.all(8.0),
@@ -480,7 +484,9 @@ class _MessagePersonViewState extends State<MessagePersonView> {
                 width: 24,
                 child: IconButton(
                   padding: EdgeInsets.zero,
-                  onPressed: () async {
+                  color: bdwmPrimaryColor,
+                  disabledColor: Colors.grey,
+                  onPressed: isDeliver() ? null : () async {
                     if (!contentController.selection.isValid) {
                       contentController.selection = const TextSelection(
                         baseOffset: 0,
@@ -518,11 +524,11 @@ class _MessagePersonViewState extends State<MessagePersonView> {
                       extentOffset: curIdx + emojiKeyList[emojiIdx].length,
                     );
                   },
-                  icon: Icon(Icons.emoji_emotions, size: 16, color: bdwmPrimaryColor,),
+                  icon: const Icon(Icons.emoji_emotions, size: 16),
                 ),
               ),
               TextButton(
-                onPressed: () {
+                onPressed: isDeliver() ? null : () {
                   var txt = contentController.text;
                   if (txt.isEmpty) {
                     return;
