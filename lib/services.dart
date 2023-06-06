@@ -136,10 +136,11 @@ class NotifyMessage {
     String content = value.unreadMessageItem.map((e) {
       return "${e.withWho}: ${e.count}条";
     },).join(", ");
-    if (content.length > 30) {
-      content = content.substring(0, 30);
+    content = "(${value.userName}) $content";
+    if (content.length > 40) {
+      content = content.substring(0, 40);
     }
-    sendNotification("${value.userName}：$count条消息", content, payload: "/message");
+    sendNotification("$count条消息", content, payload: "/message");
   }
 }
 
@@ -241,9 +242,9 @@ class NotifyMail {
     if (!notifyIt) {
       return;
     }
-    String title = "${unreadMailInfo.userName}：站内信 ${unreadMailInfo.count} 封未读";
+    String title = "站内信 ${unreadMailInfo.count} 封未读";
     var newestItem = unreadMailInfo.unreadMailList.first;
-    String content = "${newestItem.owner} ${newestItem.title} ${newestItem.content}";
+    String content = "(${unreadMailInfo.userName}) ${newestItem.owner} ${newestItem.title} ${newestItem.content}";
     if (content.length > 40) {
       content = content.substring(0, 40);
     }

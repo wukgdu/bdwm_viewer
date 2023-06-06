@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import './utils.dart' show checkAndRequestPermission;
 import './router.dart' show nv2RawPush;
 import './check_update.dart' show innerLinkForBBS;
+import './android_comm.dart' show FlutterForAndroid;
 
 // https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/lib/main.dart
 
@@ -34,7 +35,13 @@ void sendNotification(String title, String content, {String? payload, String typ
 
 Future<void> quickNotify(String title, String content, {String? payload}) async {
   bool couldDoIt = await checkAndRequestNotificationPermission();
-  if (!couldDoIt) { return; }
+  if (!couldDoIt) {
+    if (Platform.isWindows) {
+    } else if (Platform.isAndroid) {
+      await FlutterForAndroid.showToast(message: title);
+    }
+    return;
+  }
   if (Platform.isWindows) {
   } else if (Platform.isAndroid) {
     // TODO: 判断是否要group

@@ -25,11 +25,12 @@ import './pages/read_thread.dart' show naviGotoThreadByLink;
 import './views/multi_users.dart' show processSwitchUsersDialog, showSwitchUsersDialog;
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   if (isAndroid()) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   }
-  WidgetsFlutterBinding.ensureInitialized();
   // debugPaintSizeEnabled = true;
+  // debugProfilePlatformChannels = true;
   await globalContactInfo.init();
   await globalConfigInfo.init();
   await globalNotConfigInfo.init();
@@ -54,6 +55,7 @@ void main() async {
 @pragma("vm:entry-point")
 Future<void> backgroundCallback(Uri? uri) async {
   if (uri == null) { return; }
+  if (uri.scheme != "bdwmViewer") { return; }
   await globalUInfo.init();
   if (uri.host == 'obviewerupdatetop10') {
     String top10string = "";
@@ -307,6 +309,7 @@ class MainPageState extends State<MainPage> {
   void _launchedFromWidget(Uri? uri) {
     debugPrint('uri $uri');
     if (uri == null) { return; }
+    if (uri.scheme != "bdwmViewer") { return; }
     if (uri.host == 'obvieweropenlink') {
       var link = uri.queryParameters["link"] ?? "";
       debugPrint('open $link');
