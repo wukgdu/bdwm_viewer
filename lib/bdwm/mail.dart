@@ -34,6 +34,11 @@ class UnreadMailInfo {
     required this.unreadMailList,
     required this.userName,
   });
+
+  void removeOne(String filename) {
+    unreadMailList.removeWhere((element) => element.filename == filename);
+    count = unreadMailList.length;
+  }
 }
 
 Future<UnreadMailInfo?> bdwmGetUnreadMailCount() async {

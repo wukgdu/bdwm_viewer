@@ -37,7 +37,6 @@ import './pages/modify_profile.dart';
 import './pages/compare_ip.dart';
 import './html_parser/modify_profile_parser.dart' show SelfProfileInfo;
 import './views/search.dart' show PostSearchSettings;
-import './services.dart';
 import './globalvars.dart';
 import './views/utils.dart' show showConfirmDialog;
 
@@ -78,16 +77,8 @@ class MyRouteConfig {
 
 // https://github.com/flutter/flutter/issues/72487
 class MainPageBuilder {
-  ValueNotifier<int>? messageCount;
-  ValueNotifier<int>? mailCount;
-  MessageBriefNotifier? messageBrief;
-
   MainPageBuilder.empty();
-  MainPageBuilder({
-    this.messageBrief,
-    this.mailCount,
-    this.messageCount,
-  });
+  MainPageBuilder();
 
   Widget? build(MyRouteConfig settings) {
     switch (settings.name) {
@@ -300,8 +291,7 @@ class MainPageBuilder {
       case "/compareIP":
         return const CompareIpPage();
       case "/message":
-        if (messageBrief == null) { return null; }
-        return MessagelistPage(brief: messageBrief!);
+        return const MessagelistPage();
       case "/messagePerson":
         String userName = settings.arguments as String? ?? "deliver";
         return MessagePersonPage(userName: userName);
@@ -351,8 +341,7 @@ class MainPageBuilder {
           imgLinks: imgLinks, imgNames: imgNames, curIdx: curIdx, imgDataStr: imgDataStr,
         );
       case "/home":
-        if (messageCount == null || mailCount == null) { return null; }
-        return HomePage(messageCount: messageCount!, mailCount: mailCount!,);
+        return const HomePage();
       default:
         return Scaffold(
           appBar: AppBar(
@@ -456,8 +445,8 @@ class MainRouterDelegate extends RouterDelegate<MyRouteConfig>
   MainRouterDelegate.empty() {
     mainPageBuilder = MainPageBuilder.empty();
   }
-  MainRouterDelegate.init({required ValueNotifier<int> messageCount, required ValueNotifier<int> mailCount, required MessageBriefNotifier messageBrief}) {
-    mainPageBuilder = MainPageBuilder(messageBrief: messageBrief, messageCount: messageCount, mailCount: mailCount);
+  MainRouterDelegate.init() {
+    mainPageBuilder = MainPageBuilder();
   }
 
   @override

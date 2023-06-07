@@ -1,13 +1,14 @@
 import 'dart:isolate';
 
 import 'package:async/async.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show ValueNotifier;
 
 import './bdwm/message.dart';
 import './bdwm/mail.dart';
 import './utils.dart';
 import './globalvars.dart';
 import './notification.dart' show sendNotification;
+import './services_instance.dart' show messageCount, mailCount, messageBrief;
 
 class NotifyMessageInfo {
   UnreadMessageInfo value = UnreadMessageInfo.empty();
@@ -18,7 +19,6 @@ class NotifyMessageInfo {
 
 class NotifyMessage {
   var lastUnreadInfo = <String, int>{};
-  UnreadMessageInfo value = UnreadMessageInfo.empty();
   int count = 0;
 
   late ReceivePort pFromWorker;
@@ -92,10 +92,14 @@ class NotifyMessage {
   }
 
   void clearOne(String withWho) {
+    messageCount.value -= lastUnreadInfo[withWho] ?? 0;
+    messageBrief.clearOne(withWho);
     lastUnreadInfo.remove(withWho);
   }
 
   void clearAll() {
+    messageCount.value = 0;
+    messageBrief.clearAll();
     lastUnreadInfo.clear();
   }
 
@@ -114,18 +118,17 @@ class NotifyMessage {
       if (value == null) {
         return;
       }
-      this.value = value;
       int countSum = value.unreadMessageItem.fold(0, (num0, a) {
         return a.count + num0;
       });
       count = countSum;
       callBack(NotifyMessageInfo(value: value, count: count));
-      notify();
+      notify(value);
       return;
     });
   }
 
-  void notify() {
+  void notify(UnreadMessageInfo value) {
     if (count == 0) {
       return;
     }
@@ -230,8 +233,15 @@ class NotifyMail {
     });
   }
 
+  void clearOne(String filename) {
+    unreadMailInfo.removeOne(filename);
+    mailCount.value = unreadMailInfo.count;
+  }
+
   void clearAll() {
     lastUnreadTime = 0;
+    unreadMailInfo = UnreadMailInfo.empty();
+    mailCount.value = 0;
   }
 
   void notify() {
@@ -262,6 +272,16 @@ class MessageBriefNotifier extends ValueNotifier<List<TextAndLink>> {
       return a.withWho.compareTo(b.withWho);
     },);
     return uv.unreadMessageItem.map((e) => "${e.withWho}[${e.count}]").join(",");
+  }
+
+  void clearOne(String withWho) {
+    value.removeWhere((element) => element.text == withWho);
+    notifyListeners();
+  }
+
+  void clearAll() {
+    value.clear();
+    notifyListeners();
   }
 
   void newArray(NotifyMessageInfo nmi) {

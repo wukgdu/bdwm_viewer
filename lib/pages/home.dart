@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../globalvars.dart';
 import '../utils.dart';
 import '../views/constants.dart' show bdwmPrimaryColor;
-// import '../services.dart';
+import '../services_instance.dart' show messageCount, mailCount;
 import '../views/top100.dart';
 import '../views/top10.dart';
 import '../views/favorite.dart';
@@ -51,9 +51,7 @@ class StackIcon extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  final ValueNotifier<int> messageCount;
-  final ValueNotifier<int> mailCount;
-  const HomePage({Key? key, required this.messageCount, required this.mailCount}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -88,7 +86,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         title: const Text("首页"),
         actions: [
           ValueListenableBuilder(
-            valueListenable: widget.mailCount,
+            valueListenable: mailCount,
             builder: (context, count, Widget? child) {
               return StackIcon(
                 count: count as int,
@@ -101,7 +99,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             },
           ),
           ValueListenableBuilder(
-            valueListenable: widget.messageCount,
+            valueListenable: messageCount,
             builder: (context, count, Widget? child) {
               return StackIcon(
                 count: count as int,

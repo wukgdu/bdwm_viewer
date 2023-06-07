@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../views/message.dart';
-import '../services.dart' show MessageBriefNotifier;
 import '../views/utils.dart';
 import '../bdwm/search.dart';
-import '../services_instance.dart';
+import '../services_instance.dart' show unreadMessage;
 import '../views/constants.dart' show bdwmPrimaryColor;
 import '../globalvars.dart' show globalContactInfo, globalUInfo, globalConfigInfo;
 
 class MessagelistPage extends StatefulWidget {
-  final MessageBriefNotifier brief;
-  const MessagelistPage({Key? key, required this.brief}) : super(key: key);
+  const MessagelistPage({Key? key}) : super(key: key);
 
   @override
   State<MessagelistPage> createState() => _MessagelistPageState();
@@ -136,7 +134,7 @@ class _MessagelistPageState extends State<MessagelistPage> {
               onTap: () {
                 FocusManager.instance.primaryFocus?.unfocus();
               },
-              child: MessageListView(users: widget.brief, filterName: filterName),
+              child: MessageListView(filterName: filterName),
             ),
           ),
         ],

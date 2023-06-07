@@ -96,6 +96,8 @@ class Uinfo {
   }
 
   Future<void> doAfterChangeUser() async {
+    unreadMail.clearAll();
+    unreadMessage.clearAll();
     await unreadMail.reInitWorker();
     await unreadMessage.reInitWorker();
     await update();
@@ -177,33 +179,30 @@ class Uinfo {
     await doAfterChangeUser();
   }
 
-  void updatePrimary(String curUid) {
+  void updatePrimary(String curUid, String curSkey) {
     primary = -1;
     for (var i=0; i<users.length; i+=1) {
-      if (users[i].uid == curUid) {
+      if ((users[i].uid == curUid) && ((users[i].skey == curSkey) || (users[i].uid == guestUitem.uid))) {
         primary = i;
         break;
       }
     }
   }
 
-  Future<void> removeUser(String uid, String skey, {required bool save, bool force=false, bool updateP=false}) async {
+  Future<void> removeUser(String uid, String skey, {bool save=false, bool force=false, bool updateP=false}) async {
     if ((force==false) && (uid == this.uid)) { return; }
     var curUid = this.uid;
+    var curSkey = this.skey;
     users.removeWhere((element) => (element.uid == uid) && ((uid==guestUitem.uid) || (element.skey == skey)));
-    if (updateP) { updatePrimary(curUid); }
-    if (save) { await update(); }
+    if (updateP) { updatePrimary(curUid, curSkey); }
+    if (save) {
+      if ((uid == curUid) && (skey == curSkey)) {
+        await doAfterChangeUser();
+      } else {
+        await update();
+      }
+    }
   }
-
-  // Future<void> setInfo(String skey, String uid, String username) async {
-  //   this.skey = skey;
-  //   this.uid = uid;
-  //   this.username = username;
-  //   await unreadMail.reInitWorker();
-  //   await unreadMessage.reInitWorker();
-  //   login = true;
-  //   await update();
-  // }
 
   Future<void> writeInit(String filename) async {
     var file = File(filename).openWrite();
@@ -288,9 +287,16 @@ class Uinfo {
 
   Future<void> setLogout({String? uid, String? skey}) async {
     var curUid = this.uid;
-    await removeUser(uid ?? this.uid, skey ?? this.skey, save: false, force: true, updateP: false);
-    updatePrimary(curUid);
-    await doAfterChangeUser();
+    var curSkey = this.skey;
+    var rUid = uid ?? curUid, rSkey = skey ?? curSkey;
+    // await removeUser(rUid, rSkey, save: true, force: true, updateP: true);
+    await removeUser(rUid, rSkey, save: false, force: true, updateP: false);
+    updatePrimary(curUid, curSkey);
+    if ((rUid == curUid) && (rSkey == curSkey)) {
+      await doAfterChangeUser();
+    } else {
+      await update();
+    }
   }
 }
 

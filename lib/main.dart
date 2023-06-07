@@ -172,9 +172,6 @@ class MainPage extends StatefulWidget {
 class MainPageState extends State<MainPage> {
   Timer? timerMessage;
   Timer? timerMail;
-  ValueNotifier<int> messageCount = ValueNotifier<int>(0);
-  ValueNotifier<int> mailCount = ValueNotifier<int>(0);
-  MessageBriefNotifier messageBrief = MessageBriefNotifier([]);
   final navigatorKey = GlobalKey<NavigatorState>();
 
   void updateUnreadMessageData() {
@@ -197,7 +194,7 @@ class MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    mainRouterDelegate = MainRouterDelegate.init(messageCount: messageCount, mailCount: mailCount, messageBrief: messageBrief,);
+    mainRouterDelegate = MainRouterDelegate.init();
 
     updateUnreadMessageData();
     updateUnreadMailData();

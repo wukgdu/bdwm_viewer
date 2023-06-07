@@ -11,7 +11,6 @@ import "../bdwm/search.dart";
 import '../globalvars.dart';
 import '../utils.dart';
 import '../services_instance.dart';
-import '../services.dart' show MessageBriefNotifier;
 import '../router.dart' show nv2Push;
 import './html_widget.dart' show SimpleCachedImage, innerLinkJump;
 
@@ -129,9 +128,8 @@ class _UserJumpByNameComponentState extends State<UserJumpByNameComponent> {
 }
 
 class MessageListView extends StatefulWidget {
-  final MessageBriefNotifier users;
   final String filterName;
-  const MessageListView({super.key, required this.users, required this.filterName});
+  const MessageListView({super.key, required this.filterName});
 
   @override
   State<MessageListView> createState() => _MessageListViewState();
@@ -152,7 +150,7 @@ class _MessageListViewState extends State<MessageListView> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: widget.users,
+      valueListenable: messageBrief,
       builder: (context, value, child) {
         var clist = globalContactInfo.contact.toList(growable: false);
         var users = (value as List<TextAndLink>).map((e) => TextAndLink(e.text, e.link)).toList();

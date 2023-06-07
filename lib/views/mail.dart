@@ -11,6 +11,7 @@ import './constants.dart' show bdwmPrimaryColor;
 import '../globalvars.dart' show globalConfigInfo;
 import '../bdwm/mail.dart' show bdwmOperateMail;
 import '../router.dart' show nv2Push;
+import '../services_instance.dart' show unreadMail;
 
 class MailListView extends StatefulWidget {
   final MailListInfo mailListInfo;
@@ -139,6 +140,16 @@ class MailDetailView extends StatefulWidget {
 
 class _MailDetailViewState extends State<MailDetailView> {
   final _contentFont = TextStyle(fontSize: globalConfigInfo.contentFontSize, fontWeight: FontWeight.normal);
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // _controller.jumpTo(_controller.position.maxScrollExtent);
+      unreadMail.clearOne(widget.postid);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
