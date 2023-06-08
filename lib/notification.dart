@@ -24,22 +24,26 @@ const AndroidNotificationDetails androidNotificationDetailsGeneral = AndroidNoti
   ticker: 'OBViewer',
 );
 
-void sendNotification(String title, String content, {String? payload, String type="general"}) {
+Future<void> sendNotification(String title, String content, {String? payload, String type="general"}) async {
   switch (type) {
     case "general":
       // for different channel
-      quickNotify(title, content, payload: payload);
+      await quickNotify(title, content, payload: payload);
       break;
+  }
+}
+
+Future<void> sendToast(String content) async {
+  if (Platform.isWindows) {
+  } else if (Platform.isAndroid) {
+    await FlutterForAndroid.showToast(message: content);
   }
 }
 
 Future<void> quickNotify(String title, String content, {String? payload}) async {
   bool couldDoIt = await checkAndRequestNotificationPermission();
   if (!couldDoIt) {
-    if (Platform.isWindows) {
-    } else if (Platform.isAndroid) {
-      await FlutterForAndroid.showToast(message: title);
-    }
+    await sendToast(title);
     return;
   }
   if (Platform.isWindows) {

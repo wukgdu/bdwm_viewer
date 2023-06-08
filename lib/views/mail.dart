@@ -144,7 +144,7 @@ class _MailDetailViewState extends State<MailDetailView> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       // _controller.jumpTo(_controller.position.maxScrollExtent);
       unreadMail.clearOne(widget.postid);
     });

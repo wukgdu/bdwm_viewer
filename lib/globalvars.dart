@@ -685,6 +685,7 @@ class BDWMConfig {
   String primaryColorString = "";
   double contentFontSize = 16.0;
   String maxPageNum = "8";
+  bool autoSaveConfig = false;
   Set<String> seeNoThem = {};
 
   Lock lock = Lock();
@@ -713,6 +714,7 @@ class BDWMConfig {
       "autoHideBottomBar": autoHideBottomBar,
       "refreshRate": refreshRate,
       "guestFirst": guestFirst,
+      "autoSaveConfig": autoSaveConfig,
     };
   }
   void fromJson(Map<String, dynamic> jsonContent) {
@@ -728,6 +730,7 @@ class BDWMConfig {
     primaryColorString = jsonContent['primaryColorString'] ?? primaryColorString;
     refreshRate = jsonContent['refreshRate'] ?? refreshRate;
     useMD3 = jsonContent['useMD3'] ?? useMD3;
+    autoSaveConfig = jsonContent['autoSaveConfig'] ?? autoSaveConfig;
     guestFirst = jsonContent['guestFirst'] ?? guestFirst;
     useDynamicColor = jsonContent['useDynamicColor'] ?? useDynamicColor;
     autoHideBottomBar = jsonContent['autoHideBottomBar'] ?? autoHideBottomBar;
@@ -736,6 +739,17 @@ class BDWMConfig {
   }
   String gist() {
     return jsonEncode(toJson());
+  }
+
+  bool getAutoSaveConfig() {
+    return autoSaveConfig;
+  }
+
+  Future<bool> setAutoSaveConfig(bool newValue) async {
+    return await lock.synchronized(() async {
+      autoSaveConfig = newValue;
+      return await update();
+    });
   }
 
   bool getGuestFirst() {

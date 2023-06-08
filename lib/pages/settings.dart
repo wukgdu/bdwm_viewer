@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_displaymode/flutter_displaymode.dart' show FlutterDisplayMode, DisplayMode;
 
 import '../globalvars.dart';
 import '../views/constants.dart';
 import '../views/utils.dart';
 import '../utils.dart' show isAndroid;
 import '../main.dart' show MainPage, initPrimaryColor, setHighRefreshRate;
-import 'package:flutter_displaymode/flutter_displaymode.dart' show FlutterDisplayMode, DisplayMode;
+import '../notification.dart' show sendToast;
 // import './read_thread.dart' show resetInitScrollHeight;
 
 class ColorPickerComponent extends StatefulWidget {
@@ -304,6 +305,16 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  @override
+  void dispose() {
+    if (globalConfigInfo.getAutoSaveConfig()) {
+      debugPrint("设置已保存");
+      globalConfigInfo.update().then((_) {
+        sendToast("设置已保存");
+      });
+    }
+    super.dispose();
+  }
   void refresh() {
     setState(() { });
   }
@@ -316,8 +327,7 @@ class _SettingsPageState extends State<SettingsPage> {
           IconButton(
             onPressed: () async {
               await globalConfigInfo.update();
-              if (!mounted) { return; }
-              showInformDialog(context, "已保存", "rt");
+              await sendToast("设置已保存");
             },
             icon: const Icon(Icons.save),
           ),
@@ -443,6 +453,17 @@ class _SettingsPageState extends State<SettingsPage> {
             value: globalConfigInfo.autoHideBottomBar,
             onChanged: (value) {
               globalConfigInfo.autoHideBottomBar = value;
+              refresh();
+            },
+          ),
+          const Divider(),
+          SwitchListTile(
+            title: const Text("自动保存设置"),
+            subtitle: const Text("退出此页面后自动保存设置"),
+            activeColor: bdwmPrimaryColor,
+            value: globalConfigInfo.autoSaveConfig,
+            onChanged: (value) {
+              globalConfigInfo.autoSaveConfig = value;
               refresh();
             },
           ),
