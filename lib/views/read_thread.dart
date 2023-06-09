@@ -722,7 +722,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
     return Container(
       margin: widget.subIdx == null ? null : EdgeInsets.only(left: 20.0*widget.subIdx!),
       child: Card(
-        color: item.postNumber.contains("高亮") ? isDark ? highlightPostDarkColor : highlightPostColor : null,
+        color: item.postNumber.contains("高亮") ? isDark ? null : highlightPostColor : null,
         child: hideIt
         ? Container(
           alignment: Alignment.center,
