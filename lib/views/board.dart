@@ -614,9 +614,7 @@ class _BoardViewState extends State<BoardView> {
                         }
                       }
                     }
-                    // will set top read
-                    bdwmSetThreadRead(widget.bid, threads)
-                    .then((res) {
+                    bdwmSetThreadRead(widget.bid, threads).then((res) {
                       var txt = "清除未读成功";
                       if (!res.success) {
                         if (res.error == -1) {
@@ -950,9 +948,7 @@ class _BoardSingleViewState extends State<BoardSingleView> {
                         }
                       }
                     }
-                    // will set top read
-                    bdwmSetThreadRead(widget.bid, items)
-                    .then((res) {
+                    bdwmSetPostRead(widget.bid, items).then((res) {
                       var txt = "清除未读成功";
                       if (!res.success) {
                         if (res.error == -1) {

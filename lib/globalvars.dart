@@ -289,14 +289,14 @@ class Uinfo {
     var curUid = this.uid;
     var curSkey = this.skey;
     var rUid = uid ?? curUid, rSkey = skey ?? curSkey;
-    // await removeUser(rUid, rSkey, save: true, force: true, updateP: true);
-    await removeUser(rUid, rSkey, save: false, force: true, updateP: false);
-    updatePrimary(curUid, curSkey);
-    if ((rUid == curUid) && (rSkey == curSkey)) {
-      await doAfterChangeUser();
-    } else {
-      await update();
-    }
+    await removeUser(rUid, rSkey, save: true, force: true, updateP: true);
+    // await removeUser(rUid, rSkey, save: false, force: true, updateP: false);
+    // updatePrimary(curUid, curSkey);
+    // if ((rUid == curUid) && (rSkey == curSkey)) {
+    //   await doAfterChangeUser();
+    // } else {
+    //   await update();
+    // }
   }
 }
 
