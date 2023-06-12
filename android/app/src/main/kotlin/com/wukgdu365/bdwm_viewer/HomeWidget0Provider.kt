@@ -27,7 +27,7 @@ class HomeWidget0Provider : AppWidgetProvider() {
             if (link == null) { return }
 
             val intent = Intent(context, MainActivity::class.java)
-            intent.data = Uri.parse("bdwmViewer://obvieweropenlink?link=${Uri.encode(link)}")
+            intent.data = Uri.parse("bdwmviewer://obvieweropenlink?link=${Uri.encode(link)}")
             intent.action = HOME_WIDGET_LAUNCH_ACTION
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
@@ -68,7 +68,7 @@ class HomeWidget0Provider : AppWidgetProvider() {
                                         putExtras(extras)
                                     }
                                 }
-                                // fillInIntent.data = Uri.parse("bdwmViewer://obvieweropenlink?link=$link")
+                                // fillInIntent.data = Uri.parse("bdwmviewer://obvieweropenlink?link=$link")
                                 // fillInIntent.putExtra("_link", fillInIntent.data)
                                 // fillInIntent.setData(Uri.parse(fillInIntent.toUri(Intent.URI_INTENT_SCHEME)));
                                 setOnClickFillInIntent(R.id.widget_item, fillInIntent);
@@ -105,7 +105,7 @@ class HomeWidget0Provider : AppWidgetProvider() {
 
                 // Pending intent to update counter on button click
                 val backgroundIntent = HomeWidgetBackgroundIntent.getBroadcast(context,
-                    Uri.parse("bdwmViewer://obviewerupdatetop10"))
+                    Uri.parse("bdwmviewer://obviewerupdatetop10"))
                 setOnClickPendingIntent(R.id.bt_update, backgroundIntent)
             });
 

@@ -55,7 +55,7 @@ void main() async {
 @pragma("vm:entry-point")
 Future<void> backgroundCallback(Uri? uri) async {
   if (uri == null) { return; }
-  if (uri.scheme != "bdwmViewer") { return; }
+  if (uri.scheme != "bdwmviewer") { return; }
   await globalUInfo.init();
   if (uri.host == 'obviewerupdatetop10') {
     String top10string = "";
@@ -306,7 +306,7 @@ class MainPageState extends State<MainPage> {
   void _launchedFromWidget(Uri? uri) {
     debugPrint('uri $uri');
     if (uri == null) { return; }
-    if (uri.scheme != "bdwmViewer") { return; }
+    if (uri.scheme != "bdwmviewer") { return; }
     if (uri.host == 'obvieweropenlink') {
       var link = uri.queryParameters["link"] ?? "";
       debugPrint('open $link');
