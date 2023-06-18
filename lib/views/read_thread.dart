@@ -812,7 +812,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         if (item.postNumber.startsWith('#') && int.tryParse(item.postNumber.substring(1))!=null) ...[
-                          ShowPostIpComponent(userName: item.authorInfo.userName, uid: item.authorInfo.uid, part: 2, bid: widget.bid, num: item.postNumber.substring(1)),
+                          ShowPostIpComponent(userName: item.authorInfo.userName, uid: item.authorInfo.uid, bid: widget.bid, num: item.postNumber.substring(1)),
                         ],
                         const Spacer(),
                         if (item.canOpt) ...[

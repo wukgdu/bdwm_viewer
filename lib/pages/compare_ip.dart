@@ -21,7 +21,8 @@ class UsernameAndIP {
 }
 
 class CompareIpPage extends StatefulWidget {
-  const CompareIpPage({super.key});
+  final int part;
+  const CompareIpPage({super.key, this.part=2});
 
   @override
   State<CompareIpPage> createState() => _CompareIpPageState();
@@ -32,7 +33,6 @@ class _CompareIpPageState extends State<CompareIpPage> {
   UsernameAndIP uip2 = const UsernameAndIP.empty();
   TextEditingController text1Controller = TextEditingController();
   TextEditingController text2Controller = TextEditingController();
-  static const int part=2;
 
   Future<List<String>?> getBidAndNum(String link) async {
     var bid = getQueryValueImproved(link, 'bid');
@@ -188,7 +188,7 @@ class _CompareIpPageState extends State<CompareIpPage> {
                 },
                 child: const Text("对比IP"),
               ),
-              if (canSeeAllIP() || (part==4)) ...[
+              if (canSeeAllIP() || (widget.part==4)) ...[
                 Center(
                   child: Text.rich(
                     TextSpan(
@@ -200,7 +200,7 @@ class _CompareIpPageState extends State<CompareIpPage> {
                     )
                   )
                 ),
-              ] else if (part==3) ...[
+              ] else if (widget.part==3) ...[
                 Center(
                   child: Text.rich(
                     TextSpan(
@@ -212,7 +212,7 @@ class _CompareIpPageState extends State<CompareIpPage> {
                     )
                   )
                 ),
-              ] else if (part==2) ...[
+              ] else if (widget.part==2) ...[
                 Center(
                   child: Text.rich(
                     TextSpan(
@@ -229,9 +229,9 @@ class _CompareIpPageState extends State<CompareIpPage> {
                 child: SelectionArea(child: Text.rich(
                   TextSpan(
                     children: [
-                      TextSpan(text: genIPStr(uip1.ip, part)),
+                      TextSpan(text: genIPStr(uip1.ip, widget.part)),
                       const TextSpan(text: "   "),
-                      TextSpan(text: genIPStr(uip2.ip, part)),
+                      TextSpan(text: genIPStr(uip2.ip, widget.part)),
                     ]
                   )
                 ),),
