@@ -162,7 +162,12 @@ class FavoriteViewState extends State<FavoriteView> {
               Icon(Icons.circle, size: 10, color: bdwmPrimaryColor),
               const SizedBox(width: 5,),
             ],
-            Text(item.lastUpdate.text),
+            Expanded(
+              child: Text(
+                "${item.lastUpdate.text}（${item.people}）",
+                overflow: TextOverflow.ellipsis,
+              ),
+            )
           ],
         ),
         onTap: () {
