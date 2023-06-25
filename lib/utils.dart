@@ -19,6 +19,14 @@ String? getCollectionPathFromHttp(String httpPath) {
   return path;
 }
 
+String genSavePathByTime({required String srcType}) {
+  // .png, .jpg
+  var curTime = DateTime.now().toIso8601String().replaceAll(":", "_");
+  curTime = curTime.split(".").first; // 秒
+  var name = "OBViewer-$curTime$srcType";
+  return name;
+}
+
 class TextAndLink {
   String text = "";
   String? link;

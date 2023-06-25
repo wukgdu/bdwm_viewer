@@ -307,19 +307,3 @@ BoardInfo getExampleBoard() {
   final items = parseBoardInfo(htmlStr);
   return items;
 }
-
-String directToThread(String htmlStr, {bool? needLink=false}) {
-  var document = parse(htmlStr);
-  var errorMessage = checkError(document);
-  if (errorMessage != null) {
-    return errorMessage;
-  }
-  var link = document.querySelector(".view-full-post")?.attributes['href'];
-  if (link == null) {
-    return "";
-  }
-  var p1 = link.indexOf("threadid=");
-  var p2 = link.indexOf("&", p1);
-  if (needLink==true) { return link; }
-  return link.substring(p1+9, p2);
-}

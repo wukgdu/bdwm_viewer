@@ -69,7 +69,7 @@ class _DetailImageState extends State<DetailImage> {
   }
 
   Future<SaveRes> saveImage({Uint8List? data, String imgLink="", String? imgName}) async {
-    var fname = imgName ?? (imgLink.isNotEmpty ? path.basename(imgLink) : null);
+    var fname = imgName ?? (imgLink.isNotEmpty ? path.basename(Uri.decodeFull(imgLink)) : null);
     if (imgLink.contains('src=http')) {
       // link by image search
       // https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F201808%2F05%2F20180805210613_vfkly.thumb.400_0.jpg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1669211472&t=c52b46d44ccfb31377fe526bfb29019a
@@ -105,9 +105,8 @@ class _DetailImageState extends State<DetailImage> {
         try {
           File(downloadPath).writeAsBytesSync(imgData);
         } on FileSystemException catch (_) {
-          var curTime = DateTime.now().toIso8601String().replaceAll(":", "_");
-          curTime = curTime.split(".").first;
-          var newName = "OBViewer-$curTime.jpg";
+          var pathExt = path.extension(downloadPath);
+          var newName = genSavePathByTime(srcType: pathExt);
           downloadPath = path.join(path.dirname(downloadPath), newName);
           File(downloadPath).writeAsBytesSync(imgData);
         } catch (e) {

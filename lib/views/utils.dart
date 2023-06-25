@@ -11,7 +11,7 @@ import 'package:media_scanner/media_scanner.dart';
 
 import '../globalvars.dart' show networkErrorText;
 import './constants.dart';
-import '../utils.dart' show checkAndRequestStoragePermission;
+import '../utils.dart' show checkAndRequestStoragePermission, genSavePathByTime;
 import '../notification.dart' show sendNotification;
 
 class SimpleTuple2 {
@@ -312,7 +312,7 @@ Future<bool?> showLinkMenu(BuildContext context, String link, {String? downloadP
                 const seconds = 60;
                 var down = downloadPath ?? "";
                 if (down.isEmpty) {
-                  var fn = filename ?? path.basename(link);
+                  var fn = filename ?? path.basename(Uri.decodeFull(link));
                   var saveRes = await genDownloadPath(name: fn);
                   if (saveRes.success == false) {
                     return;
@@ -444,6 +444,9 @@ Future<SaveRes> genDownloadPath({String? name}) async {
   if (couldStore == false) {
     return SaveRes(false, "没有保存文件权限");
   }
+  if (name!=null) {
+    name = name.replaceAll(RegExp(r'[<>:\/\\|?*"]'), "_");
+  }
   Directory? downloadDir;
   String? downloadPath;
   switch (defaultTargetPlatform) {
@@ -465,12 +468,9 @@ Future<SaveRes> genDownloadPath({String? name}) async {
     case TargetPlatform.windows:
     case TargetPlatform.linux:
     case TargetPlatform.macOS:
-      if (name!=null) {
-        name = name.replaceAll(RegExp(r'[<>:\/\\|?*"]'), "_");
-      }
       String? outputFile = await FilePicker.platform.saveFile(
         dialogTitle: "选择保存路径",
-        fileName: (name == null || name.isEmpty) ? "image.jpg" : name,
+        fileName: (name == null || name.isEmpty) ? genSavePathByTime(srcType: ".png") : name,
       );
       if (outputFile == null) {
         return SaveRes(false, "未设置保存路径");
@@ -489,7 +489,7 @@ Future<SaveRes> genDownloadPath({String? name}) async {
     if (!downloadDir.existsSync()) {
       return SaveRes(false, "保存目录不存在");
     }
-    var nameHere = name ?? "image.jpg";
+    var nameHere = name ?? genSavePathByTime(srcType: ".png");
     downloadPath ??= path.join(downloadDir.path, nameHere);
     if (File(downloadPath).existsSync()) {
       var num = 0;

@@ -336,7 +336,7 @@ class _JumpThreadSearchComponentState extends State<JumpThreadSearchComponent> {
                 startSearch();
               },
               decoration: const InputDecoration(
-                hintText: "帖子、文集或其他链接",
+                hintText: "帖子、文集或其他链接（URL）",
               ),
             ),
           ),

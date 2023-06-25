@@ -273,7 +273,7 @@ class _CollectionPageState extends State<CollectionPage> {
               IconButton(
                 onPressed: () {
                   if (!mounted) { return; }
-                  shareWithResultWrap(context, widget.link, subject: "分享个人文集");
+                  shareWithResultWrap(context, "文集 ${widget.link}", subject: "分享个人文集");
                 },
                 icon: const Icon(Icons.share),
               ),
@@ -482,7 +482,7 @@ class _CollectionArticlePageState extends State<CollectionArticlePage> {
               IconButton(
                 onPressed: () {
                   if (!mounted) { return; }
-                  shareWithResultWrap(context, widget.link, subject: "分享个人文集");
+                  shareWithResultWrap(context, "文集 ${widget.link}", subject: "分享个人文集");
                 },
                 icon: const Icon(Icons.share),
               ),

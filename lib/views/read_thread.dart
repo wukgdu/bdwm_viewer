@@ -376,9 +376,10 @@ class _OperateComponentState extends State<OperateComponent> {
                 'receiver': widget.onePostInfo.authorInfo.userName,
               });
             } else if (value == "分享") {
-              var sharedText = "$v2Host/post-read.php?bid=${widget.bid}&threadid=${widget.threadid}&page=a&postid=${widget.postid}#${widget.postid} ";
-              sharedText += "\n${widget.title} - ${widget.boardName}";
-              sharedText += "\n${widget.onePostInfo.postNumber} 赞${widget.onePostInfo.upCount}/踩${widget.onePostInfo.downCount}";
+              var sharedText = "";
+              sharedText += "${widget.title} - ${widget.boardName} \n";
+              sharedText += "${widget.onePostInfo.postNumber} 赞${widget.onePostInfo.upCount}/踩${widget.onePostInfo.downCount} \n";
+              sharedText += "$v2Host/post-read.php?bid=${widget.bid}&threadid=${widget.threadid}&page=a&postid=${widget.postid}#${widget.postid} ";
               shareWithResultWrap(context, sharedText, subject: "分享帖子");
             } else if (value == "单帖") {
               nv2Push(context, '/singlePost', arguments: {

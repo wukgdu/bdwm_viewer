@@ -788,8 +788,9 @@ class _ThreadDetailPageState extends State<ThreadDetailPage> {
           IconButton(
             onPressed: () {
               if (!mounted) { return; }
-              var sharedText = "$v2Host/post-read.php?bid=${widget.threadPageInfo.boardid}&threadid=${widget.threadPageInfo.threadid} ";
-              sharedText += "\n${widget.threadPageInfo.title} - ${widget.threadPageInfo.board.text}";
+              var sharedText = "";
+              sharedText += "${widget.threadPageInfo.title} - ${widget.threadPageInfo.board.text} \n";
+              sharedText += "$v2Host/post-read.php?bid=${widget.threadPageInfo.boardid}&threadid=${widget.threadPageInfo.threadid} ";
               shareWithResultWrap(context, sharedText, subject: "分享帖子");
             },
             icon: const Icon(Icons.share),

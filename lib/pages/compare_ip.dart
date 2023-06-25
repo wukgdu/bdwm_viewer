@@ -39,6 +39,9 @@ class _CompareIpPageState extends State<CompareIpPage> {
     var postid = getQueryValueImproved(link, 'postid');
     if (bid == null || postid == null) { return null; }
     var res = await getSinglePostData(bid, postid);
+    if (res.errorMessage != null) {
+      return null;
+    }
     var item = res.postInfo;
     if (item.postNumber.startsWith('#') && int.tryParse(item.postNumber.substring(1))!=null) {
       return [bid, item.postNumber.substring(1)];

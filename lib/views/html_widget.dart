@@ -12,15 +12,14 @@ import 'package:flutter_highlight/themes/github.dart' show githubTheme;
 
 import "./utils.dart";
 import './constants.dart';
-import '../bdwm/req.dart';
 import '../bdwm/search.dart' show bdwmUserInfoSearch, IDandName;
 import '../pages/read_thread.dart';
 import '../html_parser/utils.dart';
-import '../globalvars.dart' show genHeaders2, globalConfigInfo, v2Host, notoSansMonoCJKscFont, globalImmConfigInfo;
-import '../html_parser/board_parser.dart' show directToThread;
+import '../globalvars.dart' show globalConfigInfo, v2Host, notoSansMonoCJKscFont, globalImmConfigInfo;
 import '../pages/detail_image.dart';
-import '../utils.dart' show getQueryValue, isAndroid;
+import '../utils.dart' show getQueryValue, isAndroid, genSavePathByTime;
 import '../router.dart' show nv2Push;
+import '../pages/read_post.dart' show getSinglePostData;
 
 const int _cacheHeight = 150;
 
@@ -353,12 +352,14 @@ bool validUserMention(int p1, int p2, String sourceStr) {
   return leftOK & rightOK;
 }
 
-void innerLinkJump(String link, BuildContext context) {
-  if (link.startsWith("$v2Host/post-read.php")
-    || link.startsWith("$v2Host/mobile/post-read.php")) {
+void innerLinkJump(String dmLink, BuildContext context) {
+  // dmLink: desktop or mobile link
+  var link = dmLink.replaceFirst("$v2Host/mobile/", "$v2Host/");
+  var httpIdx = link.indexOf("http");
+  link = httpIdx == -1 ? link : link.substring(httpIdx);
+  if (link.startsWith("$v2Host/post-read.php")) {
     naviGotoThreadByLink(context, link, "跳转", needToBoard: true);
-  } else if (link.startsWith("$v2Host/thread.php")
-    || link.startsWith("$v2Host/mobile/thread.php")) {
+  } else if (link.startsWith("$v2Host/thread.php")) {
     var bid = getQueryValue(link, 'bid') ?? "";
     if (bid.isNotEmpty) {
       nv2Push(context, '/board', arguments: {
@@ -366,25 +367,21 @@ void innerLinkJump(String link, BuildContext context) {
         'boardName': "跳转",
       });
     }
-  } else if (link.startsWith("$v2Host/collection.php")
-    || link.startsWith("$v2Host/mobile/collection.php")) {
+  } else if (link.startsWith("$v2Host/collection.php")) {
     nv2Push(context, '/collection', arguments: {
-      'link': link.replaceFirst("$v2Host/mobile/", "$v2Host/"),
+      'link': link,
       'title': "目录",
     });
-  } else if (link.startsWith("$v2Host/collection-read.php")
-    || link.startsWith("$v2Host/mobile/collection-read.php")) {
+  } else if (link.startsWith("$v2Host/collection-read.php")) {
     nv2Push(context, '/collectionArticle', arguments: {
-      'link': link.replaceFirst("$v2Host/mobile/", "$v2Host/"),
+      'link': link,
       'title': "文章",
     });
-  } else if (link.startsWith("$v2Host/user.php")
-    || link.startsWith("$v2Host/mobile/user.php")) {
+  } else if (link.startsWith("$v2Host/user.php")) {
     String uid = getQueryValue(link, 'uid') ?? "";
     if (uid.isEmpty) { return; }
     nv2Push(context, '/user', arguments: uid);
-  } else if (link.startsWith("$v2Host/note.php")
-    || link.startsWith("$v2Host/mobile/note.php")) {
+  } else if (link.startsWith("$v2Host/note.php")) {
     String bid = getQueryValue(link, 'bid') ?? "";
     if (bid.isNotEmpty) {
       nv2Push(context, '/boardNote', arguments: {
@@ -392,18 +389,17 @@ void innerLinkJump(String link, BuildContext context) {
         'boardName': "备忘录",
       });
     }
-  } else if (link.startsWith("$v2Host/post-read-single.php")
-    || link.startsWith("$v2Host/mobile/post-read-single.php")) {
-    bdwmClient.get(link.replaceFirst("$v2Host/mobile/", "$v2Host/"), headers: genHeaders2()).then((value) {
-      if (value == null) {
-        showNetWorkDialog(context);
+  } else if (link.startsWith("$v2Host/post-read-single.php")) {
+    // bdwmClient.get(link, headers: genHeaders2()).then((value) {
+    var bid = getQueryValue(link, "bid") ?? "";
+    var postid = getQueryValue(link, "postid") ?? "";
+    if (bid.isEmpty || postid.isEmpty) { return; }
+    getSinglePostData(bid, postid).then((value) {
+      if (value.errorMessage != null) {
+        showInformDialog(context, "跳转失败", value.errorMessage ?? "未知错误");
       } else {
-        var link2 = directToThread(value.body, needLink: true);
+        var link2 = value.threadLink;
         if (link2.isEmpty) { return; }
-        int? link2Int = int.tryParse(link2);
-        if (link2Int == null && link2.startsWith("post-read.php")==false) {
-          showInformDialog(context, "跳转失败", link2);
-        }
         naviGotoThreadByLink(context, link2, "", pageDefault: "a", needToBoard: true);
       }
     });
@@ -420,7 +416,7 @@ void innerLinkJump(String link, BuildContext context) {
         return;
       }
       if (value == "yes") {
-        var parsedUrl = Uri.parse(link);
+        var parsedUrl = Uri.parse(link); // bbs会有一层跳转提醒，hereLink (rawLink) 是实际url
         // await canLaunchUrl(parsedUrl)
         launchUrl(parsedUrl, mode: LaunchMode.externalApplication).then((result) {
           if (result == true) { return; }
@@ -681,9 +677,7 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
                   ),
                   onTap: () {
                     if (context != null) {
-                      var curTime = DateTime.now().toIso8601String().replaceAll(":", "_");
-                      curTime = curTime.split(".").first;
-                      var imgName = "OBViewer-$curTime.$srcType";
+                      var imgName = genSavePathByTime(srcType: ".$srcType");
                       gotoDetailImage(context: context, link: "", imgData: data, name: imgName);
                       // gotoDetailImage(context: context, link: "", imgDataStr: str, name: imgName);
                     }
