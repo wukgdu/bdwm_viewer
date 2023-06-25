@@ -273,7 +273,10 @@ class _CollectionPageState extends State<CollectionPage> {
               IconButton(
                 onPressed: () {
                   if (!mounted) { return; }
-                  shareWithResultWrap(context, "文集 ${widget.link}", subject: "分享个人文集");
+                  var sharedText = "";
+                  sharedText += "${widget.link} \n";
+                  sharedText += collectionList.title;
+                  shareWithResultWrap(context, sharedText, subject: "分享文集");
                 },
                 icon: const Icon(Icons.share),
               ),
@@ -459,7 +462,7 @@ class _CollectionArticlePageState extends State<CollectionArticlePage> {
         }
         return Scaffold(
           appBar: AppBar(
-            title: Text(widget.title),
+            title: Text(collectionArticle.title),
             actions: [
               IconButton(
                 onPressed: () {
@@ -482,7 +485,10 @@ class _CollectionArticlePageState extends State<CollectionArticlePage> {
               IconButton(
                 onPressed: () {
                   if (!mounted) { return; }
-                  shareWithResultWrap(context, "文集 ${widget.link}", subject: "分享个人文集");
+                  var sharedText = "";
+                  sharedText += "${widget.link} \n";
+                  sharedText += collectionArticle.title;
+                  shareWithResultWrap(context, sharedText, subject: "分享文集");
                 },
                 icon: const Icon(Icons.share),
               ),

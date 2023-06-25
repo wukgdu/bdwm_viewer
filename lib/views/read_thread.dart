@@ -377,9 +377,9 @@ class _OperateComponentState extends State<OperateComponent> {
               });
             } else if (value == "分享") {
               var sharedText = "";
+              sharedText += "$v2Host/post-read.php?bid=${widget.bid}&threadid=${widget.threadid}&page=a&postid=${widget.postid}#${widget.postid} \n";
               sharedText += "${widget.title} - ${widget.boardName} \n";
-              sharedText += "${widget.onePostInfo.postNumber} 赞${widget.onePostInfo.upCount}/踩${widget.onePostInfo.downCount} \n";
-              sharedText += "$v2Host/post-read.php?bid=${widget.bid}&threadid=${widget.threadid}&page=a&postid=${widget.postid}#${widget.postid} ";
+              sharedText += "${widget.onePostInfo.postNumber} 赞${widget.onePostInfo.upCount}/踩${widget.onePostInfo.downCount}";
               shareWithResultWrap(context, sharedText, subject: "分享帖子");
             } else if (value == "单帖") {
               nv2Push(context, '/singlePost', arguments: {
