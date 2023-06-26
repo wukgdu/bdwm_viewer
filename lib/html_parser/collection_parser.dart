@@ -145,6 +145,7 @@ class CollectionArticle {
   String? errorMessage;
   String path = "";
   bool canDelete = false;
+  String dirTitle = "";
   String? modifyPath;
 
   CollectionArticle.empty();
@@ -161,6 +162,7 @@ class CollectionArticle {
     this.errorMessage,
     required this.path,
     required this.canDelete,
+    required this.dirTitle,
     this.modifyPath,
   });
 }
@@ -238,10 +240,19 @@ CollectionArticle parseCollectionArticle(String htmlStr) {
     }
   }
 
+  String dirTitle = "";
+  var trailDom = document.querySelector(".breadcrumb-trail");
+  if (trailDom != null) {
+    var aList = trailDom.querySelectorAll("a");
+    if (aList.length >= 2) {
+      dirTitle = getTrimmedHtml(aList[aList.length-2]);
+    }
+  }
+
   return CollectionArticle(
     user: user, uid: uid, avatar: avatar, title: title, content: content, path: path,
     attachmentHtml: attachmentHtml, attachmentInfo: attachmentInfo, time: time, canDelete: canDelete,
-    modifyPath: modifyPath,
+    modifyPath: modifyPath, dirTitle: dirTitle,
   );
 }
 

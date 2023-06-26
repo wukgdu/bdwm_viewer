@@ -462,7 +462,7 @@ class _CollectionArticlePageState extends State<CollectionArticlePage> {
         }
         return Scaffold(
           appBar: AppBar(
-            title: Text(collectionArticle.title),
+            title: Text(collectionArticle.dirTitle.isNotEmpty ? collectionArticle.dirTitle : collectionArticle.title),
             actions: [
               IconButton(
                 onPressed: () {
@@ -487,7 +487,7 @@ class _CollectionArticlePageState extends State<CollectionArticlePage> {
                   if (!mounted) { return; }
                   var sharedText = "";
                   sharedText += "${widget.link} \n";
-                  sharedText += collectionArticle.title;
+                  sharedText += "${collectionArticle.title} - ${collectionArticle.dirTitle}";
                   shareWithResultWrap(context, sharedText, subject: "分享文集");
                 },
                 icon: const Icon(Icons.share),
