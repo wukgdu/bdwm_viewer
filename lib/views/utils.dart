@@ -136,6 +136,23 @@ Future<String?> showConfirmDialog(BuildContext context, String title, String con
   );
 }
 
+Future<String?> showComplexConfirmDialog(BuildContext context, String title, Widget content) {
+  return showAlertDialog(context, title, content,
+    actions1: TextButton(
+      onPressed: () {
+        Navigator.of(context).pop("no");
+      },
+      child: const Text("不了"),
+    ),
+    actions2: TextButton(
+      onPressed: () {
+        Navigator.of(context).pop("yes");
+      },
+      child: const Text("对的"),
+    ),
+  );
+}
+
 class PageDialog extends StatefulWidget {
   final int maxPage;
   const PageDialog({super.key, required this.maxPage});

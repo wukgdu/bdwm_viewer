@@ -20,6 +20,12 @@ const avaiFonts = [simFont, notoSansMonoCJKscFont];
 
 const accountChinese = "帐号";
 
+Future<String> genAppFilename(String name) async {
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    String filename = "$dir/$name";
+    return filename;
+}
+
 List<String> parseCookie(String cookie) {
   var pattern1 = "skey=";
   var pattern2 = "uid=";
@@ -216,8 +222,7 @@ class Uinfo {
   }
 
   Future<bool> init({bool useGuest=false}) async {
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    String filename = "$dir/$storage";
+    String filename = await genAppFilename(storage);
     // debugPrint(filename);
     if (File(filename).existsSync()) {
       var content = File(filename).readAsStringSync();
@@ -245,8 +250,7 @@ class Uinfo {
   }
 
   Future<void> update() async {
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    String filename = "$dir/$storage";
+    String filename = await genAppFilename(storage);
     var file = File(filename).openWrite();
     Map<String, Object> content = <String, Object>{
       "users": users.map((e) => e.toMap()).toList(),
@@ -416,8 +420,7 @@ class TmpContactInfo {
   }
 
   Future<bool> init() async {
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    String filename = "$dir/$storage";
+    String filename = await genAppFilename(storage);
     // debugPrint(filename);
     Future<void> writeInit() async {
       var file = File(filename).openWrite();
@@ -440,8 +443,7 @@ class TmpContactInfo {
   }
 
   Future<bool> update({bool order=true}) async {
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    String filename = "$dir/$storage";
+    String filename = await genAppFilename(storage);
     var file = File(filename).openWrite();
     var contactList = contact.toList();
     if (order) {
@@ -506,8 +508,7 @@ class BDWMNotConfig {
   }
 
   Future<bool> init() async {
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    String filename = "$dir/$storage";
+    String filename = await genAppFilename(storage);
     // debugPrint(filename);
     Future<void> writeInit() async {
       var file = File(filename).openWrite();
@@ -530,8 +531,7 @@ class BDWMNotConfig {
   }
 
   Future<bool> update() async {
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    String filename = "$dir/$storage";
+    String filename = await genAppFilename(storage);
     var file = File(filename).openWrite();
     file.write(jsonEncode(toJson()));
     await file.flush();
@@ -630,8 +630,7 @@ class BDWMImmConfig {
   }
 
   Future<bool> init() async {
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    String filename = "$dir/$storage";
+    String filename = await genAppFilename(storage);
     // debugPrint(filename);
     Future<void> writeInit() async {
       // 1.9.2 修改了设置文件，读取之前的设置
@@ -656,8 +655,7 @@ class BDWMImmConfig {
   }
 
   Future<bool> update() async {
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    String filename = "$dir/$storage";
+    String filename = await genAppFilename(storage);
     var file = File(filename).openWrite();
     file.write(jsonEncode(toJson()));
     await file.flush();
@@ -918,8 +916,7 @@ class BDWMConfig {
   }
 
   Future<bool> init() async {
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    String filename = "$dir/$storage";
+    String filename = await genAppFilename(storage);
     // debugPrint(filename);
     Future<void> writeInit() async {
       var file = File(filename).openWrite();
@@ -942,8 +939,7 @@ class BDWMConfig {
   }
 
   Future<bool> update() async {
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    String filename = "$dir/$storage";
+    String filename = await genAppFilename(storage);
     var file = File(filename).openWrite();
     file.write(jsonEncode(toJson()));
     await file.flush();
@@ -1036,8 +1032,7 @@ class RecentThreadInfo {
   }
 
   Future<bool> init() async {
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    String filename = "$dir/$storage";
+    String filename = await genAppFilename(storage);
     Future<void> writeInit() async {
       var file = File(filename).openWrite();
       file.write(jsonEncode(toJson()));
@@ -1059,8 +1054,7 @@ class RecentThreadInfo {
   }
 
   Future<bool> update() async {
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    String filename = "$dir/$storage";
+    String filename = await genAppFilename(storage);
     var file = File(filename).openWrite();
     file.write(jsonEncode(toJson()));
     await file.flush();

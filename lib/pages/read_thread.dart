@@ -4,7 +4,7 @@ import 'package:flutter/rendering.dart';
 // import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../views/read_thread.dart';
-import '../views/utils.dart';
+import '../views/utils.dart' show genScrollableWidgetForPullRefresh, showAlertDialog, showPageDialog, LongPressIconButton, shareWithResultWrap, showInformDialog;
 import '../html_parser/read_thread_parser.dart';
 import '../bdwm/req.dart';
 import '../views/constants.dart' show bdwmPrimaryColor;
@@ -781,12 +781,6 @@ class _ThreadDetailPageState extends State<ThreadDetailPage> {
           ),
           IconButton(
             onPressed: () {
-              widget.toggleTiebaForm();
-            },
-            icon: Icon(widget.tiebaForm ? Icons.change_circle : Icons.account_tree),
-          ),
-          IconButton(
-            onPressed: () {
               if (!mounted) { return; }
               var sharedText = "";
               sharedText += "$v2Host/post-read.php?bid=${widget.threadPageInfo.boardid}&threadid=${widget.threadPageInfo.threadid} \n";
@@ -794,6 +788,41 @@ class _ThreadDetailPageState extends State<ThreadDetailPage> {
               shareWithResultWrap(context, sharedText, subject: "分享帖子");
             },
             icon: const Icon(Icons.share),
+          ),
+          PopupMenuButton(
+            // icon: const Icon(Icons.more_horiz),
+            onSelected: (value) {
+              if (value == null) { return; }
+              if (value == "tiebaForm") {
+                widget.toggleTiebaForm();
+              } else if (value == "saveContent") {
+                showInformDialog(context, "暂未实现", "rt");
+              }
+            },
+            itemBuilder: (context) {
+              return <PopupMenuEntry<String>>[
+                PopupMenuItem(
+                  value: "tiebaForm",
+                  child: Row(
+                    children: [
+                      Icon(widget.tiebaForm ? Icons.change_circle : Icons.account_tree),
+                      const SizedBox(width: 5,),
+                      const Text("切换回复形式"),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: "saveContent",
+                  child: Row(
+                    children: [
+                      Icon(Icons.download),
+                      SizedBox(width: 5,),
+                      Text("保存本页内容"),
+                    ],
+                  ),
+                ),
+              ];
+            },
           ),
         ],
       ),

@@ -28,15 +28,30 @@ fquill.QuillController genController(String? content) {
   return controller;
 }
 
+fquill.QuillController genControllerFromJson(List<dynamic> clist) {
+  late fquill.QuillController controller;
+  if (clist.isNotEmpty) {
+    controller = fquill.QuillController(
+      document: fquill.Document.fromJson(clist),
+      selection: const TextSelection.collapsed(offset: 0),
+    );
+  } else {
+    controller = fquill.QuillController.basic();
+  }
+  return controller;
+}
+
 class FquillEditor extends StatefulWidget {
   final fquill.QuillController controller;
   final bool autoFocus;
   final double? height;
+  final bool readOnly;
   const FquillEditor({
     super.key,
     required this.controller,
     required this.autoFocus,
     this.height,
+    this.readOnly = false,
   });
 
   @override
@@ -260,7 +275,7 @@ class _FquillEditorState extends State<FquillEditor> {
       scrollable: true,
       focusNode: _focusNode,
       autoFocus: widget.autoFocus, // 回帖
-      readOnly: false,
+      readOnly: widget.readOnly,
       expands: false,
       padding: const EdgeInsets.all(0.0),
       keyboardAppearance: Theme.of(context).brightness,

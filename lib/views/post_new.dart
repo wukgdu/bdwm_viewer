@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
+import 'dart:io' show File;
 
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
@@ -17,7 +18,7 @@ import './quill_utils.dart';
 import './upload.dart';
 import './utils.dart';
 import '../router.dart' show nv2Pop, forceRefresh, nv2Replace;
-import './editor.dart' show FquillEditor, FquillEditorToolbar, genController;
+import './editor.dart' show FquillEditor, FquillEditorToolbar, genController, genControllerFromJson;
 import './multi_users.dart' show SwitchUsersComponent;
 
 class PostNewView extends StatefulWidget {
@@ -241,8 +242,43 @@ class _PostNewViewState extends State<PostNewView> {
           margin: const EdgeInsets.only(top: 0, left: 10, right: 10, bottom: 0),
           child: Row(
             children: [
-              const Text("当前$accountChinese："),
+              const Text("当前$accountChinese", style: TextStyle(fontSize: 14),),
               SwitchUsersComponent(showLogin: false, refresh: widget.refresh,),
+              const Spacer(),
+              const Text("草稿", style: TextStyle(fontSize: 14),),
+              vDivider,
+              GestureDetector(
+                onTap: () async {
+                  // TODO: allow more drafts
+                  var draftPath = await genAppFilename("bdwmdraft-1.json");
+                  var file = File(draftPath).openWrite();
+                  var jsonData = _controller.document.toDelta().toJson();
+                  file.write(jsonEncode(jsonData));
+                  await file.flush();
+                  await file.close();
+                  if (!mounted) { return; }
+                  await showInformDialog(context, "已保存草稿", "只保存正文（富文本）；只预览纯文本");
+                },
+                child: Icon(Icons.save_as, size: 14, color: bdwmPrimaryColor,),
+              ),
+              vDivider,
+              GestureDetector(
+                onTap: () async {
+                  var draftPath = await genAppFilename("bdwmdraft-1.json");
+                  var content = await File(draftPath).readAsString();
+                  var jsonData = jsonDecode(content);
+                  if (!mounted) { return; }
+                  var tmpController = genControllerFromJson(jsonData as List<dynamic>);
+                  var res = await showComplexConfirmDialog(context, "加载草稿", SingleChildScrollView(
+                    child: SelectableText(tmpController.document.toPlainText()),
+                  ));
+                  // FquillEditor(controller: tmpController, autoFocus: false, height: 200.0, readOnly: true,),
+                  tmpController.dispose();
+                  if (res != "yes") { return; }
+                  _controller.document = fquill.Document.fromJson(jsonData);
+                },
+                child: Icon(Icons.replay, size: 14, color: bdwmPrimaryColor,),
+              )
             ],
           )
         ),

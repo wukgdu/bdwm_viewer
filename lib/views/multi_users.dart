@@ -40,11 +40,14 @@ class _SwitchUsersComponentState extends State<SwitchUsersComponent> {
           setState(() { });
         }
       },
-      child: Text.rich(TextSpan(children: [
-        const WidgetSpan(child: Icon(Icons.switch_account, size: 16,), alignment: PlaceholderAlignment.middle),
-        const TextSpan(text: " "),
-        TextSpan(text: globalUInfo.username),
-      ])),
+      child: Text.rich(
+        TextSpan(children: [
+          const WidgetSpan(child: Icon(Icons.switch_account, size: 14,), alignment: PlaceholderAlignment.middle),
+          const TextSpan(text: " "),
+          TextSpan(text: globalUInfo.username),
+        ]),
+        style: const TextStyle(fontSize: 14),
+      ),
     );
   }
 }
