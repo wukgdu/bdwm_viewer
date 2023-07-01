@@ -242,13 +242,15 @@ class _PostNewViewState extends State<PostNewView> {
           margin: const EdgeInsets.only(top: 0, left: 10, right: 10, bottom: 0),
           child: Row(
             children: [
-              const Text("当前$accountChinese", style: TextStyle(fontSize: 14),),
+              const Text(accountChinese, style: TextStyle(fontSize: 14),),
+              vDivider,
               SwitchUsersComponent(showLogin: false, refresh: widget.refresh,),
               const Spacer(),
               const Text("草稿", style: TextStyle(fontSize: 14),),
               vDivider,
-              GestureDetector(
-                onTap: () async {
+              SizedIconButton(
+                size: 24,
+                onPressed: () async {
                   // TODO: allow more drafts
                   var draftPath = await genAppFilename("bdwmdraft-1.json");
                   var file = File(draftPath).openWrite();
@@ -259,11 +261,12 @@ class _PostNewViewState extends State<PostNewView> {
                   if (!mounted) { return; }
                   await showInformDialog(context, "已保存草稿", "只保存正文（富文本）；只预览纯文本");
                 },
-                child: Icon(Icons.save_as, size: 14, color: bdwmPrimaryColor,),
+                icon: Icon(Icons.save_as, size: 16, color: bdwmPrimaryColor,),
               ),
               vDivider,
-              GestureDetector(
-                onTap: () async {
+              SizedIconButton(
+                size: 24,
+                onPressed: () async {
                   var draftPath = await genAppFilename("bdwmdraft-1.json");
                   var content = await File(draftPath).readAsString();
                   var jsonData = jsonDecode(content);
@@ -277,7 +280,7 @@ class _PostNewViewState extends State<PostNewView> {
                   if (res != "yes") { return; }
                   _controller.document = fquill.Document.fromJson(jsonData);
                 },
-                child: Icon(Icons.replay, size: 14, color: bdwmPrimaryColor,),
+                icon: Icon(Icons.input, size: 16, color: bdwmPrimaryColor,),
               )
             ],
           )

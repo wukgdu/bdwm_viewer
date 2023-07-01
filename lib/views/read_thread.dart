@@ -170,16 +170,7 @@ class _OperateComponentState extends State<OperateComponent> {
     padding: const EdgeInsets.all(6.0),
     // textStyle: MaterialStatePropertyAll(TextStyle(fontSize: 12)),
   );
-  Widget sizedTextButton({required Widget child, required void Function()? onPressed, ButtonStyle? style}) {
-    return SizedBox(
-      height: 30,
-      child: TextButton(
-        style: style,
-        onPressed: onPressed,
-        child: child,
-      ),
-    );
-  }
+
   @override
   void initState() {
     super.initState();
@@ -195,7 +186,7 @@ class _OperateComponentState extends State<OperateComponent> {
       // alignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        sizedTextButton(
+        SizedTextButton(
           style: textButtonStyle,
           onPressed: !widget.onePostInfo.canReply ? null : () {
             nv2Push(context, '/post', arguments: {
@@ -209,7 +200,7 @@ class _OperateComponentState extends State<OperateComponent> {
           },
           child: Text("回帖", style: TextStyle(color: !widget.onePostInfo.canReply ? Colors.grey : null),),
         ),
-        sizedTextButton(
+        SizedTextButton(
           style: textButtonStyle,
           onPressed: () {
             showTextDialog(context, "转载到的版面")
@@ -241,7 +232,7 @@ class _OperateComponentState extends State<OperateComponent> {
           },
           child: const Text("转载"),
         ),
-        sizedTextButton(
+        SizedTextButton(
           style: textButtonStyle,
           onPressed: () {
             showTextDialog(context, "转寄给")
@@ -275,7 +266,7 @@ class _OperateComponentState extends State<OperateComponent> {
         ),
         // if (globalUInfo.uid == widget.uid && globalUInfo.login == true)
         if (widget.onePostInfo.canModify)
-          sizedTextButton(
+          SizedTextButton(
             style: textButtonStyle,
             onPressed: () {
               nv2Push(context, '/post', arguments: {

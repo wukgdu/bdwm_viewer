@@ -438,6 +438,54 @@ class LongPressIconButton extends StatelessWidget {
   }
 }
 
+class SizedTextButton extends StatelessWidget {
+  final Widget child;
+  final Function()? onPressed;
+  final ButtonStyle? style;
+  final double height;
+  static final textButtonStyle = TextButton.styleFrom(
+    minimumSize: const Size(40, 20),
+    padding: const EdgeInsets.all(0.0),
+    // textStyle: MaterialStatePropertyAll(TextStyle(fontSize: 12)),
+  );
+  const SizedTextButton({super.key, required this.child, this.onPressed, this.style, this.height=30});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: height,
+      child: TextButton(
+        style: style ?? textButtonStyle,
+        onPressed: onPressed,
+        child: child,
+      ),
+    );
+  }
+}
+
+class SizedIconButton extends StatelessWidget {
+  final Widget icon;
+  final Function()? onPressed;
+  final ButtonStyle? style;
+  final double size;
+  const SizedIconButton({super.key, required this.icon, this.onPressed, this.style, this.size=30});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: size,
+      width: size,
+      child: IconButton(
+        padding: EdgeInsets.zero,
+        splashRadius: size/2,
+        style: style,
+        onPressed: onPressed,
+        icon: icon,
+      ),
+    );
+  }
+}
+
 LayoutBuilder genScrollableWidgetForPullRefresh(Widget child)  {
   return LayoutBuilder(builder: (context, constraints) {
     return SingleChildScrollView(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../globalvars.dart' show globalUInfo, accountChinese, guestUitem, Uitem;
-import './utils.dart' show showConfirmDialog;
+import './utils.dart' show showConfirmDialog, SizedTextButton;
 import '../bdwm/logout.dart' show bdwmLogout;
 import '../router.dart' show nv2RawPush;
 
@@ -31,7 +31,8 @@ class SwitchUsersComponent extends StatefulWidget {
 class _SwitchUsersComponentState extends State<SwitchUsersComponent> {
   @override
   Widget build(BuildContext context) {
-    return TextButton(
+    return SizedTextButton(
+      height: 24,
       onPressed: () async {
         var res = await showSwitchUsersDialog(context, showLogin: widget.showLogin);
         if (!mounted) { return; }
@@ -42,7 +43,7 @@ class _SwitchUsersComponentState extends State<SwitchUsersComponent> {
       },
       child: Text.rich(
         TextSpan(children: [
-          const WidgetSpan(child: Icon(Icons.switch_account, size: 14,), alignment: PlaceholderAlignment.middle),
+          const WidgetSpan(child: Icon(Icons.switch_account, size: 16,), alignment: PlaceholderAlignment.middle),
           const TextSpan(text: " "),
           TextSpan(text: globalUInfo.username),
         ]),
