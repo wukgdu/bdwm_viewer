@@ -739,6 +739,8 @@ class _ThreadDetailPageState extends State<ThreadDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isUseMD3 = globalConfigInfo.getUseMD3();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.threadPageInfo.board.text.split('(').first),
@@ -805,19 +807,25 @@ class _ThreadDetailPageState extends State<ThreadDetailPage> {
                   value: "tiebaForm",
                   child: Row(
                     children: [
-                      Icon(widget.tiebaForm ? Icons.change_circle : Icons.account_tree),
+                      Icon(
+                        widget.tiebaForm ? Icons.change_circle : Icons.account_tree,
+                        color: isUseMD3 ? null : isDark ? Colors.white : Colors.black,
+                      ),
                       const SizedBox(width: 5,),
                       const Text("切换回复形式"),
                     ],
                   ),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: "saveContent",
                   child: Row(
                     children: [
-                      Icon(Icons.download),
-                      SizedBox(width: 5,),
-                      Text("保存本页内容"),
+                      Icon(
+                        Icons.download,
+                        color: isUseMD3 ? null : isDark ? Colors.white : Colors.black,
+                      ),
+                      const SizedBox(width: 5,),
+                      const Text("保存本页内容"),
                     ],
                   ),
                 ),
