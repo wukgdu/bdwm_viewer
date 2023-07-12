@@ -986,7 +986,7 @@ class RecentThreadItemInfo {
 }
 
 class RecentThreadInfo {
-  int get maxCount => 100;
+  int get maxCount => 200;
   List<RecentThreadItemInfo> items = [];
   int get count => items.length;
   String get storage => "bdwmhistory.json";
@@ -1067,7 +1067,7 @@ var globalThreadHistory = RecentThreadInfo.empty();
 
 class MarkedThreadInfo extends RecentThreadInfo {
   @override
-  int get maxCount => 200;
+  int get maxCount => 400;
   @override
   String get storage => "bdwmmarked.json";
   MarkedThreadInfo({required super.items});

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../globalvars.dart' show globalThreadHistory;
 import './read_thread.dart';
-import '../views/utils.dart' show showConfirmDialog;
+import '../views/utils.dart' show showConfirmDialog, SizedIconButton;
 import '../utils.dart' show breakLongText;
 
 class RecentThreadPage extends StatefulWidget {
@@ -61,14 +61,15 @@ class _RecentThreadPageState extends State<RecentThreadPage> {
                 ]
               ),
               isThreeLine: true,
-              trailing: IconButton(
+              trailing: SizedIconButton(
                 onPressed: () async {
                   var value = await showConfirmDialog(context, "删除", "rt");
                   if (value == null || value != "yes") { return; }
                   await globalThreadHistory.removeOne(items[index].link);
                   setState(() { });
                 },
-                icon: const Icon(Icons.delete),
+                icon: const Icon(Icons.delete, size: 24,),
+                size: 24,
               ),
             ),
           );
