@@ -80,7 +80,7 @@ dependencies:
   dynamic_color: ^1.6.0
   device_info_plus: ^9.0.0
   flutter_local_notifications: ^15.0.0
-  home_widget: ^0.2.0+1
+  home_widget: ^0.3.0
   flutter_highlight:
     git:
       url: https://github.com/wukgdu/highlight.dart
