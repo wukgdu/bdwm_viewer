@@ -18,7 +18,7 @@ const simFont = "SimSun, monospace, roboto, serif";
 const notoSansMonoCJKscFont= "Noto Sans Mono CJK SC";
 const avaiFonts = [simFont, notoSansMonoCJKscFont];
 
-const accountChinese = "帐号";
+const accountChinese = "账号";
 
 Future<String> genAppFilename(String name) async {
     String dir = (await getApplicationDocumentsDirectory()).path;
