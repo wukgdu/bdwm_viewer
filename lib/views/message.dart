@@ -153,7 +153,7 @@ class _MessageListViewState extends State<MessageListView> {
       valueListenable: messageBrief,
       builder: (context, value, child) {
         var clist = globalContactInfo.contact.toList(growable: false);
-        var users = (value as List<TextAndLink>).map((e) => TextAndLink(e.text, e.link)).toList();
+        var users = value.map((e) => TextAndLink(e.text, e.link)).toList();
         if (users.isNotEmpty) {
           globalContactInfo.memInsertMany(users.map((e) => e.text).toList());
           globalContactInfo.update(order: false);

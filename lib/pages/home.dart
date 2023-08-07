@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             valueListenable: mailCount,
             builder: (context, count, Widget? child) {
               return StackIcon(
-                count: count as int,
+                count: count,
                 icon: const Icon(Icons.mail),
                 callBack: () {
                   // quickNotify("OBViewer", "mail");
@@ -102,7 +102,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             valueListenable: messageCount,
             builder: (context, count, Widget? child) {
               return StackIcon(
-                count: count as int,
+                count: count,
                 icon: const Icon(Icons.message),
                 callBack: () {
                   // quickNotify("OBViewer", "message");

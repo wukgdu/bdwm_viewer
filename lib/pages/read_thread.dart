@@ -169,7 +169,7 @@ class DragToPrevNextPageOverlay2 {
         return ValueListenableBuilder(
           valueListenable: dx,
           builder: (context, value, child) {
-            var ndx = value as double;
+            var ndx = value;
             var rdx = ndx.abs();
             if (ndx == 0.0) {
               return Container();
@@ -285,7 +285,7 @@ class DragToPrevNextPageOverlay {
         return ValueListenableBuilder(
           valueListenable: dx,
           builder: (context, value, child) {
-            var ndx = value as double;
+            var ndx = value;
             var rdx = ndx.abs();
             if (ndx == 0.0) {
               return Container();
@@ -748,7 +748,7 @@ class _ThreadDetailPageState extends State<ThreadDetailPage> {
           ValueListenableBuilder(
             valueListenable: marked,
             builder: (context, value, child) {
-              bool markedValue = value as bool;
+              bool markedValue = value;
               return IconButton(
                 onPressed: () async {
                   if (markedValue) {
@@ -794,7 +794,6 @@ class _ThreadDetailPageState extends State<ThreadDetailPage> {
           PopupMenuButton(
             // icon: const Icon(Icons.more_horiz),
             onSelected: (value) {
-              if (value == null) { return; }
               if (value == "tiebaForm") {
                 widget.toggleTiebaForm();
               } else if (value == "saveContent") {

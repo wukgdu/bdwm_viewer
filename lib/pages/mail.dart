@@ -169,8 +169,7 @@ class _MailListPageState extends State<MailListPage> {
               PopupMenuButton(
                 // icon: const Icon(Icons.more_horiz),
                 onSelected: (value) {
-                  if (value == null) { return; }
-                  changeToMode(value as String);
+                  changeToMode(value);
                 },
                 itemBuilder: (context) {
                   return <PopupMenuEntry<String>>[
