@@ -37,7 +37,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   # cupertino_icons: ^1.0.2
   html: ^0.15.0
-  http: ^0.13.5
+  http: ^1.1.0
   crypto: ^3.0.2
   # flutter_html: ^2.2.1
   path_provider: ^2.0.11
@@ -91,7 +91,7 @@ dependencies:
   string_validator: ^1.0.0
 
 dependency_overrides:
-  http: ^1.1.0
+  # http: ^1.1.0
   # intl: ^0.18.0
   # flutter_math_fork: ^0.7.0
 
