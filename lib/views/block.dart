@@ -53,6 +53,23 @@ class _BlockViewState extends State<BlockView> {
                   ],
                 ),
               ),
+              subtitle: Row(
+                children: [
+                  if (item.isSub) ...[
+                    const SizedBox(width: 16,),
+                  ],
+                  Expanded(
+                    child: Text(
+                      item.lastPostTitle != null
+                      ? "${item.lastUpdate.text}\n${item.lastPostTitle}"
+                      : item.lastUpdate.text,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: item.readOnly ? Colors.grey : null)
+                    ),
+                  ),
+                ],
+              ),
+              isThreeLine: item.lastPostTitle != null,
               // trailing: const Icon(Icons.arrow_right),
             ),
           );

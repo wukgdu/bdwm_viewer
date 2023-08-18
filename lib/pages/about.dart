@@ -5,6 +5,7 @@ import '../views/html_widget.dart';
 import '../views/constants.dart' show textLinkStyle;
 import '../check_update.dart' show innerLinkForBBS, curVersionForBBS;
 import '../router.dart' show nv2Push;
+import '../globalvars.dart' show bbsHost;
 
 class AboutPage extends StatelessWidget {
   const AboutPage({Key? key}) : super(key: key);
@@ -56,7 +57,7 @@ class AboutPage extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          oneItem("北大未名BBS", "https://bbs.pku.edu.cn", isLink: true),
+          oneItem("北大未名BBS", bbsHost, isLink: true),
           const Divider(),
           oneItem("关于此应用", "北大未名BBS第三方安卓客户端"),
           const Divider(),

@@ -15,6 +15,8 @@ class BlockBoardItem {
   bool readOnly = false;
   bool likeIt = false;
   List<TextAndLink> admin = <TextAndLink>[];
+  TextAndLink lastUpdate = TextAndLink.empty();
+  String? lastPostTitle;
 
   BlockBoardItem.empty();
   BlockBoardItem({
@@ -26,17 +28,21 @@ class BlockBoardItem {
     required this.readOnly,
     required this.likeIt,
     required this.admin,
+    required this.lastUpdate,
+    this.lastPostTitle,
   });
 }
 
 class BlockBoardSet {
   String title = "";
+  bool isHot = false;
   List<BlockBoardItem> blockBoardItems = <BlockBoardItem>[];
 
   BlockBoardSet.empty();
   BlockBoardSet({
     required this.title,
     required this.blockBoardItems,
+    required this.isHot,
   });
 }
 
@@ -121,9 +127,18 @@ BlockInfo parseBlock(String htmlStr) {
       if (bbdom.querySelector(".readonly") != null) {
         readOnly = true;
       }
-      blockBoardItems.add(BlockBoardItem(boardName: boardName, engName: engName, bid: subbid, thereIsAdmin: thereIsAdmin, isSub: isSub, readOnly: readOnly, likeIt: likeIt, admin: adminTL));
+      String lastUpdateTime = bbdom.querySelectorAll(".right .post .info span").map((e) => getTrimmedString(e)).join(" ");
+      if (lastUpdateTime.isEmpty) {
+        lastUpdateTime = "遇到了问题";
+      }
+      String lastUpdatePost = absThreadLink(bbdom.querySelector(".right .post .title")?.attributes['href'] ?? "");
+      String lastPostTitle = getTrimmedString(bbdom.querySelector(".right .post .title"));
+      blockBoardItems.add(BlockBoardItem(
+        boardName: boardName, engName: engName, bid: subbid, thereIsAdmin: thereIsAdmin, isSub: isSub, readOnly: readOnly, likeIt: likeIt, admin: adminTL,
+        lastUpdate: TextAndLink(lastUpdateTime, lastUpdatePost), lastPostTitle: lastPostTitle,
+      ));
     }
-    blockBoardSets.add(BlockBoardSet(title: title, blockBoardItems: blockBoardItems));
+    blockBoardSets.add(BlockBoardSet(title: title, blockBoardItems: blockBoardItems, isHot: true));
   }
 
   if (otherBoardSetDom != null) {
@@ -167,9 +182,17 @@ BlockInfo parseBlock(String htmlStr) {
         if (bbdom.querySelector(".readonly") != null) {
           readOnly = true;
         }
-        blockBoardItems.add(BlockBoardItem(boardName: boardName, engName: engName, bid: subbid, thereIsAdmin: thereIsAdmin, isSub: isSub, readOnly: readOnly, likeIt: likeIt, admin: adminTL));
+        String lastUpdateTime = getTrimmedString(bbdom.querySelector(".update"));
+        if (lastUpdateTime.isEmpty) {
+          lastUpdateTime = "您没有权限访问该页面";
+        }
+        String lastUpdatePost = absThreadLink(bbdom.querySelector(".update")?.attributes['href'] ?? "");
+        blockBoardItems.add(BlockBoardItem(
+          boardName: boardName, engName: engName, bid: subbid, thereIsAdmin: thereIsAdmin, isSub: isSub, readOnly: readOnly, likeIt: likeIt, admin: adminTL,
+          lastUpdate: TextAndLink(lastUpdateTime, lastUpdatePost),
+        ));
       }
-      blockBoardSets.add(BlockBoardSet(title: title, blockBoardItems: blockBoardItems));
+      blockBoardSets.add(BlockBoardSet(title: title, blockBoardItems: blockBoardItems, isHot: false));
     }
   }
   return BlockInfo(name: name, bid: bid, blockBoardSets: blockBoardSets);

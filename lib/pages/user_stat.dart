@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../views/user_stat.dart';
 import '../views/utils.dart' show showInformDialog;
+import '../globalvars.dart' show v2Host;
 
 class UserStatPage extends StatelessWidget {
   const UserStatPage({super.key});
@@ -15,7 +16,7 @@ class UserStatPage extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              showInformDialog(context, "数据来源", "https://bbs.pku.edu.cn/v2/userstat.php");
+              showInformDialog(context, "数据来源", "$v2Host/userstat.php");
             },
             icon: const Icon(Icons.info),
           ),
