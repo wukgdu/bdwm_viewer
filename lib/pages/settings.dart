@@ -269,9 +269,11 @@ class _RefreshRateComponentState extends State<RefreshRateComponent> {
           modes = await FlutterDisplayMode.supported;
         } on PlatformException catch (e) {
           String errorMessage = "${e.code}: ${e.message}";
+          if (!mounted) { return; }
           showInformDialog(context, "遇到问题", errorMessage);
           return;
         } on Exception catch (e) {
+          if (!mounted) { return; }
           showInformDialog(context, "遇到问题", e.toString());
           return;
         }

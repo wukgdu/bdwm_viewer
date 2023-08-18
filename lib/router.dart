@@ -560,6 +560,6 @@ class MainRouteInformationParser extends RouteInformationParser<MyRouteConfig> {
 
   @override
   RouteInformation restoreRouteInformation(MyRouteConfig configuration) {
-    return RouteInformation(location: configuration.name);
+    return RouteInformation(uri: Uri.parse(configuration.name));
   }
 }
