@@ -20,13 +20,27 @@ class CachedImagesPage extends StatefulWidget {
 class _CachedImagesPageState extends State<CachedImagesPage> {
   List<String> fileNames = [];
   List<File> files = [];
+  String sortMethod = "time";
   static const thumbnailHeight = 150.0;
 
   @override
   void initState() {
     super.initState();
     files = widget.files;
+    sortByTime();
     fileNames = files.map((e) => "${path.basename(e.path)}.jpg").toList();
+  }
+
+  void sortByTime() {
+    files.sort((a, b) {
+      return b.statSync().modified.compareTo(a.statSync().modified);
+    },);
+  }
+
+  void sortBySize() {
+    files.sort((a, b) {
+      return b.statSync().size.compareTo(a.statSync().size);
+    },);
   }
 
   @override
@@ -34,6 +48,28 @@ class _CachedImagesPageState extends State<CachedImagesPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("缓存图片"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              if (sortMethod == "time") {
+                sortMethod = "size";
+                sortBySize();
+              } else if (sortMethod == "size") {
+                sortMethod = "time";
+                sortByTime();
+              } else {
+                sortMethod = "time";
+                sortByTime();
+              }
+              setState(() { });
+            },
+            icon: sortMethod == "time"
+            ? const Icon(Icons.sort)
+            : sortMethod == "size"
+            ? const Icon(Icons.access_time)
+            : const Icon(Icons.question_mark),
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: files.length,

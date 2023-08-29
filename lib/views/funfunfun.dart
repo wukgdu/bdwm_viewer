@@ -292,9 +292,6 @@ class _ImageCacheComponentState extends State<ImageCacheComponent> {
           clearImagesInMemory();
         } else if (opt == "see") {
           var imageFiles = await getLocalCachedImageFiles();
-          imageFiles.sort((a, b) {
-            return b.statSync().modified.compareTo(a.statSync().modified);
-          },);
           if (!mounted) { return; }
           nv2Push(context, '/cachedImages', arguments: {
             'files': imageFiles,
