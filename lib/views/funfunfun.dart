@@ -222,6 +222,19 @@ Future<int> computeDiskImageCache() async {
   return res;
 }
 
+Future<List<File>> getLocalCachedImageFiles() async {
+  var files = <File>[];
+  final Directory cacheImagesDirectory = Directory(
+    path.join((await getTemporaryDirectory()).path, cacheImageFolderName));
+  if (cacheImagesDirectory.existsSync()) {
+    var cachedFiles = cacheImagesDirectory.listSync();
+    for (var f in cachedFiles) {
+      files.add(File(f.path));
+    }
+  }
+  return files;
+}
+
 class ImageCacheComponent extends StatefulWidget {
   const ImageCacheComponent({super.key});
 
@@ -246,23 +259,50 @@ class _ImageCacheComponentState extends State<ImageCacheComponent> {
     super.dispose();
   }
 
+  void clearAllImages() {
+    clearAllExtendedImageCache(really: true);
+    setState(() {
+      cacheSizeBytes = computeMemoryImageCache();
+      futureDiskSize.cancel().then((_) {
+        futureDiskSize = CancelableOperation.fromFuture(computeDiskImageCache(), onCancel: () { });
+      });
+    });
+  }
+
+  void clearImagesInMemory() {
+    clearMemoryImageCache();
+    setState(() {
+      cacheSizeBytes = computeMemoryImageCache();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () {
-        clearAllExtendedImageCache(really: true);
-        setState(() {
-          cacheSizeBytes = computeMemoryImageCache();
-          futureDiskSize.cancel().then((_) {
-            futureDiskSize = CancelableOperation.fromFuture(computeDiskImageCache(), onCancel: () { });
+      onTap: () async {
+        var opt = await getOptOptions(context, [
+          SimpleTuple2(name: "清除所有图片缓存", action: "clearAll"),
+          SimpleTuple2(name: "清除内存中的图片缓存", action: "clearMemory"),
+          SimpleTuple2(name: "查看缓存图片", action: "see"),
+        ]);
+        if (opt == null) { return; }
+        if (opt == "clearAll") {
+          clearAllImages();
+        } else if (opt == "clearMemory") {
+          clearImagesInMemory();
+        } else if (opt == "see") {
+          var imageFiles = await getLocalCachedImageFiles();
+          imageFiles.sort((a, b) {
+            return b.statSync().modified.compareTo(a.statSync().modified);
+          },);
+          if (!mounted) { return; }
+          nv2Push(context, '/cachedImages', arguments: {
+            'files': imageFiles,
           });
-        });
+        }
       },
       onLongPress: () {
-        clearMemoryImageCache();
-        setState(() {
-          cacheSizeBytes = computeMemoryImageCache();
-        });
+        showInformDialog(context, "提示", "短按弹出选项，长按弹出此提示；短按右侧图标清除所有图片缓存，长按清除内存中的图片缓存");
       },
       isThreeLine: false,
       title: const Text("图片缓存"),
@@ -289,7 +329,15 @@ class _ImageCacheComponentState extends State<ImageCacheComponent> {
           ]
         ),
       ),
-      trailing: const Icon(Icons.cleaning_services, color: null,),
+      trailing: GestureDetector(
+        onTap: () {
+          clearAllImages();
+        },
+        onLongPress: () {
+          clearImagesInMemory();
+        },
+        child: const Icon(Icons.cleaning_services, color: null,),
+      )
     );
   }
 }

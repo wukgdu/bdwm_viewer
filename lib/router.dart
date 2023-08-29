@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'dart:convert';
+import 'dart:io' show File;
 
 import 'package:flutter/material.dart';
 
@@ -35,6 +36,7 @@ import './pages/read_post.dart';
 import './pages/favorite_collection.dart';
 import './pages/modify_profile.dart';
 import './pages/compare_ip.dart';
+import './pages/cached_images.dart' show CachedImagesPage;
 import './html_parser/modify_profile_parser.dart' show SelfProfileInfo;
 import './views/search.dart' show PostSearchSettings;
 import './globalvars.dart';
@@ -316,6 +318,13 @@ class MainPageBuilder {
           selfProfileInfo = settingsMap['selfProfileInfo'] as SelfProfileInfo;
         }
         return ModifyProfilePage(selfProfileInfo: selfProfileInfo,);
+      case "/cachedImages":
+        List<File> imgFiles = [];
+        if (settings.arguments != null) {
+          var settingsMap = settings.arguments as Map;
+          imgFiles = settingsMap['files'] as List<File>;
+        }
+        return CachedImagesPage(files: imgFiles);
       case "/detailImage":
         String? imgLink;
         String? imgName;
@@ -323,6 +332,7 @@ class MainPageBuilder {
         String? imgDataStr;
         List<String>? imgLinks;
         List<String>? imgNames;
+        List<File>? imgFiles;
         int? curIdx;
         if (settings.arguments != null) {
           var settingsMap = settings.arguments as Map;
@@ -332,6 +342,7 @@ class MainPageBuilder {
           imgDataStr = settingsMap['imgDataStr'] as String?;
           imgLinks = settingsMap['imgLinks'] as List<String>?;
           imgNames = settingsMap['imgNames'] as List<String>?;
+          imgFiles = settingsMap['imgFiles'] as List<File>?;
           curIdx = settingsMap['curIdx'] as int?;
         } else {
           return null;
@@ -339,6 +350,7 @@ class MainPageBuilder {
         return DetailImage(
           imgLink: imgLink ?? "", imgName: imgName, imgData: imgData,
           imgLinks: imgLinks, imgNames: imgNames, curIdx: curIdx, imgDataStr: imgDataStr,
+          imgFiles: imgFiles,
         );
       case "/home":
         return const HomePage();
@@ -359,6 +371,7 @@ MainRouterDelegate? mainRouterDelegate;
 
 BuildContext? getGlobalContext() {
   var globalContext = mainRouterDelegate?.navigatorKey.currentState?.context;
+  globalContext ??= mainRouterDelegate?.navigatorKey.currentContext;
   return globalContext;
 }
 
@@ -500,13 +513,15 @@ class MainRouterDelegate extends RouterDelegate<MyRouteConfig>
 
   @override
   Future<bool> popRoute() async {
-    if (navigatorKey.currentContext == null) {
+    // for android
+    var currentContext = navigatorKey.currentContext ?? navigatorKey.currentState?.context;
+    if (currentContext == null) {
       return Future.value(false);
     }
-    var navigatorCanPop = Navigator.of(navigatorKey.currentContext!).canPop();
+    var navigatorCanPop = Navigator.of(currentContext).canPop();
     if (navigatorCanPop && (!onWaitExit)) {
       // pop any dialog except exit dialog
-      Navigator.of(navigatorKey.currentContext!).pop();
+      Navigator.of(currentContext).pop();
       return true;
     }
     if (mainRoutes.length > 1) {
@@ -515,7 +530,7 @@ class MainRouterDelegate extends RouterDelegate<MyRouteConfig>
     }
     if (onWaitExit) { return false; }
     onWaitExit = true;
-    var value = await showConfirmDialog(navigatorKey.currentContext!, "退出应用", "rt");
+    var value = await showConfirmDialog(currentContext, "退出应用", "rt");
     if (value == null || value != "yes") {
       onWaitExit = false;
       return true;
