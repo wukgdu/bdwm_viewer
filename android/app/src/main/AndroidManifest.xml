@@ -16,7 +16,7 @@
         android:hasFragileUserData="true"
         android:extractNativeLibs="true"
         android:allowBackup="false"
-        android:enableOnBackInvokedCallback="true"
+        android:enableOnBackInvokedCallback="false"
         android:icon="@mipmap/ic_wei">
         <activity
             android:name=".MainActivity"
