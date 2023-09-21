@@ -677,7 +677,9 @@ class _UserInfoViewState extends State<UserInfoView> {
               // _multiLineItem("个人说明", user.signature, icon: const Icon(Icons.description)),
               // _multiHtmlLineItem("个人说明", Html(data: user.signature), icon: const Icon(Icons.description)),
               _multiHtmlLineItem("个人说明", HtmlComponent(user.signatureHtml, ts: const TextStyle(height: 1.0),), icon: const Icon(Icons.description)),
-              if (user.duty != null && user.dutyBoards != null) ...[
+              // if (user.duty != null && user.dutyBoards != null) ...[
+              // 很神奇的，会有下权限没有下干净的情况
+              if (user.dutyBoards != null) ...[
                 _multiLineItemForAdmin("担任版务", user.dutyBoards, user.dutyBoardLinks,)
               ],
             ],
