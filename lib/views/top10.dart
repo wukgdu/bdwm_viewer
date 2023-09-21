@@ -169,7 +169,7 @@ class OneTenComponent extends StatelessWidget {
         title: Text(
           breakLongText(item.title),
           textAlign: TextAlign.start,
-          overflow: TextOverflow.ellipsis,
+          overflow: globalConfigInfo.getShowDetailInCard() ? null : TextOverflow.ellipsis,
         ),
         subtitle: Row(
           children: [
@@ -209,7 +209,7 @@ class OneBlockComponent extends StatelessWidget {
         title: Text(
           breakLongText(item.title),
           textAlign: TextAlign.start,
-          overflow: TextOverflow.ellipsis,
+          overflow: globalConfigInfo.getShowDetailInCard() ? null : TextOverflow.ellipsis,
         ),
         subtitle: Row(
           children: [

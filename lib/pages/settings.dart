@@ -440,6 +440,17 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           const Divider(),
           SwitchListTile(
+            title: const Text("卡片显示详细信息"),
+            subtitle: const Text("完整标题"),
+            activeColor: bdwmPrimaryColor,
+            value: globalConfigInfo.showDetailInCard,
+            onChanged: (value) {
+              globalConfigInfo.showDetailInCard = value;
+              refresh();
+            },
+          ),
+          const Divider(),
+          SwitchListTile(
             title: const Text("主题帖显示悬浮按钮"),
             activeColor: bdwmPrimaryColor,
             value: globalConfigInfo.showFAB,

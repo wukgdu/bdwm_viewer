@@ -77,7 +77,7 @@ class _Top100ViewState extends State<Top100View> {
           breakLongText(item.title),
           // style: _biggerFont,
           textAlign: TextAlign.start,
-          overflow: TextOverflow.ellipsis,
+          overflow: globalConfigInfo.getShowDetailInCard() ? null : TextOverflow.ellipsis,
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
