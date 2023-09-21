@@ -8,6 +8,7 @@ import '../globalvars.dart';
 import '../router.dart';
 import './constants.dart' show bdwmPrimaryColor;
 import '../html_parser/favorite_parser.dart';
+import './board_bottom_info.dart' show jumpToAdminFromBoardCard;
 
 class FavoriteFutureView extends StatefulWidget {
   const FavoriteFutureView({Key? key}) : super(key: key);
@@ -175,6 +176,9 @@ class FavoriteViewState extends State<FavoriteView> {
             'boardName': item.boardName,
             'bid': item.boardLink.split("=").last,
           });
+        },
+        onLongPress: () {
+          jumpToAdminFromBoardCard(context, item.admin);
         },
       ),
     );

@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as hdom;
 
-import './utils.dart';
+import './utils.dart' show checkError, getTrimmedString, absThreadLink;
 import '../utils.dart' show TextAndLink;
+import './board_parser.dart' show AdminInfo;
 
 class BlockBoardItem {
   String boardName = "";
@@ -14,7 +15,7 @@ class BlockBoardItem {
   bool isSub = false;
   bool readOnly = false;
   bool likeIt = false;
-  List<TextAndLink> admin = <TextAndLink>[];
+  List<AdminInfo> admin = <AdminInfo>[];
   TextAndLink lastUpdate = TextAndLink.empty();
   String? lastPostTitle;
 
@@ -107,12 +108,13 @@ BlockInfo parseBlock(String htmlStr) {
         thereIsAdmin = true;
       }
       var adminDom = bbdom.querySelector(".admin")?.querySelectorAll(".inline-link");
-      var adminTL = <TextAndLink>[];
+      var adminTL = <AdminInfo>[];
       if ((adminDom != null) && (adminDom.isNotEmpty)) {
         for (var ad in adminDom) {
           var adminName = getTrimmedString(ad);
           var adminLink = absThreadLink(ad.attributes['href'] ?? "");
-          adminTL.add(TextAndLink(adminName, adminLink));
+          var uid = ad.attributes['href']?.split("=").last ?? "15265";
+          adminTL.add(AdminInfo(userName: adminName, link: adminLink, uid: uid));
         }
       }
       var isSub = false;
@@ -162,12 +164,13 @@ BlockInfo parseBlock(String htmlStr) {
           thereIsAdmin = true;
         }
         var adminDom = bbdom.querySelector(".admin")?.querySelectorAll(".inline-link");
-        var adminTL = <TextAndLink>[];
+        var adminTL = <AdminInfo>[];
         if ((adminDom != null) && (adminDom.isNotEmpty)) {
           for (var ad in adminDom) {
             var adminName = getTrimmedString(ad);
             var adminLink = absThreadLink(ad.attributes['href'] ?? "");
-            adminTL.add(TextAndLink(adminName, adminLink));
+            var uid = ad.attributes['href']?.split("=").last ?? "15265";
+            adminTL.add(AdminInfo(userName: adminName, link: adminLink, uid: uid));
           }
         }
         var isSub = false;

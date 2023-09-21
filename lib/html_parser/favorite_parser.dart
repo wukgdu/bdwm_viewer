@@ -3,14 +3,15 @@ import 'dart:io';
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
 
-import './utils.dart';
-import '../utils.dart';
+import './utils.dart' show getTrimmedString, absThreadLink, checkError;
+import '../utils.dart' show TextAndLink;
+import './board_parser.dart' show AdminInfo;
 
 class FavoriteBoard {
   String boardName = "";
   String engName = "";
   String people = "";
-  List<TextAndLink> admin = <TextAndLink>[];
+  List<AdminInfo> admin = <AdminInfo>[];
   bool unread = true;
   String boardLink = "";
   TextAndLink lastUpdate = TextAndLink.empty();
@@ -61,12 +62,13 @@ FavoriteBoardInfo parseFavoriteBoard(String htmlStr) {
     final boardLink = absThreadLink(item.querySelector(".block-link")?.attributes['href'] ?? "");
     final unread = item.querySelector(".dot.red") != null ? true : false;
     var adminDom = item.querySelector(".admin")?.querySelectorAll(".inline-link");
-    var adminTL = <TextAndLink>[];
+    var adminTL = <AdminInfo>[];
     if ((adminDom != null) && (adminDom.isNotEmpty)) {
       for (var ad in adminDom) {
         var adminName = getTrimmedString(ad);
         var adminLink = absThreadLink(ad.attributes['href'] ?? "");
-        adminTL.add(TextAndLink(adminName, adminLink));
+        var uid = ad.attributes['href']?.split("=").last ?? "15265";
+        adminTL.add(AdminInfo(userName: adminName, link: adminLink, uid: uid));
       }
     }
     final lastUpdateTime = getTrimmedString(item.querySelector(".update"));

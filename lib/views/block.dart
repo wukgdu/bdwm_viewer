@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import './constants.dart';
 import '../router.dart';
 import '../html_parser/block_parser.dart';
+import './board_bottom_info.dart' show jumpToAdminFromBoardCard;
 
 class BlockView extends StatefulWidget {
   final String bid;
@@ -29,6 +30,9 @@ class _BlockViewState extends State<BlockView> {
                   'boardName': item.boardName,
                   'bid': item.bid,
                 });
+              },
+              onLongPress: () {
+                jumpToAdminFromBoardCard(context, item.admin);
               },
               title: Text.rich(
                 TextSpan(
