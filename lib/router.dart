@@ -28,6 +28,7 @@ import './pages/friends_posts.dart';
 import './pages/settings.dart';
 import './pages/detail_image.dart';
 import './pages/recent_thread.dart';
+import './pages/post_history.dart' show PostHistoryPage;
 import './pages/marked_thread.dart';
 import './pages/user_stat.dart';
 import './pages/board_note.dart';
@@ -303,6 +304,8 @@ class MainPageBuilder {
         return const RecentThreadPage();
       case "/markedThread":
         return const MarkedThreadPage();
+      case "/postHistory":
+        return const PostHistoryPage();
       case "/seeNoThem":
         return const SeeNoThemPage();
       case "/friendsPosts":

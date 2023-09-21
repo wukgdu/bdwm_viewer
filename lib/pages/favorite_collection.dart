@@ -1,4 +1,3 @@
-import 'package:bdwm_viewer/bdwm/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 
@@ -9,6 +8,7 @@ import '../views/drawer.dart';
 import '../html_parser/favorite_collection_parser.dart';
 import '../bdwm/req.dart' show bdwmClient;
 import '../utils.dart' show breakLongText;
+import '../bdwm/collection.dart' show bdwmCollectionSetGood;
 
 class FavoriteCollectionPage extends StatefulWidget {
   const FavoriteCollectionPage({super.key});

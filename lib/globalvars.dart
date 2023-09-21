@@ -685,6 +685,7 @@ class BDWMConfig {
   String maxPageNum = "8";
   bool autoSaveConfig = false;
   bool showDetailInCard = false;
+  bool savePostHistory = true;
   Set<String> seeNoThem = {};
 
   Lock lock = Lock();
@@ -715,6 +716,7 @@ class BDWMConfig {
       "guestFirst": guestFirst,
       "autoSaveConfig": autoSaveConfig,
       "showDetailInCard": showDetailInCard,
+      "savePostHistory": savePostHistory,
     };
   }
   void fromJson(Map<String, dynamic> jsonContent) {
@@ -735,11 +737,23 @@ class BDWMConfig {
     useDynamicColor = jsonContent['useDynamicColor'] ?? useDynamicColor;
     autoHideBottomBar = jsonContent['autoHideBottomBar'] ?? autoHideBottomBar;
     showDetailInCard = jsonContent['showDetailInCard'] ?? showDetailInCard;
+    savePostHistory = jsonContent['savePostHistory'] ?? savePostHistory;
     List seeNoHimHerList = jsonContent['seeNoThem'] ?? seeNoThem.toList();
     seeNoThem = Set<String>.from(seeNoHimHerList.map((e) => e as String));
   }
   String gist() {
     return jsonEncode(toJson());
+  }
+
+  bool getSavePostHistory() {
+    return savePostHistory;
+  }
+
+  Future<bool> setSavePostHistory(bool newValue) async {
+    return await lock.synchronized(() async {
+      savePostHistory = newValue;
+      return await update();
+    });
   }
 
   bool getShowDetailInCard() {
@@ -1108,3 +1122,25 @@ class MarkedThreadInfo extends RecentThreadInfo {
 }
 
 var globalMarkedThread = MarkedThreadInfo.empty();
+
+class PostHistoryData extends RecentThreadInfo {
+  @override
+  int get maxCount => 400;
+  @override
+  String get storage => "bdwmposthistory.json";
+  PostHistoryData({required super.items});
+  PostHistoryData.empty() : super.empty();
+
+  @override
+  Future<bool> addOne({required String link, required String title, required String userName, required String boardName, required int timestamp}) async {
+    if (count >= maxCount) {
+      // do nothing, save all history
+      // return false;
+    }
+    items.add(RecentThreadItemInfo(link: link, title: title, userName: userName, boardName: boardName, timestamp: timestamp));
+    await update();
+    return true;
+  }
+}
+
+var globalPostHistoryData = PostHistoryData.empty();

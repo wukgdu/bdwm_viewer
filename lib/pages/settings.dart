@@ -451,6 +451,16 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           const Divider(),
           SwitchListTile(
+            title: const Text("保存发帖历史"),
+            activeColor: bdwmPrimaryColor,
+            value: globalConfigInfo.savePostHistory,
+            onChanged: (value) {
+              globalConfigInfo.savePostHistory = value;
+              refresh();
+            },
+          ),
+          const Divider(),
+          SwitchListTile(
             title: const Text("主题帖显示悬浮按钮"),
             activeColor: bdwmPrimaryColor,
             value: globalConfigInfo.showFAB,

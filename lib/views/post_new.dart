@@ -20,6 +20,7 @@ import './utils.dart';
 import '../router.dart' show nv2Pop, forceRefresh, nv2Replace;
 import './editor.dart' show FquillEditor, FquillEditorToolbar, genController, genControllerFromJson;
 import './multi_users.dart' show SwitchUsersComponent;
+import '../pages/post_new.dart' show PostNewPage;
 
 class PostNewView extends StatefulWidget {
   final String bid;
@@ -187,51 +188,71 @@ class _PostNewViewState extends State<PostNewView> {
                     ? attachCount > 0
                       ? widget.postNewInfo.attachpath : ""
                     : widget.postNewInfo.attachpath;
-                  bdwmSimplePost(
+                  var value = await bdwmSimplePost(
                     bid: widget.bid, title: titleValue.text, content: nContent, useBDWM: useHtmlContent, parentid: widget.parentid,
-                    signature: nSignature, config: config, modify: widget.postid!=null, postid: widget.postid, attachpath: nAttachPath)
-                  .then((value) {
-                    if (value.success) {
-                      // TODO: handle forward (no plan)
-                      showAlertDialog(context, "发送成功", const Text("rt"),
-                        actions1: TextButton(
-                          onPressed: () { Navigator.of(context).pop(); },
-                          child: const Text("知道了"),
-                        )
-                      ).then((value2) {
-                        if (widget.parentid == null && widget.postid == null) {
-                          // 版面发新帖
-                          if (value.threadid == null || value.threadid == -1) { return; }
-                          if (value.postid == null || value.postid == -1) { return; }
-                          nv2Replace(context, '/thread', arguments: {
-                            'bid': widget.bid,
-                            'threadid': value.threadid.toString(),
-                            'postid': value.postid.toString(),
-                            'boardName': "发帖",
-                            'page': 'a',
-                            'needToBoard': false,
-                          });
-                          // forceRefresh(value.postid!);
-                        } else {
-                          forceRefresh(value.postid ?? -1);
-                          nv2Pop(context);
-                        }
-                      });
-                    } else {
-                      var errorMessage = "发送失败，请稍后重试";
-                      if (value.error == 43) {
-                        errorMessage = "对不起，您的帖子包含敏感词，请检查后发布";
-                      } else if (value.error == -1) {
-                        errorMessage = value.result!;
+                    signature: nSignature, config: config, modify: widget.postid!=null, postid: widget.postid, attachpath: nAttachPath);
+                  if (value.success) {
+                    // TODO: handle forward (no plan)
+                    if (globalConfigInfo.getSavePostHistory()) {
+                      var timestamp1000 = DateTime.now().millisecondsSinceEpoch;
+                      var boardName = "未知版面";
+                      var newPostLink = "$v2Host/post-read.php?bid=${widget.bid}&threadid=${value.threadid}&page=a&postid=${value.postid}#${value.postid}";
+                      if (value.threadid == null || value.threadid == -1) {
+                        newPostLink = "$v2Host/post-read-single.php?bid=${widget.bid}&postid=${value.postid}";
                       }
-                      showAlertDialog(context, "发送失败", Text(errorMessage),
-                        actions1: TextButton(
-                          onPressed: () { Navigator.of(context).pop(); },
-                          child: const Text("知道了"),
-                        )
+                      if (!mounted) { return; }
+                      var postNewPageWidget = context.findAncestorWidgetOfExactType<PostNewPage>();
+                      if (postNewPageWidget != null) {
+                        boardName = postNewPageWidget.boardName;
+                      }
+                      await globalPostHistoryData.addOne(
+                        link: newPostLink,
+                        title: titleValue.text,
+                        boardName: boardName,
+                        userName: globalUInfo.username,
+                        timestamp: timestamp1000,
                       );
                     }
-                  });
+                    if (!mounted) { return; }
+                    showAlertDialog(context, "发送成功", const Text("rt"),
+                      actions1: TextButton(
+                        onPressed: () { Navigator.of(context).pop(); },
+                        child: const Text("知道了"),
+                      )
+                    ).then((value2) {
+                      if (widget.parentid == null && widget.postid == null) {
+                        // 版面发新帖
+                        if (value.threadid == null || value.threadid == -1) { return; }
+                        if (value.postid == null || value.postid == -1) { return; }
+                        nv2Replace(context, '/thread', arguments: {
+                          'bid': widget.bid,
+                          'threadid': value.threadid.toString(),
+                          'postid': value.postid.toString(),
+                          'boardName': "发帖",
+                          'page': 'a',
+                          'needToBoard': false,
+                        });
+                        // forceRefresh(value.postid!);
+                      } else {
+                        forceRefresh(value.postid ?? -1);
+                        nv2Pop(context);
+                      }
+                    });
+                  } else {
+                    var errorMessage = "发送失败，请稍后重试";
+                    if (value.error == 43) {
+                      errorMessage = "对不起，您的帖子包含敏感词，请检查后发布";
+                    } else if (value.error == -1) {
+                      errorMessage = value.result!;
+                    }
+                    if (!mounted) { return; }
+                    showAlertDialog(context, "发送失败", Text(errorMessage),
+                      actions1: TextButton(
+                        onPressed: () { Navigator.of(context).pop(); },
+                        child: const Text("知道了"),
+                      )
+                    );
+                  }
                 },
                 child: Text("发布", style: TextStyle(color: bdwmPrimaryColor)),
               ),

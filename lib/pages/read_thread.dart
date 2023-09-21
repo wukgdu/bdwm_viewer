@@ -1262,7 +1262,7 @@ void naviGotoThread(context, String bid, String threadid, String page, String bo
   });
 }
 
-Map<String, Object?>? naviGotoThreadByLink(BuildContext? context, String link, String boardName, {bool? needToBoard, String? pageDefault, bool replaceIt=false, bool getArguments=false}) {
+Map<String, Object?>? naviGotoThreadByLink(BuildContext? context, String link, String boardName, {bool? needToBoard, String? pageDefault, bool replaceIt=false, bool getArguments=false, bool allowSingle=false}) {
   var bid = getQueryValueImproved(link, 'bid');
   if (bid == null) { return null; }
   var page = pageDefault ?? "1";
@@ -1274,7 +1274,22 @@ Map<String, Object?>? naviGotoThreadByLink(BuildContext? context, String link, S
     page = getQueryValueImproved(link, 'page') ?? page;
   }
   var threadid = getQueryValueImproved(link, 'threadid');
-  if (threadid == null) { return null; }
+  if (threadid == null) {
+    if (allowSingle) {
+      Map<String, Object?> arguments = {
+        'bid': bid,
+        'boardName': boardName,
+        'postid': postid,
+      };
+      if (getArguments == true) {
+        return arguments;
+      }
+      if (context==null) { return null; }
+      var nv2Do = replaceIt ? nv2Replace : nv2Push;
+      nv2Do(context, '/singlePost', arguments: arguments);
+    }
+    return null;
+  }
   Map<String, Object?> arguments = {
     'bid': bid,
     'threadid': threadid,

@@ -170,10 +170,12 @@ class _OperateComponentState extends State<OperateComponent> {
     padding: const EdgeInsets.all(6.0),
     // textStyle: MaterialStatePropertyAll(TextStyle(fontSize: 12)),
   );
+  String boardName = "";
 
   @override
   void initState() {
     super.initState();
+    boardName = widget.boardName.split('(')[0];
   }
   @override
   void dispose() {
@@ -191,7 +193,7 @@ class _OperateComponentState extends State<OperateComponent> {
           onPressed: !widget.onePostInfo.canReply ? null : () {
             nv2Push(context, '/post', arguments: {
               'bid': widget.bid,
-              'boardName': "回帖",
+              'boardName': "$boardName/回帖",
               'parentid': widget.postid,
               // Anonymous's nickname
               'nickName': widget.onePostInfo.authorInfo.userName == "Anonymous"
@@ -271,7 +273,7 @@ class _OperateComponentState extends State<OperateComponent> {
             onPressed: () {
               nv2Push(context, '/post', arguments: {
                 'bid': widget.bid,
-                'boardName': "修改",
+                'boardName': "$boardName/修改",
                 'postid': widget.postid,
               });
             },

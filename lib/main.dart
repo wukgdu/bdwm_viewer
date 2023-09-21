@@ -38,6 +38,7 @@ void main() async {
   await globalImmConfigInfo.init();
   await globalThreadHistory.init();
   await globalMarkedThread.init();
+  await globalPostHistoryData.init();
   await initFlnInstance();
   initPrimaryColor();
   // if (!globalConfigInfo.getGuestFirst()) {

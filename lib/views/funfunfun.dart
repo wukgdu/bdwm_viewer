@@ -394,6 +394,16 @@ class FunFunFunView extends StatelessWidget {
         Card(
           child: ListTile(
             onTap: () {
+              nv2Push(context, '/postHistory');
+            },
+            title: const Text("我的发帖"),
+            subtitle: Text("本地记录 ${globalPostHistoryData.items.length}条"),
+            trailing: const Icon(Icons.arrow_right),
+          ),
+        ),
+        Card(
+          child: ListTile(
+            onTap: () {
               nv2Push(context, '/recentThread');
             },
             title: const Text("最近浏览"),
