@@ -15,6 +15,7 @@ class FavoriteBoard {
   bool unread = true;
   String boardLink = "";
   TextAndLink lastUpdate = TextAndLink.empty();
+  bool readOnly = false;
 
   FavoriteBoard.init({
     required this.boardName,
@@ -24,6 +25,7 @@ class FavoriteBoard {
     required this.unread,
     required this.boardLink,
     required this.lastUpdate,
+    required this.readOnly,
   });
 
   @override
@@ -71,11 +73,12 @@ FavoriteBoardInfo parseFavoriteBoard(String htmlStr) {
         adminTL.add(AdminInfo(userName: adminName, link: adminLink, uid: uid));
       }
     }
+    var readOnly = item.querySelector(".readonly") != null;
     final lastUpdateTime = getTrimmedString(item.querySelector(".update"));
     final lastUpdatePost = absThreadLink(item.querySelector(".update")?.attributes['href'] ?? "");
     favoriteBoards.add(FavoriteBoard.init(
       boardName: boardName, engName: engName, people: people, admin: adminTL, unread: unread,
-      boardLink: boardLink, lastUpdate: TextAndLink(lastUpdateTime, lastUpdatePost)
+      boardLink: boardLink, lastUpdate: TextAndLink(lastUpdateTime, lastUpdatePost), readOnly: readOnly,
     ));
   }
     return FavoriteBoardInfo(favoriteBoards: favoriteBoards);

@@ -137,11 +137,11 @@ class FavoriteViewState extends State<FavoriteView> {
         title: Text.rich(
           TextSpan(
             children: [
-              TextSpan(text: item.boardName),
+              TextSpan(text: item.boardName, style: TextStyle(color: item.readOnly ? Colors.grey : null)),
               const TextSpan(text: "  "),
               TextSpan(
                 text: item.engName,
-                style: const TextStyle(color: Colors.grey, fontSize: 14),
+                style: TextStyle(color: item.readOnly ? Colors.grey : null)
               ),
               const TextSpan(text: "  "),
               for (var _ in item.admin) ...[
@@ -167,6 +167,7 @@ class FavoriteViewState extends State<FavoriteView> {
               child: Text(
                 "${item.lastUpdate.text}（${item.people}）",
                 overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: item.readOnly ? Colors.grey : null)
               ),
             )
           ],

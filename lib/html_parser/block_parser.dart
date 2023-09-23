@@ -18,6 +18,7 @@ class BlockBoardItem {
   List<AdminInfo> admin = <AdminInfo>[];
   TextAndLink lastUpdate = TextAndLink.empty();
   String? lastPostTitle;
+  String people = "";
 
   BlockBoardItem.empty();
   BlockBoardItem({
@@ -30,6 +31,7 @@ class BlockBoardItem {
     required this.likeIt,
     required this.admin,
     required this.lastUpdate,
+    required this.people,
     this.lastPostTitle,
   });
 }
@@ -137,7 +139,7 @@ BlockInfo parseBlock(String htmlStr) {
       String lastPostTitle = getTrimmedString(bbdom.querySelector(".right .post .title"));
       blockBoardItems.add(BlockBoardItem(
         boardName: boardName, engName: engName, bid: subbid, thereIsAdmin: thereIsAdmin, isSub: isSub, readOnly: readOnly, likeIt: likeIt, admin: adminTL,
-        lastUpdate: TextAndLink(lastUpdateTime, lastUpdatePost), lastPostTitle: lastPostTitle,
+        lastUpdate: TextAndLink(lastUpdateTime, lastUpdatePost), lastPostTitle: lastPostTitle, people: "",
       ));
     }
     blockBoardSets.add(BlockBoardSet(title: title, blockBoardItems: blockBoardItems, isHot: true));
@@ -160,6 +162,7 @@ BlockInfo parseBlock(String htmlStr) {
         var thereIsAdmin = false;
         var boardName = getTrimmedString(bbdom.querySelector(".name"));
         var engName = getTrimmedString(bbdom.querySelector(".eng-name"));
+        final people = getTrimmedString(bbdom.querySelector(".people"));
         if (bbdom.querySelectorAll(".admin .inline-link").isNotEmpty) {
           thereIsAdmin = true;
         }
@@ -192,7 +195,7 @@ BlockInfo parseBlock(String htmlStr) {
         String lastUpdatePost = absThreadLink(bbdom.querySelector(".update")?.attributes['href'] ?? "");
         blockBoardItems.add(BlockBoardItem(
           boardName: boardName, engName: engName, bid: subbid, thereIsAdmin: thereIsAdmin, isSub: isSub, readOnly: readOnly, likeIt: likeIt, admin: adminTL,
-          lastUpdate: TextAndLink(lastUpdateTime, lastUpdatePost),
+          lastUpdate: TextAndLink(lastUpdateTime, lastUpdatePost), people: people,
         ));
       }
       blockBoardSets.add(BlockBoardSet(title: title, blockBoardItems: blockBoardItems, isHot: false));

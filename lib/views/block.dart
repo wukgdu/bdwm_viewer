@@ -66,7 +66,7 @@ class _BlockViewState extends State<BlockView> {
                     child: Text(
                       item.lastPostTitle != null
                       ? "${item.lastUpdate.text}\n${item.lastPostTitle}"
-                      : item.lastUpdate.text,
+                      : "${item.lastUpdate.text}（${item.people}）",
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(color: item.readOnly ? Colors.grey : null)
                     ),
