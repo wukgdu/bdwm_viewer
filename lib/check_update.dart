@@ -4,7 +4,7 @@ import './bdwm/req.dart';
 import './notification.dart' show sendNotification;
 
 const String innerLinkForBBS = "https://bbs.pku.edu.cn/v2/collection-read.php?path=groups%2FGROUP_0%2FPersonalCorpus%2FO%2Fonepiece%2FD93F86C79%2FA862DAFBA";
-const String curVersionForBBS = "1.9.9";
+const String curVersionForBBS = "1.10.0";
 
 bool isNewVersion(List<int> onlineNumbers, List<int> localNumbers) {
   if (onlineNumbers[0] > localNumbers[0]) { return true; }
