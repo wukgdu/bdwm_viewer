@@ -216,7 +216,7 @@ class _MailDetailViewState extends State<MailDetailView> {
                   if (base.isEmpty || base=="none") {
                     return;
                   }
-                  bdwmCollectionImport(from: "post", bid: "", postid: widget.postid, threadid: "", base: base, mode: "")
+                  bdwmCollectionImport(from: "mail", bid: "", postid: widget.postid, threadid: "", base: base, mode: "")
                   .then((importRes) {
                     var txt = "收藏成功";
                     if (importRes.success == false) {
