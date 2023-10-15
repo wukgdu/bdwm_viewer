@@ -46,7 +46,7 @@ dependencies:
   # quick_notify: ^0.2.1
   extended_image: ^8.0.0
   permission_handler: ^11.0.0
-  file_picker: ^5.0.1
+  file_picker: ^6.0.0
   # image_picker_saver: ^0.3.0
   # image_gallery_saver: ^1.7.1
   # csslib: ^0.17.2
@@ -79,7 +79,7 @@ dependencies:
   intl: ^0.18.0
   dynamic_color: ^1.6.0
   device_info_plus: ^9.0.0
-  flutter_local_notifications: ^15.0.0
+  flutter_local_notifications: ^16.1.0
   home_widget: ^0.3.0
   flutter_highlight:
     git:

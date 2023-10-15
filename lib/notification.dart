@@ -74,7 +74,7 @@ Future<bool> checkAndRequestNotificationPermission() async {
       } else {
         couldDoIt = (await flnInstance.areNotificationsEnabled()) ?? false;
         if (couldDoIt == false) {
-          couldDoIt = (await flnInstance.requestPermission()) ?? false;
+          couldDoIt = (await flnInstance.requestNotificationsPermission()) ?? false;
         }
       }
     } else {
