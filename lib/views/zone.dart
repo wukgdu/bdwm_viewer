@@ -57,7 +57,7 @@ class _ZoneViewState extends State<ZoneView> {
                     style: ButtonStyle(textStyle: MaterialStateProperty.all(const TextStyle(fontWeight: FontWeight.normal))),
                     child: Text(e.text, style: textLinkStyle),
                   );
-                }).toList(),
+                }),
               ],
             ),
             const Divider(),

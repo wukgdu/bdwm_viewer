@@ -130,7 +130,7 @@ class _BoardSearchDialogState extends State<BoardSearchDialog> {
 class BoardPage extends StatefulWidget {
   final String boardName;
   final String bid;
-  const BoardPage({Key? key, required this.boardName, required this.bid}) : super(key: key);
+  const BoardPage({super.key, required this.boardName, required this.bid});
 
   @override
   State<BoardPage> createState() => _BoardPageState();
@@ -357,7 +357,7 @@ class BoardSinglePage extends StatefulWidget {
   final String bid;
   final String? stype;
   final String smode;
-  const BoardSinglePage({Key? key, required this.boardName, required this.bid, this.stype, required this.smode}) : super(key: key);
+  const BoardSinglePage({super.key, required this.boardName, required this.bid, this.stype, required this.smode});
 
   @override
   State<BoardSinglePage> createState() => _BoardSinglePageState();

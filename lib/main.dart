@@ -159,7 +159,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
 // const _brandBlue = Color(0xFF1E88E5);
 
 class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+  const MainPage({super.key});
 
   @override
   State<MainPage> createState() => MainPageState();

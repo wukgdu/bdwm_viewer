@@ -11,7 +11,7 @@ import '../html_parser/favorite_parser.dart';
 import './board_bottom_info.dart' show jumpToAdminFromBoardCard;
 
 class FavoriteFutureView extends StatefulWidget {
-  const FavoriteFutureView({Key? key}) : super(key: key);
+  const FavoriteFutureView({super.key});
 
   @override
   State<FavoriteFutureView> createState() => _FavoriteFutureViewState();

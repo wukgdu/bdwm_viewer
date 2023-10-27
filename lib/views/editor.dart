@@ -14,6 +14,68 @@ import '../bdwm/search.dart';
 import './fq_image.dart' show ImageEmbedBuilder;
 import '../utils.dart' show isValidUserName;
 
+class FquillProvider extends StatelessWidget {
+  final fquill.QuillController controller;
+  final bool autoFocus;
+  final bool readOnly;
+  final double height;
+  final EdgeInsets? margin;
+  const FquillProvider({super.key, required this.controller, required this.autoFocus, this.readOnly=false, required this.height, this.margin});
+
+  @override
+  Widget build(BuildContext context) {
+    return fquill.QuillProvider(
+      configurations: fquill.QuillConfigurations(
+        controller: controller,
+        // final controller = context.requireQuillController;
+        sharedConfigurations: const fquill.QuillSharedConfigurations(
+          locale: Locale('zh', 'cn'),
+        )
+      ),
+      child: Column(
+        children: [
+          Expanded(
+            child: FquillEditor(
+              key: key,
+              autoFocus: autoFocus,
+              controller: controller,
+              readOnly: readOnly,
+              height: height,
+              margin: margin,
+            ),
+          ),
+          FquillEditorToolbar(controller: controller),
+        ],
+      ),
+    );
+  }
+}
+
+class FquillProvider2 extends StatelessWidget {
+  final fquill.QuillController controller;
+  final Widget fquillEditorWrap;
+  final Widget fquillEditorToolBarWrap;
+  const FquillProvider2({super.key, required this.controller, required this.fquillEditorWrap, required this.fquillEditorToolBarWrap});
+
+  @override
+  Widget build(BuildContext context) {
+    return fquill.QuillProvider(
+      configurations: fquill.QuillConfigurations(
+        controller: controller,
+        sharedConfigurations: const fquill.QuillSharedConfigurations(
+          locale: Locale('zh', 'cn'),
+        )
+      ),
+      child: Column(
+        children: [
+          fquillEditorWrap,
+          fquillEditorToolBarWrap,
+        ],
+      ),
+    );
+  }
+}
+
 fquill.QuillController genController(String? content) {
   late fquill.QuillController controller;
   if (content!=null && content.isNotEmpty) {
@@ -44,14 +106,16 @@ fquill.QuillController genControllerFromJson(List<dynamic> clist) {
 class FquillEditor extends StatefulWidget {
   final fquill.QuillController controller;
   final bool autoFocus;
-  final double? height;
+  final double height;
   final bool readOnly;
+  final EdgeInsets? margin;
   const FquillEditor({
     super.key,
     required this.controller,
     required this.autoFocus,
-    this.height,
+    required this.height,
     this.readOnly = false,
+    this.margin,
   });
 
   @override
@@ -73,9 +137,7 @@ class _FquillEditorState extends State<FquillEditor> {
     if (globalConfigInfo.getSuggestUser()==true) {
       addUserSuggest();
     }
-    if (widget.height != null) {
-      _focusNode.addListener(changeBorder);
-    }
+    _focusNode.addListener(changeBorder);
   }
 
   void changeBorder() {
@@ -85,9 +147,7 @@ class _FquillEditorState extends State<FquillEditor> {
   @override
   void dispose() {
     _scrollController.dispose();
-    if (widget.height != null) {
-      _focusNode.removeListener(changeBorder);
-    }
+    _focusNode.removeListener(changeBorder);
     _focusNode.dispose();
     _showBorder.dispose();
     removeSuggestionNow();
@@ -270,21 +330,18 @@ class _FquillEditorState extends State<FquillEditor> {
   Widget build(BuildContext context) {
     var editor =  fquill.QuillEditor(
       key: editorKey,
-      controller: widget.controller,
       scrollController: _scrollController,
-      scrollable: true,
       focusNode: _focusNode,
-      autoFocus: widget.autoFocus, // 回帖
-      readOnly: widget.readOnly,
-      expands: false,
-      padding: const EdgeInsets.all(0.0),
-      keyboardAppearance: Theme.of(context).brightness,
-      locale: const Locale('zh'),
-      embedBuilders: [ImageEmbedBuilder()],
+      configurations: fquill.QuillEditorConfigurations(
+        scrollable: true,
+        autoFocus: widget.autoFocus, // 回帖
+        readOnly: widget.readOnly,
+        expands: false,
+        padding: const EdgeInsets.all(0.0),
+        keyboardAppearance: Theme.of(context).brightness,
+        embedBuilders: [ImageEmbedBuilder()],
+      ),
     );
-    if (widget.height == null) {
-      return editor;
-    }
     var isDark = Theme.of(context).brightness == Brightness.dark;
     return ValueListenableBuilder(
       valueListenable: _showBorder,
@@ -300,7 +357,7 @@ class _FquillEditorState extends State<FquillEditor> {
             borderRadius: const BorderRadius.all(Radius.circular(5)),
           ),
           padding: EdgeInsets.all(_focusNode.hasFocus ? 4.0 : 5.0),
-          margin: const EdgeInsets.only(left: 10, right: 10, top: 0),
+          margin: widget.margin ?? const EdgeInsets.only(left: 10, right: 10, top: 0),
           height: widget.height,
           child: child,
         );
@@ -316,96 +373,97 @@ class FquillEditorToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return fquill.QuillToolbar.basic(
-      controller: controller,
-      toolbarSectionSpacing: 1,
-      showAlignmentButtons: false,
-      showBoldButton: true,
-      showUnderLineButton: true,
-      showStrikeThrough: false,
-      showDirection: false,
-      showFontFamily: false,
-      showFontSize: false,
-      showHeaderStyle: false,
-      showIndent: false,
-      showLink: false,
-      showSearchButton: false,
-      showListBullets: false,
-      showListNumbers: false,
-      showListCheck: false,
-      showDividers: false,
-      showRightAlignment: false,
-      showItalicButton: false,
-      showCenterAlignment: false,
-      showLeftAlignment: false,
-      showJustifyAlignment: false,
-      showSmallButton: false,
-      showInlineCode: false,
-      showCodeBlock: false,
-      showColorButton: false,
-      showRedo: false,
-      showUndo: false,
-      showSubscript: false,
-      showSuperscript: false,
-      showBackgroundColorButton: false,
-      customButtons: [
-        fquill.QuillCustomButton(
-          icon: Icons.color_lens,
-          onTap: () {
-            showColorDialog(context, (bdwmRichText['fc'] as Map<String, int>).keys.toList())
-            .then((value) {
-              if (value == null) { return; }
-              controller.formatSelection(fquill.ColorAttribute(value));
-            });
-          }
-        ),
-        fquill.QuillCustomButton(
-          icon: Icons.format_color_fill,
-          onTap: () {
-            showColorDialog(context, (bdwmRichText['bc'] as Map<String, int>).keys.toList())
-            .then((value) {
-              if (value == null) { return; }
-              controller.formatSelection(fquill.BackgroundAttribute(value));
-            });
-          }
-        ),
-        fquill.QuillCustomButton(
-          icon: Icons.image,
-          onTap: () {
-            showTextDialog(context, "图片链接")
-            .then((value) {
-              if (value==null) { return; }
-              if (value.isEmpty) { return; }
-              var index = controller.selection.baseOffset;
-              var length = controller.selection.extentOffset - index;
-              controller.replaceText(index, length, fquill.BlockEmbed.image(value), null);
-              controller.formatText(index, 1, const fquill.StyleAttribute("mobileAlignment:topLeft;mobileWidth:150;mobileHeight:150"));
-            },);
-          }
-        ),
-        fquill.QuillCustomButton(
-          icon: Icons.code,
-          onTap: () {
-            showTextDialog(context, "代码语言")
-            .then((value) {
-              if (value==null) { return; }
-              if (value.isEmpty) { return; }
-              var selection = controller.selection;
-              var index = selection.baseOffset;
-              var length = selection.extentOffset - index;
-              var rawText = controller.plainTextEditingValue.text;
-              var oriText = selection.textInside(rawText);
-              var preText = '<code lang="$value">';
-              var newText = '$preText$oriText</code>';
-              controller.replaceText(index, length, newText, null);
-              controller.updateSelection(selection.copyWith(
-                baseOffset: index+preText.length,
-                extentOffset: index+preText.length,
-              ), fquill.ChangeSource.LOCAL);
-            },);
-          }
-        ),
-      ]
+    return fquill.QuillToolbar(
+      configurations: fquill.QuillToolbarConfigurations(
+        toolbarSectionSpacing: 1,
+        showAlignmentButtons: false,
+        showBoldButton: true,
+        showUnderLineButton: true,
+        showStrikeThrough: false,
+        showDirection: false,
+        showFontFamily: false,
+        showFontSize: false,
+        showHeaderStyle: false,
+        showIndent: false,
+        showLink: false,
+        showSearchButton: false,
+        showListBullets: false,
+        showListNumbers: false,
+        showListCheck: false,
+        showDividers: false,
+        showRightAlignment: false,
+        showItalicButton: false,
+        showCenterAlignment: false,
+        showLeftAlignment: false,
+        showJustifyAlignment: false,
+        showSmallButton: false,
+        showInlineCode: false,
+        showCodeBlock: false,
+        showColorButton: false,
+        showRedo: false,
+        showUndo: false,
+        showSubscript: false,
+        showSuperscript: false,
+        showBackgroundColorButton: false,
+        customButtons: [
+          fquill.QuillCustomButton(
+            iconData: Icons.color_lens,
+            onTap: () {
+              showColorDialog(context, (bdwmRichText['fc'] as Map<String, int>).keys.toList())
+              .then((value) {
+                if (value == null) { return; }
+                controller.formatSelection(fquill.ColorAttribute(value));
+              });
+            }
+          ),
+          fquill.QuillCustomButton(
+            iconData: Icons.format_color_fill,
+            onTap: () {
+              showColorDialog(context, (bdwmRichText['bc'] as Map<String, int>).keys.toList())
+              .then((value) {
+                if (value == null) { return; }
+                controller.formatSelection(fquill.BackgroundAttribute(value));
+              });
+            }
+          ),
+          fquill.QuillCustomButton(
+            iconData: Icons.image,
+            onTap: () {
+              showTextDialog(context, "图片链接")
+              .then((value) {
+                if (value==null) { return; }
+                if (value.isEmpty) { return; }
+                var index = controller.selection.baseOffset;
+                var length = controller.selection.extentOffset - index;
+                controller.replaceText(index, length, fquill.BlockEmbed.image(value), null);
+                controller.formatText(index, 1, const fquill.StyleAttribute("mobileAlignment:topLeft;mobileWidth:150;mobileHeight:150"));
+              },);
+            }
+          ),
+          fquill.QuillCustomButton(
+            iconData: Icons.code,
+            onTap: () {
+              showTextDialog(context, "代码语言")
+              .then((value) {
+                if (value==null) { return; }
+                if (value.isEmpty) { return; }
+                var selection = controller.selection;
+                var index = selection.baseOffset;
+                var length = selection.extentOffset - index;
+                var rawText = controller.plainTextEditingValue.text;
+                var oriText = selection.textInside(rawText);
+                var preText = '<code lang="$value">';
+                var newText = '$preText$oriText</code>';
+                controller.replaceText(index, length, newText, null);
+                controller.updateSelection(selection.copyWith(
+                  baseOffset: index+preText.length,
+                  extentOffset: index+preText.length,
+                ), fquill.ChangeSource.LOCAL);
+              },);
+            }
+          ),
+        ]
+      ),
     );
   }
 }

@@ -8,7 +8,7 @@ import './utils.dart' show showInformDialog;
 import './multi_users.dart' show SwitchUsersComponent;
 
 class LoginView extends StatefulWidget {
-  const LoginView({Key? key}) : super(key: key);
+  const LoginView({super.key});
 
   @override
   State<LoginView> createState() => _LoginViewState();

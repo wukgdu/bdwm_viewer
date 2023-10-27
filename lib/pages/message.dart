@@ -8,7 +8,7 @@ import '../views/constants.dart' show bdwmPrimaryColor;
 import '../globalvars.dart' show globalContactInfo, globalUInfo, globalConfigInfo;
 
 class MessagelistPage extends StatefulWidget {
-  const MessagelistPage({Key? key}) : super(key: key);
+  const MessagelistPage({super.key});
 
   @override
   State<MessagelistPage> createState() => _MessagelistPageState();

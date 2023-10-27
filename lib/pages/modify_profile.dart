@@ -6,7 +6,7 @@ import '../html_parser/modify_profile_parser.dart';
 import '../views/quill_utils.dart' show quill2BDWMtext;
 import '../views/utils.dart' show showConfirmDialog, showInformDialog;
 import '../views/constants.dart' show bdwmPrimaryColor;
-import '../views/editor.dart' show FquillEditor, FquillEditorToolbar, genController;
+import '../views/editor.dart' show FquillEditor, FquillEditorToolbar, genController, FquillProvider2;
 import '../views/user.dart' show RankSelectComponent;
 import '../globalvars.dart' show globalConfigInfo;
 import '../router.dart' show nv2Pop;
@@ -222,15 +222,14 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           genContainer(
             const Text("说明档", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0,),),
           ),
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
-              borderRadius: const BorderRadius.all(Radius.circular(5)),
+          FquillProvider2(
+            controller: _controller,
+            fquillEditorWrap: FquillEditor(controller: _controller, autoFocus: false, height: 200,),
+            fquillEditorToolBarWrap: Container(
+              padding: const EdgeInsets.only(left: 0, right: 0, top: 10),
+              child: FquillEditorToolbar(controller: _controller,)
             ),
-            height: 200,
-            child: FquillEditor(controller: _controller, autoFocus: false,),
           ),
-          FquillEditorToolbar(controller: _controller,)
         ],
       ),
     );

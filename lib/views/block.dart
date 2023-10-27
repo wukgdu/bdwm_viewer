@@ -77,7 +77,7 @@ class _BlockViewState extends State<BlockView> {
               // trailing: const Icon(Icons.arrow_right),
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

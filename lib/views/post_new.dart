@@ -18,7 +18,7 @@ import './quill_utils.dart';
 import './upload.dart';
 import './utils.dart';
 import '../router.dart' show nv2Pop, forceRefresh, nv2Replace;
-import './editor.dart' show FquillEditor, FquillEditorToolbar, genController, genControllerFromJson;
+import './editor.dart' show FquillEditor, FquillEditorToolbar, genController, genControllerFromJson, FquillProvider2;
 import './multi_users.dart' show SwitchUsersComponent;
 import '../pages/post_new.dart' show PostNewPage;
 
@@ -32,7 +32,7 @@ class PostNewView extends StatefulWidget {
   final String? nickName;
   final FutureOrFunction<String> updateQuote;
   final void Function(String?)? refresh;
-  const PostNewView({Key? key, required this.bid, this.postid, this.parentid, required this.postNewInfo, this.quoteText, required this.updateQuote, this.nickName, this.refresh}) : super(key: key);
+  const PostNewView({super.key, required this.bid, this.postid, this.parentid, required this.postNewInfo, this.quoteText, required this.updateQuote, this.nickName, this.refresh});
 
   @override
   State<PostNewView> createState() => _PostNewViewState();
@@ -315,10 +315,13 @@ class _PostNewViewState extends State<PostNewView> {
         //   height: 200,
         //   child: FquillEditor(controller: _controller, autoFocus: widget.parentid != null,),
         // ),
-        FquillEditor(controller: _controller, autoFocus: widget.parentid != null, height: 200.0,),
-        Container(
-          padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-          child: FquillEditorToolbar(controller: _controller,)
+        FquillProvider2(
+          controller: _controller,
+          fquillEditorWrap: FquillEditor(controller: _controller, autoFocus: widget.parentid != null, height: 200.0,),
+          fquillEditorToolBarWrap: Container(
+            padding: const EdgeInsets.only(left: 0, right: 0, top: 10),
+            child: FquillEditorToolbar(controller: _controller,)
+          ),
         ),
         Container(
           margin: const EdgeInsets.only(top: 0, left: 10, right: 10, bottom: 0),
@@ -448,7 +451,7 @@ class _PostNewViewState extends State<PostNewView> {
                       value: item,
                       child: item.value.isEmpty ? Text("签名档：${item.key}") : Text(item.key),
                     );
-                  }).toList(),
+                  }),
                 ],
                 onChanged: (SignatureItem? value) async {
                   if (value == null) { return; }

@@ -15,7 +15,7 @@ class StackIcon extends StatelessWidget {
   final int count;
   final Icon icon;
   final Function callBack;
-  const StackIcon({Key? key, required this.count, required this.icon, required this.callBack}) : super(key: key);
+  const StackIcon({super.key, required this.count, required this.icon, required this.callBack});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class StackIcon extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();

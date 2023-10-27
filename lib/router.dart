@@ -430,10 +430,10 @@ void forceRefresh(int a) {
 
 class ForceRerefreshWidget extends InheritedWidget {
   const ForceRerefreshWidget({
-    Key? key,
+    super.key,
     required this.reload,
-    required Widget child,
-  }) : super(key: key, child: child);
+    required super.child,
+  });
 
   final int reload;
 

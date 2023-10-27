@@ -8,7 +8,7 @@ class PostNewPage extends StatefulWidget {
   final String? postid;
   final String? parentid;
   final String? nickName;
-  const PostNewPage({Key? key, required this.bid, required this.boardName, this.postid, this.parentid, this.nickName}) : super(key: key);
+  const PostNewPage({super.key, required this.bid, required this.boardName, this.postid, this.parentid, this.nickName});
 
   @override
   State<PostNewPage> createState() => _PostNewPageState();

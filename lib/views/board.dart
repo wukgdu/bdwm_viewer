@@ -263,7 +263,7 @@ class StarBoard extends StatefulWidget {
   final int starCount;
   final bool likeIt;
   final int bid;
-  const StarBoard({Key? key, required this.starCount, required this.likeIt, required this.bid}) : super(key: key);
+  const StarBoard({super.key, required this.starCount, required this.likeIt, required this.bid});
 
   @override
   State<StarBoard> createState() => _StarBoardState();
@@ -356,7 +356,7 @@ class OneThreadInBoard extends StatefulWidget {
   final String boardName;
   final bool canOpt;
   final Function refresh;
-  const OneThreadInBoard({Key? key, required this.boardPostInfo, required this.bid, required this.boardName, required this.canOpt, required this.refresh}) : super(key: key);
+  const OneThreadInBoard({super.key, required this.boardPostInfo, required this.bid, required this.boardName, required this.canOpt, required this.refresh});
 
   @override
   State<OneThreadInBoard> createState() => _OneThreadInBoardState();
@@ -534,7 +534,7 @@ class BoardView extends StatefulWidget {
   final BoardInfo boardInfo;
   final int page;
   final Function refresh;
-  const BoardView({Key? key, required this.bid, required this.boardInfo, required this.page, required this.refresh}) : super(key: key);
+  const BoardView({super.key, required this.bid, required this.boardInfo, required this.page, required this.refresh});
 
   @override
   State<BoardView> createState() => _BoardViewState();
@@ -707,7 +707,7 @@ class OnePostInBoard extends StatefulWidget {
   final bool canOpt;
   final Function refresh;
   final String? stype;
-  const OnePostInBoard({Key? key, required this.boardPostInfo, required this.bid, required this.boardName, required this.canOpt, required this.refresh, required this.stype}) : super(key: key);
+  const OnePostInBoard({super.key, required this.boardPostInfo, required this.bid, required this.boardName, required this.canOpt, required this.refresh, required this.stype});
 
   @override
   State<OnePostInBoard> createState() => _OnePostInBoardState();
@@ -870,7 +870,7 @@ class BoardSingleView extends StatefulWidget {
   final String? stype;
   final String smode;
   final Function refresh;
-  const BoardSingleView({Key? key, required this.bid, required this.boardInfo, required this.page, this.stype, required this.smode, required this.refresh}) : super(key: key);
+  const BoardSingleView({super.key, required this.bid, required this.boardInfo, required this.page, this.stype, required this.smode, required this.refresh});
 
   @override
   State<BoardSingleView> createState() => _BoardSingleViewState();

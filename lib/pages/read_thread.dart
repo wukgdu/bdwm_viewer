@@ -1038,7 +1038,7 @@ class ThreadPage extends StatefulWidget {
   final String? boardName;
   final bool? needToBoard;
   final String? postid;
-  const ThreadPage({Key? key, required this.bid, required this.threadid, this.boardName, required this.page, this.needToBoard, this.postid}) : super(key: key);
+  const ThreadPage({super.key, required this.bid, required this.threadid, this.boardName, required this.page, this.needToBoard, this.postid});
 
   @override
   State <ThreadPage> createState() =>  ThreadPageState();

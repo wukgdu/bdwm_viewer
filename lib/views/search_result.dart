@@ -104,7 +104,7 @@ class _ComplexResultViewState extends State<ComplexResultView> {
                   },
                   child: Text("${st.time} - ${st.text}", style: _ts1.copyWith(height: 1.5),),
                 );
-              }).toList(),
+              }),
             ],
           ),
         ),

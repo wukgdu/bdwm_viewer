@@ -74,7 +74,7 @@ class WrapImageNetwork extends StatefulWidget {
   final bool? useLinearProgress;
   final bool? mustClear;
   final bool? highQuality;
-  const WrapImageNetwork({Key? key, required this.imgLink, this.imgAlt, this.useLinearProgress, this.mustClear, this.highQuality}) : super(key: key);
+  const WrapImageNetwork({super.key, required this.imgLink, this.imgAlt, this.useLinearProgress, this.mustClear, this.highQuality});
 
   @override
   State<WrapImageNetwork> createState() => _WrapImageNetworkState();
@@ -177,7 +177,7 @@ class HtmlComponent extends StatefulWidget {
   final String? nickName;
   final bool? isBoardNote;
   final bool needBox;
-  const HtmlComponent(this.htmlStr, {Key? key, this.needSelect, this.ts, this.nickName, this.isBoardNote, this.needBox=true}) : super(key: key);
+  const HtmlComponent(this.htmlStr, {super.key, this.needSelect, this.ts, this.nickName, this.isBoardNote, this.needBox=true});
 
   @override
   State<HtmlComponent> createState() => _HtmlComponentState();

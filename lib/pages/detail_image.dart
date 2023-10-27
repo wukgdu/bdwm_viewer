@@ -37,7 +37,7 @@ class DetailImage extends StatefulWidget {
   final List<String>? imgNames;
   final List<File>? imgFiles;
   final int? curIdx;
-  const DetailImage({Key? key, required this.imgLink, this.imgName, this.imgData, this.imgLinks, this.imgNames, this.curIdx, this.imgDataStr, this.imgFiles}) : super(key: key);
+  const DetailImage({super.key, required this.imgLink, this.imgName, this.imgData, this.imgLinks, this.imgNames, this.curIdx, this.imgDataStr, this.imgFiles});
 
   @override
   State<DetailImage> createState() => _DetailImageState();

@@ -378,7 +378,7 @@ class _RankSysComponentState extends State<RankSysComponent> {
 class UserInfoView extends StatefulWidget {
   final UserProfile user;
   final void Function(String?) refresh;
-  const UserInfoView({Key? key, required this.user, required this.refresh}) : super(key: key);
+  const UserInfoView({super.key, required this.user, required this.refresh});
 
   @override
   State<UserInfoView> createState() => _UserInfoViewState();

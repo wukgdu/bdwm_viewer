@@ -109,7 +109,7 @@ class _SwitchUsersDialogContentState extends State<SwitchUsersDialogContent> {
                 icon: const Icon(Icons.remove),
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

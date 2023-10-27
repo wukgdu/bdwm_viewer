@@ -430,7 +430,7 @@ class VoteComponent extends StatefulWidget {
   final int voteDownCount;
   final void Function(bool isVoteUp, int voteUpCount, bool isVoteDown, int voteDownCount)? callBack;
   const VoteComponent({
-    Key? key,
+    super.key,
     required this.iVoteUp,
     required this.iVoteDown,
     required this.voteUpCount,
@@ -438,7 +438,7 @@ class VoteComponent extends StatefulWidget {
     required this.bid,
     required this.postID,
     this.callBack,
-  }) : super(key: key);
+  });
 
   @override
   State<VoteComponent> createState() => _VoteComponentState();
@@ -586,7 +586,7 @@ class _VoteComponentState extends State<VoteComponent> {
 
 class AttachmentComponent extends StatelessWidget {
   final List<AttachmentInfo> attachments;
-  const AttachmentComponent({Key? key, required this.attachments}) : super(key: key);
+  const AttachmentComponent({super.key, required this.attachments});
 
   @override
   Widget build(BuildContext context) {
@@ -685,8 +685,8 @@ class OnePostComponent extends StatefulWidget {
   final int? subIdx;
   final bool? hideIt;
 
-  const OnePostComponent({Key? key, required this.onePostInfo, required this.bid, required this.refreshCallBack,
-    required this.boardName, required this.threadid, this.subIdx, this.hideIt, required this.title}) : super(key: key);
+  const OnePostComponent({super.key, required this.onePostInfo, required this.bid, required this.refreshCallBack,
+    required this.boardName, required this.threadid, this.subIdx, this.hideIt, required this.title});
 
   @override
   State<OnePostComponent> createState() => _OnePostComponentState();

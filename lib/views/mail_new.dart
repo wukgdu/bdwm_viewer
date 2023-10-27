@@ -18,7 +18,7 @@ import '../html_parser/mailnew_parser.dart';
 import './utils.dart';
 import './upload.dart';
 import '../router.dart' show nv2Pop;
-import './editor.dart' show FquillEditor, FquillEditorToolbar, genController;
+import './editor.dart' show FquillEditor, FquillEditorToolbar, genController, FquillProvider2;
 
 class MailNewView extends StatefulWidget {
   final String? bid;
@@ -254,10 +254,13 @@ class _MailNewViewState extends State<MailNewView> {
             ],
           ),
         ),
-        FquillEditor(controller: _controller, autoFocus: false, height: 200.0,),
-        Container(
-          padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-          child: FquillEditorToolbar(controller: _controller),
+        FquillProvider2(
+          controller: _controller,
+          fquillEditorWrap: FquillEditor(controller: _controller, autoFocus: false, height: 200.0,),
+          fquillEditorToolBarWrap: Container(
+            padding: const EdgeInsets.only(left: 0, right: 0, top: 10),
+            child: FquillEditorToolbar(controller: _controller),
+          ),
         ),
         if (quoteText!=null)
           Container(
@@ -310,7 +313,7 @@ class _MailNewViewState extends State<MailNewView> {
                       value: item,
                       child: item.value.isEmpty ? Text("签名档：${item.key}") : Text(item.key),
                     );
-                  }).toList(),
+                  }),
                 ],
                 onChanged: (SignatureItem? value) async {
                   if (value == null) { return; }

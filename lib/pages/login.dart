@@ -5,7 +5,7 @@ import '../views/drawer.dart';
 
 class LoginPage extends StatelessWidget {
   final bool? needBack; 
-  const LoginPage({Key? key, this.needBack}) : super(key: key);
+  const LoginPage({super.key, this.needBack});
 
   @override
   Widget build(BuildContext context) {

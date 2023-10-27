@@ -30,7 +30,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/extensions.dart' as base;
-import 'package:flutter_quill/flutter_quill.dart' hide Text;
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill/translations.dart';
 import 'package:string_validator/string_validator.dart' show isBase64;
 
@@ -41,9 +41,7 @@ class _SimpleDialogItem extends StatelessWidget {
       {required this.icon,
       required this.color,
       required this.text,
-      required this.onPressed,
-      Key? key})
-      : super(key: key);
+      required this.onPressed});
 
   final IconData icon;
   final Color color;
@@ -75,8 +73,7 @@ class ImageResizer extends StatefulWidget {
       required this.maxWidth,
       required this.maxHeight,
       required this.onImageResize,
-      Key? key})
-      : super(key: key);
+      super.key});
 
   final double? imageWidth;
   final double? imageHeight;
@@ -285,8 +282,8 @@ class ImageEmbedBuilder extends EmbedBuilder {
                                 onImageResize: (w, h) {
                                   final res = getEmbedNode(
                                       controller, controller.selection.start);
-                                  final attr = base.replaceStyleString(
-                                      getImageStyleString(controller), w, h);
+                                  final attr = base.replaceStyleStringWithSize(
+                                      getImageStyleString(controller), width: w, height: h, isMobile: base.isMobile());
                                   controller
                                     ..skipRequestKeyboard = true
                                     ..formatText(

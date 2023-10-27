@@ -261,7 +261,7 @@ class BlocksComponent extends StatelessWidget {
             return RepaintBoundary(
               child: OneBlockComponent(item: item),
             );
-          }).toList()
+          })
         else ...[
           const Card(child: Center(child: Text("该分区暂无热门主题帖"),),),
         ],
@@ -306,7 +306,7 @@ class TensComponent extends StatelessWidget {
             return RepaintBoundary(
               child: OneTenComponent(item: item),
             );
-          }).toList()
+          })
         else if (gotTop10(homeInfo.top10Info) && !isTop10Valid(homeInfo.top10Info!)) ...[
           Card(
             child: ListTile(
@@ -326,7 +326,7 @@ class TensComponent extends StatelessWidget {
 }
 
 class TopHomeView extends StatefulWidget {
-  const TopHomeView({Key? key}) : super(key: key);
+  const TopHomeView({super.key});
 
   @override
   State<TopHomeView> createState() => _TopHomeViewState();

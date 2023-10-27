@@ -35,7 +35,7 @@ const drawerPages = [
 
 class MyDrawer extends StatelessWidget {
   final int selectedIdx;
-  const MyDrawer({Key? key, required this.selectedIdx}) : super(key: key);
+  const MyDrawer({super.key, required this.selectedIdx});
 
   _gotoPage(String route, BuildContext context) {
     nv2Replace(context, route);

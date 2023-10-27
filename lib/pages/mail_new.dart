@@ -6,7 +6,7 @@ class MailNewPage extends StatelessWidget {
   final String? bid;
   final String? parentid;
   final String? receiver;
-  const MailNewPage({Key? key, this.bid, this.parentid, this.receiver}) : super(key: key);
+  const MailNewPage({super.key, this.bid, this.parentid, this.receiver});
 
   @override
   Widget build(BuildContext context) {

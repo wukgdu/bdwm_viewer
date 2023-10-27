@@ -264,7 +264,7 @@ class NotifyMail {
 
 class MessageBriefNotifier extends ValueNotifier<List<TextAndLink>> {
   String lastStr = "";
-  MessageBriefNotifier(List<TextAndLink> value): super(value);
+  MessageBriefNotifier(super.value);
 
   String arr2Str(UnreadMessageInfo uv) {
     if (uv.unreadMessageItem.isEmpty) { return ""; }

@@ -24,7 +24,7 @@ class SinglePostPage extends StatefulWidget {
   final String postid;
   final String? boardName;
   final String? type;
-  const SinglePostPage({Key? key, required this.bid, this.boardName, required this.postid, this.type}) : super(key: key);
+  const SinglePostPage({super.key, required this.bid, this.boardName, required this.postid, this.type});
   // ThreadApp.empty({Key? key}) : super(key: key);
 
   @override

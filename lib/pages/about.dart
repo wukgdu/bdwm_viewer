@@ -8,7 +8,7 @@ import '../router.dart' show nv2Push;
 import '../globalvars.dart' show bbsHost;
 
 class AboutPage extends StatelessWidget {
-  const AboutPage({Key? key}) : super(key: key);
+  const AboutPage({super.key});
   final _titleStyle = const TextStyle(fontSize: 20, fontWeight: FontWeight.normal);
   final _contentStyle = const TextStyle(fontSize: 16);
 

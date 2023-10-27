@@ -7,7 +7,7 @@ import '../views/drawer.dart';
 class UserPage extends StatelessWidget {
   final String uid;
   final bool? needBack;
-  const UserPage({Key? key, required this.uid, this.needBack}) : super(key: key);
+  const UserPage({super.key, required this.uid, this.needBack});
 
   @override
   Widget build(BuildContext context) {

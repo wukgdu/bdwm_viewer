@@ -24,20 +24,20 @@ class Top10Item extends _BasicInfo {
   int id = 0;
   Top10Item({
     required this.id,
-    required title,
-    required board,
-    required link,
-    required countComments,
-  }) : super(title: title, board: board, link: link, countComments: countComments);
+    required super.title,
+    required super.board,
+    required super.link,
+    required super.countComments,
+  });
 }
 
 class BlockItem extends _BasicInfo {
   BlockItem({
-    required title,
-    required board,
-    required link,
-    required countComments,
-  }) : super(title: title, board: board, link: link, countComments: countComments);
+    required super.title,
+    required super.board,
+    required super.link,
+    required super.countComments,
+  });
 }
 
 class BlockOne {

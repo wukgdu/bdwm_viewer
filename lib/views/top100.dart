@@ -31,7 +31,7 @@ class Top100RankLabelComponent extends StatelessWidget {
 }
 
 class Top100View extends StatefulWidget {
-  const Top100View({Key? key}) : super(key: key);
+  const Top100View({super.key});
 
   @override
   State<Top100View> createState() => _Top100ViewState();
