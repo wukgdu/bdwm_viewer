@@ -407,7 +407,7 @@ class FquillEditorToolbar extends StatelessWidget {
         showBackgroundColorButton: false,
         customButtons: [
           fquill.QuillToolbarCustomButtonOptions(
-            icon: const Icon(Icons.color_lens),
+            icon: const Icon(Icons.color_lens, size: 16,),
             tooltip: "文字颜色",
             onPressed: () {
               showColorDialog(context, (bdwmRichText['fc'] as Map<String, int>).keys.toList())
@@ -418,7 +418,7 @@ class FquillEditorToolbar extends StatelessWidget {
             }
           ),
           fquill.QuillToolbarCustomButtonOptions(
-            icon: const Icon(Icons.format_color_fill),
+            icon: const Icon(Icons.format_color_fill, size: 16,),
             tooltip: "背景颜色",
             onPressed: () {
               showColorDialog(context, (bdwmRichText['bc'] as Map<String, int>).keys.toList())
@@ -429,7 +429,7 @@ class FquillEditorToolbar extends StatelessWidget {
             }
           ),
           fquill.QuillToolbarCustomButtonOptions(
-            icon: const Icon(Icons.image),
+            icon: const Icon(Icons.image, size: 16,),
             onPressed: () {
               showTextDialog(context, "图片链接")
               .then((value) {
@@ -443,7 +443,7 @@ class FquillEditorToolbar extends StatelessWidget {
             }
           ),
           fquill.QuillToolbarCustomButtonOptions(
-            icon: const Icon(Icons.code),
+            icon: const Icon(Icons.code, size: 16,),
             onPressed: () {
               showTextDialog(context, "代码语言")
               .then((value) {
