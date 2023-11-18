@@ -3,7 +3,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as fquill;
-// import 'package:flutter_quill_extensions/embeds/builders.dart' show ImageEmbedBuilder;
+import 'package:flutter_quill_extensions/presentation/embeds/editor/image/image.dart' show QuillEditorImageEmbedBuilder;
+import 'package:flutter_quill_extensions/presentation/models/config/editor/image/image.dart' show QuillEditorImageEmbedConfigurations;
 import 'package:async/async.dart';
 
 import './constants.dart';
@@ -11,7 +12,6 @@ import './utils.dart' show showColorDialog, showTextDialog;
 import './quill_utils.dart' show html2Quill;
 import '../globalvars.dart' show globalConfigInfo;
 import '../bdwm/search.dart';
-import './fq_image.dart' show ImageEmbedBuilder;
 import '../utils.dart' show isValidUserName;
 
 class FquillProvider extends StatelessWidget {
@@ -29,7 +29,7 @@ class FquillProvider extends StatelessWidget {
         controller: controller,
         // final controller = context.requireQuillController;
         sharedConfigurations: const fquill.QuillSharedConfigurations(
-          locale: Locale('zh', 'cn'),
+          locale: Locale('zh', 'CN'),
         )
       ),
       child: Column(
@@ -63,7 +63,7 @@ class FquillProvider2 extends StatelessWidget {
       configurations: fquill.QuillConfigurations(
         controller: controller,
         sharedConfigurations: const fquill.QuillSharedConfigurations(
-          locale: Locale('zh', 'cn'),
+          locale: Locale('zh', 'CN'),
         )
       ),
       child: Column(
@@ -304,7 +304,7 @@ class _FquillEditorState extends State<FquillEditor> {
                         widget.controller.updateSelection(widget.controller.selection.copyWith(
                           baseOffset: selection1+fullName.length,
                           extentOffset: selection1+fullName.length,
-                        ), fquill.ChangeSource.LOCAL);
+                        ), fquill.ChangeSource.local);
                         removeSuggestionNow();
                       },
                       child: Text("@${e.name}", style: serifFont.copyWith(fontSize: 18)),
@@ -339,7 +339,7 @@ class _FquillEditorState extends State<FquillEditor> {
         expands: false,
         padding: const EdgeInsets.all(0.0),
         keyboardAppearance: Theme.of(context).brightness,
-        embedBuilders: [ImageEmbedBuilder()],
+        embedBuilders: [QuillEditorImageEmbedBuilder(configurations: const QuillEditorImageEmbedConfigurations(),),]
       ),
     );
     var isDark = Theme.of(context).brightness == Brightness.dark;
@@ -406,9 +406,10 @@ class FquillEditorToolbar extends StatelessWidget {
         showSuperscript: false,
         showBackgroundColorButton: false,
         customButtons: [
-          fquill.QuillCustomButton(
-            iconData: Icons.color_lens,
-            onTap: () {
+          fquill.QuillToolbarCustomButtonOptions(
+            icon: const Icon(Icons.color_lens),
+            tooltip: "文字颜色",
+            onPressed: () {
               showColorDialog(context, (bdwmRichText['fc'] as Map<String, int>).keys.toList())
               .then((value) {
                 if (value == null) { return; }
@@ -416,9 +417,10 @@ class FquillEditorToolbar extends StatelessWidget {
               });
             }
           ),
-          fquill.QuillCustomButton(
-            iconData: Icons.format_color_fill,
-            onTap: () {
+          fquill.QuillToolbarCustomButtonOptions(
+            icon: const Icon(Icons.format_color_fill),
+            tooltip: "背景颜色",
+            onPressed: () {
               showColorDialog(context, (bdwmRichText['bc'] as Map<String, int>).keys.toList())
               .then((value) {
                 if (value == null) { return; }
@@ -426,9 +428,9 @@ class FquillEditorToolbar extends StatelessWidget {
               });
             }
           ),
-          fquill.QuillCustomButton(
-            iconData: Icons.image,
-            onTap: () {
+          fquill.QuillToolbarCustomButtonOptions(
+            icon: const Icon(Icons.image),
+            onPressed: () {
               showTextDialog(context, "图片链接")
               .then((value) {
                 if (value==null) { return; }
@@ -440,9 +442,9 @@ class FquillEditorToolbar extends StatelessWidget {
               },);
             }
           ),
-          fquill.QuillCustomButton(
-            iconData: Icons.code,
-            onTap: () {
+          fquill.QuillToolbarCustomButtonOptions(
+            icon: const Icon(Icons.code),
+            onPressed: () {
               showTextDialog(context, "代码语言")
               .then((value) {
                 if (value==null) { return; }
@@ -458,7 +460,7 @@ class FquillEditorToolbar extends StatelessWidget {
                 controller.updateSelection(selection.copyWith(
                   baseOffset: index+preText.length,
                   extentOffset: index+preText.length,
-                ), fquill.ChangeSource.LOCAL);
+                ), fquill.ChangeSource.local);
               },);
             }
           ),
