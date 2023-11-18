@@ -675,7 +675,7 @@ class BDWMConfig {
   bool highQualityPreview = true;
   bool suggestUser = true;
   bool showFAB = true;
-  bool useMD3 = false;
+  bool useMD3 = true;
   bool useDynamicColor = false;
   String refreshRate = "high";
   bool autoHideBottomBar = true;
@@ -709,7 +709,7 @@ class BDWMConfig {
       "primaryColorString": primaryColorString,
       "suggestUser": suggestUser,
       "showFAB": showFAB,
-      "useMD3": useMD3,
+      "useMD3_1": useMD3,
       "useDynamicColor": useDynamicColor,
       "autoHideBottomBar": autoHideBottomBar,
       "refreshRate": refreshRate,
@@ -731,7 +731,7 @@ class BDWMConfig {
     contentFontSize = jsonContent['contentFontSize'] ?? contentFontSize;
     primaryColorString = jsonContent['primaryColorString'] ?? primaryColorString;
     refreshRate = jsonContent['refreshRate'] ?? refreshRate;
-    useMD3 = jsonContent['useMD3'] ?? useMD3;
+    useMD3 = jsonContent['useMD3_1'] ?? useMD3;
     autoSaveConfig = jsonContent['autoSaveConfig'] ?? autoSaveConfig;
     guestFirst = jsonContent['guestFirst'] ?? guestFirst;
     useDynamicColor = jsonContent['useDynamicColor'] ?? useDynamicColor;
