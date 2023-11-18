@@ -233,6 +233,7 @@ class MainPageState extends State<MainPage> {
     }
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (globalConfigInfo.getGuestFirst()) {
+        // 延后1秒再选择用户：当通过桌面小组件进入十大帖子时，可在刷新后浏览登录后才能看的帖子
         await Future<void>.delayed(const Duration(milliseconds: 1000));
         if (!mounted) { return; }
         var globalContext = getGlobalContext();

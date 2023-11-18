@@ -224,7 +224,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           ),
           FquillProvider2(
             controller: _controller,
-            fquillEditorWrap: FquillEditor(controller: _controller, autoFocus: false, height: 200,),
+            fquillEditorWrap: FquillEditor(controller: _controller, autoFocus: false, height: 200, margin: const EdgeInsets.all(0.0),),
             fquillEditorToolBarWrap: Container(
               padding: const EdgeInsets.only(left: 0, right: 0, top: 10),
               child: FquillEditorToolbar(controller: _controller,)
