@@ -296,7 +296,7 @@ class _RankSysComponentState extends State<RankSysComponent> {
             const Text("等级："),
             SelectionArea(child: Text(widget.rankName)),
             if (!underEdit) ...[
-              if ((globalUInfo.login == true) && (globalUInfo.username == widget.userName)) ...[
+              if ((globalUInfo.login == true) && (globalUInfo.username.toLowerCase() == widget.userName.toLowerCase())) ...[
                 genSizedIconButton(
                   onPressed: () {
                     setState(() {
