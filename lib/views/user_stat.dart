@@ -124,11 +124,12 @@ class UserStatView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: tableDataInfo.tables.length,
-      itemBuilder: (context, index) {
-        return UserStatTableComponent(tableOneInfo: tableDataInfo.tables[index]);
-      },
+    return SingleChildScrollView(
+      child: Column(
+        children: tableDataInfo.tables.map((e) {
+          return Center(child: UserStatTableComponent(tableOneInfo: e));
+        }).toList(),
+      ),
     );
   }
 }
