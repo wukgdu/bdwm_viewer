@@ -83,7 +83,7 @@ class _BoardIntroComponentState extends State<BoardIntroComponent> {
                       changingIntro = false;
                     });
                   } else {
-                    if (!mounted) { return; }
+                    if (!context.mounted) { return; }
                     var alertText = res.errorMessage ?? "编辑失败~请稍后重试";
                     showInformDialog(context, "编辑失败", alertText);
                   }
@@ -457,7 +457,7 @@ class _OneThreadInBoardState extends State<OneThreadInBoard> {
             if (opt == null) { return; }
             if (opt == "noreply" || opt == "unnoreply" || opt == "delete") {
               if (opt == "delete") {
-                if (!mounted) { return; }
+                if (!context.mounted) { return; }
                 var confirm = await showConfirmDialog(context, "同主题删除", "是否确定删除帖子");
                 if (confirm != "yes") { return; }
               }
@@ -470,11 +470,11 @@ class _OneThreadInBoardState extends State<OneThreadInBoard> {
                 widget.refresh();
               } else {
                 var confirmText = optRes.errorMessage ?? "$opt 失败~请稍后重试";
-                if (!mounted) { return; }
+                if (!context.mounted) { return; }
                 showInformDialog(context, "同主题操作失败", confirmText);
               }
             } else if (opt == "create-collect") {
-              if (!mounted) { return; }
+              if (!context.mounted) { return; }
               var confirm = await showConfirmDialog(context, "同主题合集", "是否确定在版面生成本主题帖的合集");
               if (confirm != "yes") { return; }
               var optRes = await bdwmAdminBoardCreateThreadCollect(bid: widget.bid, threadid: widget.boardPostInfo.itemid);
@@ -482,7 +482,7 @@ class _OneThreadInBoardState extends State<OneThreadInBoard> {
                 widget.refresh();
               } else {
                 var confirmText = optRes.errorMessage ?? "合集失败~请稍后重试";
-                if (!mounted) { return; }
+                if (!context.mounted) { return; }
                 showInformDialog(context, "同主题操作失败", confirmText);
               }
             }
@@ -502,7 +502,7 @@ class _OneThreadInBoardState extends State<OneThreadInBoard> {
             ]);
             if (opt == null) { return; }
             if (opt == "rate") {
-              if (!mounted) { return; }
+              if (!context.mounted) { return; }
               var ycf = await showRatePostDialog(context, [1, 2, 3]);
               if (ycf == null) { return; }
               var optRes = await bdwmAdminBoardOperatePost(bid: widget.bid, postid: widget.boardPostInfo.itemid, action: opt, rating: ycf);
@@ -510,7 +510,7 @@ class _OneThreadInBoardState extends State<OneThreadInBoard> {
                 widget.refresh();
               } else {
                 var confirmText = optRes.errorMessage ?? "打原创分失败~请稍后重试";
-                if (!mounted) { return; }
+                if (!context.mounted) { return; }
                 showInformDialog(context, "操作失败", confirmText);
               }
             } else {
@@ -519,7 +519,7 @@ class _OneThreadInBoardState extends State<OneThreadInBoard> {
                 widget.refresh();
               } else {
                 var confirmText = optRes.errorMessage ?? "${getActionName(opt)}失败~请稍后重试";
-                if (!mounted) { return; }
+                if (!context.mounted) { return; }
                 showInformDialog(context, "操作失败", confirmText);
               }
             }
@@ -804,7 +804,7 @@ class _OnePostInBoardState extends State<OnePostInBoard> {
                 widget.refresh();
               } else {
                 var confirmText = optRes.errorMessage ?? "${getActionName(toRecover)}失败~请稍后重试";
-                if (!mounted) { return; }
+                if (!context.mounted) { return; }
                 showInformDialog(context, "操作失败", confirmText);
               }
             }
@@ -831,7 +831,7 @@ class _OnePostInBoardState extends State<OnePostInBoard> {
             ]);
             if (opt == null) { return; }
             if (opt == "rate") {
-              if (!mounted) { return; }
+              if (!context.mounted) { return; }
               var ycf = await showRatePostDialog(context, [1, 2, 3]);
               if (ycf == null) { return; }
               var optRes = await bdwmAdminBoardOperatePost(bid: widget.bid, postid: widget.boardPostInfo.itemid, action: opt, rating: ycf);
@@ -839,12 +839,12 @@ class _OnePostInBoardState extends State<OnePostInBoard> {
                 widget.refresh();
               } else {
                 var confirmText = optRes.errorMessage ?? "${getActionName(opt)}失败~请稍后重试";
-                if (!mounted) { return; }
+                if (!context.mounted) { return; }
                 showInformDialog(context, "操作失败", confirmText);
               }
             } else {
               if (opt == "delete") {
-                if (!mounted) { return; }
+                if (!context.mounted) { return; }
                 var confirm = await showConfirmDialog(context, "删除", "是否确定删除帖子");
                 if (confirm != "yes") { return; }
               }
@@ -853,7 +853,7 @@ class _OnePostInBoardState extends State<OnePostInBoard> {
                 widget.refresh();
               } else {
                 var confirmText = optRes.errorMessage ?? "${getActionName(opt)}失败~请稍后重试";
-                if (!mounted) { return; }
+                if (!context.mounted) { return; }
                 showInformDialog(context, "操作失败", confirmText);
               }
             }

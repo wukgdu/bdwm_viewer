@@ -11,7 +11,7 @@ import './utils.dart';
 import '../html_parser/collectionnew_parser.dart';
 import './upload.dart';
 import '../router.dart' show nv2Replace, nv2Pop;
-import './editor.dart' show FquillEditor, FquillEditorToolbar, genController, FquillProvider2;
+import './editor.dart' show FquillEditor, FquillEditorToolbar, genController;
 
 class CollectionNewView extends StatefulWidget {
   final String mode;
@@ -144,13 +144,9 @@ class _CollectionNewViewState extends State<CollectionNewView> {
             ],
           ),
         ),
-        FquillProvider2(
-          controller: _controller,
-          fquillEditorWrap: FquillEditor(controller: _controller, autoFocus: false, height: 200,),
-          fquillEditorToolBarWrap: Container(
-            padding: const EdgeInsets.only(left: 0, right: 0, top: 10),
-            child: FquillEditorToolbar(controller: _controller,)
-          ),
+        FquillEditor(controller: _controller, autoFocus: false, height: 200,),
+        Center(
+          child: FquillEditorToolbar(controller: _controller,)
         ),
         Container(
           margin: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),

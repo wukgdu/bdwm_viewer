@@ -50,7 +50,7 @@ class _MailListViewState extends State<MailListView> {
                   content = res.result!;
                 }
               }
-              if (!mounted) { return; }
+              if (!context.mounted) { return; }
               await showInformDialog(context, title, content);
               if (res.success) {
                 widget.refreshCallBack();

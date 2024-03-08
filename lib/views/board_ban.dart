@@ -48,11 +48,11 @@ class _BoardBanViewState extends State<BoardBanView> {
             ]);
             if (opt == null) { return; }
             if (opt == "delete") {
-              if (!mounted) { return; }
+              if (!context.mounted) { return; }
               var doIt = await showConfirmDialog(context, "解封", "解封${e.userName}");
               if (doIt != "yes") { return; }
               var optRes = await bdwmAdminBoardBanUser(bid: widget.bid, action: opt, day: 0, reason: "", userName: e.userName, uid: e.uid);
-              if (!mounted) { return; }
+              if (!context.mounted) { return; }
               if (optRes.success) {
                 await showInformDialog(context, "解封成功", "rt");
                 widget.refresh();
@@ -60,7 +60,7 @@ class _BoardBanViewState extends State<BoardBanView> {
                 showInformDialog(context, "解封失败", optRes.errorMessage ?? "解封失败，请稍后重试");
               }
             } else if (opt == "edit") {
-              if (!mounted) { return; }
+              if (!context.mounted) { return; }
               var result = await showAlertDialog2(context, BanUserDialog(
                 boardName: widget.boardBanInfo.boardName, bid: widget.bid, userName: e.userName, postid: null, uid: e.uid,
                 reason: e.reason, showPostid: false, isEdit: true,

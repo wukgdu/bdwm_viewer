@@ -238,7 +238,7 @@ class _CollectionPageState extends State<CollectionPage> {
                   var path = getCollectionPathFromHttp(widget.link);
                   if (path == null) { return; }
                   var res = await bdwmCollectionSetGood(action: "add", paths: [path]);
-                  if (!mounted) { return; }
+                  if (!context.mounted) { return; }
                   bool success = res.success;
                   var txt = "收藏成功";
                   if (success==false) {

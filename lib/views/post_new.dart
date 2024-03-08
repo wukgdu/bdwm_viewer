@@ -18,7 +18,7 @@ import './quill_utils.dart';
 import './upload.dart';
 import './utils.dart';
 import '../router.dart' show nv2Pop, forceRefresh, nv2Replace;
-import './editor.dart' show FquillEditor, FquillEditorToolbar, genController, genControllerFromJson, FquillProvider2;
+import './editor.dart' show FquillEditor, FquillEditorToolbar, genController, genControllerFromJson;
 import './multi_users.dart' show SwitchUsersComponent;
 import '../pages/post_new.dart' show PostNewPage;
 
@@ -200,7 +200,7 @@ class _PostNewViewState extends State<PostNewView> {
                       if (value.threadid == null || value.threadid == -1) {
                         newPostLink = "$v2Host/post-read-single.php?bid=${widget.bid}&postid=${value.postid}";
                       }
-                      if (!mounted) { return; }
+                      if (!context.mounted) { return; }
                       var postNewPageWidget = context.findAncestorWidgetOfExactType<PostNewPage>();
                       if (postNewPageWidget != null) {
                         boardName = postNewPageWidget.boardName;
@@ -213,7 +213,7 @@ class _PostNewViewState extends State<PostNewView> {
                         timestamp: timestamp1000,
                       );
                     }
-                    if (!mounted) { return; }
+                    if (!context.mounted) { return; }
                     showAlertDialog(context, "发送成功", const Text("rt"),
                       actions1: TextButton(
                         onPressed: () { Navigator.of(context).pop(); },
@@ -245,7 +245,7 @@ class _PostNewViewState extends State<PostNewView> {
                     } else if (value.error == -1) {
                       errorMessage = value.result!;
                     }
-                    if (!mounted) { return; }
+                    if (!context.mounted) { return; }
                     showAlertDialog(context, "发送失败", Text(errorMessage),
                       actions1: TextButton(
                         onPressed: () { Navigator.of(context).pop(); },
@@ -279,7 +279,7 @@ class _PostNewViewState extends State<PostNewView> {
                   file.write(jsonEncode(jsonData));
                   await file.flush();
                   await file.close();
-                  if (!mounted) { return; }
+                  if (!context.mounted) { return; }
                   await showInformDialog(context, "已保存草稿", "只保存正文（富文本）；只预览纯文本");
                 },
                 icon: Icon(Icons.save_as, size: 16, color: bdwmPrimaryColor,),
@@ -291,7 +291,7 @@ class _PostNewViewState extends State<PostNewView> {
                   var draftPath = await genAppFilename("bdwmdraft-1.json");
                   var content = await File(draftPath).readAsString();
                   var jsonData = jsonDecode(content);
-                  if (!mounted) { return; }
+                  if (!context.mounted) { return; }
                   var tmpController = genControllerFromJson(jsonData as List<dynamic>);
                   var res = await showComplexConfirmDialog(context, "加载草稿", SingleChildScrollView(
                     child: SelectableText(tmpController.document.toPlainText()),
@@ -315,13 +315,9 @@ class _PostNewViewState extends State<PostNewView> {
         //   height: 200,
         //   child: FquillEditor(controller: _controller, autoFocus: widget.parentid != null,),
         // ),
-        FquillProvider2(
-          controller: _controller,
-          fquillEditorWrap: FquillEditor(controller: _controller, autoFocus: widget.parentid != null, height: 200.0,),
-          fquillEditorToolBarWrap: Container(
-            padding: const EdgeInsets.only(left: 0, right: 0, top: 10),
-            child: FquillEditorToolbar(controller: _controller,)
-          ),
+        FquillEditor(controller: _controller, autoFocus: widget.parentid != null, height: 200.0,),
+        Center(
+          child: FquillEditorToolbar(controller: _controller,)
         ),
         Container(
           margin: const EdgeInsets.only(top: 0, left: 10, right: 10, bottom: 0),

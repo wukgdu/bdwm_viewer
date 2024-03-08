@@ -6,7 +6,7 @@ import '../html_parser/modify_profile_parser.dart';
 import '../views/quill_utils.dart' show quill2BDWMtext;
 import '../views/utils.dart' show showConfirmDialog, showInformDialog;
 import '../views/constants.dart' show bdwmPrimaryColor;
-import '../views/editor.dart' show FquillEditor, FquillEditorToolbar, genController, FquillProvider2;
+import '../views/editor.dart' show FquillEditor, FquillEditorToolbar, genController;
 import '../views/user.dart' show RankSelectComponent;
 import '../globalvars.dart' show globalConfigInfo;
 import '../router.dart' show nv2Pop;
@@ -76,7 +76,7 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
               try {
                 desc = quill2BDWMtext(quillDelta, removeLastReturn: true);
               } catch (e) {
-                if (!mounted) { return; }
+                if (!context.mounted) { return; }
                 showInformDialog(context, "内容格式错误", "$e\n请返回后截图找 onepiece 报bug");
                 return;
               }
@@ -88,13 +88,13 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
                 desc: desc, birthYear: birthYear, birthMonth: birthMonth, birthDay: birthDay,
               );
               if (res.success) {
-                if (!mounted) { return; }
+                if (!context.mounted) { return; }
                 await showInformDialog(context, "保存成功", "rt");
-                if (!mounted) { return; }
+                if (!context.mounted) { return; }
                 nv2Pop(context);
               } else {
                 var reason = res.errorMessage ?? "rt";
-                if (!mounted) { return; }
+                if (!context.mounted) { return; }
                 showInformDialog(context, "保存失败", reason);
               }
             },
@@ -222,13 +222,9 @@ class _ModifyProfilePageState extends State<ModifyProfilePage> {
           genContainer(
             const Text("说明档", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0,),),
           ),
-          FquillProvider2(
-            controller: _controller,
-            fquillEditorWrap: FquillEditor(controller: _controller, autoFocus: false, height: 200, margin: const EdgeInsets.all(0.0),),
-            fquillEditorToolBarWrap: Container(
-              padding: const EdgeInsets.only(left: 0, right: 0, top: 10),
-              child: FquillEditorToolbar(controller: _controller,)
-            ),
+          FquillEditor(controller: _controller, autoFocus: false, height: 200, margin: const EdgeInsets.all(0.0),),
+          Center(
+            child: FquillEditorToolbar(controller: _controller,)
           ),
         ],
       ),

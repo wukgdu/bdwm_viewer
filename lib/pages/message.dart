@@ -56,7 +56,7 @@ class _MessagelistPageState extends State<MessagelistPage> {
               }
               var userRes = await bdwmUserInfoSearch([userNew]);
               if (userRes.success == false) {
-                if (!mounted) { return; }
+                if (!context.mounted) { return; }
                 await showAlertDialog(context, "添加对话失败", const Text("查找用户失败"),
                   actions1: TextButton(
                     onPressed: () { Navigator.of(context).pop(); },
@@ -68,7 +68,7 @@ class _MessagelistPageState extends State<MessagelistPage> {
                 for (var r in userRes.users) {
                   // only one result
                   if (r == false) {
-                    if (!mounted) { return; }
+                    if (!context.mounted) { return; }
                     await showAlertDialog(context, "添加对话失败", Text("用户 $userNew 不存在"),
                       actions1: TextButton(
                         onPressed: () { Navigator.of(context).pop(); },

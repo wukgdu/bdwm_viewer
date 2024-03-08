@@ -756,7 +756,7 @@ class _ThreadDetailPageState extends State<ThreadDetailPage> {
                   } else {
                     var notfull = await addMarked(link: widget.threadLink, title: widget.threadPageInfo.title, userName: widget.userName, boardName: widget.threadPageInfo.board.text);
                     if (notfull == false) {
-                      if (!mounted) { return; }
+                      if (!context.mounted) { return; }
                       showAlertDialog(context, "收藏数量已达上限", const Text("rt"),
                         actions1: TextButton(
                           onPressed: () {

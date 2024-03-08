@@ -86,7 +86,7 @@ class _BoardSearchDialogState extends State<BoardSearchDialog> {
                   'boardName': "",
                 });
               } else {
-                if (!mounted) { return; }
+                if (!context.mounted) { return; }
                 showInformDialog(context, "跳转失败", res.errorMessage ?? "错误码：${res.error}");
               }
             },

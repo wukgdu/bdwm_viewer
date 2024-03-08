@@ -141,7 +141,7 @@ class _FavoriteCollectionPageState extends State<FavoriteCollectionPage> {
                       if (res.success == false) {
                         txt = res.errorMessage ?? "取消收藏失败";
                       }
-                      if (!mounted) { return; }
+                      if (!context.mounted) { return; }
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(txt), duration: const Duration(milliseconds: 600),),
                       );

@@ -292,7 +292,7 @@ class _ImageCacheComponentState extends State<ImageCacheComponent> {
           clearImagesInMemory();
         } else if (opt == "see") {
           var imageFiles = await getLocalCachedImageFiles();
-          if (!mounted) { return; }
+          if (!context.mounted) { return; }
           nv2Push(context, '/cachedImages', arguments: {
             'files': imageFiles,
           });

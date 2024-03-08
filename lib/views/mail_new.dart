@@ -18,7 +18,7 @@ import '../html_parser/mailnew_parser.dart';
 import './utils.dart';
 import './upload.dart';
 import '../router.dart' show nv2Pop;
-import './editor.dart' show FquillEditor, FquillEditorToolbar, genController, FquillProvider2;
+import './editor.dart' show FquillEditor, FquillEditorToolbar, genController;
 
 class MailNewView extends StatefulWidget {
   final String? bid;
@@ -147,7 +147,7 @@ class _MailNewViewState extends State<MailNewView> {
                   var userRes = await bdwmUserInfoSearch(rcvuidsStr);
                   var rcvuids = <int>[];
                   if (userRes.success == false) {
-                    if (!mounted) { return; }
+                    if (!context.mounted) { return; }
                     await showAlertDialog(context, "发送中", const Text("查找用户失败"),
                       actions1: TextButton(
                         onPressed: () { Navigator.of(context).pop(); },
@@ -159,7 +159,7 @@ class _MailNewViewState extends State<MailNewView> {
                     var uidx = 0;
                     for (var r in userRes.users) {
                       if (r == false) {
-                        if (!mounted) { return; }
+                        if (!context.mounted) { return; }
                         await showAlertDialog(context, "发送中", Text("用户${rcvuidsStr[uidx]}不存在"),
                           actions1: TextButton(
                             onPressed: () { Navigator.of(context).pop(); },
@@ -189,7 +189,7 @@ class _MailNewViewState extends State<MailNewView> {
                   try {
                     mailContent = quill2BDWMtext(quillDelta);
                   } catch (e) {
-                    if (!mounted) { return; }
+                    if (!context.mounted) { return; }
                     showAlertDialog(context, "内容格式错误", Text("$e\n请返回后截图找 onepiece 报bug"),
                       actions1: TextButton(
                         onPressed: () { Navigator.of(context).pop(); },
@@ -254,13 +254,9 @@ class _MailNewViewState extends State<MailNewView> {
             ],
           ),
         ),
-        FquillProvider2(
-          controller: _controller,
-          fquillEditorWrap: FquillEditor(controller: _controller, autoFocus: false, height: 200.0,),
-          fquillEditorToolBarWrap: Container(
-            padding: const EdgeInsets.only(left: 0, right: 0, top: 10),
-            child: FquillEditorToolbar(controller: _controller),
-          ),
+        FquillEditor(controller: _controller, autoFocus: false, height: 200.0,),
+        Center(
+          child: FquillEditorToolbar(controller: _controller),
         ),
         if (quoteText!=null)
           Container(

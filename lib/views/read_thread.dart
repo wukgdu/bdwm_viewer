@@ -79,7 +79,7 @@ class _BanUserDialogState extends State<BanUserDialog> {
             var postidText = postidValue.text.trim();
             String? postid = postidText.isEmpty ? null : postidText;
             var optRes = await bdwmAdminBoardBanUser(bid: widget.bid, action: widget.isEdit ? "edit" : "add", day: day, reason: reason, userName: userName, postid: postid, uid: widget.uid, reclocking: widget.isEdit ? reclocking ? 1 : 0 : null);
-            if (!mounted) { return; }
+            if (!context.mounted) { return; }
             var action = widget.isEdit ? "修改" : "封禁";
             if (optRes.success) {
               showInformDialog(context, "$action成功", "rt").then((_) {
@@ -840,7 +840,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                                 ]);
                                 if (opt == null) { return; }
                                 if (opt == "rate") {
-                                  if (!mounted) { return; }
+                                  if (!context.mounted) { return; }
                                   var ycf = await showRatePostDialog(context, [1, 2, 3]);
                                   if (ycf == null) { return; }
                                   var optRes = await bdwmAdminBoardOperatePost(bid: widget.bid, postid: item.postID, action: opt, rating: ycf);
@@ -848,7 +848,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                                     widget.refreshCallBack();
                                   } else {
                                     var confirmText = optRes.errorMessage ?? "打原创分失败~请稍后重试";
-                                    if (!mounted) { return; }
+                                    if (!context.mounted) { return; }
                                     showInformDialog(context, "操作失败", confirmText);
                                   }
                                   return;
@@ -856,7 +856,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                                 if (opt == "ban") {
                                   var boardName = widget.boardName;
                                   boardName = boardName.split('(')[0];
-                                  if (!mounted) { return; }
+                                  if (!context.mounted) { return; }
                                   showAlertDialog2(context, BanUserDialog(
                                     boardName: boardName, bid: widget.bid, userName: item.authorInfo.userName, postid: item.postID, uid: item.authorInfo.uid,
                                     showPostid: true,
@@ -868,7 +868,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                                   widget.refreshCallBack();
                                 } else {
                                   var confirmText = optRes.errorMessage ?? "${getActionName(opt)}失败~请稍后重试";
-                                  if (!mounted) { return; }
+                                  if (!context.mounted) { return; }
                                   showInformDialog(context, "操作失败", confirmText);
                                 }
                               },

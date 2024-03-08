@@ -52,7 +52,7 @@ class SeeNoThemPageState extends State<SeeNoThemPage> {
               userNew = userNew.trim();
               var userRes = await bdwmUserInfoSearch([userNew]);
               if (userRes.success == false) {
-                if (!mounted) { return; }
+                if (!context.mounted) { return; }
                 await showAlertDialog(context, "添加失败", const Text("查找用户失败"),
                   actions1: TextButton(
                     onPressed: () { Navigator.of(context).pop(); },
@@ -64,7 +64,7 @@ class SeeNoThemPageState extends State<SeeNoThemPage> {
                 for (var r in userRes.users) {
                   // only one result
                   if (r == false) {
-                    if (!mounted) { return; }
+                    if (!context.mounted) { return; }
                     var res = await showAlertDialog(context, "添加失败", Text("用户 $userNew 不存在"),
                       actions1: TextButton(
                         onPressed: () { Navigator.of(context).pop("add"); },

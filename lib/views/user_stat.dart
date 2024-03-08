@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
-import 'package:syncfusion_flutter_charts/charts.dart' show SfCartesianChart, LineSeries, DateTimeAxis, ChartSeries, TooltipBehavior;
+import 'package:syncfusion_flutter_charts/charts.dart' show SfCartesianChart, LineSeries, DateTimeAxis, CartesianSeries, TooltipBehavior;
 import 'package:intl/intl.dart' show DateFormat;
 
 import '../globalvars.dart' show v2Host, networkErrorText, genHeaders2;
@@ -101,7 +101,7 @@ class _UserStatTableComponentState extends State<UserStatTableComponent> {
             SfCartesianChart(
               tooltipBehavior: tooltipBehavior,
               primaryXAxis: DateTimeAxis(dateFormat: DateFormat.yM()),
-              series: <ChartSeries>[
+              series: <CartesianSeries>[
                 LineSeries<TVPair, DateTime>(
                   dataSource: widget.tableOneInfo.value,
                   xValueMapper: (TVPair sales, _) => DateTime.parse("${sales.time}-01"),

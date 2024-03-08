@@ -229,7 +229,7 @@ class MainPageState extends State<MainPage> {
         const ShortcutItem(type: '/markedThread', localizedTitle: '帖子收藏', icon: 'ic_wei'),
       ]);
 
-      HomeWidget.registerBackgroundCallback(backgroundCallback);
+      HomeWidget.registerInteractivityCallback(backgroundCallback);
     }
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (globalConfigInfo.getGuestFirst()) {
@@ -238,6 +238,7 @@ class MainPageState extends State<MainPage> {
         if (!mounted) { return; }
         var globalContext = getGlobalContext();
         if (globalContext == null) { return; }
+        if (!globalContext.mounted) { return; }
         var switchRes = await showSwitchUsersDialog(globalContext, showLogin: false, desc: "选择非游客需要下拉刷新，不需要重新登录");
         await processSwitchUsersDialog(switchRes);
         if (globalUInfo.uid != guestUitem.uid) {
@@ -271,6 +272,7 @@ class MainPageState extends State<MainPage> {
     } else if (res.startsWith("checksuccess")) {
       txt = "最新版本：$txt\n当前版本：$curVersionForBBS";
     }
+    if (!globalContext.mounted) { return; }
     showInformDialog(globalContext, "检查新版本", txt);
   }
 

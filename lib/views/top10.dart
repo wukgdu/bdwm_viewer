@@ -130,7 +130,7 @@ class _EntryHomeComponentState extends State<EntryHomeComponent> {
                 onPressed: () async {
                   var value = await showConfirmDialog(context, "打开", welcomeInfo.actionLink);
                   if (value == null || value != "yes") { return; }
-                  if (!mounted) { return; }
+                  if (!context.mounted) { return; }
                   Navigator.of(context).pop();
                   innerLinkJump(welcomeInfo.actionLink, context);
                 },
