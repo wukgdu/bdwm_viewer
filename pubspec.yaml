@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.10.1+77
 
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.3.0
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -46,14 +46,14 @@ dependencies:
   # quick_notify: ^0.2.1
   extended_image: ^8.0.0
   permission_handler: ^11.0.0
-  file_picker: ^6.0.0
+  file_picker: ^8.0.0+1
   # image_picker_saver: ^0.3.0
   # image_gallery_saver: ^1.7.1
   # csslib: ^0.17.2
   path: ^1.8.1
   async: ^2.8.2
   url_launcher: ^6.1.5
-  share_plus: ^7.0.0
+  share_plus: ^8.0.2
   flutter_treeview: ^1.0.7+1
   http_parser: ^4.0.1
   html_unescape: ^2.0.0
@@ -69,8 +69,12 @@ dependencies:
   # scrollable_positioned_list: ^0.3.5
   flutter_colorpicker: ^1.0.3
   # flutter_speed_dial: ^6.2.0
-  syncfusion_flutter_charts: ^24.2.9
-  media_scanner: ^2.1.0
+  syncfusion_flutter_charts: ^25.1.35
+  # media_scanner: ^2.1.0
+  media_scanner:
+    # path: ../media_scanner/
+    git:
+      url: https://github.com/wukgdu/media_scanner
   dynamic_fonts: ^2.2.0
   # dynamic_fonts:
   #   git:
@@ -79,7 +83,7 @@ dependencies:
   intl: ^0.18.0
   dynamic_color: ^1.6.0
   device_info_plus: ^9.0.0
-  flutter_local_notifications: ^16.1.0
+  flutter_local_notifications: ^17.0.0
   home_widget: ^0.4.0
   flutter_highlight:
     git:
@@ -94,6 +98,7 @@ dependency_overrides:
   # http: ^1.1.0
   # intl: ^0.18.0
   # flutter_math_fork: ^0.7.0
+  # flutter_inappwebview: ^6.0.0
 
 dev_dependencies:
   flutter_test:
