@@ -327,10 +327,14 @@ class _ImageCacheComponentState extends State<ImageCacheComponent> {
         ),
       ),
       trailing: GestureDetector(
-        onTap: () {
+        onTap: () async {
+          var doIt = await showConfirmDialog(context, "清除图片缓存", "清除所有图片缓存");
+          if (doIt == null || doIt != "yes") { return; }
           clearAllImages();
         },
-        onLongPress: () {
+        onLongPress: () async {
+          var doIt = await showConfirmDialog(context, "清除图片缓存", "清除内存中的图片缓存");
+          if (doIt == null || doIt != "yes") { return; }
           clearImagesInMemory();
         },
         child: const Icon(Icons.cleaning_services, color: null,),
