@@ -43,13 +43,17 @@ class _CollectionCreateDirComponentState extends State<CollectionCreateDirCompon
     .then((res) {
       bool success = res.success;
       if (success==true) {
-        showInformDialog(context, "创建文件夹成功", "rt")
-        .then((_) {
-          Navigator.of(context).pop();
-          if (widget.callBack!=null) {
-            widget.callBack!();
-          }
-        });
+        if (mounted) {
+          showInformDialog(context, "创建文件夹成功", "rt")
+          .then((_) {
+            if (mounted) {
+              Navigator.of(context).pop();
+              if (widget.callBack!=null) {
+                widget.callBack!();
+              }
+            }
+          });
+        }
       } else {
         var txt = "发生错误啦><";
         if (res.error == -1) {
@@ -57,7 +61,9 @@ class _CollectionCreateDirComponentState extends State<CollectionCreateDirCompon
         } else if (res.error == 9) {
           txt = "您没有足够权限执行此操作";
         }
-        showInformDialog(context, "创建文件夹失败", txt);
+        if (mounted) {
+          showInformDialog(context, "创建文件夹失败", txt);
+        }
       }
     });
   }

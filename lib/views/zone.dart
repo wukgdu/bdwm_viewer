@@ -54,7 +54,7 @@ class _ZoneViewState extends State<ZoneView> {
                       }
                       nv2Push(context, '/user', arguments: e.link);
                     },
-                    style: ButtonStyle(textStyle: MaterialStateProperty.all(const TextStyle(fontWeight: FontWeight.normal))),
+                    style: ButtonStyle(textStyle: WidgetStateProperty.all(const TextStyle(fontWeight: FontWeight.normal))),
                     child: Text(e.text, style: textLinkStyle),
                   );
                 }),

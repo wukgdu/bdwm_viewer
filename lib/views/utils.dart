@@ -607,7 +607,7 @@ void shareWithResultWrap(BuildContext context, String text, {String? subject}) {
     newText = subject;
     newSubject = text;
   }
-  Share.shareWithResult(
+  Share.share(
     newText,
     subject: newSubject,
     sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
@@ -626,9 +626,11 @@ void shareWithResultWrap(BuildContext context, String text, {String? subject}) {
       default:
         txt = "分享状态未知";
     }
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(txt),
-      duration: const Duration(milliseconds: 600),
-    ));
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(txt),
+        duration: const Duration(milliseconds: 600),
+      ));
+    }
   });
 }

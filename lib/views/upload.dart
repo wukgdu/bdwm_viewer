@@ -60,9 +60,11 @@ class _UploadDialogBodyState extends State<UploadDialogBody> {
               checkAndRequestStoragePermission()
               .then((couldDoIt) {
                 if (!couldDoIt) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("没有文件权限"), duration: Duration(milliseconds: 1000),),
-                  );
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("没有文件权限"), duration: Duration(milliseconds: 1000),),
+                    );
+                  }
                   return;
                 }
                 FilePicker.platform.pickFiles()
@@ -88,14 +90,16 @@ class _UploadDialogBodyState extends State<UploadDialogBody> {
                         debugPrint(uploadRes.name);
                         debugPrint(uploadRes.url);
                         if (widget.showAttachLink) {
-                          showComplexInformDialog(context, "附件链接", SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SelectableText(uploadRes.url ?? "未知"),
-                              ],
-                            ),
-                          ));
+                          if (context.mounted) {
+                            showComplexInformDialog(context, "附件链接", SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SelectableText(uploadRes.url ?? "未知"),
+                                ],
+                              ),
+                            ));
+                          }
                         }
                         bool hasIt = false;
                         for (var fn in filenames) {

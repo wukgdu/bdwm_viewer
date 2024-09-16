@@ -302,9 +302,11 @@ class _DetailImageState extends State<DetailImage> {
                 if (!res.success) {
                   text = "保存失败：${res.reason}";
                 }
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(text), duration: const Duration(milliseconds: 2000),),
-                );
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(text), duration: const Duration(milliseconds: 2000),),
+                  );
+                }
               });
             },
           ),
@@ -326,9 +328,11 @@ class _DetailImageState extends State<DetailImage> {
                   if (!res.success) {
                     text = "保存失败：${res.reason}";
                   }
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(text), duration: const Duration(milliseconds: 1500),),
-                  );
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(text), duration: const Duration(milliseconds: 1500),),
+                    );
+                  }
                 });
               },
               child: genNetworkImage(widget.imgLinks![index], inPageView: true),
@@ -357,9 +361,11 @@ class _DetailImageState extends State<DetailImage> {
                   if (!res.success) {
                     text = "保存失败：${res.reason}";
                   }
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(text), duration: const Duration(milliseconds: 1500),),
-                  );
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(text), duration: const Duration(milliseconds: 1500),),
+                    );
+                  }
                 });
               },
               child: genFileImage(widget.imgFiles![index], inPageView: true),

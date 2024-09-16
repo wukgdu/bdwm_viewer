@@ -45,14 +45,14 @@ class FquillEditor extends StatefulWidget {
   final fquill.QuillController controller;
   final bool autoFocus;
   final double height;
-  final bool readOnly;
+  // final bool readOnly;
   final EdgeInsets? margin;
   const FquillEditor({
     super.key,
     required this.controller,
     required this.autoFocus,
     required this.height,
-    this.readOnly = false,
+    // this.readOnly = false,
     this.margin,
   });
 
@@ -274,7 +274,7 @@ class _FquillEditorState extends State<FquillEditor> {
         controller: widget.controller,
         scrollable: true,
         autoFocus: widget.autoFocus, // 回帖
-        readOnly: widget.readOnly,
+        // readOnly: widget.readOnly,
         expands: false,
         padding: const EdgeInsets.all(0.0),
         keyboardAppearance: Theme.of(context).brightness,

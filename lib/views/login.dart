@@ -97,12 +97,16 @@ class _LoginViewState extends State<LoginView> {
                       default:
                         content = res.desc ?? "其他错误发生，错误码 ${res.error}";
                     }
-                    showInformDialog(context, title, content);
+                    if (context.mounted) {
+                      showInformDialog(context, title, content);
+                    }
                   } else {
                     debugPrint(globalUInfo.gist());
                     unreadMail.clearAll();
                     unreadMessage.clearAll();
-                    nv2PushAndRemoveAll(context, '/home');
+                    if (context.mounted) {
+                      nv2PushAndRemoveAll(context, '/home');
+                    }
                   }
                 });
               },

@@ -137,16 +137,18 @@ class _UserOperationComponentState extends State<UserOperationComponent> {
               content = "失败啦，请稍候再试";
             }
           }
-          showInformDialog(context, title, content).then((dialogValue) {
-            if (!value.success) { return; }
-            if (widget.callBack != null) {
-              widget.callBack!();
-            } else {
-              setState(() {
-                userexist = !userexist;
-              });
-            }
-          });
+          if (context.mounted) {
+            showInformDialog(context, title, content).then((dialogValue) {
+              if (!value.success) { return; }
+              if (widget.callBack != null) {
+                widget.callBack!();
+              } else {
+                setState(() {
+                  userexist = !userexist;
+                });
+              }
+            });
+          }
         });
       },
     );
@@ -617,9 +619,11 @@ class _UserInfoViewState extends State<UserInfoView> {
                               // await canLaunchUrl(parsedUrl)
                               launchUrl(parsedUrl, mode: LaunchMode.externalApplication).then((result) {
                                 if (result == true) { return; }
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text("打开链接失败"), duration: Duration(milliseconds: 600),),
-                                );
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text("打开链接失败"), duration: Duration(milliseconds: 600),),
+                                  );
+                                }
                               });
                             }
                           });
@@ -643,10 +647,12 @@ class _UserInfoViewState extends State<UserInfoView> {
                   icon: const Icon(Icons.logout),
                   onPressed: () {
                     bdwmLogout().then((value) {
-                      if (value == false) {
-                        showNetWorkDialog(context);
+                      if (context.mounted) {
+                        if (value == false) {
+                          showNetWorkDialog(context);
+                        }
+                        nv2PushAndRemoveAll(context, '/login');
                       }
-                      nv2PushAndRemoveAll(context, '/login');
                     });
                   },
                 ),

@@ -308,14 +308,16 @@ class _StarBoardState extends State<StarBoard> {
                 if (value.error == -1) {
                   reason = value.desc!;
                 }
-                showAlertDialog(context, "失败", Text(reason),
-                  actions1: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text("知道了"),
-                  ),
-                );
+                if (context.mounted) {
+                  showAlertDialog(context, "失败", Text(reason),
+                    actions1: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("知道了"),
+                    ),
+                  );
+                }
               }
             });
           },
@@ -623,9 +625,11 @@ class _BoardViewState extends State<BoardView> {
                           txt = "清除未读失败";
                         }
                       }
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(txt), duration: const Duration(milliseconds: 600),),
-                      );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(txt), duration: const Duration(milliseconds: 600),),
+                        );
+                      }
                       if (res.success) {
                         for (var item in boardInfo.boardPostInfo) {
                           item.isNew = false;
@@ -957,9 +961,11 @@ class _BoardSingleViewState extends State<BoardSingleView> {
                           txt = "清除未读失败";
                         }
                       }
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(txt), duration: const Duration(milliseconds: 600),),
-                      );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(txt), duration: const Duration(milliseconds: 600),),
+                        );
+                      }
                       if (res.success) {
                         for (var item in boardInfo.boardPostInfo) {
                           item.isNew = false;

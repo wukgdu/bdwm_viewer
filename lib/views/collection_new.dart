@@ -117,25 +117,31 @@ class _CollectionNewViewState extends State<CollectionNewView> {
                     attachpath: nAttachPath, mode: widget.mode, baseOrPath: widget.baseOrPath)
                   .then((value) {
                     if (value.success) {
-                      showInformDialog(context, "操作成功", "rt")
-                      .then((value2) {
-                        var name = value.name!;
-                        if (name.isEmpty && widget.mode=="new") { return; }
-                        var path = widget.mode=="new" ? "${widget.baseOrPath}/$name" : widget.baseOrPath;
-                        if (widget.mode!="new") {
-                          nv2Pop(context);
-                        }
-                        nv2Replace(context, '/collectionArticle', arguments: {
-                          "link": "$v2Host/collection-read.php?path=$path",
-                          "title": widget.baseName,
+                      if (context.mounted) {
+                        showInformDialog(context, "操作成功", "rt")
+                        .then((value2) {
+                          var name = value.name!;
+                          if (name.isEmpty && widget.mode=="new") { return; }
+                          var path = widget.mode=="new" ? "${widget.baseOrPath}/$name" : widget.baseOrPath;
+                          if (context.mounted) {
+                            if (widget.mode!="new") {
+                              nv2Pop(context);
+                            }
+                            nv2Replace(context, '/collectionArticle', arguments: {
+                              "link": "$v2Host/collection-read.php?path=$path",
+                              "title": widget.baseName,
+                            });
+                          }
                         });
-                      });
+                      }
                     } else {
                       var errorMessage = "创建/修改精华区文件失败";
                       if (value.error == -1) {
                         errorMessage = value.errorMessage!;
                       }
-                      showInformDialog(context, "失败", errorMessage);
+                      if (context.mounted) {
+                        showInformDialog(context, "失败", errorMessage);
+                      }
                     }
                   });
                 },

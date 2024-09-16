@@ -9,7 +9,9 @@ Widget _hereDesc = const Center(child: Text("版务"),);
 Future<void> jumpToAdminFromBoardCard(BuildContext context, List<AdminInfo> admins, {bool isScrollControlled=true, Widget? desc}) async {
   showBoardInfoBottomSheet(context, admins, isScrollControlled: isScrollControlled, desc: desc ?? _hereDesc).then((adminUid) {
     if (adminUid == null) { return; }
-    nv2Push(context, '/user', arguments: adminUid);
+    if (context.mounted) {
+      nv2Push(context, '/user', arguments: adminUid);
+    }
   });
   // showBoardInfoBottomSheet(context, admins, isScrollControlled: isScrollControlled, desc: desc ?? _hereDesc);
 }

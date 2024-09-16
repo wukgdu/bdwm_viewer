@@ -396,11 +396,15 @@ void innerLinkJump(String dmLink, BuildContext context) {
     if (bid.isEmpty || postid.isEmpty) { return; }
     getSinglePostData(bid, postid).then((value) {
       if (value.errorMessage != null) {
-        showInformDialog(context, "跳转失败", value.errorMessage ?? "未知错误");
+        if (context.mounted) {
+          showInformDialog(context, "跳转失败", value.errorMessage ?? "未知错误");
+        }
       } else {
         var link2 = value.threadLink;
         if (link2.isEmpty) { return; }
-        naviGotoThreadByLink(context, link2, "", pageDefault: "a", needToBoard: true);
+        if (context.mounted) {
+          naviGotoThreadByLink(context, link2, "", pageDefault: "a", needToBoard: true);
+        }
       }
     });
   } else {
@@ -420,9 +424,11 @@ void innerLinkJump(String dmLink, BuildContext context) {
         // await canLaunchUrl(parsedUrl)
         launchUrl(parsedUrl, mode: LaunchMode.externalApplication).then((result) {
           if (result == true) { return; }
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("打开链接失败"), duration: Duration(milliseconds: 600),),
-          );
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("打开链接失败"), duration: Duration(milliseconds: 600),),
+            );
+          }
         });
       }
     });
@@ -492,11 +498,15 @@ List<InlineSpan>? travelHtml(hdom.Element? document, {required TextStyle? ts, Bu
                     } else {
                       success = true;
                       var ian = res.users.first as IDandName;
-                      nv2Push(context, '/user', arguments: ian.id);
+                      if (context.mounted) {
+                        nv2Push(context, '/user', arguments: ian.id);
+                      }
                     }
                   }
                   if (!success) {
-                    showInformDialog(context, "查询用户失败", informText);
+                    if (context.mounted) {
+                      showInformDialog(context, "查询用户失败", informText);
+                    }
                   }
                 },);
               },

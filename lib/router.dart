@@ -70,6 +70,10 @@ class MyRouteConfig {
     incIdx();
   }
 
+  String toKey() {
+    return "$name+$localIdx";
+  }
+
   Map toJson() {
     return {
       'name': name,
@@ -478,7 +482,7 @@ class MainRouterDelegate extends RouterDelegate<MyRouteConfig>
     for (var s in toIter) {
       var w = mainPageBuilder.build(s);
       if (w!=null) {
-        pages.add(MyPage(child: w, key: ValueKey("${s.name}+${s.localIdx}")));
+        pages.add(MyPage(child: w, key: ValueKey(s.toKey())));
         sNum += 1;
         if (maxPageNum != null && sNum >= maxPageNum) {
           break;
@@ -495,13 +499,28 @@ class MainRouterDelegate extends RouterDelegate<MyRouteConfig>
       child: Navigator(
         key: navigatorKey,
         pages: pages,
-        onPopPage: (route, result) {
-          if (!route.didPop(result)) {
-            return false;
+        onDidRemovePage: (page) {
+          if (pages.map((e) => e.key).contains(page.key)) {
+            mainRoutes.removeWhere((e) => ValueKey(e.toKey())==page.key);
+            notifyListeners();
           }
-          pop();
-          return true;
-        }
+          // 2.
+          // if (pages.last.key == page.key) { // 处理replace的情况
+          //   pop();
+          // }
+          // or 3.
+          // 页数超出后，最开始的几页也会认为是remove，但是不应该真的remove，只是在显示时略过
+          // if maxPageNum == null 或者 index + maxPageNum >= mainRoutes.length => remove
+          // mainRoutes.removeWhere((e) => ValueKey(e.toKey())==page.key);
+          // notifyListeners();
+        },
+        // onPopPage: (route, result) {
+        //   if (!route.didPop(result)) {
+        //     return false;
+        //   }
+        //   pop();
+        //   return true;
+        // }
       ),
     );
   }

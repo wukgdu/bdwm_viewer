@@ -227,14 +227,16 @@ class _MailDetailViewState extends State<MailDetailView> {
                         txt = "您没有足够权限执行此操作";
                       }
                     }
-                    showAlertDialog(context, "收入文集", Text(txt),
-                      actions1: TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text("知道了"),
-                      ),
-                    );
+                    if (context.mounted) {
+                      showAlertDialog(context, "收入文集", Text(txt),
+                        actions1: TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text("知道了"),
+                        ),
+                      );
+                    }
                   });
                 });
                 },
@@ -258,14 +260,16 @@ class _MailDetailViewState extends State<MailDetailView> {
                           content = "该版面不存在，或需要特殊权限";
                         }
                       }
-                      showAlertDialog(context, title, Text(content),
-                        actions1: TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text("知道了"),
-                        ),
-                      );
+                      if (context.mounted) {
+                        showAlertDialog(context, title, Text(content),
+                          actions1: TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("知道了"),
+                          ),
+                        );
+                      }
                     });
                   },);
                 },
@@ -289,14 +293,16 @@ class _MailDetailViewState extends State<MailDetailView> {
                           content = "用户不存在";
                         }
                       }
-                      showAlertDialog(context, title, Text(content),
-                        actions1: TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text("知道了"),
-                        ),
-                      );
+                      if (context.mounted) {
+                        showAlertDialog(context, title, Text(content),
+                          actions1: TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("知道了"),
+                          ),
+                        );
+                      }
                     });
                   },);
                 },
@@ -318,18 +324,20 @@ class _MailDetailViewState extends State<MailDetailView> {
                             content = mailRes.result!;
                           }
                         }
-                        showAlertDialog(context, title, Text(content),
-                          actions1: TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text("知道了"),
-                          ),
-                        ).then((value2) {
-                          if (mailRes.success) {
-                            widget.refreshCallBack();
-                          }
-                        });
+                        if (context.mounted) {
+                          showAlertDialog(context, title, Text(content),
+                            actions1: TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("知道了"),
+                            ),
+                          ).then((value2) {
+                            if (mailRes.success) {
+                              widget.refreshCallBack();
+                            }
+                          });
+                        }
                       });
                     }
                   });

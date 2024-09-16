@@ -219,12 +219,14 @@ class _MailNewViewState extends State<MailNewView> {
                       } else if (value.error == 9) {
                         errReason = "您的发信权已被封禁";
                       }
-                      showAlertDialog(context, "发送失败", Text(errReason),
-                        actions1: TextButton(
-                          onPressed: () { Navigator.of(context).pop(); },
-                          child: const Text("知道了"),
-                        ),
-                      );
+                      if (context.mounted) {
+                        showAlertDialog(context, "发送失败", Text(errReason),
+                          actions1: TextButton(
+                            onPressed: () { Navigator.of(context).pop(); },
+                            child: const Text("知道了"),
+                          ),
+                        );
+                      }
                     } else {
                       var n = "";
                       var uidx = 0;
@@ -238,14 +240,18 @@ class _MailNewViewState extends State<MailNewView> {
                       if (n.isNotEmpty) {
                         txt = "部分成功，发送给用户$n 的信件未发送成功";
                       }
-                      showAlertDialog(context, "站内信", Text(txt),
-                        actions1: TextButton(
-                          onPressed: () { Navigator.of(context).pop(); },
-                          child: const Text("知道了"),
-                        ),
-                      ).then((value) {
-                        nv2Pop(context);
-                      },);
+                      if (context.mounted) {
+                        showAlertDialog(context, "站内信", Text(txt),
+                          actions1: TextButton(
+                            onPressed: () { Navigator.of(context).pop(); },
+                            child: const Text("知道了"),
+                          ),
+                        ).then((value) {
+                          if (context.mounted) {
+                            nv2Pop(context);
+                          }
+                        },);
+                      }
                     }
                   });
                 },

@@ -535,7 +535,9 @@ class _MessagePersonViewState extends State<MessagePersonView> {
                   .then((value) {
                     if (value.success == false) {
                       var errStr = value.desc ?? "错误代码：${value.error}";
-                      showInformDialog(context, "发送失败", errStr);
+                      if (context.mounted) {
+                        showInformDialog(context, "发送失败", errStr);
+                      }
                       return;
                     }
                     if (!mounted) { return; }

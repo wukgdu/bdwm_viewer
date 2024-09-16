@@ -83,7 +83,9 @@ class _BanUserDialogState extends State<BanUserDialog> {
             var action = widget.isEdit ? "修改" : "封禁";
             if (optRes.success) {
               showInformDialog(context, "$action成功", "rt").then((_) {
-                Navigator.of(context).pop("success");
+                if (context.mounted) {
+                  Navigator.of(context).pop("success");
+                }
               });
             } else {
               showInformDialog(context, "$action失败", optRes.errorMessage ?? "$action失败，请稍后重试");
@@ -221,14 +223,16 @@ class _OperateComponentState extends State<OperateComponent> {
                     content = "该版面不存在，或需要特殊权限";
                   }
                 }
-                showAlertDialog(context, title, Text(content),
-                  actions1: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text("知道了"),
-                  ),
-                );
+                if (context.mounted) {
+                  showAlertDialog(context, title, Text(content),
+                    actions1: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("知道了"),
+                    ),
+                  );
+                }
               });
             },);
           },
@@ -253,14 +257,16 @@ class _OperateComponentState extends State<OperateComponent> {
                     content = "用户不存在";
                   }
                 }
-                showAlertDialog(context, title, Text(content),
-                  actions1: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text("知道了"),
-                  ),
-                );
+                if (context.mounted) {
+                  showAlertDialog(context, title, Text(content),
+                    actions1: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("知道了"),
+                    ),
+                  );
+                }
               });
             },);
           },
@@ -299,12 +305,14 @@ class _OperateComponentState extends State<OperateComponent> {
                 if (!res.success) {
                   txt = "操作失败";
                 }
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(txt),
-                    duration: const Duration(milliseconds: 1000),
-                  ),
-                );
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(txt),
+                      duration: const Duration(milliseconds: 1000),
+                    ),
+                  );
+                }
                 if (!res.success) { return; }
                 widget.refreshCallBack();
               });
@@ -331,14 +339,16 @@ class _OperateComponentState extends State<OperateComponent> {
                       txt = "您没有足够权限执行此操作";
                     }
                   }
-                  showAlertDialog(context, "收入文集", Text(txt),
-                    actions1: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text("知道了"),
-                    ),
-                  );
+                  if (context.mounted) {
+                    showAlertDialog(context, "收入文集", Text(txt),
+                      actions1: TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text("知道了"),
+                      ),
+                    );
+                  }
                 });
               });
             } else if (value == "删除") {
@@ -355,11 +365,13 @@ class _OperateComponentState extends State<OperateComponent> {
                       content = value.result!;
                     }
                   }
-                  showInformDialog(context, title, content).then((value2) {
-                    if (value.success) {
-                      widget.refreshCallBack();
-                    }
-                  });
+                  if (context.mounted) {
+                    showInformDialog(context, title, content).then((value2) {
+                      if (value.success) {
+                        widget.refreshCallBack();
+                      }
+                    });
+                  }
                 });
               });
             } else if (value == "回站内信") {
@@ -504,12 +516,14 @@ class _VoteComponentState extends State<VoteComponent> {
           default:
             text = "操作失败";
         }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(text),
-            duration: const Duration(milliseconds: 1000),
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(text),
+              duration: const Duration(milliseconds: 1000),
+            ),
+          );
+        }
       }
     },);
   }
@@ -625,9 +639,11 @@ class AttachmentComponent extends StatelessWidget {
                     var parsedUrl = Uri.parse(e.link);
                     launchUrl(parsedUrl, mode: LaunchMode.externalApplication).then((result) {
                       if (result == true) { return; }
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("打开链接失败"), duration: Duration(milliseconds: 600),),
-                      );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("打开链接失败"), duration: Duration(milliseconds: 600),),
+                        );
+                      }
                     });
                     // gotoDetailImage(context: context, link: e.link, name: e.text);
                   },

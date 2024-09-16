@@ -29,11 +29,13 @@ void deleteCollectionWrap(String path, BuildContext context, Function refreshCal
             content = "删除失败：${res.desc}";
           }
         }
-        showInformDialog(context, title, content).then((value2) {
-          if (res.success) {
-            refreshCallBack();
-          }
-        });
+        if (context.mounted) {
+          showInformDialog(context, title, content).then((value2) {
+            if (res.success) {
+              refreshCallBack();
+            }
+          });
+        }
       });
     }
   });
@@ -55,7 +57,9 @@ void reorderCollectionWrap(String httpPath, int index, BuildContext context, {Fu
       if (res.error == -1) {
         content = "移动失败：${res.desc}";
       }
-      showInformDialog(context, title, content);
+      if (context.mounted) {
+        showInformDialog(context, title, content);
+                                    }
     } else {
       if (refreshCallBack!=null) {
         refreshCallBack();
@@ -178,7 +182,9 @@ class _CollectionViewState extends State<CollectionView> {
           } else if (importRes.error == 9) {
             txt = "您没有足够权限执行此操作";
           }
-          showInformDialog(context, "$ope文集", txt,);
+          if (context.mounted) {
+            showInformDialog(context, "$ope文集", txt,);
+                                    }
         } else {
           if (widget.refresh!=null) {
             widget.refresh!();
@@ -249,7 +255,9 @@ class _CollectionViewState extends State<CollectionView> {
                                 if (res.error == -1) {
                                   txt = res.desc ?? txt;
                                 }
-                                showInformDialog(context, "重命名失败", txt);
+                                if (mounted) {
+                                  showInformDialog(context, "重命名失败", txt);
+                                }
                               }
                             });
                           },
@@ -292,7 +300,9 @@ class _CollectionViewState extends State<CollectionView> {
                                 }
                                 bdwmOperateCollectionBatched(action: "move", list: paths, tobase: value)
                                 .then((batchRes) {
-                                  confirmAfterBatchOperation(context, batchRes, ope: "移动");
+                                if (mounted) {
+                                    confirmAfterBatchOperation(context, batchRes, ope: "移动");
+                                    }
                                 });
                               });
                             }
@@ -324,7 +334,9 @@ class _CollectionViewState extends State<CollectionView> {
                                 if (value == "yes") {
                                   bdwmOperateCollectionBatched(action: "delete", list: paths)
                                   .then((batchRes) {
-                                    confirmAfterBatchOperation(context, batchRes, ope: "删除");
+                                    if (mounted) {
+                                      confirmAfterBatchOperation(context, batchRes, ope: "删除");
+                                    }
                                   });
                                 }
                               });
@@ -345,20 +357,24 @@ class _CollectionViewState extends State<CollectionView> {
                                   if (value==null) { return; }
                                   if (value.isEmpty) { return; }
                                   if (value != "yes") { return; }
-                                  showCollectionDialog(context, isSingle: true)
-                                  .then((value) {
-                                    if (value == null || value.isEmpty) {
-                                      return;
-                                    }
-                                    var base = value;
-                                    if (base.isEmpty || base=="none") {
-                                      return;
-                                    }
-                                    bdwmOperateCollectionBatched(action: "copy", list: paths, tobase: value)
-                                    .then((batchRes) {
-                                      confirmAfterBatchOperation(context, batchRes, ope: "收入文集");
+                                  if (mounted) {
+                                    showCollectionDialog(context, isSingle: true)
+                                    .then((value) {
+                                      if (value == null || value.isEmpty) {
+                                        return;
+                                      }
+                                      var base = value;
+                                      if (base.isEmpty || base=="none") {
+                                        return;
+                                      }
+                                      bdwmOperateCollectionBatched(action: "copy", list: paths, tobase: value)
+                                      .then((batchRes) {
+                                        if (mounted) {
+                                          confirmAfterBatchOperation(context, batchRes, ope: "收入文集");
+                                        }
+                                      });
                                     });
-                                  });
+                                  }
                                 });
                               }
                             },
@@ -564,7 +580,9 @@ class _CollectionArticleViewState extends State<CollectionArticleView> {
                         txt = "您没有足够权限执行此操作";
                       }
                     }
-                    showInformDialog(context, "收入文集", txt,);
+                    if (context.mounted) {
+                      showInformDialog(context, "收入文集", txt,);
+                    }
                   });
                 },);
               },

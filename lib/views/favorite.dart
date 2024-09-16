@@ -118,9 +118,11 @@ class FavoriteViewState extends State<FavoriteView> {
           txt = "清除未读失败";
         }
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(txt), duration: const Duration(milliseconds: 600),),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(txt), duration: const Duration(milliseconds: 600),),
+        );
+      }
       if (res.success) {
         for (var item in favoriteBoardInfo.favoriteBoards) {
           item.unread = false;

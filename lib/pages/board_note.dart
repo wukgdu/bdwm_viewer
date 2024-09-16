@@ -128,7 +128,7 @@ class _BoardNotePageState extends State<BoardNotePage> {
         }
         if (useNotoSansMonoCJKsc) {
           isDownloadNotoSansMonoCJKscOK().then((ok) {
-            if (!mounted) { return; }
+            if (!context.mounted) { return; }
             if (!ok) {
               showInformDialog(context, "下载字体中", "https://bbs.pku.edu.cn/attach/ec/04/ec04cc376b34887c/NotoSansMonoCJKsc-Regular.otf \n15.6MB");
             }
