@@ -73,8 +73,8 @@ class UserStatTableComponent extends StatefulWidget {
 class _UserStatTableComponentState extends State<UserStatTableComponent> {
   final tooltipBehavior = TooltipBehavior(
     enable: true,
-    animationDuration: 0,
-    duration: 0.0,
+    // animationDuration: 0,
+    // duration: 0.0,
     builder: (data, point, series, pointIndex, seriesIndex) {
       var datum = data as TVPair;
       return Container(
