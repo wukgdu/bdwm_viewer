@@ -30,19 +30,20 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "com.wukgdu365.bdwm_viewer"
-    // compileSdkVersion flutter.compileSdkVersion
-    compileSdkVersion 34
-    // ndkVersion flutter.ndkVersion
-    ndkVersion "26.2.11394342"
+    compileSdkVersion flutter.compileSdkVersion
+    // compileSdkVersion 34
+    ndkVersion flutter.ndkVersion
+    // ndkVersion = "25.1.8937393"
+    // ndkVersion "26.2.11394342"
 
     compileOptions {
         coreLibraryDesugaringEnabled true
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
-        jvmTarget = 17
+        jvmTarget = '1.8'
     }
 
     sourceSets {
