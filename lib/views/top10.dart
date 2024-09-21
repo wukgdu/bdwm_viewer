@@ -410,18 +410,39 @@ class _TopHomeViewState extends State<TopHomeView> {
               ),
             );
           }
-          return ListView.builder(
-            controller: _scrollController,
-            // padding: const EdgeInsets.all(8),
-            itemCount: homeInfo.blockInfo.length+1,
-            itemBuilder: (context, index) {
-              if (index==0) {
-                return TensComponent(homeInfo: homeInfo, titleFont: _titleFont,);
-              } else {
-                var blockOne = homeInfo.blockInfo[index-1];
-                return BlocksComponent(blockOne: blockOne, titleFont: _titleFont,);
-              }
-            },
+          // return ListView.builder(
+          //   controller: _scrollController,
+          //   // padding: const EdgeInsets.all(8),
+          //   itemCount: homeInfo.blockInfo.length+1,
+          //   itemBuilder: (context, index) {
+          //     if (index==0) {
+          //       return TensComponent(homeInfo: homeInfo, titleFont: _titleFont,);
+          //     } else {
+          //       var blockOne = homeInfo.blockInfo[index-1];
+          //       return BlocksComponent(blockOne: blockOne, titleFont: _titleFont,);
+          //     }
+          //   },
+          // );
+          // return ListView(
+          //   controller: _scrollController,
+          //   // padding: const EdgeInsets.all(8),
+          //   children: [
+          //     TensComponent(homeInfo: homeInfo, titleFont: _titleFont,),
+          //     ...homeInfo.blockInfo.map((blockOne) {
+          //       return BlocksComponent(blockOne: blockOne, titleFont: _titleFont,);
+          //     }),
+          //   ],
+          // );
+          return SingleChildScrollView(
+            child: Column(
+              // padding: const EdgeInsets.all(8),
+              children: [
+                TensComponent(homeInfo: homeInfo, titleFont: _titleFont,),
+                ...homeInfo.blockInfo.map((blockOne) {
+                  return BlocksComponent(blockOne: blockOne, titleFont: _titleFont,);
+                }),
+              ],
+            ),
           );
         },
       ),
