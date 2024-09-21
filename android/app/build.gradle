@@ -32,8 +32,9 @@ android {
     namespace "com.wukgdu365.bdwm_viewer"
     compileSdkVersion flutter.compileSdkVersion
     // compileSdkVersion 34
-    ndkVersion flutter.ndkVersion
+    // ndkVersion flutter.ndkVersion
     // ndkVersion = "25.1.8937393"
+    ndkVersion = "26.1.10909125"
     // ndkVersion "26.2.11394342"
 
     compileOptions {
@@ -119,7 +120,7 @@ flutter {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.23"
+    // implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.23"
     // implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.23"
     // https://mvnrepository.com/artifact/com.android.tools/desugar_jdk_libs
     // implementation group: 'com.android.tools', name: 'desugar_jdk_libs', version: '2.0.4'

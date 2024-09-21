@@ -7,14 +7,18 @@ allprojects {
 
 rootProject.buildDir = '../build'
 subprojects {
-   afterEvaluate { project ->
-       if (project.hasProperty('android')) {
-           project.android {
-               if (namespace == null) {
-                   namespace project.group
-               }
-           }
-       }
+    afterEvaluate { project ->
+        if (project.hasProperty('android')) {
+            project.android {
+                if (namespace == null) {
+                    namespace project.group
+                }
+            }
+            // https://github.com/pichillilorenzo/flutter_inappwebview/issues/2139#issuecomment-2245639804
+            if (project.name == "flutter_inappwebview") {
+                project.android.buildTypes.release.minifyEnabled = false
+            }
+        }
    }
 }
 subprojects {

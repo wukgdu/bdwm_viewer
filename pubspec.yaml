@@ -69,7 +69,7 @@ dependencies:
   # scrollable_positioned_list: ^0.3.5
   flutter_colorpicker: ^1.0.3
   # flutter_speed_dial: ^6.2.0
-  syncfusion_flutter_charts: ^26.2.14
+  syncfusion_flutter_charts: ^27.1.48
   # media_scanner: ^2.1.0
   media_scanner:
     # path: ../media_scanner/
