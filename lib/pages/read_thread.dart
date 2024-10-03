@@ -600,7 +600,7 @@ class _ThreadDetailPageState extends State<ThreadDetailPage> {
     }
     var leadingEdge = scrollListBox.localToGlobal(Offset.zero).dy;
     for (var i=validY.length-1; i>=0; i-=1) {
-      if (validY[i] < leadingEdge) {
+      if (validY[i] - leadingEdge < -0.001) {
         Scrollable.ensureVisible(validContext[i]);
         break;
       }
@@ -628,7 +628,7 @@ class _ThreadDetailPageState extends State<ThreadDetailPage> {
     }
     var leadingEdge = scrollListBox.localToGlobal(Offset.zero).dy;
     for (var i=0; i<validY.length; i+=1) {
-      if (validY[i] > leadingEdge) {
+      if (validY[i] - leadingEdge > 0.001) {
         Scrollable.ensureVisible(validContext[i]);
         break;
       }

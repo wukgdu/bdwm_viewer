@@ -434,8 +434,9 @@ class _TopHomeViewState extends State<TopHomeView> {
           //   ],
           // );
           return SingleChildScrollView(
+            controller: _scrollController,
+            // padding: const EdgeInsets.all(8),
             child: Column(
-              // padding: const EdgeInsets.all(8),
               children: [
                 TensComponent(homeInfo: homeInfo, titleFont: _titleFont,),
                 ...homeInfo.blockInfo.map((blockOne) {
