@@ -348,12 +348,13 @@ class ThreadDetailPage extends StatefulWidget {
   final bool tiebaForm;
   final Function toggleTiebaForm;
   final bool showFAB;
+  final String? viewmode;
   const ThreadDetailPage({super.key,
     required this.refreshCallBack, required this.threadPageInfo, required this.threadLink,
     required this.page, required this.goPage, required this.userName,
     required this.bid, required this.threadid, this.postid, this.needToBoard,
     required this.tiebaForm, required this.toggleTiebaForm,
-    required this.showFAB,
+    required this.showFAB, this.viewmode,
   });
 
   @override
@@ -732,7 +733,7 @@ class _ThreadDetailPageState extends State<ThreadDetailPage> {
     return RepaintBoundary(
       child: OnePostComponent(onePostInfo: item, bid: widget.bid, refreshCallBack: widget.refreshCallBack,
         boardName: widget.threadPageInfo.board.text, threadid: widget.threadid, title: widget.threadPageInfo.title,
-        subIdx: newSubIdx, hideIt: hideIt, key: GlobalObjectKey(kStr),
+        subIdx: newSubIdx, hideIt: hideIt, key: GlobalObjectKey(kStr), viewmode: widget.viewmode,
       ),
     );
   }
@@ -1038,7 +1039,9 @@ class ThreadPage extends StatefulWidget {
   final String? boardName;
   final bool? needToBoard;
   final String? postid;
-  const ThreadPage({super.key, required this.bid, required this.threadid, this.boardName, required this.page, this.needToBoard, this.postid});
+  final String? viewmode;
+  final String? uid;
+  const ThreadPage({super.key, required this.bid, required this.threadid, this.boardName, required this.page, this.needToBoard, this.postid, this.viewmode, this.uid});
 
   @override
   State <ThreadPage> createState() =>  ThreadPageState();
@@ -1102,15 +1105,29 @@ class  ThreadPageState extends State <ThreadPage> {
     var bid = widget.bid;
     var threadid = widget.threadid;
     var url = "$v2Host/post-read.php?bid=$bid&threadid=$threadid";
-    if (!firstTime) {
-      postid = null;
-    }
-    if (firstTime && postid != null) {
-      url += "&page=a";
-      url += "&postid=$postid";
-      // postid = null;
-    } else if (! (page == 0 || page == 1)) {
-      url += "&page=$page";
+    if (widget.viewmode != null) {
+      if (firstTime) {
+        url += "&page=a";
+      } else if (! (page == 0 || page == 1)) {
+        postid = null;
+        url += "&page=$page";
+      }
+      url += "&viewmode=${widget.viewmode}";
+      if (widget.uid?.isNotEmpty ?? false) {
+        url += "&uid=${widget.uid}";
+      }
+      url += "&postid=${widget.postid}";
+    } else {
+      if (!firstTime) {
+        postid = null;
+      }
+      if (firstTime && postid != null) {
+        url += "&page=a";
+        url += "&postid=$postid";
+        // postid = null;
+      } else if (! (page == 0 || page == 1)) {
+        url += "&page=$page";
+      }
     }
     var resp = await bdwmClient.get(url, headers: genHeaders2());
     if (resp == null) {
@@ -1200,6 +1217,7 @@ class  ThreadPageState extends State <ThreadPage> {
           bid: widget.bid,
           threadid: widget.threadid,
           threadLink: threadLink,
+          viewmode: widget.viewmode,
           goPage: (int newPage) {
             goPage(newPage);
           },
@@ -1236,6 +1254,8 @@ Widget? gotoThreadPage(Object? arguments) {
   String boardName = "";
   String page = "";
   String? postid;
+  String? viewmode;
+  String? uid;
   bool? needToBoard;
   if (arguments != null) {
     var settingsMap = arguments as Map;
@@ -1244,23 +1264,25 @@ Widget? gotoThreadPage(Object? arguments) {
     boardName = (settingsMap['boardName'] as String?) ?? boardName;
     page = settingsMap['page'] as String;
     postid = settingsMap['postid'] as String?;
+    viewmode = settingsMap['viewmode'] as String?;
+    uid = settingsMap['uid'] as String?;
     needToBoard = settingsMap['needToBoard'] as bool?;
   } else {
     return null;
   }
-  return ThreadPage(boardName: boardName, bid: bid, threadid: threadid, page: page, needToBoard: needToBoard, postid: postid);
+  return ThreadPage(boardName: boardName, bid: bid, threadid: threadid, page: page, needToBoard: needToBoard, postid: postid, viewmode: viewmode, uid: uid);
 }
 
-void naviGotoThread(context, String bid, String threadid, String page, String boardName, {bool? needToBoard, String? postid}) {
-  nv2Push(context, '/thread', arguments: {
-    'bid': bid,
-    'threadid': threadid,
-    'page': page,
-    'boardName': boardName,
-    'needToBoard': needToBoard,
-    'postid': postid,
-  });
-}
+// void naviGotoThread(context, String bid, String threadid, String page, String boardName, {bool? needToBoard, String? postid}) {
+//   nv2Push(context, '/thread', arguments: {
+//     'bid': bid,
+//     'threadid': threadid,
+//     'page': page,
+//     'boardName': boardName,
+//     'needToBoard': needToBoard,
+//     'postid': postid,
+//   });
+// }
 
 Map<String, Object?>? naviGotoThreadByLink(BuildContext? context, String link, String boardName, {bool? needToBoard, String? pageDefault, bool replaceIt=false, bool getArguments=false, bool allowSingle=false}) {
   var bid = getQueryValueImproved(link, 'bid');
@@ -1290,6 +1312,8 @@ Map<String, Object?>? naviGotoThreadByLink(BuildContext? context, String link, S
     }
     return null;
   }
+  var viewmode = getQueryValueImproved(link, 'viewmode');
+  var uid = getQueryValueImproved(link, 'uid');
   Map<String, Object?> arguments = {
     'bid': bid,
     'threadid': threadid,
@@ -1297,6 +1321,8 @@ Map<String, Object?>? naviGotoThreadByLink(BuildContext? context, String link, S
     'boardName': boardName,
     'needToBoard': needToBoard,
     'postid': postid,
+    'viewmode': viewmode,
+    'uid': uid,
   };
   if (getArguments == true) {
     return arguments;

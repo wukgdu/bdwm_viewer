@@ -198,7 +198,7 @@ class _OperateComponentState extends State<OperateComponent> {
               'boardName': "$boardName/回帖",
               'parentid': widget.postid,
               // Anonymous's nickname
-              'nickName': widget.onePostInfo.authorInfo.userName == "Anonymous"
+              'nickName': widget.onePostInfo.authorInfo.userName.toLowerCase() == "anonymous"
                 ? widget.onePostInfo.authorInfo.nickName : null,
             });
           },
@@ -392,6 +392,17 @@ class _OperateComponentState extends State<OperateComponent> {
                 'postid': widget.postid,
                 'boardName': widget.boardName,
               });
+            } else if (value == "只看他") {
+              nv2Push(context, '/thread', arguments: {
+                'bid': widget.bid,
+                'threadid': widget.threadid,
+                'page': "a",
+                'boardName': widget.boardName,
+                'needToBoard': false,
+                'postid': widget.postid,
+                'viewmode': widget.onePostInfo.authorInfo.uid.isEmpty ? "anony" : "nonanony",
+                'uid': widget.onePostInfo.authorInfo.uid,
+              });
             }
           },
           itemBuilder: (context) {
@@ -425,6 +436,10 @@ class _OperateComponentState extends State<OperateComponent> {
                 value: "分享",
                 child: Text("分享"),
               ),
+              // const PopupMenuItem(
+              //   value: "只看他",
+              //   child: Text("只看ta"),
+              // ),
             ];
           },
         )
@@ -700,9 +715,10 @@ class OnePostComponent extends StatefulWidget {
   final Function refreshCallBack;
   final int? subIdx;
   final bool? hideIt;
+  final String? viewmode;
 
   const OnePostComponent({super.key, required this.onePostInfo, required this.bid, required this.refreshCallBack,
-    required this.boardName, required this.threadid, this.subIdx, this.hideIt, required this.title});
+    required this.boardName, required this.threadid, this.subIdx, this.hideIt, required this.title, this.viewmode});
 
   @override
   State<OnePostComponent> createState() => _OnePostComponentState();
@@ -782,28 +798,53 @@ class _OnePostComponentState extends State<OnePostComponent> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SelectionArea(
-                      child: Text.rich(TextSpan(
-                        style: const TextStyle(height: 1.0),
-                        children: [
-                          TextSpan(text: item.authorInfo.userName, style: serifFont),
-                          const TextSpan(text: ' ('),
-                          // WidgetSpan(child: HtmlComponent(item.authorInfo.nickName, needSelect: true),),
-                          item.authorInfo.vipIdentity == -1
-                          ? html2TextSpan(item.authorInfo.nickName)
-                          : TextSpan(text: item.authorInfo.nickName, style: TextStyle(
-                            color: getVipColor(item.authorInfo.vipIdentity, defaultColor: null),
-                          )),
-                          const TextSpan(text: ') '),
-                          if (item.authorInfo.vipIdentity != -1) ...[
-                            WidgetSpan(child: genVipLabel(item.authorInfo.vipIdentity), alignment: PlaceholderAlignment.middle),
-                          ],
-                          TextSpan(
-                            text: item.authorInfo.status,
-                            style: TextStyle(color: item.authorInfo.status.contains("在线") ? onlineColor : Colors.grey),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: SelectionArea(
+                            child: Text.rich(TextSpan(
+                              style: const TextStyle(height: 1.0),
+                              children: [
+                                TextSpan(text: item.authorInfo.userName, style: serifFont),
+                                const TextSpan(text: ' ('),
+                                // WidgetSpan(child: HtmlComponent(item.authorInfo.nickName, needSelect: true),),
+                                item.authorInfo.vipIdentity == -1
+                                ? html2TextSpan(item.authorInfo.nickName)
+                                : TextSpan(text: item.authorInfo.nickName, style: TextStyle(
+                                  color: getVipColor(item.authorInfo.vipIdentity, defaultColor: null),
+                                )),
+                                const TextSpan(text: ') '),
+                                if (item.authorInfo.vipIdentity != -1) ...[
+                                  WidgetSpan(child: genVipLabel(item.authorInfo.vipIdentity), alignment: PlaceholderAlignment.middle),
+                                ],
+                                TextSpan(
+                                  text: item.authorInfo.status,
+                                  style: TextStyle(color: item.authorInfo.status.contains("在线") ? onlineColor : Colors.grey),
+                                ),
+                              ],
+                            ),),
+                          ),
+                        ),
+                        if (widget.viewmode == null) ...[
+                          const SizedBox(width: 3,),
+                          GestureDetector(
+                            child: Text("><", style: TextStyle(height: 1.0, color: bdwmPrimaryColor),),
+                            onTap: () {
+                              nv2Push(context, '/thread', arguments: {
+                                'bid': widget.bid,
+                                'threadid': widget.threadid,
+                                'page': "a",
+                                'boardName': widget.boardName,
+                                'needToBoard': false,
+                                'postid': item.postID,
+                                'viewmode': item.authorInfo.uid.isEmpty ? "anony" : "nonanony",
+                                'uid': item.authorInfo.uid,
+                              });
+                            },
                           ),
                         ],
-                      ),),
+                      ],
                     ),
                     if (item.modifyTime.isNotEmpty)
                       Text(
