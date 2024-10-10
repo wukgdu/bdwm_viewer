@@ -26,8 +26,8 @@ https://github.com/wukgdu/bdwm_viewer/releases
     - 或者直接用 VSCode 调试。但是 VSCode 调试会在一些奇怪的 caught exceptions 止住，比如图片未加载完取消或失败，坑
     - 此时的签名是 flutter 的 debug 签名，不安全
 7. 编译 `flutter build apk --split-per-abi`
-    - 自行编译后的签名会和原本的签名不同，因为签名没有公开
     - 编译得到的 apk 使用 arm64-v8a 的即可
+    - 但是此代码无法`build apk`，因为没有签名（我的签名没有公开上传），可参照 https://docs.flutter.cn/deployment/android/#signing-the-app 自行添加签名
 
 实现代码在 lib/ 下，欢迎发 pull requests
 
