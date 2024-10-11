@@ -3,8 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as fquill;
-import 'package:flutter_quill_extensions/embeds/image/editor/image_embed.dart' show QuillEditorImageEmbedBuilder;
-import 'package:flutter_quill_extensions/models/config/image/editor/image_configurations.dart' show QuillEditorImageEmbedConfigurations;
+import 'package:flutter_quill_extensions/flutter_quill_extensions.dart' show QuillEditorImageEmbedBuilder, QuillEditorImageEmbedConfigurations;
 import 'package:async/async.dart';
 
 import './constants.dart';
@@ -270,8 +269,8 @@ class _FquillEditorState extends State<FquillEditor> {
       key: editorKey,
       scrollController: _scrollController,
       focusNode: _focusNode,
+      controller: widget.controller,
       configurations: fquill.QuillEditorConfigurations(
-        controller: widget.controller,
         scrollable: true,
         autoFocus: widget.autoFocus, // 回帖
         // readOnly: widget.readOnly,
