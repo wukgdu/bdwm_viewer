@@ -388,11 +388,12 @@ packages:
   flutter_treeview:
     dependency: "direct main"
     description:
-      name: flutter_treeview
-      sha256: ce7a66452e02877700890cb674773ea0af28d914192acfb5bf55a50ce35b5819
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "1.0.7+1"
+      path: "."
+      ref: HEAD
+      resolved-ref: "2d8b123b1a0404c93434b46e4a3e29fe7621c65d"
+      url: "https://github.com/kee-org/flutter_treeview"
+    source: git
+    version: "1.1.1"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
