@@ -23,7 +23,7 @@ class Top100RankLabelComponent extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         // border: Border.all(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
-        color: bdwmPrimaryColor.withOpacity(0.8),
+        color: bdwmPrimaryColor.withAlpha(200),
       ),
       child: Text("$itemID", style: const TextStyle(color: Colors.white, fontSize: 10, height: null),),
     );

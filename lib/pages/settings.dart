@@ -149,7 +149,7 @@ class PrimaryColorComponent extends StatefulWidget {
 class _PrimaryColorComponentState extends State<PrimaryColorComponent> {
   void setNewColor(Color newColor) {
     bdwmPrimaryColor = newColor;
-    globalConfigInfo.primaryColorString = newColor.value.toString();
+    globalConfigInfo.primaryColorString = newColor.toARGB32().toString();
     var mainState = MainPage.maybeOf(context);
     if (mainState == null) {
       if (widget.parentRefresh != null) {

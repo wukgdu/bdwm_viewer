@@ -96,7 +96,6 @@ class _CachedImagesPageState extends State<CachedImagesPage> {
                     alignment: Alignment.center,
                     child: ExtendedImage.file(
                       f,
-                      enableMemoryCache: true,
                       clearMemoryCacheWhenDispose: true,
                       clearMemoryCacheIfFailed: true,
                       height: globalConfigInfo.getHighQualityPreview() ? null : thumbnailHeight,

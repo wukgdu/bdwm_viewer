@@ -315,7 +315,7 @@ class DragToPrevNextPageOverlay {
                         width: barWidth,
                         height: barHeight,
                         child: LinearProgressIndicator(
-                          value: rdx/threshold, color: bdwmPrimaryColor, backgroundColor: bdwmPrimaryColor.withOpacity(0.5),
+                          value: rdx/threshold, color: bdwmPrimaryColor, backgroundColor: bdwmPrimaryColor.withAlpha(128),
                         ),
                       )
                     ],

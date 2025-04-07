@@ -135,7 +135,6 @@ class _DetailImageState extends State<DetailImage> {
       imgLink,
       fit: BoxFit.contain,
       cache: true,
-      enableMemoryCache: true,
       clearMemoryCacheWhenDispose: true,
       clearMemoryCacheIfFailed: true,
       handleLoadingProgress: true,
@@ -187,7 +186,6 @@ class _DetailImageState extends State<DetailImage> {
     return ExtendedImage.memory(
       imgData,
       fit: BoxFit.contain,
-      enableMemoryCache: true,
       clearMemoryCacheWhenDispose: true,
       clearMemoryCacheIfFailed: true,
       filterQuality: FilterQuality.high,
@@ -236,7 +234,6 @@ class _DetailImageState extends State<DetailImage> {
     return ExtendedImage.file(
       imgFile,
       fit: BoxFit.contain,
-      enableMemoryCache: true,
       clearMemoryCacheWhenDispose: true,
       clearMemoryCacheIfFailed: true,
       filterQuality: FilterQuality.high,

@@ -9,6 +9,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart' show FlutterDisplayMode, DisplayMode;
+import 'package:flutter_quill/flutter_quill.dart' show FlutterQuillLocalizations;
 
 import './router.dart';
 import './globalvars.dart';
@@ -371,7 +372,7 @@ class MainPageState extends State<MainPage> {
         }
         return MaterialApp.router(
           title: 'OBViewer',
-          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          localizationsDelegates: [...GlobalMaterialLocalizations.delegates, FlutterQuillLocalizations.delegate],
           supportedLocales: const [
             Locale('en'),
             Locale('zh'),
@@ -386,7 +387,7 @@ class MainPageState extends State<MainPage> {
             colorScheme: !globalConfigInfo.useMD3 ? const ColorScheme.light().copyWith(primary: bdwmPrimaryColor)
             : ColorScheme(brightness: Brightness.light,
               primary: bdwmPrimaryColor, onPrimary: Colors.white,
-              secondary: bdwmPrimaryColor.withOpacity(0.8), onSecondary: Colors.black,
+              secondary: bdwmPrimaryColor.withAlpha(200), onSecondary: Colors.black,
               error: const Color(0xffb00020), onError: Colors.white,
               surface: Colors.white, onSurface: Colors.black,
               outlineVariant: const Color(0xffcccccc),
@@ -405,7 +406,7 @@ class MainPageState extends State<MainPage> {
             colorScheme: !globalConfigInfo.useMD3 ? const ColorScheme.dark().copyWith(primary: bdwmPrimaryColor, surface: Colors.grey[800])
             : ColorScheme(brightness: Brightness.dark,
               primary: bdwmPrimaryColor, onPrimary: Colors.black,
-              secondary: bdwmPrimaryColor.withOpacity(0.8), onSecondary: Colors.black,
+              secondary: bdwmPrimaryColor.withAlpha(200), onSecondary: Colors.black,
               error: const Color(0xffcf6679), onError: Colors.black,
               surface: const Color(0xff424242), onSurface: Colors.white,
               outlineVariant: const Color(0xffcccccc),

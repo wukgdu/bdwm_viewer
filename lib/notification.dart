@@ -109,6 +109,7 @@ Future<void> initFlnInstance() async {
   const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('ic_quick_notify');
   const InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
+    windows: WindowsInitializationSettings(appName: 'bdwm_viewer', appUserModelId: 'com.wukgdu365.bdwm_viewer', guid: 'B46E3053-FED5-CC78-8295-034D08DF0216'),
   );
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,

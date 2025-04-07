@@ -142,7 +142,7 @@ void travelHtml2Quill(hdom.Element? document, Map<String, dynamic>? attributes, 
       } else if (ele.localName == "a") {
         var href = ele.attributes['href'];
         var link = absThreadLink(href ?? "");
-        var hereColor = bdwmPrimaryColor.value.toRadixString(16);
+        var hereColor = bdwmPrimaryColor.toARGB32().toRadixString(16);
         if (hereColor.length > 6) {
           hereColor = hereColor.substring(hereColor.length-6);
         }

@@ -149,7 +149,7 @@ class _MailListPageState extends State<MailListPage> {
                           children: [
                             const Text("容量： "),
                             Expanded(
-                              child: LinearProgressIndicator(value: mailListInfo.capacity, backgroundColor: bdwmPrimaryColor.withOpacity(0.3),),
+                              child: LinearProgressIndicator(value: mailListInfo.capacity, backgroundColor: bdwmPrimaryColor.withAlpha(75),),
                             ),
                             const Text(" "),
                             Text(mailListInfo.sizeString),

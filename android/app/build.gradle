@@ -32,9 +32,9 @@ android {
     namespace "com.wukgdu365.bdwm_viewer"
     compileSdkVersion flutter.compileSdkVersion
     // compileSdkVersion 34
-    // ndkVersion flutter.ndkVersion
+    ndkVersion flutter.ndkVersion
     // ndkVersion = "25.1.8937393"
-    ndkVersion = "26.1.10909125"
+    // ndkVersion = "26.1.10909125"
     // ndkVersion "26.2.11394342"
 
     compileOptions {
@@ -56,8 +56,8 @@ android {
         applicationId "com.wukgdu365.bdwm_viewer"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
-        // minSdkVersion flutter.minSdkVersion
-        minSdkVersion 23
+        minSdkVersion flutter.minSdkVersion
+        // minSdkVersion 23
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -124,7 +124,7 @@ dependencies {
     // implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.23"
     // https://mvnrepository.com/artifact/com.android.tools/desugar_jdk_libs
     // implementation group: 'com.android.tools', name: 'desugar_jdk_libs', version: '2.0.4'
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2' // 1.1.5 ? 1.2.2 ? 2.0.4
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4' // 1.1.5 ? 1.2.2 ? 2.0.4
     // https://github.com/flutter/flutter/issues/110658 https://stackoverflow.com/a/74410353/17742614
     implementation 'androidx.window:window:1.0.0'
     implementation 'androidx.window:window-java:1.0.0'

@@ -80,7 +80,7 @@ class MyDrawer extends StatelessWidget {
     double dWidth = min(280, deviceWidth*0.7);
     if (globalConfigInfo.useMD3) {
       return NavigationDrawer(
-        indicatorColor: bdwmPrimaryColor.withOpacity(0.8),
+        indicatorColor: bdwmPrimaryColor.withAlpha(200),
         onDestinationSelected: (idx) {
           _gotoPage(drawerPages[idx].pageName, context);
         },
