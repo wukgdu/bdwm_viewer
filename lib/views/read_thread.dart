@@ -810,7 +810,7 @@ class _OnePostComponentState extends State<OnePostComponent> {
                                 const TextSpan(text: ' ('),
                                 // WidgetSpan(child: HtmlComponent(item.authorInfo.nickName, needSelect: true),),
                                 item.authorInfo.vipIdentity == -1
-                                ? html2TextSpan(item.authorInfo.nickName)
+                                ? html2TextSpan(item.authorInfo.nickNameHtml)
                                 : TextSpan(text: item.authorInfo.nickName, style: TextStyle(
                                   color: getVipColor(item.authorInfo.vipIdentity, defaultColor: null),
                                 )),

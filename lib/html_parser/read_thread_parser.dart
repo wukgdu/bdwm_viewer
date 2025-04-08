@@ -12,6 +12,7 @@ class AuthorPostInfo {
   String uid = "";
   String status = "";
   String nickName = "";
+  String nickNameHtml = "";
   String rankName = "";
   String score = "";
   String postCount = "";
@@ -26,6 +27,7 @@ class AuthorPostInfo {
     required this.uid,
     required this.score,
     required this.nickName,
+    required this.nickNameHtml,
     required this.rankName,
     required this.status,
     required this.postCount,
@@ -151,7 +153,8 @@ AuthorPostInfo parseUserPost(Element? document) {
   }
   String uid = getEqualValue(document.querySelector(".portrait-container")?.attributes['href'] ?? "");
   String userName = getTrimmedString(document.querySelector(".username a"));
-  String nickName = getTrimmedHtml(document.querySelector(".nickname"));
+  String nickName = getTrimmedString(document.querySelector(".nickname"));
+  String nickNameHtml = getTrimmedHtml(document.querySelector(".nickname"));
   String status = getTrimmedString(document.querySelector(".username span"));
 
   int vipIdentity = -1;
@@ -196,7 +199,7 @@ AuthorPostInfo parseUserPost(Element? document) {
   }
 
   return AuthorPostInfo(
-    userName: userName, uid: uid, nickName: nickName, status: status, postCount: postCount,
+    userName: userName, uid: uid, nickName: nickName, nickNameHtml: nickNameHtml, status: status, postCount: postCount,
     rating: rating, avatarLink: avatarLink, avatarFrame: avatarFrame, rankName: rankName, score: score,
     vipIdentity: vipIdentity,
   );
