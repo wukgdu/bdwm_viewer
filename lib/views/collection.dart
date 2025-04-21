@@ -694,7 +694,7 @@ class _CollectionImportDialogBodyState extends State<CollectionImportDialogBody>
             _treeViewController = _treeViewController.copyWith(
               children: collectionRes.collections.map((e) {
                 if (e.isdir) {
-                  return Node(key: e.path, label: e.title, parent: true);
+                  return Node(key: e.path, label: e.title, parent: true, children: []);
                 }
                 return Node(label: "skip", key: e.path);
               }).toList());
@@ -727,7 +727,7 @@ class _CollectionImportDialogBodyState extends State<CollectionImportDialogBody>
                       if (c.islink) {
                         newKey = c.path;
                       }
-                      _treeViewController = _treeViewController.withAddNode(key, Node(key: newKey, label: c.title, parent: true, expanded: false));
+                      _treeViewController = _treeViewController.withAddNode(key, Node(key: newKey, label: c.title, parent: true, expanded: false, children: []));
                     }
                     visited.add(key);
                     setState(() {
