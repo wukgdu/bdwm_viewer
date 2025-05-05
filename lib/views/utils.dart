@@ -604,13 +604,15 @@ void shareWithResultWrap(BuildContext context, String text, {String? subject}) {
   var newSubject = subject;
   if (Platform.isWindows) {
     if (subject == null || subject.isEmpty) { return; }
-    newText = subject;
-    newSubject = text;
+    // newText = subject;
+    // newSubject = text;
   }
-  Share.share(
-    newText,
-    subject: newSubject,
-    sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
+  SharePlus.instance.share(
+    ShareParams(
+      text: newText,
+      subject: newSubject,
+      sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
+    )
   ).then((result) {
     var txt = "";
     switch (result.status) {
