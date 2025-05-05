@@ -69,6 +69,19 @@ class _DetailImageState extends State<DetailImage> {
     }
     super.dispose();
   }
+  GestureConfig  genGestureConfig({inPageView=false}) {
+    return GestureConfig(
+      minScale: 0.8,
+      animationMinScale: 0.5,
+      maxScale: 5.0,
+      animationMaxScale: 7.0,
+      speed: 1.0,
+      inertialSpeed: 100.0,
+      initialScale: 1.0,
+      inPageView: inPageView,
+      // initialAlignment: InitialAlignment.center,
+    );
+  }
 
   Future<SaveRes> saveImage({Uint8List? data, String imgLink="", String? imgName, File? imgFile}) async {
     var fname = imgName ?? (imgLink.isNotEmpty ? path.basename(Uri.decodeFull(imgLink)) : null);
@@ -147,16 +160,16 @@ class _DetailImageState extends State<DetailImage> {
             var curByte = state.loadingProgress?.cumulativeBytesLoaded ?? 0;
             var sumByte = state.loadingProgress?.expectedTotalBytes ?? -1;
             if (sumByte == -1) {
-              return const Text("加载中");
+              return const Center(child: Text("加载中"));
             }
             var text = "${(curByte * 100 / sumByte).toStringAsFixed(0)}%";
             // return Text(text);
-            return CircularProgressIndicator(
+            return Center(child: CircularProgressIndicator(
               value: curByte / sumByte,
               semanticsLabel: '加载中',
               semanticsValue: text,
               backgroundColor: Colors.amberAccent,
-            );
+            ));
           case LoadState.completed:
             return null;
           case LoadState.failed:
@@ -167,17 +180,7 @@ class _DetailImageState extends State<DetailImage> {
       },
       mode: ExtendedImageMode.gesture,
       initGestureConfigHandler: (state) {
-        return GestureConfig(
-          minScale: 1.0,
-          animationMinScale: 0.7,
-          maxScale: 3.0,
-          animationMaxScale: 3.5,
-          speed: 1.0,
-          inertialSpeed: 100.0,
-          initialScale: 1.0,
-          inPageView: inPageView,
-          initialAlignment: InitialAlignment.center,
-        );
+        return genGestureConfig(inPageView: inPageView);
       },
     );
   }
@@ -195,16 +198,16 @@ class _DetailImageState extends State<DetailImage> {
             var curByte = state.loadingProgress?.cumulativeBytesLoaded ?? 0;
             var sumByte = state.loadingProgress?.expectedTotalBytes ?? -1;
             if (sumByte == -1) {
-              return const Text("加载中");
+              return const Center(child: Text("加载中"));
             }
             var text = "${(curByte * 100 / sumByte).toStringAsFixed(0)}%";
             // return Text(text);
-            return LinearProgressIndicator(
+            return Center(child: LinearProgressIndicator(
               value: curByte / sumByte,
               semanticsLabel: '加载中',
               semanticsValue: text,
               backgroundColor: Colors.amberAccent,
-            );
+            ));
           case LoadState.completed:
             return null;
           case LoadState.failed:
@@ -215,17 +218,7 @@ class _DetailImageState extends State<DetailImage> {
       },
       mode: ExtendedImageMode.gesture,
       initGestureConfigHandler: (state) {
-        return GestureConfig(
-          minScale: 1.0,
-          animationMinScale: 0.7,
-          maxScale: 3.0,
-          animationMaxScale: 3.5,
-          speed: 1.0,
-          inertialSpeed: 100.0,
-          initialScale: 1.0,
-          inPageView: false,
-          initialAlignment: InitialAlignment.center,
-        );
+        return genGestureConfig(inPageView: inPageView);
       },
     );
   }
@@ -243,16 +236,16 @@ class _DetailImageState extends State<DetailImage> {
             var curByte = state.loadingProgress?.cumulativeBytesLoaded ?? 0;
             var sumByte = state.loadingProgress?.expectedTotalBytes ?? -1;
             if (sumByte == -1) {
-              return const Text("加载中");
+              return const Center(child: Text("加载中"));
             }
             var text = "${(curByte * 100 / sumByte).toStringAsFixed(0)}%";
             // return Text(text);
-            return LinearProgressIndicator(
+            return Center(child: LinearProgressIndicator(
               value: curByte / sumByte,
               semanticsLabel: '加载中',
               semanticsValue: text,
               backgroundColor: Colors.amberAccent,
-            );
+            ));
           case LoadState.completed:
             return null;
           case LoadState.failed:
@@ -263,17 +256,7 @@ class _DetailImageState extends State<DetailImage> {
       },
       mode: ExtendedImageMode.gesture,
       initGestureConfigHandler: (state) {
-        return GestureConfig(
-          minScale: 1.0,
-          animationMinScale: 0.7,
-          maxScale: 3.0,
-          animationMaxScale: 3.5,
-          speed: 1.0,
-          inertialSpeed: 100.0,
-          initialScale: 1.0,
-          inPageView: false,
-          initialAlignment: InitialAlignment.center,
-        );
+        return genGestureConfig(inPageView: inPageView);
       },
     );
   }
@@ -315,25 +298,23 @@ class _DetailImageState extends State<DetailImage> {
         scrollDirection: Axis.horizontal,
         controller: ExtendedPageController(initialPage: currentIdx),
         itemBuilder: (context, index) {
-          return Center(
-            child: GestureDetector(
-              onLongPress: () async {
-                var doIt = await showDownloadMenu(context, widget.imgLinks![index]);
-                if (doIt == null || doIt != "yes") { return; }
-                saveImage(imgLink: widget.imgLinks![currentIdx], imgName: widget.imgNames![currentIdx],).then((res) {
-                  var text = "保存成功：${res.reason}";
-                  if (!res.success) {
-                    text = "保存失败：${res.reason}";
-                  }
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(text), duration: const Duration(milliseconds: 1500),),
-                    );
-                  }
-                });
-              },
-              child: genNetworkImage(widget.imgLinks![index], inPageView: true),
-            ),
+          return GestureDetector(
+            onLongPress: () async {
+              var doIt = await showDownloadMenu(context, widget.imgLinks![index]);
+              if (doIt == null || doIt != "yes") { return; }
+              saveImage(imgLink: widget.imgLinks![currentIdx], imgName: widget.imgNames![currentIdx],).then((res) {
+                var text = "保存成功：${res.reason}";
+                if (!res.success) {
+                  text = "保存失败：${res.reason}";
+                }
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(text), duration: const Duration(milliseconds: 1500),),
+                  );
+                }
+              });
+            },
+            child: genNetworkImage(widget.imgLinks![index], inPageView: true),
           );
         },
         onPageChanged: (int newIndex) {
@@ -348,25 +329,23 @@ class _DetailImageState extends State<DetailImage> {
         scrollDirection: Axis.horizontal,
         controller: ExtendedPageController(initialPage: currentIdx),
         itemBuilder: (context, index) {
-          return Center(
-            child: GestureDetector(
-              onLongPress: () async {
-                var doIt = await showDownloadMenu(context, path.basename(widget.imgFiles![index].path));
-                if (doIt == null || doIt != "yes") { return; }
-                saveImage(imgLink: "", imgName: widget.imgNames![currentIdx], imgFile: widget.imgFiles![currentIdx]).then((res) {
-                  var text = "保存成功：${res.reason}";
-                  if (!res.success) {
-                    text = "保存失败：${res.reason}";
-                  }
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(text), duration: const Duration(milliseconds: 1500),),
-                    );
-                  }
-                });
-              },
-              child: genFileImage(widget.imgFiles![index], inPageView: true),
-            ),
+          return GestureDetector(
+            onLongPress: () async {
+              var doIt = await showDownloadMenu(context, path.basename(widget.imgFiles![index].path));
+              if (doIt == null || doIt != "yes") { return; }
+              saveImage(imgLink: "", imgName: widget.imgNames![currentIdx], imgFile: widget.imgFiles![currentIdx]).then((res) {
+                var text = "保存成功：${res.reason}";
+                if (!res.success) {
+                  text = "保存失败：${res.reason}";
+                }
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(text), duration: const Duration(milliseconds: 1500),),
+                  );
+                }
+              });
+            },
+            child: genFileImage(widget.imgFiles![index], inPageView: true),
           );
         },
         onPageChanged: (int newIndex) {
@@ -375,12 +354,16 @@ class _DetailImageState extends State<DetailImage> {
           });
         },
       )
-      : Center(
-        // child: Image.network(imgLink),
-        child: imgData == null
-        ? genNetworkImage(imgLink)
-        : genMemoryImage(imgData!)
-      ),
+      : LayoutBuilder(builder: (context1, constraints) {
+        return Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight, minWidth: constraints.maxWidth),
+            child: imgData == null
+            ? genNetworkImage(imgLink)
+            : genMemoryImage(imgData!)
+          ),
+        );
+      })
     );
   }
 }
